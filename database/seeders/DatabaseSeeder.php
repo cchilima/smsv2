@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
 
             $userType = UserType::create([
 
-                'title' => 'super admin',
+                'title' => 'super_admin',
                 'name' => 'Super Admin',
                 'level' => 1,
 
