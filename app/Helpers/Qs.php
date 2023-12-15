@@ -2,10 +2,8 @@
 
 namespace App\Helpers;
 
-use App\Models\Admissions\StudentRecord;
 use App\Models\Settings\Setting;
-use App\Models\Subject;
-use Hashids\Hashids;
+
 use Illuminate\Support\Facades\Auth;
 
 class Qs
@@ -296,7 +294,7 @@ class Qs
 
     public static function getSetting($type)
     {
-        return Settings::where('type', $type)->first()->description;
+        return Setting::where('type', $type)->first()->description;
     }
 
     public static function getCurrentSession()
