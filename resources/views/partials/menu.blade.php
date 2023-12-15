@@ -50,7 +50,7 @@
 
                 <!-- Main -->
                 <li class="nav-item">
-                    <a href="{{ route('dashboard') }}" class="nav-link {{ (Route::is('dashboard')) ? 'active' : '' }}">
+                    <a href="" class="nav-link {{ (Route::is('dashboard')) ? 'active' : '' }}">
                         <i class="icon-home4"></i>
                         <span>Dashboard</span>
                     </a>
@@ -463,7 +463,7 @@
 
                 {{--Manage Account--}}
                 <li class="nav-item">
-                    <a href="{{ route('my_account')  }}"
+                    <a href="#"
                        class="nav-link {{ in_array(Route::currentRouteName(), ['my_account']) ? 'active' : '' }}"><i
                                 class="icon-user"></i> <span>My Account</span></a>
                 </li>

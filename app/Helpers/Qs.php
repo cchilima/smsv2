@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Settings\Setting;
 
+use App\Models\Users\User;
 use Illuminate\Support\Facades\Auth;
 
 class Qs
@@ -180,7 +181,8 @@ class Qs
 
     public static function getUserType()
     {
-        return Auth::user()->user_type;
+        $user = Auth::user();
+        return $user->userType->title;
     }
 
     public static function userIsSuperAdmin()
