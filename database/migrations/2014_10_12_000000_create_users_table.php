@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('force_password_reset')->nullable();
             $table->unsignedBiginteger('last_login_ip')->nullable();
             $table->integer('last_login_at')->nullable();
-            $table->string('user_type')->default('student');
+            $table->foreignId('user_type_id')->constrained('user_types')->onDelete('restrict');
             $table->rememberToken();
             $table->timestamps();
 
