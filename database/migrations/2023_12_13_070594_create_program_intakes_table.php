@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('program_intakes', function (Blueprint $table) {
+        Schema::create('academic_period_intakes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->timestamps();
@@ -19,7 +19,7 @@ return new class extends Migration
             // Add indexes
             $table->index('id');
             $table->index('name');
-            
+
         });
     }
 

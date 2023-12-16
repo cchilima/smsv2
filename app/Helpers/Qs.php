@@ -6,7 +6,7 @@ use App\Models\Settings\Setting;
 
 use App\Models\Users\User;
 use Illuminate\Support\Facades\Auth;
-
+use Hashids\Hashids;
 class Qs
 {
     public static function displayError($errors)
@@ -143,32 +143,32 @@ class Qs
 
     public static function userIsTeamAccount()
     {
-        return in_array(Auth::user()->user_type, self::getTeamAccount());
+        return in_array(self::getUserType(), self::getTeamAccount());
     }
 
     public static function userIsTeamSA()
     {
-        return in_array(Auth::user()->user_type, self::getTeamSA());
+        return in_array(self::getUserType(), self::getTeamSA());
     }
 
     public static function userIsTeamSAT()
     {
-        return in_array(Auth::user()->user_type, self::getTeamSAT());
+        return in_array(self::getUserType(), self::getTeamSAT());
     }
 
     public static function userIsAcademic()
     {
-        return in_array(Auth::user()->user_type, self::getTeamAcademic());
+        return in_array(self::getUserType(), self::getTeamAcademic());
     }
 
     public static function userIsAdministrative()
     {
-        return in_array(Auth::user()->user_type, self::getTeamAdministrative());
+        return in_array(self::getUserType(), self::getTeamAdministrative());
     }
 
     public static function userIsAdmin()
     {
-        return Auth::user()->user_type == 'admin';
+        return self::getUserType() == 'admin';
     }
 
     public static function getStudentData($remove = [])
@@ -187,27 +187,31 @@ class Qs
 
     public static function userIsSuperAdmin()
     {
-        return Auth::user()->user_type == 'super_admin';
+        return self::getUserType() == 'super_admin';
     }
 
     public static function userIsStudent()
     {
-        return Auth::user()->user_type == 'student';
+        $user = Auth::user();
+        return $user->userType->title == 'student';
     }
 
     public static function userIsInstructor()
     {
-        return Auth::user()->user_type == 'instructor';
+        $user = Auth::user();
+        return $user->userType->title == 'instructor';
     }
 
     public static function userIsParent()
     {
-        return Auth::user()->user_type == 'parent';
+        $user = Auth::user();
+        return $user->userType->title == 'parent';
     }
 
     public static function userIsStaff()
     {
-        return in_array(Auth::user()->user_type, self::getStaff());
+        $user = Auth::user();
+        return in_array($user->userType->title, self::getStaff());
     }
 
     public static function getStaff($remove=[])
