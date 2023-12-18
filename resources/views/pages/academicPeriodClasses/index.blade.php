@@ -32,9 +32,9 @@
                         @foreach($periodClasses as $period)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $period->id }}</td>
-                                <td>{{ $period->id}}</td>
-                                <td>{{ $period->id}}</td>
+                                <td>{{ $period->academicPeriod->code }}</td>
+                                <td>{{ $period->course->code}}</td>
+                                <td>{{ $period->instructor->first_name}}</td>
 
                                 <td class="text-center">
                                     <div class="list-icons">
