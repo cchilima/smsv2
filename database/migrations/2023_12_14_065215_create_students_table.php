@@ -15,7 +15,7 @@ return new class extends Migration
             $table->unsignedBiginteger('id')->primary();
             $table->foreignId('user_id')->constrained('users')->onDelete('restrict');
             $table->foreignId('program_id')->constrained('programs')->onDelete('restrict');
-            $table->foreignId('program_intake_id')->constrained('program_intakes')->onDelete('restrict');
+            $table->foreignId('academic_period_intake_id')->constrained('academic_period_intakes')->onDelete('restrict');
             $table->foreignId('study_mode_id')->constrained('study_modes')->onDelete('restrict');
             $table->foreignId('course_level_id')->constrained('course_levels')->onDelete('restrict');
             $table->foreignId('period_type_id')->constrained('period_types')->onDelete('restrict');
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->index('id');
             $table->index('user_id');
             $table->index('program_id');
-            $table->index('program_intake_id');
+            $table->index('academic_period_intake_id');
             $table->index('study_mode_id');
 
         });

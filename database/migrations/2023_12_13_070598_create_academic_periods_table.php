@@ -19,9 +19,9 @@ return new class extends Migration
             $table->date('ac_start_date');
             $table->date('ac_end_date');
             $table->foreignId('period_type_id')->constrained('period_types')->onDelete('restrict');
-            $table->foreignId('program_intake_id')->constrained('program_intakes')->onDelete('restrict');
+            $table->foreignId('academic_period_intake_id')->constrained('academic_period_intakes')->onDelete('restrict');
             $table->unsignedBigInteger('type');
-            $table->unsignedInteger('study_mode_id_allowed');
+            $table->foreignId('study_mode_id')->constrained('study_modes')->onDelete('restrict');
             $table->timestamps();
 
             // Indexes for id, periodID and code columns

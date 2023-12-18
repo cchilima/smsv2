@@ -135,6 +135,66 @@
 
 
 
+
+
+                        <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index', 'fees.create', 'fees.edit', 'fees.index', 'academicPeriods.create', 'academicPeriods.edit', 'academicPeriods.index', 'academicPeriodClasses.create', 'academicPeriodClasses.edit', 'academicPeriodClasses.index' ]) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Academics</span></a>
+
+                            <ul class="nav nav-group-sub" data-submenu-title="Manage Academic Period">
+
+                                <li class="nav-item">
+                                    <a href="{{ route('academic-periods.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['academicPeriods.create', 'academicPeriods.edit', 'academicPeriods.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Academic period</span></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('academic-period-classes.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['academicPeriodClasses.create', 'academicPeriodClasses.edit', 'academicPeriodClasses.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Academic period class</span></a>
+                                </li>
+                                    
+
+                                    </ul>
+                                </li>
+
+
+
+                        <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['fees.create', 'fees.edit', 'fees.index' ]) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Accounting</span></a>
+
+                            <ul class="nav nav-group-sub" data-submenu-title="Manage Fees">
+
+                                <li class="nav-item">
+                                    <a href="{{ route('fees.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['fees.create', 'fees.edit', 'fees.index' ]) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Fees</span></a>
+                          </li>
+
+                                    </ul>
+                                </li>
+
+
+
+                        <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index' ]) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Other</span></a>
+
+                            <ul class="nav nav-group-sub" data-submenu-title="Manage Academic Period">
+
+                                <li class="nav-item">
+                                    <a href="{{ route('academic-periods.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Marital status</span></a>
+                                </li>
+
+                                    
+
+                                    </ul>
+                                </li>
+
+
+
+
                                 @endif
 
 

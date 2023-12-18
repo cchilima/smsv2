@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('program_courses', function (Blueprint $table) {
             $table->id();
-            $table->Integer('level_id');
-            $table->Integer('course_id');
-            $table->Integer('program_id');
+            $table->foreignId('course_level_id')->constrained('course_levels')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreignId('course_id')->constrained('courses')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreignId('program_id')->constrained('programs')->onDelete('restrict')->onUpdate('restrict');
             $table->integer('active')->default(1);
             $table->timestamps();
 
-            $table->foreign('course_id')->references('id')->on('courses')->onDelete('restrict')->onUpdate('restrict');
-            $table->foreign('program_id')->references('id')->on('programs')->onDelete('restrict')->onUpdate('restrict');
-            $table->foreign('level_id')->references('id')->on('course_levels')->onDelete('restrict')->onUpdate('restrict');
+            // Add indexes
+            $table->index('course_id');
+            $table->index('program_id');
+            $table->index('course_level_id');
         });
 
 
