@@ -90,6 +90,7 @@ class DatabaseSeeder extends Seeder
                 'date_of_birth' => '1992-08-16',
                 'street_main' => 'Developers highway',
                 'mobile' => '0000000000',
+                'nrc' => '109100/52/1',
                 'marital_status_id' => $maritalStatus->id, 
                 'town_id' => $town->id, 
                 'province_id' => $province->id, 
