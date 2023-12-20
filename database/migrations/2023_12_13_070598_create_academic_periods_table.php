@@ -13,15 +13,11 @@ return new class extends Migration
     {
         Schema::create('academic_periods', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 100);
             $table->string('code',100)->unique();
-            $table->date('registration_date');
-            $table->date('late_registration_date');
             $table->date('ac_start_date');
             $table->date('ac_end_date');
             $table->foreignId('period_type_id')->constrained('period_types')->onDelete('restrict');
-            $table->foreignId('academic_period_intake_id')->constrained('academic_period_intakes')->onDelete('restrict');
-            $table->unsignedBigInteger('type');
-            $table->foreignId('study_mode_id')->constrained('study_modes')->onDelete('restrict');
             $table->timestamps();
 
             // Indexes for id, periodID and code columns

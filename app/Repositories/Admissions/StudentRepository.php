@@ -20,7 +20,6 @@ class StudentRepository
         return Student::paginate(20);
     }
 
-
     public function update($id, $data)
     {
         return Student::find($id)->update($data);
@@ -91,7 +90,7 @@ class StudentRepository
     $year = date("y");
     
     // Fetch last ID
-    
+
     $lastID = Student::latest('id')->first();
 
     $finalID = ($lastID) ? $lastID->id + 1 : 1;
