@@ -175,6 +175,23 @@
                                 </li>
 
 
+                        <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['students.create', 'students.edit' ]) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Student</span></a>
+
+                            <ul class="nav nav-group-sub" data-submenu-title="Manage Students">
+
+                                <li class="nav-item">
+                                    <a href="{{ route('students.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['students.create', 'students.edit']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Admit student</span></a>
+                                </li>
+
+                                    
+
+                                    </ul>
+                                </li>
+
+
 
                         <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index' ]) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Other</span></a>
@@ -191,6 +208,10 @@
 
                                     </ul>
                                 </li>
+
+
+
+
 
 
 

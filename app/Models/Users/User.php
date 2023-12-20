@@ -24,9 +24,13 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'middle_name',
+        'last_name',
         'email',
         'password',
+        'gender',
+        'user_type_id'
     ];
 
     /**
@@ -52,5 +56,29 @@ class User extends Authenticatable
     public function userType(){
        // dd($this->hasOne(UserType::class)->select('title'));
         return $this->belongsTo(UserType::class);
+    }
+
+    /**
+     * Define a one-to-one relationship with UserPersonalInfo.
+     */
+    public function userPersonalInfo()
+    {
+        return $this->hasOne(UserPersonalInfo::class);
+    }
+
+    /**
+     * Define a one-to-one relationship with UserNextOfKin.
+     */
+    public function userNextOfKin()
+    {
+        return $this->hasOne(NextOfKin::class);
+    }
+
+    /**
+     * Define a one-to-one relationship with Student.
+     */
+    public function student()
+    {
+        return $this->hasOne(Student::class);
     }
 }

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->integer('post_code')->nullable();
             $table->string('telephone')->nullable();
             $table->string('mobile');
+            $table->string('nrc');
+            $table->string('passport_number')->nullable();
             $table->foreignId('marital_status_id')->constrained('marital_statuses')->onDelete('restrict');
             $table->foreignId('town_id')->constrained('towns')->onDelete('restrict');
             $table->foreignId('province_id')->constrained('provinces')->onDelete('restrict');

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('user_next_of_kin', function (Blueprint $table) {
             $table->id();
             $table->string('full_name');
-            $table->string('phone');
-            $table->string('tel');
+            $table->string('mobile');
+            $table->string('telephone');
             $table->foreignId('user_id')->constrained('users')->onDelete('restrict');
             $table->string('relationship_id')->constrained('relationships')->onDelete('restrict');
             $table->string('town_id')->constrained('towns')->onDelete('restrict');

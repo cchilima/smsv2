@@ -30,16 +30,16 @@ class AcademicPeriodRepository
 
     public function getPeriodTypes()
     {
-        return PeriodType::pluck('id', 'name');
+        return PeriodType::all(['id', 'name']);
     }
 
     public function getStudyModes()
     {
-        return StudyMode::pluck('id', 'name');
+        return StudyMode::all(['id', 'name']);
     }
 
     public function getIntakes()
     {
-        return AcademicPeriodIntake::pluck('id', 'name');
+        return AcademicPeriodIntake::all(['id', 'name']);
     }
 }

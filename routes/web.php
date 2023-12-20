@@ -17,6 +17,8 @@ use App\Http\Controllers\Academics\CourseController;
 use App\Http\Controllers\Academics\AcademicPeriodController;
 use App\Http\Controllers\Academics\AcademicPeriodClassController;
 
+use App\Http\Controllers\Admissions\StudentController;
+
 use App\Http\Controllers\Profile\MaritalStatusController;
 
 use App\Http\Controllers\Accounting\FeeController;
@@ -40,10 +42,11 @@ use App\Http\Controllers\Accounting\FeeController;
     Route::resource('prerequisites', PrerequisiteController::class);
     Route::resource('program-courses', ProgramCoursesController::class);
 
+    Route::resource('fees', FeeController::class);
     Route::resource('marital-statuses', MaritalStatusController::class);
     Route::resource('academic-periods', AcademicPeriodController::class);
     Route::resource('academic-period-classes', AcademicPeriodClassController::class);
-    Route::resource('fees', FeeController::class);
+    Route::resource('students', StudentController::class);
 
 
 
