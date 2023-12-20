@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('view_results_threshold');
             $table->foreignId('study_mode_id')->constrained('study_modes')->onDelete('restrict');
             $table->foreignId('academic_period_intake_id')->constrained('academic_period_intakes')->onDelete('restrict');
+            $table->foreignId('academic_period_id')->constrained('academic_periods')->onDelete('restrict');
             $table->timestamps();
 
             // Add indexes

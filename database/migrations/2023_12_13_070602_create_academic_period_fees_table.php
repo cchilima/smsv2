@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->decimal('amount', 10, 2);
             $table->foreignId('academic_period_id')->constrained('academic_periods')->onDelete('restrict');
-            $table->foreignId('study_mode_id')->constrained('study_modes')->onDelete('restrict');
             $table->foreignId('fee_id')->constrained('fees')->onDelete('restrict');
             $table->timestamps();
         });
