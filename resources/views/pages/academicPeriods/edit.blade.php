@@ -15,56 +15,42 @@
                 <div class="col-md-6">
                     <form class="ajax-update" data-reload="#page-header" method="post" action="{{ route('academic-periods.update', $academicPeriod->id) }}">
                         @csrf @method('PUT')
-
+                        <!-- Add form fields for creating a new academic period -->
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label font-weight-semibold">Name <span class="text-danger">*</span></label>
+                            <div class="col-lg-9">
+                                <input name="name" value="{{ $academicPeriod->name }}" required type="text" class="form-control" placeholder="Ac name">
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label class="col-lg-3 col-form-label font-weight-semibold">Code <span class="text-danger">*</span></label>
                             <div class="col-lg-9">
-                                <input name="code" required type="text" class="form-control" placeholder="Code" value="{{ $academicPeriod->code }}">
+                                <input name="code" value="{{ $academicPeriod->code }}" required type="text" class="form-control" placeholder="Code">
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-lg-3 col-form-label font-weight-semibold">Registration Date <span class="text-danger">*</span></label>
+                            <label class="col-lg-3 col-form-label font-weight-semibold">Start Date <span class="text-danger">*</span></label>
                             <div class="col-lg-9">
-                                <input name="registration_date" required type="date" class="form-control" placeholder="Registration Date" value="{{ $academicPeriod->registration_date }}">
+                                <input name="ac_start_date" value="{{ $academicPeriod->ac_start_date }}" required type="text" class="form-control date-pick" placeholder="AC start Date">
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-lg-3 col-form-label font-weight-semibold">Late Registration Date <span class="text-danger">*</span></label>
+                            <label class="col-lg-3 col-form-label font-weight-semibold">End Date <span class="text-danger">*</span></label>
                             <div class="col-lg-9">
-                                <input name="late_registration_date" required type="date" class="form-control" placeholder="Late Registration Date" value="{{ $academicPeriod->late_registration_date }}">
+                                <input name="ac_end_date" value="{{ $academicPeriod->ac_end_date }}" required type="text" class="form-control date-pick" placeholder="AC end date">
                             </div>
                         </div>
 
+                        <!-- Use loops for dropdowns -->
                         <div class="form-group row">
-                            <label class="col-lg-3 col-form-label font-weight-semibold">Period Type <span class="text-danger">*</span></label>
+                            <label for="period-type" class="col-lg-3 col-form-label font-weight-semibold">Period Type <span class="text-danger">*</span></label>
                             <div class="col-lg-9">
-                                <select name="period_type_id" class="form-control" required>
+                                <select required data-placeholder="Select type" class="form-control select-search" name="period_type_id" id="period-type">
+                                    <option selected value="{{ $academicPeriod->period_types->id }}">{{ $academicPeriod->period_types->name }}</option>
                                     @foreach ($periodTypes as $type)
                                         <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label font-weight-semibold">Intake <span class="text-danger">*</span></label>
-                            <div class="col-lg-9">
-                                <select name="academic_period_intake_id" class="form-control" required>
-                                    @foreach ($intakes as $intake)
-                                        <option value="{{ $intake->id }}">{{ $intake->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label font-weight-semibold">Study Mode <span class="text-danger">*</span></label>
-                            <div class="col-lg-9">
-                                <select name="study_mode_id" class="form-control" required>
-                                    @foreach ($studyModes as $mode)
-                                        <option value="{{ $mode->id }}">{{ $mode->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

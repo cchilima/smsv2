@@ -9,5 +9,12 @@ class AcademicPeriod extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['code', 'registration_date', 'late_registration_date', 'ac_start_date', 'ace_end_date', 'period_type_id', 'academic_period_intake_id', 'type', 'study_mode_id'];
+    protected $fillable = [ 'name', 'code', 'ac_start_date', 'ac_end_date', 'period_type_id'];
+
+    public function period_types(){
+        return $this->belongsTo(PeriodType::class,'period_type_id','id');
+    }
+    public function academic_period_information(){
+        return $this->hasOne(AcademicPeriodInformation::class,'academic_period_id','id');
+    }
 }

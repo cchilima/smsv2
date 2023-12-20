@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Academics\APFeesController;
+use App\Http\Controllers\Academics\APManagementController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Home\HomeController;
@@ -46,6 +48,8 @@ use App\Http\Controllers\Accounting\FeeController;
     Route::resource('marital-statuses', MaritalStatusController::class);
     Route::resource('academic-periods', AcademicPeriodController::class);
     Route::resource('academic-period-classes', AcademicPeriodClassController::class);
+    Route::resource('academic-period-management', APManagementController::class);
+Route::resource('academic-period-fees', APFeesController::class);
     Route::resource('students', StudentController::class);
 
 

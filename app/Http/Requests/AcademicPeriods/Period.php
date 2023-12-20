@@ -22,15 +22,11 @@ class Period extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => 'required|string',
-            'registration_date' => 'required|date',
-            'late_registration_date' => 'required|date',
-            'ac_start_date' => 'required|date',
-            'ace_end_date' => 'required|date',
-            'period_type_id' => 'required|integer',
-            'program_intake_id' => 'required|integer',
-            'type' => 'required|boolean',
-            'study_mode_id' => 'required|integer',
+            'code' => 'required|string|unique:academic_periods',
+            'name' => 'required|string',
+            'ac_start_date' => 'required|date|after_or_equal:today',
+            'ac_end_date' => 'required|date|after:ac_start_date',
+            'period_type_id' => 'required|integer|exists:period_types,id'
         ];
     }
 }

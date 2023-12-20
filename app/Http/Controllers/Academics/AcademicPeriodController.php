@@ -16,7 +16,7 @@ class AcademicPeriodController extends Controller
 {
 
     protected $periods;
-    
+
     public function __construct(AcademicPeriodRepository $periods)
     {
         $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
@@ -34,10 +34,10 @@ class AcademicPeriodController extends Controller
         $periodTypes = $this->periods->getPeriodTypes();
         $studyModes = $this->periods->getStudyModes();
         $intakes = $this->periods->getIntakes();
-    
+
         return view('pages.academicPeriods.index', compact('periods', 'periodTypes', 'studyModes', 'intakes'));
     }
-    
+
 
     /**
      * Show the form for creating a new resource.
@@ -56,14 +56,15 @@ class AcademicPeriodController extends Controller
      */
     public function store(Period $request)
     {
-        $data = $request->only(['code', 'registration_date', 'late_registration_date', 'ac_start_date', 'ace_end_date', 'period_type_id', 'academic_period_intake_id', 'type', 'study_mode_id']);
-        
+        $data = $request->only(['name', 'code', 'ac_start_date', 'ac_end_date', 'period_type_id']);
+        $data['ac_start_date'] = date('Y-m-d', strtotime($data['ac_start_date']));
+        $data['ac_end_date'] = date('Y-m-d', strtotime($data['ac_end_date']));
         $period = $this->periods->create($data);
 
         if ($period) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::json(false,'failed to create message');
         }
     }
 
@@ -80,21 +81,23 @@ class AcademicPeriodController extends Controller
      */
     public function edit(string $id)
     {
-        $period = $this->periods->find($id);
+        $academicPeriod = $this->periods->find($id);
         $periodTypes = $this->periods->getPeriodTypes();
         $studyModes = $this->periods->getStudyModes();
         $intakes = $this->periods->getIntakes();
-    
-        return !is_null($fee) ? view('pages.academicPeriods.edit', compact('period','periodTypes','studyModes','intakes'))
+
+        return !is_null($academicPeriod) ? view('pages.academicPeriods.edit', compact('academicPeriod','periodTypes','studyModes','intakes'))
             : Qs::goWithDanger('pages.academicPeriods.index');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(PeriodUpdate $request, string $id)
     {
-        $data = $request->only(['code', 'registration_date', 'late_registration_date', 'ac_start_date', 'ace_end_date', 'period_type_id', 'academic_period_intake_id', 'type', 'study_mode_id']);
+        $data = $request->only(['name', 'code', 'ac_start_date', 'ac_end_date', 'period_type_id']);
+        $data['ac_start_date'] = date('Y-m-d', strtotime($data['ac_start_date']));
+        $data['ac_end_date'] = date('Y-m-d', strtotime($data['ac_end_date']));
         $this->periods->update($id, $data);
         return Qs::jsonUpdateOk();
     }

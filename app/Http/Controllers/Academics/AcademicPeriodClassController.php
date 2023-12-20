@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\AcademicPeriodClasses\PeriodClass;
 use App\Http\Requests\AcademicPeriodClasses\PeriodClassUpdate;
+use App\Http\Requests\AcademicPeriods\Period;
 use App\Repositories\Academics\AcademicPeriodClassRepository;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,7 @@ class AcademicPeriodClassController extends Controller
 {
 
     protected $periodClasses;
-    
+
     public function __construct(AcademicPeriodClassRepository $periodClasses)
     {
         $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
@@ -35,7 +36,7 @@ class AcademicPeriodClassController extends Controller
         $courses = $this->periodClasses->getCourses();
         $instructors = $this->periodClasses->getInstructors();
         $academicPeriods = $this->periodClasses->getAcademicPeriods();
-    
+
         return view('pages.academicPeriodClasses.index', compact('periodClasses', 'courses', 'instructors', 'academicPeriods'));
     }
 
@@ -55,16 +56,16 @@ class AcademicPeriodClassController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Period $request)
     {
         $data = $request->only(['instructor_id', 'course_id', 'academic_period_id']);
-        
+
         $periodClass = $this->periodClasses->create($data);
 
         if ($periodClass) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::json(false,'error to create message message');
         }
     }
 
@@ -87,7 +88,7 @@ class AcademicPeriodClassController extends Controller
         $instructors = $this->periodClasses->getInstructors();
         $academicPeriods = $this->periodClasses->getAcademicPeriods();
 
-    
+
         return !is_null($fee) ? view('pages.academicPeriodClasses.edit', compact('periodClass','courses','instructors','academicPeriods'))
             : Qs::goWithDanger('pages.academicPeriodClasses.index');
     }

@@ -22,12 +22,11 @@
                         <thead>
                         <tr>
                             <th>S/N</th>
+                            <th>Name</th>
                             <th>Code</th>
-                            <th>Registration Date</th>
-                            <th>Late Registration Date</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
                             <th>Period Type</th>
-                            <th>Program Intake</th>
-                            <th>Study Mode</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -35,12 +34,11 @@
                         @foreach($periods as $period)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
+                                <td>{{ $period->name }}</td>
                                 <td>{{ $period->code }}</td>
-                                <td>{{ $period->registration_date }}</td>
-                                <td>{{ $period->late_registration_date }}</td>
-                                <td>{{ $period->periodType->name }}</td>
-                                <td>{{ $period->programIntake->name }}</td>
-                                <td>{{ $period->studyMode->name }}</td>
+                                <td>{{ $period->ac_start_date }}</td>
+                                <td>{{ $period->ac_end_date  }}</td>
+                                <td>{{ $period->period_types->name  }}</td>
                                 <td class="text-center">
                                     <div class="list-icons">
                                         <div class="dropdown">
@@ -52,6 +50,12 @@
                                                 @if(Qs::userIsTeamSA())
                                                     <a href="{{ route('academic-periods.edit', $period->id) }}" class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
                                                 @endif
+                                                    @if(Qs::userIsTeamSA())
+                                                        <a href="{{ route('academic-periods.edit', $period->id) }}" class="dropdown-item"><i class="icon-eye"></i> Show</a>
+                                                    @endif
+                                                    @if(Qs::userIsTeamSA())
+                                                        <a href="{{ route('academic-period-management.index', ['ac'=>$period->id]) }}" class="dropdown-item"><i class="icon-paperplane"></i> Manage</a>
+                                                    @endif
                                                 @if(Qs::userIsSuperAdmin())
                                                     <a id="{{ $period->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>
                                                     <form method="post" id="item-delete-{{ $period->id }}" action="{{ route('academic-periods.destroy', $period->id) }}" class="hidden">@csrf @method('delete')</form>
@@ -73,6 +77,12 @@
                                 @csrf
                                 <!-- Add form fields for creating a new academic period -->
                                 <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Name <span class="text-danger">*</span></label>
+                                    <div class="col-lg-9">
+                                        <input name="name" value="{{ old('name') }}" required type="text" class="form-control" placeholder="Ac name">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label class="col-lg-3 col-form-label font-weight-semibold">Code <span class="text-danger">*</span></label>
                                     <div class="col-lg-9">
                                         <input name="code" value="{{ old('code') }}" required type="text" class="form-control" placeholder="Code">
@@ -80,49 +90,27 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Registration Date <span class="text-danger">*</span></label>
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Start Date <span class="text-danger">*</span></label>
                                     <div class="col-lg-9">
-                                        <input name="registration_date" value="{{ old('registration_date') }}" required type="date" class="form-control" placeholder="Registration Date">
+                                        <input name="ac_start_date" value="{{ old('ac_start_date') }}" required type="text" class="form-control date-pick" placeholder="AC start Date">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Late Registration Date <span class="text-danger">*</span></label>
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">End Date <span class="text-danger">*</span></label>
                                     <div class="col-lg-9">
-                                        <input name="late_registration_date" value="{{ old('late_registration_date') }}" required type="date" class="form-control" placeholder="Late Registration Date">
+                                        <input name="ac_end_date" value="{{ old('ace_end_date') }}" required type="text" class="form-control date-pick" placeholder="AC end date">
                                     </div>
                                 </div>
 
                                 <!-- Use loops for dropdowns -->
-
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Period Type <span class="text-danger">*</span></label>
+                                    <label for="period-type" class="col-lg-3 col-form-label font-weight-semibold">Period Type <span class="text-danger">*</span></label>
                                     <div class="col-lg-9">
-                                        <select name="period_type_id" class="form-control" required>
+                                        <select required data-placeholder="Select type" class="form-control select-search" name="period_type_id" id="period-type">
+                                            <option value=""></option>
                                             @foreach ($periodTypes as $type)
                                                 <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold"> Intake <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <select name="academic_period_intake_id" class="form-control" required>
-                                            @foreach ($intakes as $intake)
-                                                <option value="{{ $intake->id }}">{{ $intake->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Study Mode <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <select name="study_mode_id" class="form-control" required>
-                                            @foreach ($studyModes as $mode)
-                                                <option value="{{ $mode->id }}">{{ $mode->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

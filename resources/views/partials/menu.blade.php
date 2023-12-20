@@ -137,23 +137,23 @@
 
 
 
-                        <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index', 'fees.create', 'fees.edit', 'fees.index', 'academicPeriods.create', 'academicPeriods.edit', 'academicPeriods.index', 'academicPeriodClasses.create', 'academicPeriodClasses.edit', 'academicPeriodClasses.index' ]) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                        <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['academic-period-management.index','academic-period-fees.edit','academic-period-management.edit','academic-periods.create', 'academic-periods.edit', 'academic-periods.index' ]) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Academics</span></a>
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Academic Period">
 
                                 <li class="nav-item">
                                     <a href="{{ route('academic-periods.index') }}"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['academicPeriods.create', 'academicPeriods.edit', 'academicPeriods.index']) ? 'active' : '' }}"><i
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-management.index','academic-period-management.edit','academic-period-fees.edit','academic-periods.create', 'academic-periods.edit', 'academic-periods.index']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Academic period</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('academic-period-classes.index') }}"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['academicPeriodClasses.create', 'academicPeriodClasses.edit', 'academicPeriodClasses.index']) ? 'active' : '' }}"><i
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-classes.create', 'academic-period-classes.edit', 'academic-period-classes.index']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Academic period class</span></a>
                                 </li>
-                                    
+
 
                                     </ul>
                                 </li>
@@ -186,7 +186,7 @@
                                             class="icon-fence"></i> <span>Admit student</span></a>
                                 </li>
 
-                                    
+
 
                                     </ul>
                                 </li>
@@ -204,7 +204,7 @@
                                             class="icon-fence"></i> <span>Marital status</span></a>
                                 </li>
 
-                                    
+
 
                                     </ul>
                                 </li>
