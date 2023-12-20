@@ -10,9 +10,9 @@ use App\Models\Users\{ User };
 
 class StudentRepository
 {
-    public function create($data)
+    public function createUser($data)
     {
-        return Student::create($data);
+        return User::create($data);
     }
 
     public function getAll()
@@ -85,4 +85,23 @@ class StudentRepository
     {
         return CourseLevel::all(['id', 'name']);
     }
+
+    public function generateStudentId()
+{
+    $year = date("y");
+    
+    // Fetch last ID
+    
+    $lastID = Student::latest('id')->first();
+
+    $finalID = ($lastID) ? $lastID->id + 1 : 1;
+
+    $studentNumber = str_pad($finalID, 3, '0', STR_PAD_LEFT);
+
+    $concatStudentNumber = ($studentNumber < 10) ? "000$studentNumber" : (($studentNumber > 99) ? "0$studentNumber" : "00$studentNumber");
+
+    $semester = (date("m") <= 6) ? 1 : 2;
+
+    return $year . $semester . $concatStudentNumber;
+}
 }

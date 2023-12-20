@@ -104,7 +104,9 @@ class StudentController extends Controller
             $nextOfKin = $user->userNextOfKin()->create($nextOfKinData);
     
             // Use the created user instance to associate and create Student
-            $student = $user->student()->create($studentData);
+            $studentNumber = $this->students->generateStudentId();
+            $student = $user->student()->create(array_merge($studentData, ['id' => $studentNumber]));
+
     
             DB::commit();
     
@@ -197,7 +199,6 @@ public function update(Student $request, $id)
         return Qs::jsonError(__('msg.update_failed'));
     }
 }
-
 
     /**
      * Remove the specified resource from storage.
