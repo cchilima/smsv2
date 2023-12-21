@@ -30,12 +30,12 @@ class AcademicPeriodClassRepository
 
     public function getCourses()
     {
-        return Course::pluck('id', 'name', 'code');
+        return Course::all('id', 'name', 'code')->paginate(10);
     }
 
     public function getAcademicPeriods()
     {
-        return AcademicPeriod::pluck('id', 'code');
+        return AcademicPeriod::all('id', 'code')->paginate(10);
     }
 
     public function getInstructors()

@@ -7,7 +7,7 @@ use DB;
 use Illuminate\Database\Seeder;
 use App\Models\Users\{ User, UserPersonalInformation, UserType };
 use App\Models\Residency\{ Country, Province, Town };
-use App\Models\Profile\{ MaritalStatus };
+use App\Models\Profile\{ MaritalStatus, Relationship };
 
 class DatabaseSeeder extends Seeder
 {
@@ -55,6 +55,13 @@ class DatabaseSeeder extends Seeder
                $maritalStatus = MaritalStatus::create([
                     'status' => 'Single',
                  ]);
+
+
+            // Seed marital statuses
+
+               $relationship = Relationship::create([
+                'relationship' => 'Parent',
+             ]);
 
     
             // Seed user type

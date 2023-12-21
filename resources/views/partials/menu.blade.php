@@ -196,10 +196,10 @@
                         <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index' ]) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Other</span></a>
 
-                            <ul class="nav nav-group-sub" data-submenu-title="Manage Academic Period">
+                            <ul class="nav nav-group-sub" data-submenu-title="Manage Profile">
 
                                 <li class="nav-item">
-                                    <a href="{{ route('academic-periods.index') }}"
+                                    <a href="{{ route('marital-statuses.index') }}"
                                        class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Marital status</span></a>
                                 </li>
