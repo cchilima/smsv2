@@ -23,6 +23,7 @@ class Department extends FormRequest
     {
         return [
             'name' => 'required|string|unique:departments',
+            'school_id' => 'required|integer|exists:schools,id'
         ];
     }
 }

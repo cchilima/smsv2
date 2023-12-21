@@ -25,6 +25,7 @@ class DepartmentController extends Controller
     public function index()
     {
         $departments['departments'] = $this->department->getAll();
+        $departments['schools'] = $this->department->getSchools();
         return view('pages.departments.index',$departments);
     }
 
@@ -43,7 +44,7 @@ class DepartmentController extends Controller
     {
 
         if($req->hasFile('cover')) {
-            $data = $req->only(['name', 'description','cover']);
+            $data = $req->only(['school_id','name', 'description','cover']);
             $logo = $req->file('cover');
             $f = Qs::getFileMetaData($logo);
             $f['name'] = $data['name'].'logo.' . $f['ext'];
@@ -53,7 +54,7 @@ class DepartmentController extends Controller
             $data['slug'] = $data['name'];
             $this->department->create($data);
         }else{
-            $data = $req->only(['name', 'description']);
+            $data = $req->only(['school_id','name', 'description']);
             $data['slug'] = $data['name'];
             $this->department->create($data);
         }
