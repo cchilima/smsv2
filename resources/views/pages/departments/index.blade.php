@@ -68,6 +68,18 @@
                         <div class="col-md-6">
                             <form class="ajax-store" method="post" action="{{ route('departments.store')  }}">
                                 @csrf
+
+                                <div class="form-group row">
+                                    <label for="school_id" class="col-lg-3 col-form-label font-weight-semibold">School <span class="text-danger">*</span></label>
+                                    <div class="col-lg-9">
+                                        <select required data-placeholder="Select Class Type" class="form-control select" name="school_id" id="school_id">
+                                            @foreach($schools as $q)
+                                                <option value="{{ $q->id }}">{{ $q->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div class="form-group row">
                                     <label class="col-lg-3 col-form-label font-weight-semibold">Name <span class="text-danger">*</span></label>
                                     <div class="col-lg-9">

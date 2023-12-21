@@ -3,6 +3,7 @@
 namespace App\Repositories\Academics;
 
 use App\Models\Academics\Department;
+use App\Models\Academics\School;
 
 class DepartmentsRepository
 {
@@ -29,5 +30,11 @@ class DepartmentsRepository
     public function find($id)
     {
         return Department::with('programs')->find($id);
+    }
+
+    //GET SCHOOLS
+    public function getSchools()
+    {
+        return School::get();
     }
 }
