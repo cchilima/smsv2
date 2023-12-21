@@ -35,7 +35,7 @@ class AcademicPeriodClassRepository
 
     public function getAcademicPeriods()
     {
-        return AcademicPeriod::all('id', 'code');
+        return AcademicPeriod::all('id', 'name', 'code');
     }
 
     public function getInstructors()

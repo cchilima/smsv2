@@ -15,14 +15,14 @@ use Illuminate\Http\Request;
 class StudentController extends Controller
 {
 
-    protected $students;
+    protected $studentRepo;
 
-    public function __construct(StudentRepository $students)
+    public function __construct(StudentRepository $studentRepo)
     {
         $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
         $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
 
-        $this->students = $students;
+        $this->studentRepo = $studentRepo;
     }
 
     /**
@@ -31,7 +31,7 @@ class StudentController extends Controller
     public function index()
     {
         $dropdownData = $this->getDropdownData();
-        $students = $this->students->getAll();
+        $students = $this->studentRepo->getAll();
 
         return view('pages.students.index', compact('students'), $dropdownData);
     }
@@ -52,22 +52,22 @@ class StudentController extends Controller
     private function getDropdownData()
     {
         $residencyData = [
-            'towns' => $this->students->getTowns(),
-            'provinces' => $this->students->getProvinces(),
-            'countries' => $this->students->getCountries(),
+            'towns' => $this->studentRepo->getTowns(),
+            'provinces' => $this->studentRepo->getProvinces(),
+            'countries' => $this->studentRepo->getCountries(),
         ];
 
         $profileData = [
-            'maritalStatuses' => $this->students->getMaritalStatuses(),
-            'relationships' => $this->students->getRelationships(),
+            'maritalStatuses' => $this->studentRepo->getMaritalStatuses(),
+            'relationships' => $this->studentRepo->getRelationships(),
         ];
 
         $academicData = [
-            'programs' => $this->students->getPrograms(),
-            'periodIntakes' => $this->students->getPeriodIntakes(),
-            'studyModes' => $this->students->getStudyModes(),
-            'courseLevels' => $this->students->getCourseLevels(),
-            'periodTypes' => $this->students->getPeriodTypes(),
+            'programs' => $this->studentRepo->getPrograms(),
+            'periodIntakes' => $this->studentRepo->getPeriodIntakes(),
+            'studyModes' => $this->studentRepo->getStudyModes(),
+            'courseLevels' => $this->studentRepo->getCourseLevels(),
+            'periodTypes' => $this->studentRepo->getPeriodTypes(),
         ];
 
         return array_merge($residencyData, $profileData, $academicData);
@@ -95,7 +95,7 @@ class StudentController extends Controller
             }, array_flip($nextOfKinDataWithPrefix));
 
             // Create user and obtain the instance
-            $user = $this->students->createUser($userData);
+            $user = $this->studentRepo->createUser($userData);
 
             // Use the created user instance to associate and create UserPersonalInfo
             $userPersonalInfo = $user->userPersonalInfo()->create($personalData);
@@ -104,7 +104,7 @@ class StudentController extends Controller
             $nextOfKin = $user->userNextOfKin()->create($nextOfKinData);
 
             // Use the created user instance to associate and create Student
-            $studentNumber = $this->students->generateStudentId();
+            $studentNumber = $this->studentRepo->generateStudentId();
             $student = $user->student()->create(array_merge($studentData, ['id' => $studentNumber]));
 
     
@@ -137,10 +137,10 @@ class StudentController extends Controller
         $dropdownData = $this->getDropdownData();
 
         // Returns a student object
-        $student = $this->students->find($id);
+        $student = $this->studentRepo->find($id);
 
         // Returns a user object
-        $user = $this->students->findUser($student->user_id);
+        $user = $this->studentRepo->findUser($student->user_id);
 
         // Methods to get userNextOfKin and userPersonalInfo from the User model
         $nextOfKin = $user->userNextOfKin;
@@ -173,7 +173,7 @@ public function update(Student $request, $id)
         }, array_flip($nextOfKinDataWithPrefix));
 
         // Check if the user already exists
-        $user = $this->students->findUser($id);
+        $user = $this->studentRepo->findUser($id);
 
         // Update the user data
         $user->update($userData);

@@ -25,6 +25,8 @@ use App\Http\Controllers\Profile\MaritalStatusController;
 
 use App\Http\Controllers\Accounting\FeeController;
 
+use App\Http\Controllers\Users\UserController;
+
 
     Route::get('/', function () { return redirect()->route('login'); });
 
@@ -49,8 +51,9 @@ use App\Http\Controllers\Accounting\FeeController;
     Route::resource('academic-periods', AcademicPeriodController::class);
     Route::resource('academic-period-classes', AcademicPeriodClassController::class);
     Route::resource('academic-period-management', APManagementController::class);
-Route::resource('academic-period-fees', APFeesController::class);
+    Route::resource('academic-period-fees', APFeesController::class);
     Route::resource('students', StudentController::class);
+    Route::resource('users', UserController::class);
 
 
 

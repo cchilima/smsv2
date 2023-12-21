@@ -85,7 +85,7 @@
                                     <div class="col-lg-9">
                                         <select name="academic_period_intake_id" class="form-control" required>
                                         @foreach ($courses as $course)
-                                            <option value="{{ $course->id }}">{{ $course->name }} {{ $course->code }}</option>
+                                            <option value="{{ $course->id }}">{{ $course->name }} - {{ $course->code }}</option>
                                         @endforeach
                                         </select>
                                     </div>

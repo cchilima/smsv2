@@ -23,6 +23,7 @@
                                 <label class="col-lg-3 col-form-label font-weight-semibold">Academic Periods <span class="text-danger">*</span></label>
                                 <div class="col-lg-9">
                                     <select name="period_type_id" class="form-control" required>
+                                    <option value=""></option>
                                     @foreach ($academicPeriods as $period)
                                         <option value="{{ $period->id }}">{{ $period->name }}</option>
                                     @endforeach
@@ -36,7 +37,7 @@
                                 <div class="col-lg-9">
                                     <select name="academic_period_intake_id" class="form-control" required>
                                     @foreach ($courses as $course)
-                                        <option value="{{ $course->id }}">{{ $course->name }} {{ $course->code }}</option>
+                                        <option value="{{ $course->id }}">{{ $course->name }} - {{ $course->code }}</option>
                                     @endforeach
                                     </select>
                                 </div>
@@ -49,7 +50,7 @@
                                 <div class="col-lg-9">
                                         <select name="study_mode_id" class="form-control" required>
                                         @foreach ($instructors as $instructor)
-                                            <option value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option>
+                                            <option value="{{ $instructor->id }}">{{ $instructor->first_name }}  {{ $instructor->last_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
