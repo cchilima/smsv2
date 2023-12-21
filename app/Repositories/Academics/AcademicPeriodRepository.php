@@ -34,17 +34,17 @@ class AcademicPeriodRepository
     }
     public function getPeriodTypes()
     {
-        return PeriodType::all(['id', 'name'])->paginate(10);
+        return PeriodType::all(['id', 'name']);
     }
 
     public function getStudyModes()
     {
-        return StudyMode::all(['id', 'name'])->paginate(10);
+        return StudyMode::all(['id', 'name']);
     }
 
     public function getIntakes()
     {
-        return AcademicPeriodIntake::all(['id', 'name'])->paginate(10);
+        return AcademicPeriodIntake::all(['id', 'name']);
     }
     public function getFees()
     {
