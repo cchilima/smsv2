@@ -11,17 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('enrollments', function (Blueprint $table) {
+        Schema::create('class_assessments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('restrict');
+            $table->integer('total');
+            $table->date('end_date');
+            $table->foreignId('assessment_type_id')->constrained('assessment_types')->onDelete('restrict');
             $table->foreignId('academic_period_class_id')->constrained('academic_period_classes')->onDelete('restrict');
             $table->timestamps();
-
-            // Add indexes
-            $table->index('user_id');
-            $table->index('academic_period_class_id');
-      
-
         });
     }
 
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('enrollments');
+        Schema::dropIfExists('class_assessments');
     }
 };

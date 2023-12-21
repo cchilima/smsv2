@@ -11,16 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fees', function (Blueprint $table) {
+        Schema::create('statements', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('type');
-            $table->string('chart_of_account_id', 255);
-            $table->integer('archieved')->default(0);
+            $table->foreignId('invoice_id')->constrained('invoices')->onDelete('restrict');
+            $table->decimal('amount', 10, 2);
             $table->timestamps();
-
-            // Add indexes
-            $table->index('name');
         });
     }
 
@@ -29,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fees');
+        Schema::dropIfExists('statements');
     }
 };
