@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admissions;
 
-use DB;
 use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\SuperAdmin;
@@ -10,7 +9,9 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Students\Student;
 use App\Http\Requests\Students\StudentUpdate;
 use App\Repositories\Admissions\StudentRepository;
+use http\Client\Curl\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
 {
@@ -107,7 +108,7 @@ class StudentController extends Controller
             $studentNumber = $this->studentRepo->generateStudentId();
             $student = $user->student()->create(array_merge($studentData, ['id' => $studentNumber]));
 
-    
+
             DB::commit();
 
             return Qs::jsonStoreOk();
@@ -117,7 +118,7 @@ class StudentController extends Controller
             DB::rollBack();
 
             // Log the error or handle it accordingly
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::json(false,'msg.create_failed');
         }
     }
 
@@ -206,5 +207,16 @@ public function update(Student $request, $id)
     public function destroy(string $id)
     {
         //
+    }
+
+    public function search(Request $request){
+        if (isset($request['query']) && !$request['query'] ==''){
+            $searchText = $request['query'];
+            $users['users'] = $this->studentRepo->studentSearch($searchText);
+            return view('pages.students.student_search',$users);
+
+        }else{
+            return view('pages.students.student_search');
+        }
     }
 }

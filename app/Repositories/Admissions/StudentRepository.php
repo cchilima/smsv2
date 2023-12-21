@@ -2,11 +2,11 @@
 
 namespace App\Repositories\Admissions;
 
-use App\Models\Academics\{ Program, CourseLevel, StudyMode, PeriodType};
-use App\Models\Admissions\{Student, AcademicPeriodIntake };
-use App\Models\Profile\{ MaritalStatus, Relationship };
-use App\Models\Residency\{ Town, Province, Country };
-use App\Models\Users\{ User };
+use App\Models\Academics\{Program, CourseLevel, StudyMode, PeriodType};
+use App\Models\Admissions\{Student, AcademicPeriodIntake};
+use App\Models\Profile\{MaritalStatus, Relationship};
+use App\Models\Residency\{Town, Province, Country};
+use App\Models\Users\{User};
 
 class StudentRepository
 {
@@ -86,21 +86,27 @@ class StudentRepository
     }
 
     public function generateStudentId()
-{
-    $year = date("y");
-    
-    // Fetch last ID
+    {
+        $year = date("y");
 
-    $lastID = Student::latest('id')->first();
+        // Fetch last ID
 
-    $finalID = ($lastID) ? $lastID->id + 1 : 1;
+        $lastID = Student::latest('id')->first();
 
-    $studentNumber = str_pad($finalID, 3, '0', STR_PAD_LEFT);
+        $finalID = ($lastID) ? $lastID->id + 1 : 1;
 
-    $concatStudentNumber = ($studentNumber < 10) ? "000$studentNumber" : (($studentNumber > 99) ? "0$studentNumber" : "00$studentNumber");
+        $studentNumber = str_pad($finalID, 3, '0', STR_PAD_LEFT);
 
-    $semester = (date("m") <= 6) ? 1 : 2;
+        $concatStudentNumber = ($studentNumber < 10) ? "000$studentNumber" : (($studentNumber > 99) ? "0$studentNumber" : "00$studentNumber");
 
-    return $year . $semester . $concatStudentNumber;
-}
+        $semester = (date("m") <= 6) ? 1 : 2;
+
+        return $year . $semester . $concatStudentNumber;
+    }
+
+    public function studentSearch($searchText){
+        return User::where('first_name','LIKE','%'.$searchText.'%')
+            ->orWhere('last_name','LIKE','%'.$searchText.'%')
+            ->orWhere('id','LIKE','%'.$searchText.'%')->get();
+    }
 }

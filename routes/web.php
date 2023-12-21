@@ -32,6 +32,11 @@ use App\Http\Controllers\Users\UserController;
 
     Auth::routes(['register' => false]);
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::group(['prefix'=>'students'],function (){
+        Route::get('/search', [StudentController::class,'search'])->name('search');
+        Route::post('/search',[StudentController::class,'search'])->name('students.lists');
+    });
+
 
 
     Route::resource('courses', CourseController::class);
