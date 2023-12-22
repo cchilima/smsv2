@@ -42,9 +42,8 @@
                             <label class="col-lg-3 col-form-label font-weight-semibold">Gender: <span class="text-danger">*</span></label>
                             <div class="col-lg-9">
                                 <select class="select form-control" required id="gender" name="gender" data-fouc data-placeholder="Choose..">
-                                    <option value=""></option>
-                                    <option {{ (old('gender') == 'Male') ? 'selected' : '' }} value="Male">Male</option>
-                                    <option {{ (old('gender') == 'Female') ? 'selected' : '' }} value="Female">Female</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
                                 </select>
                             </div>
                         </div>
