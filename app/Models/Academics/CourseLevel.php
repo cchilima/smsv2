@@ -12,7 +12,7 @@ class CourseLevel extends Model
 
     public function programCourses()
     {
-        return $this->hasMany(ProgramCourses::class, 'level_id');
+        return $this->hasMany(ProgramCourses::class, 'course_level_id');
     }
     public function programs()
     {
@@ -23,6 +23,6 @@ class CourseLevel extends Model
 
     public function courses()
     {
-        return $this->hasManyThrough(Course::class, ProgramCourses::class, 'level_id', 'id');
+        return $this->hasManyThrough(Course::class, ProgramCourses::class, 'course_level_id', 'id');
     }
 }
