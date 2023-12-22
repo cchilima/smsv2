@@ -63,7 +63,7 @@
                                     <select class="select form-control" required id="marital_status" name="marital_status_id" data-fouc data-placeholder="Choose..">
                                         <option value=""></option>
                                         @foreach($maritalStatuses as $maritalStatus)
-                                           <option value="{{$maritalStatus->id}}" {{ $personalInfo->marital_status_id === $maritalStatus->id ? 'selected' : '' }}>{{$maritalStatus->status}}</option>
+                                           <option value="{{$maritalStatus->id}}" {{ $personalInfo->marital_status_id === $maritalStatus->id ? 'selected' : '' }}> {{$maritalStatus->status}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -72,9 +72,8 @@
                                     <div class="form-group">
                                         <label for="gender">Gender: <span class="text-danger">*</span></label>
                                         <select class="select form-control" required id="gender" name="gender" data-fouc data-placeholder="Choose..">
-                                            <option value=""></option>
-                                            <option value="Male" {{ $personalInfo->gender === 'Male' ? 'selected' : '' }}>Male</option>
-                                            <option value="Female" {{ $personalInfo->gender === 'Female' ? 'selected' : '' }}>Female</option>
+                                            <option value="Male" {{ $user->gender == 'Male' ? 'selected' : '' }}>Male</option>
+                                            <option value="Female" {{ $user->gender == 'Female' ? 'selected' : '' }}>Female</option>
                                         </select>
                                     </div>
                                 </div>
@@ -105,7 +104,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Passport Number: </label>
-                                        <input type="text" value="{{ $personalInfo->passport }}" name="passport" class="form-control" placeholder="Passport Number">
+                                        <input type="text" value="{{ $personalInfo->passport }}" name="passport_number" class="form-control" placeholder="Passport Number">
                                     </div>
                                 </div>
 
@@ -199,7 +198,7 @@
                                     <select data-placeholder="Select Relationship" required class="select-search form-control" name="kin_relationship_id" id="kin_relationship_id">
                                         <option value=""></option>
                                         @foreach($relationships as $relationship)
-                                        <option value="{{$relationship->id}}" {{ $nextOfKin->relationship_id === $relationship->id ? 'selected' : '' }}>{{$relationship->relationship}}</option>
+                                        <option value="{{$relationship->id}}" {{ $nextOfKin->relationship_id == $relationship->id ? 'selected' : '' }}>{{$relationship->relationship}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -209,7 +208,7 @@
                                     <select data-placeholder="Select Town" required class="select-search form-control" name="kin_town_id" id="kin_town_id">
                                         <option value=""></option>
                                         @foreach($towns as $town)
-                                        <option value="{{$town->id}}" {{ $nextOfKin->town_id === $town->id ? 'selected' : '' }}>{{$town->name}}</option>
+                                        <option value="{{$town->id}}" {{ $nextOfKin->town_id == $town->id ? 'selected' : '' }}>{{$town->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -219,7 +218,7 @@
                                     <select data-placeholder="Select Province" required class="select-search form-control" name="kin_province_id" id="kin_province_id">
                                         <option value=""></option>
                                         @foreach($provinces as $province)
-                                        <option value="{{$province->id}}" {{ $nextOfKin->province_id === $province->id ? 'selected' : '' }}>{{$province->name}}</option>
+                                        <option value="{{$province->id}}" {{ $nextOfKin->province_id == $province->id ? 'selected' : '' }}>{{$province->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -231,7 +230,7 @@
                                     <select data-placeholder="Select Country" required class="select-search form-control" name="kin_country_id" id="kin_country_id">
                                         <option value=""></option>
                                         @foreach($countries as $country)
-                                        <option value="{{$country->id}}" {{ $nextOfKin->country_id === $country->id ? 'selected' : '' }}>{{$country->country}}</option>
+                                        <option value="{{$country->id}}" {{ $nextOfKin->country_id == $country->id ? 'selected' : '' }}>{{$country->country}}</option>
                                         @endforeach
                                     </select>
                                 </div>

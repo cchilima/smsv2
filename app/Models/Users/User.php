@@ -54,7 +54,7 @@ class User extends Authenticatable
     ];
 
     public function userType(){
-       // dd($this->hasOne(UserType::class)->select('title'));
+
         return $this->belongsTo(UserType::class);
     }
 
@@ -63,7 +63,7 @@ class User extends Authenticatable
      */
     public function userPersonalInfo()
     {
-        return $this->hasOne(UserPersonalInfo::class);
+        return $this->hasOne(UserPersonalInformation::class);
     }
 
     /**
@@ -71,7 +71,7 @@ class User extends Authenticatable
      */
     public function userNextOfKin()
     {
-        return $this->hasOne(NextOfKin::class);
+        return $this->hasOne(UserNextOfKin::class);
     }
 
     /**
@@ -79,6 +79,6 @@ class User extends Authenticatable
      */
     public function student()
     {
-        return $this->hasOne(Student::class);
+        return $this->hasOne(\App\Models\Admissions\Student::class);
     }
 }

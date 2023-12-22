@@ -2,8 +2,8 @@
 
 namespace App\Repositories\Users;
 
-use App\Models\Users\{ User, UserType };
 use Illuminate\Support\Facades\Hash;
+use App\Models\Users\{ User, UserType };
 
 class UserRepository
 {

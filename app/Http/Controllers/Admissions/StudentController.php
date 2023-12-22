@@ -84,29 +84,37 @@ class StudentController extends Controller
             DB::beginTransaction();
 
             $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
-            $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport']);
-            $studentData = $request->only(['program_id', 'study_mode_id', 'period_type_id', 'academic_period_intake_id', 'course_level_id', 'graduated']);
+            $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport_number']);
+            $studentData = $request->only(['program_id', 'study_mode_id', 'period_type_id', 'academic_period_intake_id', 'course_level_id', 'graduated', 'admission_year']);
 
             // Extract nextOfKinData with the "kin_" prefix
             $nextOfKinDataWithPrefix = $request->only(['kin_full_name', 'kin_mobile', 'kin_telephone', 'kin_town_id', 'kin_province_id', 'kin_country_id', 'kin_relationship_id']);
 
-            // Remove the "kin_" prefix from keys
-            $nextOfKinData = array_map(function ($key) {
-                return preg_replace('/^kin_/', '', $key);
-            }, array_flip($nextOfKinDataWithPrefix));
+            // Remove kin_ prefixes
+            $nextOfKinData = $this->studentRepo->removePrefixes($nextOfKinDataWithPrefix);
 
             // Create user and obtain the instance
             $user = $this->studentRepo->createUser($userData);
 
             // Use the created user instance to associate and create UserPersonalInfo
+
+            // Change DOB date format
+            $personalData = $this->studentRepo->changeDBOFromat($personalData);
+
+            // Create personal info record
             $userPersonalInfo = $user->userPersonalInfo()->create($personalData);
 
             // Use the created user instance to associate and create NextOfKin
             $nextOfKin = $user->userNextOfKin()->create($nextOfKinData);
 
             // Use the created user instance to associate and create Student
-            $studentNumber = $this->studentRepo->generateStudentId();
-            $student = $user->student()->create(array_merge($studentData, ['id' => $studentNumber]));
+
+            // Add student id to the data we have
+            $studentData = $this->studentRepo->addStudentId($studentData);
+
+            // Create the student record
+
+            $student = $user->student()->create($studentData);
 
 
             DB::commit();
@@ -116,7 +124,8 @@ class StudentController extends Controller
         } catch (\Exception $e) {
 
             DB::rollBack();
-
+            
+            dd($e);
             // Log the error or handle it accordingly
             return Qs::json(false,'msg.create_failed');
         }
@@ -148,7 +157,7 @@ class StudentController extends Controller
         $personalInfo = $user->userPersonalInfo;
 
         // Pass all relevant variables to the view
-        return view('pages.students.edit', compact('student', 'user', 'nextOfKin', 'personalInfo', 'dropdownData'));
+        return view('pages.students.edit', compact('student', 'user', 'nextOfKin', 'personalInfo'), $dropdownData);
     }
 
 
@@ -162,7 +171,7 @@ public function update(Student $request, $id)
         DB::beginTransaction();
 
         $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
-        $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport']);
+        $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport_number']);
         $studentData = $request->only(['program_id', 'study_mode_id', 'period_type_id', 'academic_period_intake_id', 'course_level_id', 'graduated']);
 
         // Extract nextOfKinData with the "kin_" prefix

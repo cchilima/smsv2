@@ -9,10 +9,10 @@ class Student extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['admission_year', 'graduated', 'program_id', 'academic_period_intake_id', 'study_mode_id', 'course_level_id', 'period_type_id', 'user_id' ];
+    protected $fillable = ['id', 'graduated', 'program_id', 'academic_period_intake_id', 'study_mode_id', 'course_level_id', 'period_type_id', 'user_id', 'admission_year' ];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(\App\Models\Users\User::class);
     }
 }

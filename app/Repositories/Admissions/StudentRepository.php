@@ -2,19 +2,27 @@
 
 namespace App\Repositories\Admissions;
 
+use Illuminate\Support\Facades\Hash;
 use App\Models\Academics\{Program, CourseLevel, StudyMode, PeriodType};
 use App\Models\Admissions\{Student, AcademicPeriodIntake};
 use App\Models\Profile\{MaritalStatus, Relationship};
 use App\Models\Residency\{Town, Province, Country};
-use App\Models\Users\{User};
+use App\Models\Users\{User, UserType};
 
 class StudentRepository
 {
+
+    const DEFAULT_STUDENT_PASSWORD = 'secret';
+
     public function createUser($data)
     {
+
+        $data['password'] = $this->encryptPassword(self::DEFAULT_STUDENT_PASSWORD);
+        $data['user_type_id'] = $this->getStudentUserType();
+    
         return User::create($data);
     }
-
+    
     public function getAll()
     {
         return Student::paginate(20);
@@ -85,7 +93,7 @@ class StudentRepository
         return CourseLevel::all(['id', 'name']);
     }
 
-    public function generateStudentId()
+    public function addStudentId($studentData)
     {
         $year = date("y");
 
@@ -101,12 +109,54 @@ class StudentRepository
 
         $semester = (date("m") <= 6) ? 1 : 2;
 
-        return $year . $semester . $concatStudentNumber;
+        $studentData['id'] =  $year . $semester . $concatStudentNumber;
+
+        return $studentData;
+    }
+
+    public function removePrefixes($nextOfKinDataWithPrefix)
+    {
+        // Remove the "kin_" prefix from keys
+        $nextOfKinData = array_combine(
+
+        array_map(function ($key) {
+            return preg_replace('/^kin_/', '', $key);
+        }, array_keys($nextOfKinDataWithPrefix)),
+        
+            $nextOfKinDataWithPrefix
+        );
+
+        return $nextOfKinData;
+
+    }
+
+    public function changeDBOFromat($personalData)
+    {
+        $personalData['date_of_birth'] = date('Y-m-d', strtotime($personalData['date_of_birth']));
+
+        return $personalData;
     }
 
     public function studentSearch($searchText){
+
         return User::where('first_name','LIKE','%'.$searchText.'%')
             ->orWhere('last_name','LIKE','%'.$searchText.'%')
             ->orWhere('id','LIKE','%'.$searchText.'%')->get();
+    }
+
+    private function getStudentUserType()
+    {
+        $userTypeId = UserType::where('name', 'Student')->value('id');
+
+        return $userTypeId;
+
+    }
+
+    private function encryptPassword($password)
+    {
+         // Hash the password before creating the user
+         $hashedPassword = Hash::make($password);
+
+         return $hashedPassword;
     }
 }

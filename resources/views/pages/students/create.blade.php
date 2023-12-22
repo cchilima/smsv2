@@ -104,7 +104,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Passport Number: </label>
-                                <input type="text" value="{{ old('passport_number') }}" name="passport" class="form-control" placeholder="Passport Number">
+                                <input type="text" value="{{ old('passport_number') }}" name="passport_number" class="form-control" placeholder="Passport Number">
                             </div>
                         </div>
 
