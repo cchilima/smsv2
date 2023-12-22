@@ -51,7 +51,7 @@
                                                     <a href="{{ route('academic-periods.edit', $period->id) }}" class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
                                                 @endif
                                                     @if(Qs::userIsTeamSA())
-                                                        <a href="{{ route('academic-periods.edit', $period->id) }}" class="dropdown-item"><i class="icon-eye"></i> Show</a>
+                                                        <a href="{{ route('academic-periods.show', $period->id) }}" class="dropdown-item"><i class="icon-eye"></i> Show</a>
                                                     @endif
                                                     @if(Qs::userIsTeamSA())
                                                         <a href="{{ route('academic-period-management.index', ['ac'=>$period->id]) }}" class="dropdown-item"><i class="icon-paperplane"></i> Manage</a>

@@ -197,11 +197,4 @@
             </div>
         </div>
     </div>
-
-        {{--Program courses and level--}}
-
-
-
-
-
 @endsection
