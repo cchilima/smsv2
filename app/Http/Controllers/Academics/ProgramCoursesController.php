@@ -48,7 +48,7 @@ class ProgramCoursesController extends Controller
             $this->programCoursesRepo->create([
                 'course_id' => $courseID,
                 'program_id' => $data['program_id'],
-                'level_id' => $data['level_id'],
+                'course_level_id' => $data['level_id'],
             ]);
         }
 

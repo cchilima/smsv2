@@ -9,7 +9,7 @@ class ProgramCourses extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['level_id','course_id','program_id'];
+    protected $fillable = ['course_level_id','course_id','program_id'];
     public $timestamps = true;
 
     public function courses()
@@ -24,6 +24,6 @@ class ProgramCourses extends Model
 
     public function levels()
     {
-        return $this->belongsTo(CourseLevel::class, 'level_id');
+        return $this->belongsTo(CourseLevel::class, 'course_level_id');
     }
 }
