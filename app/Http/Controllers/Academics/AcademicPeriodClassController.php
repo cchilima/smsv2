@@ -56,10 +56,10 @@ class AcademicPeriodClassController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Period $request)
+    public function store(PeriodClass $request)
     {
         $data = $request->only(['instructor_id', 'course_id', 'academic_period_id']);
-
+        $data['key'] = 1;
         $periodClass = $this->periodClasses->create($data);
 
         if ($periodClass) {
@@ -86,10 +86,8 @@ class AcademicPeriodClassController extends Controller
 
         $courses = $this->periodClasses->getCourses();
         $instructors = $this->periodClasses->getInstructors();
-        $academicPeriods = $this->periodClasses->getAcademicPeriods();
 
-
-        return !is_null($fee) ? view('pages.academicPeriodClasses.edit', compact('periodClass','courses','instructors','academicPeriods'))
+        return !is_null($instructors) ? view('pages.academicPeriodClasses.edit', compact('periodClass','courses','instructors'))
             : Qs::goWithDanger('pages.academicPeriodClasses.index');
     }
 

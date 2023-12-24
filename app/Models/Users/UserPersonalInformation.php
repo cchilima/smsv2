@@ -2,6 +2,10 @@
 
 namespace App\Models\Users;
 
+use App\Models\Profile\MaritalStatus;
+use App\Models\Residency\Country;
+use App\Models\Residency\Province;
+use App\Models\Residency\Town;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,4 +19,22 @@ class UserPersonalInformation extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function userMaritalStatus()
+    {
+        return $this->belongsTo(MaritalStatus::class,'marital_status_id');
+    }
+    public function country()
+    {
+        return $this->belongsTo(Country::class,'country_id');
+    }
+    public function town()
+    {
+        return $this->belongsTo(Town::class,'town_id');
+    }
+    public function province()
+    {
+        return $this->belongsTo(Province::class,'province_id');
+    }
 }
+
+

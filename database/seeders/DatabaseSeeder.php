@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
 
             ]);
 
-            
+
             // Seed province
 
             $province = Province::create([
@@ -38,8 +38,8 @@ class DatabaseSeeder extends Seeder
 
             ]);
 
-            
-    
+
+
             // Seed town
 
             $town = Town::create([
@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
 
             ]);
 
-            
+
             // Seed marital statuses
 
                $maritalStatus = MaritalStatus::create([
@@ -63,16 +63,17 @@ class DatabaseSeeder extends Seeder
                 'relationship' => 'Parent',
              ]);
 
-    
+
             // Seed user type
-
-            $userType = UserType::create([
-
-                'title' => 'super_admin',
-                'name' => 'Super Admin',
-                'level' => 1,
-
-            ]);
+            $userTypesData = [
+              ['title' => 'super_admin', 'name' => 'Super Admin', 'level' => 1]  ,
+                ['title' => 'instructor', 'name' => 'Instructor', 'level' => 2],
+                ['title' => 'student', 'name' => 'Student', 'level' => 3],
+                ['title' => 'accounts', 'name' => 'Accounts', 'level' => 4],
+                ['title' => 'hod', 'name' => 'HOD', 'level' => 5],
+                ['title' => 'director', 'name' => 'Director', 'level' => 6]
+            ];
+            DB::table('user_types')->insert($userTypesData);
 
 
             // Seed user
@@ -82,14 +83,14 @@ class DatabaseSeeder extends Seeder
                 'first_name' => 'System',
                 'last_name' => 'Generated',
                 'email' => 'notice@zut.edu.zm',
-                'user_type_id' => $userType->id, 
-                
-                'password' => bcrypt('secret'), 
+                'user_type_id' => 1,
+
+                'password' => bcrypt('secret'),
 
                  ]);
 
 
-    
+
             // Seed user personal information
 
             $userPersonInfo = UserPersonalInformation::create([
@@ -98,9 +99,9 @@ class DatabaseSeeder extends Seeder
                 'street_main' => 'Developers highway',
                 'mobile' => '0000000000',
                 'nrc' => '109100/52/1',
-                'marital_status_id' => $maritalStatus->id, 
-                'town_id' => $town->id, 
-                'province_id' => $province->id, 
+                'marital_status_id' => $maritalStatus->id,
+                'town_id' => $town->id,
+                'province_id' => $province->id,
                 'country_id' => $country->id,
                 'user_id' => $user->id
 
@@ -130,11 +131,11 @@ class DatabaseSeeder extends Seeder
                 ['type' => 'next_term_fees_s', 'description' => '15600'],
                 ['type' => 'next_term_fees_c', 'description' => '1600'],
             ];
-    
+
             DB::table('settings')->insert($settings);
-        
-    
-    
+
+
+
 
     }
 }

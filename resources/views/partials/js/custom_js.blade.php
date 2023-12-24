@@ -206,4 +206,172 @@
         form[0].reset();
     }
 
+    function prepareUserinfor(userid) {
+        $('.personal-infor span').hide();
+        //console.log(userid);
+       // $('.personal-infor span').hide();
+        var firsname = $('#fname' + userid), midname = $('#mname' + userid), lastname = $('#lname' + userid),
+            gender = $('#gender' + userid), email = $('#email' + userid), nrc = $('#nrc' + userid),
+            passport = $('#passport' + userid),
+            dob = $('#dob' + userid), marital_status = $('#marital_status' + userid), mobile = $('#mobile' + userid),
+            street = $('#street' + userid),
+            town = $('#town' + userid), province_id = $('#province_id' + userid),
+            country_id = $('#country_id' + userid);
+        firsname.removeClass('d-none');
+        firsname.show();
+        midname.removeClass('d-none');
+        lastname.removeClass('d-none');
+        gender.removeClass('d-none');
+        email.removeClass('d-none');
+        nrc.removeClass('d-none');
+        passport.removeClass('d-none');
+        dob.removeClass('d-none');
+        marital_status.removeClass('d-none');
+        mobile.removeClass('d-none');
+        street.removeClass('d-none');
+        town.removeClass('d-none');
+        province_id.removeClass('d-none');
+        country_id.removeClass('d-none');
+
+
+        // var showSelect = true; // Change this condition as needed
+        //
+        // // Check the condition and toggle visibility accordingly
+        // if (showSelect) {
+        //     $('.personal-infor span').hide();
+        // } else {
+        //     $('.personal-infor span').show();
+        // }
+    }
+
+    function UpdateGeneralinformation(data, countries, programs, towns, provinces, course_levels, intake, inforType, username) {
+
+
+    }
+    function UpdateNkininformation(id){
+        var kin_country_id = $('#kin_country_id'+id),kin_province_id = $('#kin_province_id'+id),kin_town_id = $('#kin_town_id'+id),
+            kin_relationship_id = $('#kin_relationship_id'+id),telephone = $('#telephone'+id),mobile = $('#mobile'+id),name = $('#name'+id);
+        $('.next-of-kin-infor span').hide();
+
+        kin_country_id.removeClass('d-none');
+        kin_province_id.removeClass('d-none');
+        kin_town_id.removeClass('d-none');
+        kin_relationship_id.removeClass('d-none');
+        telephone.removeClass('d-none');
+        mobile.removeClass('d-none');
+        name.removeClass('d-none');
+    }
+
+    function manageAcademicInfor(key) {
+        $('.academic-infor span').hide();
+        var study_mode_id = $('#study_mode_id-' + key), course_level_id = $('#course_level_id-' + key),
+            program_id = $('#program_id-' + key),
+            academic_period_intake_id = $('#academic_period_intake_id-' + key),
+            period_type_id = $('#period_type_id-' + key);
+
+        study_mode_id.addClass('select-search');
+        course_level_id.addClass('select-search');
+        program_id.addClass('select-search');
+        academic_period_intake_id.addClass('select-search');
+        period_type_id.addClass('select-search');
+
+
+        period_type_id.show();
+        course_level_id.show();
+        program_id.show();
+        academic_period_intake_id.show();
+        study_mode_id.show();
+        //let actual = $('#class' + classID).val();
+
+        // var displaymode = $('#display-mode' + classID);
+        // var textContent = displaymode.text();
+        // var input = $('#class' + classID);
+        //
+        // var totalElement = $(".assess-total");
+
+        // Get the text content and extract the total value
+        // var totalText = totalElement.text();
+        // var totalValue = totalText.match(/\d+/);
+        //
+        // var newValues = ((actual / 100) * totalValue)
+        //
+        // let apid = $('#apid' + classID).val(),
+        //     student_id = classID,
+        //     programID = $('#program' + classID).val(),
+        //     code = $('#course' + classID).val(),
+        //     title = $('#title' + classID).val(),
+        //     type = $('#assessid' + classID).val(),
+        //     id = $('#idc' + classID).val(),
+        //     userID = $('#userid'+ classID).val();
+
+
+        //url = url.replace(':id', classID);
+        // Perform an AJAX request to update the database with the new value
+        // You can use Laravel's route and controller for this
+        //console.log(newValues);
+        // $.ajax({
+        //     url: url, // Replace with the actual route
+        //     method: 'POST',
+        //     dataType: 'json',
+        //     data: {
+        //         academicPeriodID: apid,
+        //         programID: programID,
+        //         studentID: student_id,
+        //         code: code,
+        //         title: title,
+        //         total: newValues,
+        //         id: id,
+        //         type: type,
+        //         userID: userID
+        //     },
+        //     success: function (resp) {
+        //         // Update the display mode with the new value
+        //         console.log(resp)
+        //         if (resp.ok === true) {
+        //             displaymode.text(newValues);
+        //             displaymode.show();
+        //             input.hide();
+        //         } else {
+        //             displaymode.text(textContent);
+        //             displaymode.show();
+        //             input.hide();
+        //         }
+        //         resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({msg: resp.msg, type: 'danger'});
+        //     }, error: function (xhr, status, error) {
+        //         flash({msg: error, type: 'danger'})
+        //     }
+        // });
+    }
+
+    function CloseModal() {
+        $('#staticBackdrop').modal('hide');
+    }
 </script>
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content row col card card-body">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <div class="list-icons">
+                    <a type="submit" class="btn btn-outline-light" onclick="CloseModal()"><i
+                            class="icon-close2 ml-2"></i></a>
+                </div>
+            </div>
+            <div class="modal-body p-3">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary closeModalButton"
+                        onclick="CloseModal()"
+                        id="closeModalButton" data-bs-dismiss="modal">
+                    Close
+                </button>
+                <button type="button" id="submitButton" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>

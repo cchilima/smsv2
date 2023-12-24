@@ -20,8 +20,8 @@ class StudentController extends Controller
 
     public function __construct(StudentRepository $studentRepo)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->studentRepo = $studentRepo;
     }
@@ -124,10 +124,8 @@ class StudentController extends Controller
         } catch (\Exception $e) {
 
             DB::rollBack();
-            
-            dd($e);
             // Log the error or handle it accordingly
-            return Qs::json(false,'msg.create_failed');
+            return Qs::json(false, 'msg.create_failed');
         }
     }
 
@@ -164,51 +162,50 @@ class StudentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-public function update(Student $request, $id)
-{
-    try {
+    public function update(Student $request, $id)
+    {
+        try {
 
-        DB::beginTransaction();
+            DB::beginTransaction();
 
-        $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
-        $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport_number']);
-        $studentData = $request->only(['program_id', 'study_mode_id', 'period_type_id', 'academic_period_intake_id', 'course_level_id', 'graduated']);
+            $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
+            $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport_number']);
+            $studentData = $request->only(['program_id', 'study_mode_id', 'period_type_id', 'academic_period_intake_id', 'course_level_id', 'graduated']);
 
-        // Extract nextOfKinData with the "kin_" prefix
-        $nextOfKinDataWithPrefix = $request->only(['kin_full_name', 'kin_mobile', 'kin_telephone', 'kin_town_id', 'kin_province_id', 'kin_country_id', 'kin_relationship_id']);
+            // Extract nextOfKinData with the "kin_" prefix
+            $nextOfKinDataWithPrefix = $request->only(['kin_full_name', 'kin_mobile', 'kin_telephone', 'kin_town_id', 'kin_province_id', 'kin_country_id', 'kin_relationship_id']);
 
-        // Remove the "kin_" prefix from keys
-        $nextOfKinData = array_map(function ($key) {
-            return preg_replace('/^kin_/', '', $key);
-        }, array_flip($nextOfKinDataWithPrefix));
+            // Remove the "kin_" prefix from keys
+            $nextOfKinData = array_map(function ($key) {
+                return preg_replace('/^kin_/', '', $key);
+            }, array_flip($nextOfKinDataWithPrefix));
 
-        // Check if the user already exists
-        $user = $this->studentRepo->findUser($id);
+            // Check if the user already exists
+            $user = $this->studentRepo->findUser($id);
 
-        // Update the user data
-        $user->update($userData);
+            // Update the user data
+            $user->update($userData);
 
-        // Update or create UserPersonalInfo
-        $userPersonalInfo = $user->userPersonalInfo()->update($personalData);
+            // Update or create UserPersonalInfo
+            $userPersonalInfo = $user->userPersonalInfo()->update($personalData);
 
-        // Update or create NextOfKin
-        $nextOfKin = $user->userNextOfKin()->update($nextOfKinData);
+            // Update or create NextOfKin
+            $nextOfKin = $user->userNextOfKin()->update($nextOfKinData);
 
-        // Update or create Student
-        $student = $user->student()->update($studentData);
+            // Update or create Student
+            $student = $user->student()->update($studentData);
 
-        DB::commit();
+            DB::commit();
 
-        return Qs::jsonStoreOk();
+            return Qs::jsonStoreOk();
 
-    } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-        DB::rollBack();
-
-        // Log the error or handle it accordingly
-        return Qs::jsonError(__('msg.update_failed'));
+            DB::rollBack();
+            // Log the error or handle it accordingly
+            return Qs::jsonError(__('msg.update_failed'));
+        }
     }
-}
 
     /**
      * Remove the specified resource from storage.
@@ -218,14 +215,33 @@ public function update(Student $request, $id)
         //
     }
 
-    public function search(Request $request){
-        if (isset($request['query']) && !$request['query'] ==''){
+    public function search(Request $request)
+    {
+        if (isset($request['query']) && !$request['query'] == '') {
             $searchText = $request['query'];
             $users['users'] = $this->studentRepo->studentSearch($searchText);
-            return view('pages.students.student_search',$users);
+            return view('pages.students.student_search', $users);
 
-        }else{
+        } else {
             return view('pages.students.student_search');
         }
+    }
+
+    //student management controller
+    public function studentShow($id)
+    {
+        $data['student'] = $this->studentRepo->getStudentInfor($id);
+        $data['countries'] = $this->studentRepo->getCountries();
+        $data['programs'] = $this->studentRepo->getPrograms();
+        $data['towns'] = $this->studentRepo->getTowns();
+        $data['provinces'] = $this->studentRepo->getProvinces();
+        $data['course_levels'] = $this->studentRepo->getCourseLevels();
+        $data['periodIntakes'] = $this->studentRepo->getIntakes();
+        $data['studyModes'] = $this->studentRepo->getStudyModes();
+        $data['periodTypes'] = $this->studentRepo->getPeriodTypes();
+        $data['relationships'] = $this->studentRepo->getRelationships();
+        $data['maritalStatuses'] = $this->studentRepo->getMaritalStatuses();
+        //'student','countries','programs','towns','provinces','course_levels','periodIntakes','studyModes','periodTypes','relationships','maritalStatuses'
+        return view('pages.students.show', $data);
     }
 }

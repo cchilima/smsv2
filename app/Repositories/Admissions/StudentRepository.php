@@ -3,7 +3,7 @@
 namespace App\Repositories\Admissions;
 
 use Illuminate\Support\Facades\Hash;
-use App\Models\Academics\{Program, CourseLevel, StudyMode, PeriodType};
+use App\Models\Academics\{AcademicPeriod, Program, CourseLevel, StudyMode, PeriodType};
 use App\Models\Admissions\{Student, AcademicPeriodIntake};
 use App\Models\Profile\{MaritalStatus, Relationship};
 use App\Models\Residency\{Town, Province, Country};
@@ -19,10 +19,10 @@ class StudentRepository
 
         $data['password'] = $this->encryptPassword(self::DEFAULT_STUDENT_PASSWORD);
         $data['user_type_id'] = $this->getStudentUserType();
-    
+
         return User::create($data);
     }
-    
+
     public function getAll()
     {
         return Student::paginate(20);
@@ -92,6 +92,10 @@ class StudentRepository
     {
         return CourseLevel::all(['id', 'name']);
     }
+    public function getIntakes()
+    {
+        return AcademicPeriodIntake::all(['id', 'name']);
+    }
 
     public function addStudentId($studentData)
     {
@@ -122,7 +126,7 @@ class StudentRepository
         array_map(function ($key) {
             return preg_replace('/^kin_/', '', $key);
         }, array_keys($nextOfKinDataWithPrefix)),
-        
+
             $nextOfKinDataWithPrefix
         );
 
@@ -158,5 +162,10 @@ class StudentRepository
          $hashedPassword = Hash::make($password);
 
          return $hashedPassword;
+    }
+    public function getStudentInfor($id){
+        return Student::with('period_type','level','intake','study_mode','program',
+            'user.userPersonalInfo','user.userNextOfKin.relationship','user.userPersonalInfo.userMaritalStatus',
+            'user.userPersonalInfo.province','user.userPersonalInfo.country','user.userPersonalInfo.town')->where('user_id',$id)->get()->first();
     }
 }

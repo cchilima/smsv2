@@ -30,7 +30,7 @@ class UserController extends Controller
      */
     public function index()
     {
-  
+
         $dropdownData = $this->getDropdownData();
         $users = $this->userRepo->getAll();
 
@@ -68,8 +68,8 @@ class UserController extends Controller
             DB::beginTransaction();
 
             $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'password', 'user_type_id']);
-            $user = $userRepo->create($userData);
-            
+            $user = $this->userRepo->create($userData);
+
             DB::commit();
 
             return Qs::jsonStoreOk();
@@ -77,9 +77,8 @@ class UserController extends Controller
         } catch (\Exception $e) {
 
             DB::rollBack();
-
             // Log the error or handle it accordingly
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::json(false,'msg.create_failed');
         }
     }
 
@@ -115,25 +114,25 @@ class UserController extends Controller
         try {
 
             DB::beginTransaction();
-    
+
             $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
-       
-    
+
+
             // Check if the user already exists
             $user = $this->userRepo->find($id);
-    
+
             // Update the user data
             $user->update($userData);
 
-    
+
             DB::commit();
-    
+
             return Qs::jsonStoreOk();
-    
+
         } catch (\Exception $e) {
-    
+
             DB::rollBack();
-    
+
             // Log the error or handle it accordingly
             return Qs::jsonError(__('msg.update_failed'));
         }

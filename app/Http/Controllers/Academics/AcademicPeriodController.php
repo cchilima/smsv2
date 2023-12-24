@@ -9,20 +9,22 @@ use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\AcademicPeriods\Period;
 use App\Http\Requests\AcademicPeriods\PeriodUpdate;
+use App\Repositories\Academics\AcademicPeriodClassRepository;
 use App\Repositories\Academics\AcademicPeriodRepository;
 use Illuminate\Http\Request;
 
 class AcademicPeriodController extends Controller
 {
 
-    protected $periods;
+    protected $periods,$periodClasses;
 
-    public function __construct(AcademicPeriodRepository $periods)
+    public function __construct(AcademicPeriodRepository $periods,AcademicPeriodClassRepository $periodClasses)
     {
         $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
         $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
 
         $this->periods = $periods;
+        $this->periodClasses = $periodClasses;
     }
 
     /**
@@ -74,9 +76,8 @@ class AcademicPeriodController extends Controller
     public function show(string $id)
     {
         $academicPeriod = $this->periods->find($id);
-        $periodTypes = $this->periods->getPeriodTypes();
-        $studyModes = $this->periods->getStudyModes();
-        $intakes = $this->periods->getIntakes();
+
+        $periodClasses = $this->periodClasses->getAll();
 
         $periods = $this->periods->getAPInformation($id);
         $academic= $this->periods->findOne($id);
@@ -84,7 +85,7 @@ class AcademicPeriodController extends Controller
         $intakes = $this->periods->getIntakes();
         $feeInformation = $this->periods->getAPFeeInformation($id);
 
-        return  view('pages.academicPeriods.show', compact('academicPeriod','feeInformation','periods'));
+        return  view('pages.academicPeriods.show', compact('academicPeriod','feeInformation','periods','periodClasses'));
     }
 
     /**

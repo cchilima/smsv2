@@ -25,7 +25,7 @@ class AcademicPeriodClassRepository
 
     public function find($id)
     {
-        return AcademicPeriodClass::find($id);
+        return AcademicPeriodClass::with('instructor','course','academicPeriod')->find($id);
     }
 
     public function getCourses()
@@ -41,8 +41,8 @@ class AcademicPeriodClassRepository
     public function getInstructors()
     {
         return User::join('user_types', 'user_types.id', 'users.user_type_id')
-                    ->where('user_types.title', 'instructor')
-                    ->pluck('users.id', 'first_name', 'last_name');
-                    
+                    ->where('user_types.title', 'instructor')->get();
+                    //->pluck('users.id', 'first_name', 'last_name');
+
     }
 }

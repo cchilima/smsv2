@@ -31,7 +31,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $fee->name }}</td>
-                     
+
                                 <td class="text-center">
                                     <div class="list-icons">
                                         <div class="dropdown">
@@ -66,6 +66,17 @@
                                     <label class="col-lg-3 col-form-label font-weight-semibold">Fee name <span class="text-danger">*</span></label>
                                     <div class="col-lg-9">
                                         <input name="name" value="{{ old('name') }}" required type="text" class="form-control" placeholder="Fee name">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Courses <span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-lg-9">
+                                        <select name="type" class="form-control" required>
+                                                <option value="0">Recurring</option>
+                                            <option value="1">Once Off</option>
+                                            <option value="2">Course Repeat Fee</option>
+                                        </select>
                                     </div>
                                 </div>
 

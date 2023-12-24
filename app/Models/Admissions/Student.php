@@ -2,6 +2,11 @@
 
 namespace App\Models\Admissions;
 
+use App\Models\Academics\CourseLevel;
+use App\Models\Academics\PeriodType;
+use App\Models\Academics\Program;
+use App\Models\Academics\StudyMode;
+use App\Models\Users\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,6 +18,27 @@ class Student extends Model
 
     public function user()
     {
-        return $this->belongsTo(\App\Models\Users\User::class);
+        return $this->belongsTo(User::class,'user_id','id');
     }
+    public function program()
+    {
+        return $this->belongsTo(Program::class, 'program_id');
+    }
+    public function intake()
+    {
+        return $this->belongsTo(AcademicPeriodIntake::class, 'academic_period_intake_id');
+    }
+    public function study_mode()
+    {
+        return $this->belongsTo(StudyMode::class, 'study_mode_id');
+    }
+    public function level()
+    {
+        return $this->belongsTo(CourseLevel::class, 'course_level_id');
+    }
+    public function period_type()
+    {
+        return $this->belongsTo(PeriodType::class, 'period_type_id');
+    }
+
 }

@@ -65,7 +65,7 @@
                                                     <a href="#" class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
                                                 @endif
                                                 @if(Qs::userIsTeamSA())
-                                                    <a href="#" class="dropdown-item"><i class="icon-eye"></i> Show</a>
+                                                    <a href="{{ route('show.student',$u->id,['ac'=>1]) }}" class="dropdown-item"><i class="icon-eye"></i> Show</a>
                                                 @endif
                                                 @if(Qs::userIsSuperAdmin())
                                                     <a id="{{ $u->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>

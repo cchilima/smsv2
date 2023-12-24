@@ -20,7 +20,7 @@
                     <h6 class="card-title">General Information</h6>
                     {!! Qs::getPanelOptions() !!}
                 </div>
-                <div class="card-body">
+                <div class="card-body collapse">
                     <ul class="nav nav-tabs nav-tabs-highlight">
                         <li class="nav-item"><a href="#ac-info" class="nav-link active" data-toggle="tab">Some
                                 Information</a></li>
@@ -129,12 +129,25 @@
                                     <tr>
                                         <td>{{ $fee->fee->name }}</td>
                                         <td>{{ $fee->amount }}</td>
-                                        <td><a href="{{ route('academic-period-fees.edit', Qs::hash($fee->id)) }}"
-                                               class="dropdown-item"><i class="icon-pencil"></i></a></td>
+                                        <td>{{ ($fee->status == 1 ? 'published' : 'Not Published') }}</td>
+                                        <td>
+                                            <a href="{{ route('academic-period-fees.edit', Qs::hash($fee->id)) }}"
+                                               class="dropdown-item"><i class="icon-pencil"></i></a>
+                                            @if($fee->status == 0)
+                                                <a href="{{ route('academic-period-fees.edit', Qs::hash($fee->id)) }}"
+                                                   class="dropdown-item"><i class="icon-eye"></i> publish</a>
+                                            @endif
+
+                                        </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
+                            <div class="text-right">
+                                <a href="{{ route('academic-period-management.edit', Qs::hash($periods->id)) }}"
+                                   id="ajax-btn" type="button" class="mbt-3 mt-4 btn btn-primary">Publish Fees
+                                    <i class="icon-paperplane ml-2"></i></a>
+                            </div>
                         </div>
 
                     </div>
@@ -149,9 +162,10 @@
                 <div class="card-body collapse">
                     <ul class="nav nav-tabs nav-tabs-highlight">
                         <li class="nav-item">
-                            {{--                                    <a href="#all-{{ $level->id }}" class="nav-link{{ $loop->first ? ' active' : '' }}" data-toggle="tab">--}}
-                            {{--                                        --}}
-                            {{--                                    </a>--}}
+                            <a href="#all-classes" class="nav-link active"
+                               data-toggle="tab">
+                                All classes
+                            </a>
                         </li>
 
                         <li class="nav-item">
@@ -167,40 +181,52 @@
                     </ul>
 
                     <div class="tab-content">
-                        <div class="tab-pane fade" id="all-">
-                            <table class="table table-bordered">
+                        <div class="tab-pane fade show active" id="all-classes">
+                            <table class="table datatable-button-html5-columns">
                                 <thead>
                                 <tr>
                                     <th>S/N</th>
-                                    <th>Name</th>
-                                    <th>Code</th>
-                                    <th>Prerequisite</th> <!-- New column for prerequisites -->
+                                    <th>Academic Period</th>
+                                    <th>Course</th>
+                                    <th>Instructor</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
+                                @foreach($periodClasses as $period)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $period->academicPeriod->code }}</td>
+                                        <td>{{ $period->course->code}}</td>
+                                        <td>{{ $period->instructor->first_name}}</td>
 
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>
-                                        {{--                                                    @if (count($course['prerequisites']) > 0)--}}
-                                        {{--                                                            @foreach ($course['prerequisites'] as $prerequisite)--}}
-                                        {{--                                                                {{ $prerequisite['prerequisite_code'].' '.$prerequisite['prerequisite_name'] }}--}}
-                                        {{--                                                            @endforeach--}}
-                                        {{--                                                    @else--}}
+                                        <td class="text-center">
+                                            <div class="list-icons">
+                                                <div class="dropdown">
+                                                    <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                                        <i class="icon-menu9"></i>
+                                                    </a>
 
-                                        {{--                                                    @endif--}}
-                                    </td>
-                                    <td>
-                                        @if (Qs::userIsSuperAdmin())
-                                            {{--                                                        <a id="{{ $course->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>--}}
-                                            {{--                                                        <form method="post" id="item-delete-{{ $course->id }}" action="{{ route('program-course.destroy', ['programID' => $myprogram['program']->id, 'levelID' => $level['level'], 'courseID' => $course['course_id']]) }}" class="hidden">@csrf @method('delete')</form>--}}
-                                        @endif
-                                    </td>
-                                </tr>
-
+                                                    <div class="dropdown-menu dropdown-menu-left">
+                                                        @if(Qs::userIsTeamSA())
+                                                            <a href="{{ route('academic-period-classes.edit', $period->id) }}"
+                                                               class="dropdown-item"><i class="icon-pencil"></i>
+                                                                Edit</a>
+                                                        @endif
+                                                        @if(Qs::userIsSuperAdmin())
+                                                            <a id="{{ $period->id }}" onclick="confirmDelete(this.id)"
+                                                               href="#" class="dropdown-item"><i class="icon-trash"></i>
+                                                                Delete</a>
+                                                            <form method="post" id="item-delete-{{ $period->id }}"
+                                                                  action="{{ route('academic-period-classes.destroy', $period->id) }}"
+                                                                  class="hidden">@csrf @method('delete')</form>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>

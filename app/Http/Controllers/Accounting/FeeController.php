@@ -47,7 +47,7 @@ class FeeController extends Controller
      */
     public function store(Fee $request)
     {
-        $data = $request->only(['name']);
+        $data = $request->only(['name','type']);
         $data['chart_of_account_id'] = 'data';
 
 

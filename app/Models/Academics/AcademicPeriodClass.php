@@ -2,6 +2,7 @@
 
 namespace App\Models\Academics;
 
+use App\Models\Users\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,7 +10,7 @@ class AcademicPeriodClass extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['academic_period_id', 'course_id', 'instructor_id'];
+    protected $fillable = ['academic_period_id', 'course_id', 'instructor_id','key'];
 
     public function academicPeriod()
     {

@@ -3,6 +3,7 @@
 namespace App\Models\Users;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Admissions\Student;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -79,6 +80,6 @@ class User extends Authenticatable
      */
     public function student()
     {
-        return $this->hasOne(\App\Models\Admissions\Student::class);
+        return $this->hasOne(Student::class);
     }
 }

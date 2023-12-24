@@ -35,6 +35,7 @@ use App\Http\Controllers\Users\UserController;
     Route::group(['prefix'=>'students'],function (){
         Route::get('/search', [StudentController::class,'search'])->name('search');
         Route::post('/search',[StudentController::class,'search'])->name('students.lists');
+        Route::get('/profile/{id}',[StudentController::class,'studentShow'])->name('show.student');
     });
 
 

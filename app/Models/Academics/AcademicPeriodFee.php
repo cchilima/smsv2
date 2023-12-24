@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AcademicPeriodFee extends Model
 {
-    protected $fillable = ['amount','academic_period_id','fee_id',];
+    protected $fillable = ['amount','academic_period_id','fee_id','status'];
     use HasFactory;
 
     public function fee(){

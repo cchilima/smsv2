@@ -13,26 +13,18 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <form class="ajax-update" data-reload="#page-header" method="post" action="{{ route('academic-period-classes.update', $academicPeriodClass->id) }}">
+                    <form class="ajax-update" data-reload="#page-header" method="post" action="{{ route('academic-period-classes.update', $periodClass->id) }}">
                         @csrf @method('PUT')
 
                         <!-- Use loops for dropdowns -->
 
-                        <div class="form-group row">
-                            <label class="col-lg-3 col-form-label font-weight-semibold">Academic Periods <span class="text-danger">*</span></label>
-                            <div class="col-lg-9">
-                                <select name="period_type_id" class="form-control" required>
-                                    @foreach ($academicPeriods as $period)
-                                        <option value="{{ $period->id }}">{{ $period->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                        <input type="hidden" name="academic_period_id" value="{{ $periodClass->academicPeriod->id }}">
 
                         <div class="form-group row">
                             <label class="col-lg-3 col-form-label font-weight-semibold">Courses <span class="text-danger">*</span></label>
                             <div class="col-lg-9">
                                 <select name="academic_period_intake_id" class="form-control" required>
+                                    <option value="{{ $periodClass->course->id }}">{{ $periodClass->course->name }} {{ $periodClass->course->code }}</option>
                                     @foreach ($courses as $course)
                                         <option value="{{ $course->id }}">{{ $course->name }} {{ $course->code }}</option>
                                     @endforeach
@@ -44,6 +36,7 @@
                             <label class="col-lg-3 col-form-label font-weight-semibold">Instructors <span class="text-danger">*</span></label>
                             <div class="col-lg-9">
                                 <select name="study_mode_id" class="form-control" required>
+                                    <option value="{{ $periodClass->instructor->id }}">{{ $periodClass->instructor->first_name.' '.$periodClass->instructor->first_name  }}</option>
                                     @foreach ($instructors as $instructor)
                                         <option value="{{ $instructor->id }}"> {{ $instructor->first_name }} {{ $instructor->last_name }}</option>
                                     @endforeach

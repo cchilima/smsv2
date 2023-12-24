@@ -10,7 +10,7 @@ class UserRepository
     public function create($data)
     {
         // Hash the password before creating the user
-        $data['password'] = encryptPassword($data['password']);
+        $data['password'] = $this->encryptPassword($data['password']);
 
         return User::create($data);
     }
