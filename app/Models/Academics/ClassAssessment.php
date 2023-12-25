@@ -10,4 +10,9 @@ class ClassAssessment extends Model
     use HasFactory;
 
     protected $fillable = ['total', 'end_date', 'assessment_type_id', 'academic_period_class_id'];
+
+    public function assessment_type()
+    {
+        return $this->belongsTo(AssessmentType::class, 'assessment_type_id');
+    }
 }

@@ -2,9 +2,16 @@
 
 namespace App\Repositories\Academics;
 
-use App\Models\Academics\{AcademicPeriod, AcademicPeriodFee, AcademicPeriodInformation, PeriodType, StudyMode};
+use App\Models\Academics\{AcademicPeriod,
+    AcademicPeriodClass,
+    AcademicPeriodFee,
+    AcademicPeriodInformation,
+    ClassAssessment,
+    PeriodType,
+    StudyMode};
 use App\Models\Admissions\{AcademicPeriodIntake};
 use App\Models\Accounting\Fee;
+use Illuminate\Support\Facades\Auth;
 
 class AcademicPeriodRepository
 {
@@ -18,11 +25,22 @@ class AcademicPeriodRepository
         return AcademicPeriod::with('period_types')->orderBy($order)->get();
     }
 
-
     public function update($id, $data)
     {
         return AcademicPeriod::find($id)->update($data);
     }
+    public function getAllopen($order = 'created_at')
+    {
+        return AcademicPeriod::with('period_types', 'study_mode')
+            ->whereDate('ac_end_date', '>=', now())
+            ->orderByDesc($order)
+            ->get();
+    }
+    public function getAcadeperiodClasses($id)
+    {
+        return AcademicPeriodClass::with('course','instructor')->where('academic_period_id',$id)->get();
+    }
+
 
     public function find($id)
     {
@@ -88,5 +106,38 @@ class AcademicPeriodRepository
     public function APFeeUpdate($id,$data)
     {
         return AcademicPeriodFee::find($id)->update($data);;
+    }
+    //academic period assessment types
+    public function getAcadeperiodClassAssessments()
+    {
+        return AcademicPeriod::with('classes.class_assessments.assessment_type','classes.instructor','classes.course')->get();
+    }
+    public static function getAllOpened($order = 'created_at')
+    {
+        $user = Auth::user();
+        if ($user->userType->title == 'instructor'){
+                return AcademicPeriod::whereDate('ac_end_date', '>=', now())->has('classes.instructor')->get();
+        }else {
+            return  AcademicPeriod::whereDate('ac_end_date', '>=', now())
+                ->orderByDesc($order)
+                ->distinct('id')
+                ->get();
+
+        }
+    }
+    public function showClasses($id){
+        $user = Auth::user();
+
+        if ($user->userType->title == 'instructor') {
+            // If the authenticated user is an instructor, only get AcademicPeriods with related classes where the user is the instructor
+            return AcademicPeriod::whereHas('classes', function ($query) use ($user) {
+                $query->where('instructor_id', $user->id);
+            })
+                ->with('classes.class_assessments.assessment_type', 'classes.instructor', 'classes.course')
+                ->find($id);
+        } else {
+            // If the authenticated user is not an instructor, get all AcademicPeriods with related classes
+            return AcademicPeriod::with('classes.class_assessments.assessment_type', 'classes.instructor', 'classes.course')->find($id);
+        }
     }
 }

@@ -342,6 +342,81 @@
         //     }
         // });
     }
+    //academic classes for assessements
+    function getAcClassesPD(ac_id) {
+        var url = '<?php echo e(route('class-names', [':id'])); ?>';
+        url = url.replace(':id', ac_id);
+        var classId = $('#classID');
+
+        $.ajax({
+            dataType: 'json',
+            url: url,
+            success: function (resp) {
+                classId.empty();
+                classId.append($('<option>', {
+                    value: '',
+                    text: 'Choose ...'
+                }));
+                $.each(resp, function (i, data) {
+                    classId.append($('<option>', {
+                        value: data.id,
+                        text: data.course.code+' - '+data.course.name
+                    }));
+                });
+            }
+        })
+    }
+    $('.edit-total-link').on('click', function () {
+
+        var row = $(this).closest('tr');
+        row.find('.display-mode').hide();
+        row.find('.edit-mode').show();
+    });
+    //});
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    function updateExamResults(classID) {
+        //date
+        let newValuesendDate = $('#enddate' + classID).val();
+        var displaymodedate = $('#display-mode-enddate' + classID);
+        var inputdate = $('#enddate' + classID);
+
+        let newValues = $('#class' + classID).val();
+        var displaymode = $('#display-mode' + classID);
+        var input = $('#class' + classID);
+
+        let url = '{{ route('assessmentUpdate', [':id']) }}';
+        url = url.replace(':id', classID);
+        // Perform an AJAX request to update the database with the new value
+        // You can use Laravel's route and controller for this
+        console.log(newValues);
+        $.ajax({
+            url: url, // Replace with the actual route
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                total: newValues,
+                end_date: newValuesendDate,
+            },
+            success: function (resp) {
+                // Update the display mode with the new value
+                displaymode.text(newValues);
+                displaymode.show();
+                input.hide();
+
+                displaymodedate.text(newValuesendDate);
+                displaymodedate.show();
+                inputdate.hide();
+
+                resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({msg: resp.msg, type: 'danger'});
+            }, error: function (xhr, status, error) {
+                flash({msg: error, type: 'danger'})
+            }
+        });
+    }
 
     function CloseModal() {
         $('#staticBackdrop').modal('hide');

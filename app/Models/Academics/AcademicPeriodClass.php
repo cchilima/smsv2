@@ -24,7 +24,11 @@ class AcademicPeriodClass extends Model
 
     public function instructor()
     {
-        // Assuming the user ID for the instructor is stored in the 'user_id' column
         return $this->belongsTo(User::class, 'instructor_id');
     }
+    public function class_assessments()
+    {
+        return $this->hasMany(ClassAssessment::class, 'academic_period_class_id');
+    }
+
 }
