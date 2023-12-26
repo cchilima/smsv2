@@ -4,6 +4,7 @@ namespace App\Repositories\Admissions;
 
 use Illuminate\Support\Facades\Hash;
 use App\Models\Academics\{AcademicPeriod, Program, CourseLevel, StudyMode, PeriodType};
+use Ramsey\Uuid\Type\Integer;
 use App\Models\Admissions\{Student, AcademicPeriodIntake};
 use App\Models\Profile\{MaritalStatus, Relationship};
 use App\Models\Residency\{Town, Province, Country};
@@ -101,21 +102,34 @@ class StudentRepository
     {
         $year = date("y");
 
-        // Fetch last ID
-
         $lastID = Student::latest('id')->first();
+        $afterRemovingFirstThree = intval(substr($lastID->id, 3));
+        $addonw = ($afterRemovingFirstThree+1);
 
-        $finalID = ($lastID) ? $lastID->id + 1 : 1;
 
-        $studentNumber = str_pad($finalID, 3, '0', STR_PAD_LEFT);
+        $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
+        $finalID = strlen($studentNumber);
 
-        $concatStudentNumber = ($studentNumber < 10) ? "000$studentNumber" : (($studentNumber > 99) ? "0$studentNumber" : "00$studentNumber");
+        //$concatStudentNumber = ($studentNumber < 10) ? "000$studentNumber" : (($studentNumber > 99) ? "0$studentNumber" : "00$studentNumber");
+        if($finalID ==1){
+            $concatStudentNumber = "000$studentNumber";
+        }else if($finalID ==2){
+            $concatStudentNumber = "00$studentNumber";
+        }else if($finalID == 3){
+            $concatStudentNumber = "0$studentNumber";
+        }else if($finalID == 4){
+            $concatStudentNumber = "$studentNumber";
+        }
 
         $semester = (date("m") <= 6) ? 1 : 2;
 
         $studentData['id'] =  $year . $semester . $concatStudentNumber;
 
+        //echo $finalID;
+        echo $studentData['id'];
+
         return $studentData;
+
     }
 
     public function removePrefixes($nextOfKinDataWithPrefix)

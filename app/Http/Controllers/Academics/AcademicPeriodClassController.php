@@ -59,7 +59,7 @@ class AcademicPeriodClassController extends Controller
     public function store(PeriodClass $request)
     {
         $data = $request->only(['instructor_id', 'course_id', 'academic_period_id']);
-        $data['key'] = 1;
+        $data['key'] = rand(2,23);
         $periodClass = $this->periodClasses->create($data);
 
         if ($periodClass) {
