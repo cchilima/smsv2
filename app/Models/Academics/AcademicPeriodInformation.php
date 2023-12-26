@@ -20,4 +20,5 @@ class AcademicPeriodInformation extends Model
     public function intake(){
         return $this->belongsTo(AcademicPeriodIntake::class,'academic_period_intake_id','id');
     }
+
 }

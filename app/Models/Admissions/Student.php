@@ -6,6 +6,7 @@ use App\Models\Academics\CourseLevel;
 use App\Models\Academics\PeriodType;
 use App\Models\Academics\Program;
 use App\Models\Academics\StudyMode;
+use App\Models\Academics\AcademicPeriodInformation;
 use App\Models\Users\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -39,6 +40,12 @@ class Student extends Model
     public function period_type()
     {
         return $this->belongsTo(PeriodType::class, 'period_type_id');
+    }
+
+    public function academic_info()
+    {
+        return $this->belongsTo(AcademicPeriodInformation::class, 'study_mode_id', 'study_mode_id')
+                    ->where('academic_period_intake_id', $this->academic_period_intake_id);
     }
 
 }

@@ -144,10 +144,14 @@
                                        class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-classes.create', 'academic-period-classes.edit', 'academic-period-classes.index']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Academic period class</span></a>
                                 </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('enrollments.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Enrollments</span></a>
+                                </li>
                             </ul>
                         </li>
-
-
 
                         <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['fees.create', 'fees.edit', 'fees.index' ]) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Accounting</span></a>

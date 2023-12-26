@@ -20,6 +20,7 @@ use App\Http\Controllers\Academics\StudyModeController;
 use App\Http\Controllers\Academics\CourseController;
 use App\Http\Controllers\Academics\AcademicPeriodController;
 use App\Http\Controllers\Academics\AcademicPeriodClassController;
+use App\Http\Controllers\Academics\StudentRegistrationController;
 
 use App\Http\Controllers\Admissions\StudentController;
 
@@ -28,6 +29,8 @@ use App\Http\Controllers\Profile\MaritalStatusController;
 use App\Http\Controllers\Accounting\FeeController;
 
 use App\Http\Controllers\Users\UserController;
+
+use App\Http\Controllers\Enrollments\EnrollmentController;
 
 
 Route::get('/', function () {
@@ -61,6 +64,7 @@ Route::resource('prerequisites', PrerequisiteController::class);
 Route::resource('program-courses', ProgramCoursesController::class);
 Route::resource('classAssessments', ClassAssessmentsController::class);
 Route::resource('assessments', AssessmentsTypesController::class);
+Route::resource('registration', StudentRegistrationController::class);
 
 Route::resource('fees', FeeController::class);
 Route::resource('marital-statuses', MaritalStatusController::class);
@@ -70,6 +74,8 @@ Route::resource('academic-period-management', APManagementController::class);
 Route::resource('academic-period-fees', APFeesController::class);
 Route::resource('students', StudentController::class);
 Route::resource('users', UserController::class);
+
+Route::resource('enrollments', EnrollmentController::class);
 
 
 
