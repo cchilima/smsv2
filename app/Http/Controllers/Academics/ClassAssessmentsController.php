@@ -165,6 +165,7 @@ class ClassAssessmentsController extends Controller
         $class = $request->input('classId');
         $assessID = $request->input('assessID');
         //dd($class);
+        //return Classes::with('class_assessments.assessment_type', 'instructor', 'course')->find($id);
         $academicPeriodsData = Classes::where('id', $class)->with(['course', 'enrollments.user', 'academicPeriod', 'assessments'])
             ->get();
         $assessment_total = ClassAssessment::where('classID', $class)->where('assesmentID', $assessID)->get()->first();
@@ -216,26 +217,12 @@ class ClassAssessmentsController extends Controller
             // dd($classData);
         }
         $filename = 'results_upload_template.csv';
-
-// Save the CSV content to a file
-        //dd($academicPeriodsData);
         file_put_contents($filename, $csvContent);
-
-// Generate a response and return the file URL
         $response = [
             'fileUrl' => asset($filename), // Generate a URL to the file
         ];
 
         return response()->json($response);
-//        $filename = 'results_upload_template.csv';
-//        file_put_contents($filename, $csvContent);
-//
-//// Force download the CSV file
-//        header('Content-Type: application/csv');
-//        header('Content-Disposition: attachment; filename="' . $filename . '"');
-//        readfile($filename);
-//        unlink($filename); // Delete the temporary file
-//        exit();
 
     }
 

@@ -125,7 +125,7 @@ class StudentController extends Controller
 
             DB::rollBack();
             // Log the error or handle it accordingly
-            return Qs::json(false, 'msg.create_failed');
+            return Qs::json('msg.create_failed => '.$e->getMessage(),false );
         }
     }
 
