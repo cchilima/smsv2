@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('total');
             $table->boolean('publication_status')->default(0);
             $table->foreignId('student_id')->constrained('students')->onDelete('restrict');
+            $table->foreignId('course_id')->constrained('courses')->onDelete('restrict');
             $table->foreignId('academic_period_id')->constrained('academic_periods')->onDelete('restrict');
             $table->foreignId('assessment_type_id')->constrained('assessment_types')->onDelete('restrict');
             $table->timestamps();
