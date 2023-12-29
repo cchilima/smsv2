@@ -9,7 +9,6 @@ use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\AcademicPeriodClasses\PeriodClass;
 use App\Http\Requests\AcademicPeriodClasses\PeriodClassUpdate;
-use App\Http\Requests\AcademicPeriods\Period;
 use App\Repositories\Academics\AcademicPeriodClassRepository;
 use Illuminate\Http\Request;
 
@@ -58,8 +57,11 @@ class AcademicPeriodClassController extends Controller
      */
     public function store(PeriodClass $request)
     {
+        
         $data = $request->only(['instructor_id', 'course_id', 'academic_period_id']);
         $data['key'] = rand(2,23);
+
+
         $periodClass = $this->periodClasses->create($data);
 
         if ($periodClass) {
