@@ -126,7 +126,7 @@ class StudentRepository
         $studentData['id'] =  $year . $semester . $concatStudentNumber;
 
         //echo $finalID;
-        echo $studentData['id'];
+        //echo $studentData['id'];
 
         return $studentData;
 
