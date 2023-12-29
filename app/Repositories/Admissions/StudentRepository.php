@@ -100,24 +100,32 @@ class StudentRepository
 
     public function addStudentId($studentData)
     {
+
         $year = date("y");
-
+        $semester = (date("m") <= 6) ? 1 : 2;
+        
+        // Get the latest student ID from the database
         $lastID = Student::latest('id')->first();
-        $afterRemovingFirstThree = intval(substr($lastID->id, 3));
-        $addonw = ($afterRemovingFirstThree+1);
-
-
-        $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
+        
+        if ($lastID) {
+            $afterRemovingFirstThree = intval(substr($lastID->id, 3));
+            $addonw = $afterRemovingFirstThree + 1;
+        
+            $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
+        } else {
+            // If there is no last ID, use an ID starting with the current year and zeros
+            $studentNumber = '000';
+        }
+        
         $finalID = strlen($studentNumber);
-
-        //$concatStudentNumber = ($studentNumber < 10) ? "000$studentNumber" : (($studentNumber > 99) ? "0$studentNumber" : "00$studentNumber");
-        if($finalID ==1){
+        
+        if ($finalID == 1) {
             $concatStudentNumber = "000$studentNumber";
-        }else if($finalID ==2){
+        } else if ($finalID == 2) {
             $concatStudentNumber = "00$studentNumber";
-        }else if($finalID == 3){
+        } else if ($finalID == 3) {
             $concatStudentNumber = "0$studentNumber";
-        }else if($finalID == 4){
+        } else if ($finalID == 4) {
             $concatStudentNumber = "$studentNumber";
         }
 

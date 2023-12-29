@@ -23,8 +23,8 @@
                         <div class="form-group row">
                             <label class="col-lg-3 col-form-label font-weight-semibold">Courses <span class="text-danger">*</span></label>
                             <div class="col-lg-9">
-                                <select name="academic_period_intake_id" class="form-control" required>
-                                    <option value="{{ $periodClass->course->id }}">{{ $periodClass->course->name }} {{ $periodClass->course->code }}</option>
+                                <select name="course_id" class="form-control" required>
+                                    <option value="{{ $periodClass->course->id }}">{{ $periodClass->course->name }} - {{ $periodClass->course->code }}</option>
                                     @foreach ($courses as $course)
                                         <option value="{{ $course->id }}">{{ $course->name }} {{ $course->code }}</option>
                                     @endforeach
@@ -35,8 +35,8 @@
                         <div class="form-group row">
                             <label class="col-lg-3 col-form-label font-weight-semibold">Instructors <span class="text-danger">*</span></label>
                             <div class="col-lg-9">
-                                <select name="study_mode_id" class="form-control" required>
-                                    <option value="{{ $periodClass->instructor->id }}">{{ $periodClass->instructor->first_name.' '.$periodClass->instructor->first_name  }}</option>
+                                <select name="instructor_id" class="form-control" required>
+                                    <option value="{{ $periodClass->instructor->id }}">{{ $periodClass->instructor->first_name.' '.$periodClass->instructor->last_name  }}</option>
                                     @foreach ($instructors as $instructor)
                                         <option value="{{ $instructor->id }}"> {{ $instructor->first_name }} {{ $instructor->last_name }}</option>
                                     @endforeach

@@ -22,7 +22,7 @@
                             <div class="form-group row">
                                 <label class="col-lg-3 col-form-label font-weight-semibold">Academic Periods <span class="text-danger">*</span></label>
                                 <div class="col-lg-9">
-                                    <select name="period_type_id" class="form-control" required>
+                                    <select name="academic_period_id" class="form-control" required>
                                     <option value=""></option>
                                     @foreach ($academicPeriods as $period)
                                         <option value="{{ $period->id }}">{{ $period->name }}</option>
@@ -35,7 +35,7 @@
                             <div class="form-group row">
                                 <label class="col-lg-3 col-form-label font-weight-semibold">Courses <span class="text-danger">*</span></label>
                                 <div class="col-lg-9">
-                                    <select name="academic_period_intake_id" class="form-control" required>
+                                    <select name="course_id" class="form-control" required>
                                     @foreach ($courses as $course)
                                         <option value="{{ $course->id }}">{{ $course->name }} - {{ $course->code }}</option>
                                     @endforeach
@@ -48,7 +48,7 @@
                             <div class="form-group row">
                                 <label class="col-lg-3 col-form-label font-weight-semibold">Instructors <span class="text-danger">*</span></label>
                                 <div class="col-lg-9">
-                                        <select name="study_mode_id" class="form-control" required>
+                                        <select name="instructor_id" class="form-control" required>
                                         @foreach ($instructors as $instructor)
                                             <option value="{{ $instructor->id }}">{{ $instructor->first_name }}  {{ $instructor->last_name }}</option>
                                         @endforeach

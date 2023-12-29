@@ -42,7 +42,6 @@ class AcademicPeriodClassRepository
     {
         return User::join('user_types', 'user_types.id', 'users.user_type_id')
                     ->where('user_types.title', 'instructor')->get();
-                    //->pluck('users.id', 'first_name', 'last_name');
 
     }
 }

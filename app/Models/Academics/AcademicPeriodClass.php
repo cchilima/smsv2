@@ -10,7 +10,7 @@ class AcademicPeriodClass extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['academic_period_id', 'course_id', 'instructor_id','key'];
+    protected $fillable = ['course_id', 'instructor_id', 'academic_period_id', 'key'];
 
     public function academicPeriod()
     {
