@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Students\Student;
 use App\Http\Requests\Students\StudentUpdate;
 use App\Repositories\Admissions\StudentRepository;
+use App\Repositories\Academics\StudentRegistrationRepository;
 use http\Client\Curl\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,12 +19,13 @@ class StudentController extends Controller
 
     protected $studentRepo;
 
-    public function __construct(StudentRepository $studentRepo)
+    public function __construct(StudentRepository $studentRepo, StudentRegistrationRepository $registrationRepo)
     {
         $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
         $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->studentRepo = $studentRepo;
+        $this->registrationRepo = $registrationRepo;
     }
 
     /**
@@ -230,6 +232,7 @@ class StudentController extends Controller
     //student management controller
     public function studentShow($id)
     {
+
         $data['student'] = $this->studentRepo->getStudentInfor($id);
         $data['countries'] = $this->studentRepo->getCountries();
         $data['programs'] = $this->studentRepo->getPrograms();
@@ -241,6 +244,13 @@ class StudentController extends Controller
         $data['periodTypes'] = $this->studentRepo->getPeriodTypes();
         $data['relationships'] = $this->studentRepo->getRelationships();
         $data['maritalStatuses'] = $this->studentRepo->getMaritalStatuses();
+
+        // Find student
+        $student = $this->studentRepo->findUser($id);
+
+        $data['courses'] = $this->registrationRepo->getAll($student->student->id);
+        $data['isRegistered'] = $this->registrationRepo->getRegisterationStatus($student->student->id);
+
         //'student','countries','programs','towns','provinces','course_levels','periodIntakes','studyModes','periodTypes','relationships','maritalStatuses'
         return view('pages.students.show', $data);
     }

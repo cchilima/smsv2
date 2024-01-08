@@ -4,6 +4,11 @@
     @php
         use App\Helpers\Qs;
     @endphp
+
+    @if (session('status'))
+        <?php Qs::goWithSuccessCustom(session('status')); ?>
+    @endif
+    
     <div class="row">
         <div class="col-md-3 text-center">
             <div class="card">
@@ -809,6 +814,68 @@
                     </div>
                 </div>
             </div>
+
+
+
+@if($isRegistered)
+
+<div class="card card-collapsed">
+
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title">Registration Summary</h6>
+        {!! Qs::getPanelOptions() !!}
+    </div>
+
+    <div class="card-body">
+
+                    <form  action="{{ route('registration.summary') }}" method="get">
+                        @csrf
+                        <input name="student_number" type="hidden" value="{{ $student->id }}" />
+                         <button type="submit" class="btn btn-primary mt-2">Download summary</button>
+                    </form>
+    </div>
+</div>
+
+@else
+
+
+            <div class="card card-collapsed">
+            <div class="card-header header-elements-inline">
+                <h6 class="card-title">Courses available for registration</h6>
+                {!! Qs::getPanelOptions() !!}
+            </div>
+
+            <div class="card-body">
+
+                        <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Code</th>
+                                <th>Name</th>
+                            </tr>
+                            </thead>
+                                    <tbody>
+                                        @foreach($courses as $course)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $course->code }}</td>
+                                                <td>{{ $course->name }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                            </table>
+
+                            <form action="{{ route('enrollments.store') }}" method="post">
+                                @csrf
+                                <input name="student_number" type="hidden" value="{{ $student->id }}" />
+                                <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register</button>
+                            </form>
+            </div>
+            </div>
+
+            @endif
+
         </div>
 
     </div>

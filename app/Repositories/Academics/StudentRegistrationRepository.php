@@ -10,18 +10,36 @@ namespace App\Repositories\Academics;
 class StudentRegistrationRepository
 {
 
-    public function getStudent()
+    public function getStudent($student_id = null)
     {
-        $student = Student::where('user_id', Auth::user()->id)->first();
+        
+        if($student_id){
+
+            // incase request from management
+            $student = Student::find($student_id);
+
+        } else {
+            // incase request from student
+            $student = Student::where('user_id', Auth::user()->id)->first();
+        }
 
         return $student;
     }
 
-    public function getAll()
+    public function getAll($student_id = null)
     {
 
         // step 1 - get student
-        $student = $this->getStudent();
+        if($student_id){
+
+            // incase request from management
+            $student = Student::find($student_id);
+
+        } else {
+
+            // incase request from student
+            $student = $this->getStudent();
+        }
 
         // step 2 - get available courses for that academic period with running classes
 
@@ -43,8 +61,6 @@ class StudentRegistrationRepository
                                 ->where('academic_period_id', $currentAcademicPeriodId)
                                 ->exists();
                 });
-
-
 
                 // get academic class info
                 $courseIds = $currentCourses->pluck('course_id')->toArray();
@@ -120,9 +136,19 @@ class StudentRegistrationRepository
     } 
     
 
-    public function getAcademicInfo()
+    public function getAcademicInfo($student_id = null)
     {
-        $student = $this->getStudent();
+        if($student_id) {
+
+            // incase request from management
+            $student = $this->getStudent($student_id);
+
+        } else {
+
+            // incase request from student
+            $student = $this->getStudent();
+        }
+        
 
         $academicInfo = $student->academic_info()
             ->with(['academic_period', 'study_mode'])
@@ -131,10 +157,10 @@ class StudentRegistrationRepository
         return $academicInfo;
     }
 
-    public function getRegisterationStatus()
+    public function getRegisterationStatus($student_id = null)
     {
         // get courses
-        $courses = $this->getAll();
+        $courses = $this->getAll($student_id);
         $classIds = $courses->pluck('id')->toArray();
 
         // check if student has already been enrolled in courses

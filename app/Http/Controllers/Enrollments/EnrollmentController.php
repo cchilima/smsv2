@@ -52,12 +52,14 @@ class EnrollmentController extends Controller
      */
     public function store(Request $request)
     {
+        // Incase request from management get student number
+        $studentNumber = $request->input('student_number');
 
         // Get courses student can register for
-        $courseToRegister = $this->studentRepo->getAll();
+        $courseToRegister = $this->studentRepo->getAll($studentNumber);
 
         // Register and enrollment student in the above courses.
-        $enrolled = $this->enrollmentRepo->create($courseToRegister);
+        $enrolled = $this->enrollmentRepo->create($courseToRegister, $studentNumber);
 
         // Give student feedback
         if ($enrolled) {

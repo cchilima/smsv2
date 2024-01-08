@@ -96,9 +96,12 @@ class StudentRegistrationController extends Controller
     public function summary(Request $request)
     {
 
-       $courses = $this->registrationRepo->getAll();
-       $student = $this->registrationRepo->getStudent();
-       $academicInfo = $this->registrationRepo->getAcademicInfo();
+        // Incase request from management get student number
+        $studentNumber = $request->input('student_number');
+
+       $courses = $this->registrationRepo->getAll($studentNumber);
+       $student = $this->registrationRepo->getStudent($studentNumber);
+       $academicInfo = $this->registrationRepo->getAcademicInfo($studentNumber);
 
        $filename = 'registration_summary.pdf';
 
