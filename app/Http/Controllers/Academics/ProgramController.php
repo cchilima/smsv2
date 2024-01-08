@@ -72,6 +72,7 @@ class ProgramController extends Controller
     {
         $id = Qs::decodeHash($id);
         $myprogram['withCourseLevels'] =$this->programs->findOneP($id);
+        //dd($myprogram['withCourseLevels']);
         $myprogram['programs'] = $someprograms = $this->programs->find($id);
         $myprogram['program'] = $someprograms = $this->programs->findOne($id);
        // dd($myprogram['withCourseLevels']);

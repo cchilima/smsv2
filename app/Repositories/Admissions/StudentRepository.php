@@ -128,10 +128,13 @@ class StudentRepository
         } else if ($finalID == 4) {
             $concatStudentNumber = "$studentNumber";
         }
-        
-        $studentData['id'] = $year . $semester . $concatStudentNumber;
-        
-        // return $studentData
+
+        $semester = (date("m") <= 6) ? 1 : 2;
+
+        $studentData['id'] =  $year . $semester . $concatStudentNumber;
+
+        //echo $finalID;
+        //echo $studentData['id'];
 
         return $studentData;
 

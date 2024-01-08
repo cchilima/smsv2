@@ -64,10 +64,10 @@
                 </div>
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-tabs-highlight">
-                        @foreach ($withCourseLevels->levels as $level)
+                        @foreach ($withCourseLevels['course_levels'] as $programCourse)
                                 <li class="nav-item">
-                                    <a href="#all-{{ $level->id }}" class="nav-link{{ $loop->first ? ' active' : '' }}" data-toggle="tab">
-                                        {{ $level->name }}
+                                    <a href="#all-{{ $programCourse['id'] }}" class="nav-link{{ $loop->first ? ' active' : '' }}" data-toggle="tab">
+                                        {{ $programCourse['name'] }}
                                     </a>
                                 </li>
                         @endforeach
@@ -84,8 +84,8 @@
                     </ul>
 
                     <div class="tab-content">
-                            @foreach ($withCourseLevels->levels as $level)
-                                <div class="tab-pane fade{{ $loop->first ? ' show active' : '' }}" id="all-{{ $level->id }}">
+                        @foreach ($withCourseLevels['course_levels'] as $programCourse)
+                                <div class="tab-pane fade{{ $loop->first ? ' show active' : '' }}" id="all-{{ $programCourse['id'] }}">
                                     <table class="table table-bordered">
                                         <thead>
                                         <tr>
@@ -97,11 +97,11 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach ($level->courses as $course)
+                                        @foreach ($programCourse['courses'] as $course)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $course->name }}</td>
-                                                <td>{{ $course->code }}</td>
+                                                <td>{{ $course['name'] }}</td>
+                                                <td>{{ $course['code'] }}</td>
                                                 <td>
 {{--                                                    @if (count($course['prerequisites']) > 0)--}}
 {{--                                                            @foreach ($course['prerequisites'] as $prerequisite)--}}
@@ -112,10 +112,10 @@
 {{--                                                    @endif--}}
                                                 </td>
                                                 <td>
-                                                    @if (Qs::userIsSuperAdmin())
-{{--                                                        <a id="{{ $course->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>--}}
-{{--                                                        <form method="post" id="item-delete-{{ $course->id }}" action="{{ route('program-course.destroy', ['programID' => $myprogram['program']->id, 'levelID' => $level['level'], 'courseID' => $course['course_id']]) }}" class="hidden">@csrf @method('delete')</form>--}}
-                                                    @endif
+{{--                                                    @if (Qs::userIsSuperAdmin())--}}
+{{--                                                        <a id="{{ $course['id'] }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>--}}
+{{--                                                        <form method="post" id="item-delete-{{ $course['id'] }}" action="{{ route('program-course.destroy', ['programID' => $withCourseLevels['program_id']->id, 'levelID' => $programCourse['id'], 'courseID' => $course['id']) }}" class="hidden">@csrf @method('delete')</form>--}}
+{{--                                                    @endif--}}
                                                 </td>
                                             </tr>
                                         @endforeach
