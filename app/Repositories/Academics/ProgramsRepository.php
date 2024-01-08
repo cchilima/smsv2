@@ -27,9 +27,9 @@ class ProgramsRepository
     {
         return Program::find($id);
     }
-    public function findOneP($id){
-
-        return Program::find($id)->with('levels.courses')->firstOrFail();;
+    public function findOneP($id)
+    {
+        return Program::find($id)->with('levels.courses')->firstOrFail();
     }
 
 }

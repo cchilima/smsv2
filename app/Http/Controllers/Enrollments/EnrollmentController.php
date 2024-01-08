@@ -2,11 +2,35 @@
 
 namespace App\Http\Controllers\Enrollments;
 
+
+use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\Custom\Student;
+use App\Http\Requests\Enrollments\Enrollment;
+use App\Repositories\Enrollments\EnrollmentRepository;
+use App\Repositories\Academics\StudentRegistrationRepository;
+use http\Client\Curl\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EnrollmentController extends Controller
 {
+
+    /**
+     * Display a listing of the resource.
+     */
+    protected $enrollmentRepo;
+    protected $studentRepo;
+
+    public function __construct(EnrollmentRepository $enrollmentRepo, StudentRegistrationRepository $studentRepo)
+    {
+
+       $this->middleware(Student::class, ['only' => ['destroy',] ]);
+
+        $this->enrollmentRepo = $enrollmentRepo;
+        $this->studentRepo = $studentRepo;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -28,7 +52,20 @@ class EnrollmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        // Get courses student can register for
+        $courseToRegister = $this->studentRepo->getAll();
+
+        // Register and enrollment student in the above courses.
+        $enrolled = $this->enrollmentRepo->create($courseToRegister);
+
+        // Give student feedback
+        if ($enrolled) {
+            return redirect()->back()->with('status', 'Enrollment successful');
+           // return Qs::jsonStoreOk();
+        } else {
+            return Qs::json(false,'msg.create_failed');
+        }
     }
 
     /**
@@ -62,4 +99,5 @@ class EnrollmentController extends Controller
     {
         //
     }
+
 }

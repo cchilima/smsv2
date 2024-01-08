@@ -5,6 +5,10 @@
         use App\Helpers\Qs;
     @endphp
 
+    @if (session('status'))
+        <?php Qs::goWithSuccessCustom(session('status')); ?>
+    @endif
+
     <div class="card">
 
         <div class="card-header header-elements-inline">
@@ -52,6 +56,25 @@
         </div>
     </div>
 
+@if($isRegistered)
+
+    <div class="card">
+
+        <div class="card-header header-elements-inline">
+            <h6 class="card-title">Registration Summary</h6>
+            {!! Qs::getPanelOptions() !!}
+        </div>
+
+        <div class="card-body">
+
+                        <form  action="{{ route('registration.summary') }}" method="get">
+                            @csrf
+                             <button type="submit" class="btn btn-primary mt-2">Download summary</button>
+                        </form>
+        </div>
+    </div>
+
+    @else
 
     <div class="card">
 
@@ -80,8 +103,15 @@
                                     @endforeach
                                 </tbody>
                         </table>
+
+                        <form action="{{ route('enrollments.store') }}" method="post">
+                            @csrf
+                             <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register</button>
+                        </form>
         </div>
     </div>
+
+    @endif
 
     {{-- Course List Ends --}}
 @endsection

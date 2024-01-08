@@ -4,6 +4,7 @@ namespace App\Repositories\Academics;
 
  use Auth; 
  use App\Models\Admissions\{ Student };
+ use App\Models\Enrollments\{ Enrollment };
  use App\Models\Academics\{ Course, AcademicPeriodClass, AcademicPeriodInformation, CourseLevel, ProgramCourses, Grade, Prerequisite };
 
 class StudentRegistrationRepository
@@ -12,6 +13,7 @@ class StudentRegistrationRepository
     public function getStudent()
     {
         $student = Student::where('user_id', Auth::user()->id)->first();
+
         return $student;
     }
 
@@ -41,6 +43,22 @@ class StudentRegistrationRepository
                                 ->where('academic_period_id', $currentAcademicPeriodId)
                                 ->exists();
                 });
+
+
+
+                // get academic class info
+                $courseIds = $currentCourses->pluck('course_id')->toArray();
+            
+                $currentCourses = AcademicPeriodClass::join('courses', 'courses.id', 'academic_period_classes.course_id')
+                                ->whereIn('course_id', $courseIds)
+                                ->where('academic_period_id', $currentAcademicPeriodId)
+                                ->get(['code', 'name', 'course_id', 'academic_period_classes.id']);
+
+
+
+
+
+                /*
 
         // step 3 - get all courses that student failed in previous academic periods
 
@@ -94,6 +112,7 @@ class StudentRegistrationRepository
                 }
 
         
+*/
 
 
         return $currentCourses;
@@ -110,6 +129,19 @@ class StudentRegistrationRepository
             ->first();
     
         return $academicInfo;
+    }
+
+    public function getRegisterationStatus()
+    {
+        // get courses
+        $courses = $this->getAll();
+        $classIds = $courses->pluck('id')->toArray();
+
+        // check if student has already been enrolled in courses
+        $enrollmentExists = Enrollment::whereIn('academic_period_class_id', $classIds)->exists();
+
+        return $enrollmentExists;
+  
     }
 
 }

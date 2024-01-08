@@ -76,6 +76,7 @@ Route::resource('students', StudentController::class);
 Route::resource('users', UserController::class);
 
 Route::resource('enrollments', EnrollmentController::class);
+Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 
 
 
