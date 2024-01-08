@@ -17,13 +17,28 @@ class ProgramCourses extends Model
         return $this->belongsTo(Course::class, 'course_id', 'id');
     }
 
-    public function programs()
-    {
-        return $this->belongsTo(Program::class, 'program_id', 'id');
-    }
+//    public function programs()
+//    {
+//        return $this->belongsTo(Program::class, 'program_id', 'id');
+//    }
 
     public function levels()
     {
+        return $this->belongsTo(CourseLevel::class, 'course_level_id','id');
+    }
+
+    public function program()
+    {
+        return $this->belongsTo(Program::class, 'program_id');
+    }
+
+    public function courseLevel()
+    {
         return $this->belongsTo(CourseLevel::class, 'course_level_id');
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
     }
 }

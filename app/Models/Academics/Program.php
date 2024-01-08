@@ -15,10 +15,10 @@ class Program extends Model
         return $this->belongsTo(Department::class, 'department_id');
     }
 
-    public function courses()
-    {
-        return $this->belongsToMany(Course::class, 'program_courses', 'program_id', 'course_id')->orderBy('code', 'asc');
-    }
+//    public function courses()
+//    {
+//        return $this->belongsToMany(Course::class, 'program_courses', 'program_id', 'course_id')->orderBy('code', 'asc');
+//    }
     public function course()
     {
         return $this->belongsToMany(Course::class, 'program_courses')->withPivot('level_id');
@@ -27,15 +27,25 @@ class Program extends Model
     {
         return $this->belongsTo(Qualification::class, 'qualification_id');
     }
-
-    public function programCourses()
-    {
-        return $this->hasMany(ProgramCourses::class, 'program_id','id');
-    }
     public function levels()
     {
-        return $this->belongsToMany(CourseLevel::class, 'program_courses', 'program_id', 'course_level_id')
-            ->withPivot('course_id')
-            ->with('courses');
+        return $this->hasMany(CourseLevel::class);
     }
+
+    //levels
+    public function programCourses()
+    {
+        return $this->hasMany(ProgramCourses::class, 'program_id');
+    }
+
+    public function courseLevels()
+    {
+        return $this->hasManyThrough(CourseLevel::class, ProgramCourses::class, 'program_id', 'id', 'id', 'course_level_id');
+    }
+
+    public function courses()
+    {
+        return $this->hasManyThrough(Course::class, ProgramCourses::class, 'program_id', 'id', 'id', 'course_id');
+    }
+
 }
