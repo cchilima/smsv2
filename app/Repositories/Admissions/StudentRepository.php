@@ -2,13 +2,14 @@
 
 namespace App\Repositories\Admissions;
 
-use Illuminate\Support\Facades\Hash;
-use App\Models\Academics\{AcademicPeriod, Program, CourseLevel, StudyMode, PeriodType};
+
 use Ramsey\Uuid\Type\Integer;
-use App\Models\Admissions\{Student, AcademicPeriodIntake};
-use App\Models\Profile\{MaritalStatus, Relationship};
-use App\Models\Residency\{Town, Province, Country};
+use Illuminate\Support\Facades\Hash;
 use App\Models\Users\{User, UserType};
+use App\Models\Residency\{Town, Province, Country};
+use App\Models\Profile\{MaritalStatus, Relationship};
+use App\Models\Admissions\{Student, AcademicPeriodIntake};
+use App\Models\Academics\{AcademicPeriod, Program, CourseLevel, StudyMode, PeriodType};
 
 class StudentRepository
 {
@@ -133,9 +134,6 @@ class StudentRepository
 
         $studentData['id'] =  $year . $semester . $concatStudentNumber;
 
-        //echo $finalID;
-        //echo $studentData['id'];
-
         return $studentData;
 
     }
@@ -185,9 +183,36 @@ class StudentRepository
 
          return $hashedPassword;
     }
+    
     public function getStudentInfor($id){
+
         return Student::with('period_type','level','intake','study_mode','program',
             'user.userPersonalInfo','user.userNextOfKin.relationship','user.userPersonalInfo.userMaritalStatus',
             'user.userPersonalInfo.province','user.userPersonalInfo.country','user.userPersonalInfo.town')->where('user_id',$id)->get()->first();
     }
+
+    public function resetPassword($resetPasswordData)
+    {
+        // encrypt password
+        $resetPasswordData['password'] = $this->encryptPassword($resetPasswordData['password']);
+    
+        // get user account
+        $user = $this->findUser($resetPasswordData['user_id']);
+
+        // remove non essential array properties
+        unset($resetPasswordData['user_id']);
+        unset($resetPasswordData['password_confirmation']);
+        
+        // handle checkbox value
+        $resetPasswordData['force_password_reset'] = ($resetPasswordData['force_password_reset'] == 'on') ? 1 : 0;
+
+        // update user account
+        $passwordResetted = $user->update($resetPasswordData);
+    
+        // give user feedback
+        if ($passwordResetted) {
+            return true;
+        }
+    }
+    
 }

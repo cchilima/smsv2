@@ -49,7 +49,6 @@ class Student extends FormRequest
             'graduated' => 'required|boolean',
 
 
-
             'kin_full_name' => 'required|string|max:255',
             'kin_mobile' => 'required|string|max:20',
             'kin_telephone' => 'nullable|string|max:20',

@@ -1,12 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Academics\APFeesController;
 use App\Http\Controllers\Academics\APManagementController;
 use App\Http\Controllers\Academics\AssessmentsTypesController;
 use App\Http\Controllers\Academics\ClassAssessmentsController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Academics\CourseLevelController;
 use App\Http\Controllers\Academics\DepartmentController;
 use App\Http\Controllers\Academics\IntakeController;
@@ -78,5 +78,5 @@ Route::resource('users', UserController::class);
 Route::resource('enrollments', EnrollmentController::class);
 Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 
-
+Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])->name('students.resetAccountPassword');
 
