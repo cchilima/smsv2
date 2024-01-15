@@ -3,16 +3,15 @@
 namespace App\Http\Controllers\Admissions;
 
 use App\Helpers\Qs;
-use App\Http\Controllers\Controller;
-use App\Http\Middleware\Custom\SuperAdmin;
-use App\Http\Middleware\Custom\TeamSA;
-use App\Http\Requests\Students\Student;
-use App\Http\Requests\Students\StudentUpdate;
-use App\Repositories\Admissions\StudentRepository;
-use App\Repositories\Academics\StudentRegistrationRepository;
 use http\Client\Curl\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Http\Middleware\Custom\TeamSA;
+use App\Http\Middleware\Custom\SuperAdmin;
+use App\Repositories\Admissions\StudentRepository;
+use App\Repositories\Academics\StudentRegistrationRepository;
+use App\Http\Requests\Students\{Student, StudentUpdate, UserInfo, PersonalInfo, NextOfKinInfo, AcademicInfo, ResetPasswordInfo};
 
 class StudentController extends Controller
 {
@@ -164,38 +163,68 @@ class StudentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Student $request, $id)
+    public function update(Request $request, string $id)
     {
+
         try {
 
             DB::beginTransaction();
 
-            $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
-            $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport_number']);
-            $studentData = $request->only(['program_id', 'study_mode_id', 'period_type_id', 'academic_period_intake_id', 'course_level_id', 'graduated']);
+            $userData = null;
+            $personalData = null;
+            $nextOfKinDataWithPrefix = null;
+            $studentData = null;
 
-            // Extract nextOfKinData with the "kin_" prefix
-            $nextOfKinDataWithPrefix = $request->only(['kin_full_name', 'kin_mobile', 'kin_telephone', 'kin_town_id', 'kin_province_id', 'kin_country_id', 'kin_relationship_id']);
+            // Determine the type of request and validate accordingly
+            if ($request instanceof UserInfo) {
+                $userData = $request->validated();
+            } elseif ($request instanceof PersonalInfo) {
+                $personalData = $request->validated();
+            } elseif ($request instanceof NextOfKinInfo) {
+                $nextOfKinDataWithPrefix = $request->validated();
+            } elseif ($request instanceof AcademicInfo) {
+                $studentData = $request->validated();
+            }
+
+        
+            if($nextOfKinDataWithPrefix){
 
             // Remove the "kin_" prefix from keys
-            $nextOfKinData = array_map(function ($key) {
-                return preg_replace('/^kin_/', '', $key);
-            }, array_flip($nextOfKinDataWithPrefix));
+                $nextOfKinData = array_combine(
+                    array_map(function ($key) {
+                        return preg_replace('/^kin_/', '', $key);
+                    }, array_keys($nextOfKinDataWithPrefix)),
+                    $nextOfKinDataWithPrefix
+                );
+      
+        }
 
             // Check if the user already exists
             $user = $this->studentRepo->findUser($id);
 
+            // Determine what user info to update
+
+            if($userData){
+                
             // Update the user data
             $user->update($userData);
+
+            } elseif($personalData){
 
             // Update or create UserPersonalInfo
             $userPersonalInfo = $user->userPersonalInfo()->update($personalData);
 
+            } elseif ($nextOfKinDataWithPrefix) {
+
             // Update or create NextOfKin
             $nextOfKin = $user->userNextOfKin()->update($nextOfKinData);
 
+            } elseif ($studentData) {
+
             // Update or create Student
             $student = $user->student()->update($studentData);
+
+            }
 
             DB::commit();
 
@@ -204,8 +233,10 @@ class StudentController extends Controller
         } catch (\Exception $e) {
 
             DB::rollBack();
+
+            dd($e);
             // Log the error or handle it accordingly
-            return Qs::jsonError(__('msg.update_failed'));
+            return Qs::json(false,'failed to update');
         }
     }
 
@@ -254,4 +285,24 @@ class StudentController extends Controller
         //'student','countries','programs','towns','provinces','course_levels','periodIntakes','studyModes','periodTypes','relationships','maritalStatuses'
         return view('pages.students.show', $data);
     }
+
+    public function resetAccountPassword(ResetPasswordInfo $request)
+    {
+
+        $resetPasswordData = $request->validated();
+
+        try {
+
+            $this->studentRepo->resetPassword($resetPasswordData);
+
+            return Qs::jsonStoreOk();
+
+        } catch (\Exception $e) {
+
+            // Log the error or handle it accordingly
+            return Qs::json(false,'failed to reset password');
+        }
+
+    }
+
 }

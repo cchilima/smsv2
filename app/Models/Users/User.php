@@ -31,7 +31,8 @@ class User extends Authenticatable
         'email',
         'password',
         'gender',
-        'user_type_id'
+        'user_type_id',
+        'force_password_reset'
     ];
 
     /**
