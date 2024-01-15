@@ -3,8 +3,10 @@
 namespace App\Models\Admissions;
 
 use App\Models\Academics\CourseLevel;
+use App\Models\Academics\Grade;
 use App\Models\Academics\PeriodType;
 use App\Models\Academics\Program;
+use App\Models\Academics\ProgramCourses;
 use App\Models\Academics\StudyMode;
 use App\Models\Academics\AcademicPeriodInformation;
 use App\Models\Users\User;
@@ -46,6 +48,15 @@ class Student extends Model
     {
         return $this->belongsTo(AcademicPeriodInformation::class, 'study_mode_id', 'study_mode_id')
                     ->where('academic_period_intake_id', $this->academic_period_intake_id);
+    }
+    public function grades()
+    {
+        return $this->hasMany(Grade::class, 'student_id', 'id');
+    }
+
+    public function programCourses()
+    {
+        return $this->hasManyThrough(ProgramCourses::class, Grade::class, 'student_id', 'course_id', 'id', 'course_id');
     }
 
 }

@@ -15,4 +15,8 @@ class ClassAssessment extends Model
     {
         return $this->belongsTo(AssessmentType::class, 'assessment_type_id');
     }
+    public function grades()
+    {
+        return $this->belongsTo(Grade::class, 'class_assessment_id','id');
+    }
 }

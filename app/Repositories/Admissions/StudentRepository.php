@@ -103,22 +103,22 @@ class StudentRepository
 
         $year = date("y");
         $semester = (date("m") <= 6) ? 1 : 2;
-        
+
         // Get the latest student ID from the database
         $lastID = Student::latest('id')->first();
-        
+
         if ($lastID) {
             $afterRemovingFirstThree = intval(substr($lastID->id, 3));
             $addonw = $afterRemovingFirstThree + 1;
-        
+
             $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
         } else {
             // If there is no last ID, use an ID starting with the current year and zeros
-            $studentNumber = '000';
+            $studentNumber = '0001';
         }
-        
+
         $finalID = strlen($studentNumber);
-        
+
         if ($finalID == 1) {
             $concatStudentNumber = "000$studentNumber";
         } else if ($finalID == 2) {

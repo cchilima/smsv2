@@ -417,6 +417,41 @@
             }
         });
     }
+    function downloadCSVtemplate(){
+        let url = '{{ route('template.download')}}';
+        var classID = $('input[name="classIDTemplate"]').val();
+        var AssessID = $('input[name="AssessIDTemplate"]').val();
+        $.ajax({
+            url: url, // Replace with the actual route
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                classId: classID,
+                assessID: AssessID
+            },
+            success: function (resp) {
+                // resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({
+                //     msg: resp.msg,
+                //     type: 'danger'
+                // });
+
+                if (resp.fileUrl) {
+                    // If the response contains a file URL, trigger the download
+                    var link = document.createElement('a');
+                    link.href = resp.fileUrl;
+                    link.download = 'results_upload_template.csv'; // Set the default file name
+                    link.click();
+                } else if (resp.ok && resp.msg) {
+                    flash({ msg: resp.msg, type: 'success' });
+                } else {
+                    flash({ msg: resp.msg, type: 'danger' });
+                }
+
+            }, error: function (xhr, status, error) {
+                flash({msg: error, type: 'danger'})
+            }
+        });
+    }
 
     function CloseModal() {
         $('#staticBackdrop').modal('hide');

@@ -7,10 +7,10 @@
 
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h3>{{ $class[0]['code'] }}</h3>
-            <h6 class="card-title">Enter Assessment And Exam Results
-                for {{ $class[0]['courseCode'].' - '.$class[0]['courseName'] }}</h6>
-            <h6 class="card-title assess-total">Being Marked out of {{ $class[0]['assess_total'] }}</h6>
+            <h3>{{ $class_ass->class_assessments[0]->assessment_type->name }}</h3>
+            <h6 class="card-title">Enter {{ $class_ass->class_assessments[0]->assessment_type->name }}  Results
+                for {{ $class_ass->course->code.' - '.$class_ass->course->name }}</h6>
+            <h6 class="card-title assess-total">Being Marked out of {{ $class_ass->class_assessments[0]->total }}</h6>
             {!! Qs::getPanelOptions() !!}
         </div>
 
@@ -22,10 +22,10 @@
                                         class="nav-link {{ (!empty($isInstructor) && $isInstructor == 1)? 'active' :'' }}"
                                         data-toggle="tab"><i
                                 class="icon-plus2"></i>Post results</a></li>
-                {{--                <li class="nav-item"><a href="#post-results"--}}
-                {{--                                        class="nav-link "--}}
-                {{--                                        data-toggle="tab"><i--}}
-                {{--                                class="icon-plus2"></i>Post results</a></li>--}}
+{{--                                <li class="nav-item"><a href="#post-results"--}}
+{{--                                                        class="nav-link "--}}
+{{--                                                        data-toggle="tab"><i--}}
+{{--                                                class="icon-plus2"></i>Post results</a></li>--}}
             </ul>
 
             <div class="tab-content">
@@ -43,53 +43,36 @@
                         </thead>
                         <tbody>
 
-                        @foreach($class[0]['students'] as $classAssessment)
+                        @foreach($class_ass->enrollments as $enroll)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $classAssessment['first_name'].' '.$classAssessment['last_name'] }}</td>
-                                <td>{{ $classAssessment['student_id'] }}</td>
-                                <td>{{ $class[0]['assessmentName'] }}</td>
+                                <td>{{ $enroll->user->first_name.' '.$enroll->user->last_name }}</td>
+                                <td>{{ $enroll->user->student->id }}</td>
+                                <td>{{ $class_ass->class_assessments[0]->assessment_type->name }}</td>
                                 <td class="edit-total-link">
-                                    <input type="hidden" id="course{{ Qs::hash($classAssessment['student_id']) }}"
-                                           value="{{ $class[0]['courseCode'] }}">
-                                    <input type="hidden" id="title{{ Qs::hash($classAssessment['student_id']) }}"
-                                           value="{{ $class[0]['courseName'] }}">
-                                    <input type="hidden" id="idc{{ Qs::hash($classAssessment['student_id']) }}"
-                                           value="{{ $class[0]['classID'] }}">
-                                    <input type="hidden" id="program{{ Qs::hash($classAssessment['student_id']) }}"
-                                           value="{{ $classAssessment['program'] }}">
-                                    <input type="hidden" id="apid{{ Qs::hash($classAssessment['student_id']) }}"
-                                           value="{{ $class[0]['apid'] }}">
-                                    <input type="hidden" id="assessid{{ Qs::hash($classAssessment['student_id']) }}"
-                                           value="{{ $class[0]['assessmentId'] }}">
-                                    <input type="hidden" id="userid{{ Qs::hash($classAssessment['student_id']) }}"
-                                           value="{{ $classAssessment['userID'] }}">
+                                    @if(!empty($enroll->user->student->grades[0]))
+{{--                                    <input type="hidden" id="course{{ Qs::hash($classAssessment['student_id']) }}"--}}
+{{--                                           value="{{ $class[0]['courseCode'] }}">--}}
+{{--                                    <input type="hidden" id="title{{ Qs::hash($classAssessment['student_id']) }}"--}}
+{{--                                           value="{{ $class[0]['courseName'] }}">--}}
+{{--                                    <input type="hidden" id="idc{{ Qs::hash($classAssessment['student_id']) }}"--}}
+{{--                                           value="{{ $class[0]['classID'] }}">--}}
+{{--                                    <input type="hidden" id="program{{ Qs::hash($classAssessment['student_id']) }}"--}}
+{{--                                           value="{{ $classAssessment['program'] }}">--}}
+{{--                                    <input type="hidden" id="apid{{ Qs::hash($classAssessment['student_id']) }}"--}}
+{{--                                           value="{{ $class[0]['apid'] }}">--}}
+{{--                                    <input type="hidden" id="assessid{{ Qs::hash($classAssessment['student_id']) }}"--}}
+{{--                                           value="{{ $class[0]['assessmentId'] }}">--}}
+{{--                                    <input type="hidden" id="userid{{ Qs::hash($classAssessment['student_id']) }}"--}}
+{{--                                           value="{{ $classAssessment['userID'] }}">--}}
                                     <span class="display-mode"
-                                          id="display-mode{{ Qs::hash($classAssessment['student_id']) }}">{{ $classAssessment['total'] }}</span>
-                                    <input type="text" class="edit-mode form-control"
-                                           id="class{{ Qs::hash($classAssessment['student_id']) }}"
-                                           value="{{ $classAssessment['total'] }}" style="display: none;"
-                                           onchange="EnterResults('{{Qs::hash($classAssessment['student_id'])}}')">
+                                          id="display-mode{{ Qs::hash($enroll->user->student->id) }}">{{ $enroll->user->student->grades[0]->total }}</span>
+{{--                                    <input type="text" class="edit-mode form-control"--}}
+{{--                                           id="class{{ Qs::hash($classAssessment['student_id']) }}"--}}
+{{--                                           value="{{ $classAssessment['total'] }}" style="display: none;"--}}
+{{--                                           onchange="EnterResults('{{Qs::hash($classAssessment['student_id'])}}')">--}}
+                                    @endif
                                 </td>
-
-
-                                {{--                                <td class="text-center">--}}
-                                {{--                                    <a href="#" class="edit-total-link"><i--}}
-                                {{--                                                class="icon-pencil"></i></a>--}}
-                                {{--                                    <div class="list-icons">--}}
-                                {{--                                        <div class="dropdown">--}}
-                                {{--                                            <a href="#" class="list-icons-item" data-toggle="dropdown">--}}
-                                {{--                                                <i class="icon-menu9"></i>--}}
-                                {{--                                            </a>--}}
-
-                                {{--                                            <div class="dropdown-menu dropdown-menu-left">--}}
-                                {{--                                                <a href="#" class="dropdown-item edit-total-link"><i--}}
-                                {{--                                                            class="icon-pencil"></i> Edit</a>--}}
-
-                                {{--                                            </div>--}}
-                                {{--                                        </div>--}}
-                                {{--                                    </div>--}}
-                                {{--                                </td>--}}
                             </tr>
                         @endforeach
                         </tbody>
@@ -118,7 +101,7 @@
                                                         data-placeholder="Choose..." name="academic" required
                                                         id="nal_id" class="select-search form-control">
                                                     <option value="">Choose</option>
-                                                    <option value="{{ Qs::hash($class[0]['apid'] ) }}">{{ $class[0]['code']  }}</option>
+                                                    <option value="{{ Qs::hash($class_ass->academic_period_id ) }}">{{ $class_ass->academicPeriod->code  }}</option>
 
                                                 </select>
                                             </div>
@@ -173,10 +156,10 @@
                                               enctype="multipart/form-data">
                                             @csrf
 
-                                            <input type="hidden" name="academic" value="{{ $class[0]['apid']  }}">
-                                            <input type="hidden" name="course" value="{{ $class[0]['courseCode'] }}">
-                                            <input type="hidden" name="title" value="{{ $class[0]['courseName'] }}">
-                                            <input type="hidden" name="assesTotal" value="{{  $class[0]['assess_total'] }}">
+                                            <input type="hidden" name="academic" value="{{ $class_ass->academic_period_id  }}">
+                                            <input type="hidden" name="course" value="{{ $class_ass->course->code }}">
+                                            <input type="hidden" name="title" value="{{ $class_ass->course->name }}">
+                                            <input type="hidden" name="assesTotal" value="{{  $class_ass->class_assessments[0]->total }}">
 
                                             <div class="form-group row">
                                                 <label for="classID"
@@ -190,9 +173,11 @@
                                                 </div>
                                             </div>
                                             <input type="hidden" id="idc" name="AssessIDTemplate"
-                                                   value="{{ $class[0]['assessmentId'] }}">
+                                                   value="{{ $class_ass->class_assessments[0]->assessment_type_id }}">
+                                            <input type="hidden" id="idc" name="backroute"
+                                                   value="{{ $class_ass->class_assessments[0]->assessment_type_id }}">
                                             <input type="hidden" id="assessid" name="classIDTemplate"
-                                                   value="{{ $class[0]['classID'] }}">
+                                                   value="{{ $class_ass->id }}">
                                             <button type="submit" class="btn btn-primary">Upload and Preview</button>
                                             <button type="button" onclick="downloadCSVtemplate()" class="btn btn-primary">Download CSV Template</button>
                                         </form>
@@ -202,9 +187,9 @@
                                         <table class="table table-bordered table-hover datatable-button-html5-columns">
                                             <thead>
                                             <tr>
-                                                {{--                                                @foreach($data[0] as $column => $value)--}}
-                                                {{--                                                    <th>{{ $column }}</th>--}}
-                                                {{--                                                @endforeach--}}
+                                                                                                @foreach($data[0] as $column => $value)
+                                                                                                    <th>{{ $column }}</th>
+                                                                                                @endforeach
                                                 <th> SIN</th>
                                                 <th> CODE</th>
                                                 <th> COURSE</th>
