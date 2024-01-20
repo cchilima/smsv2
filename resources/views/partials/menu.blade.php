@@ -224,7 +224,7 @@
                     @endif
 
                 @endif
-                @if(true)
+                @if(Qs::userIsTeamSAT() || Qs::userIsSuperAdmin())
                     <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['getPublishProgramsCas','exams.index', 'exams.edit', 'assessments.index', 'assessments.edit', 'assessments.store', 'classAssessments.index',
                                                          'classAssessments.edit', 'classAssessments.show', 'classAssessments.store', 'classAssessments.create','import.process','getPublishPrograms','getPramResults','myClassStudentList','myClassList',
                                                          'reports.index','getPramResultsLevel']) ? 'nav-item-expanded nav-item-open' : '' }} ">

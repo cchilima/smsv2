@@ -9,6 +9,7 @@ use App\Models\Academics\Program;
 use App\Models\Academics\ProgramCourses;
 use App\Models\Academics\StudyMode;
 use App\Models\Academics\AcademicPeriodInformation;
+use App\Models\Enrollments\Enrollment;
 use App\Models\Users\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -57,6 +58,10 @@ class Student extends Model
     public function programCourses()
     {
         return $this->hasManyThrough(ProgramCourses::class, Grade::class, 'student_id', 'course_id', 'id', 'course_id');
+    }
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class,'student_id');
     }
 
 }

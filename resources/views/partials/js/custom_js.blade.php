@@ -209,7 +209,7 @@
     function prepareUserinfor(userid) {
         $('.personal-infor span').hide();
         //console.log(userid);
-       // $('.personal-infor span').hide();
+        // $('.personal-infor span').hide();
         var firsname = $('#fname' + userid), midname = $('#mname' + userid), lastname = $('#lname' + userid),
             gender = $('#gender' + userid), email = $('#email' + userid), nrc = $('#nrc' + userid),
             passport = $('#passport' + userid),
@@ -248,9 +248,12 @@
 
 
     }
-    function UpdateNkininformation(id){
-        var kin_country_id = $('#kin_country_id'+id),kin_province_id = $('#kin_province_id'+id),kin_town_id = $('#kin_town_id'+id),
-            kin_relationship_id = $('#kin_relationship_id'+id),telephone = $('#telephone'+id),mobile = $('#mobile'+id),name = $('#name'+id);
+
+    function UpdateNkininformation(id) {
+        var kin_country_id = $('#kin_country_id' + id), kin_province_id = $('#kin_province_id' + id),
+            kin_town_id = $('#kin_town_id' + id),
+            kin_relationship_id = $('#kin_relationship_id' + id), telephone = $('#telephone' + id),
+            mobile = $('#mobile' + id), name = $('#name' + id);
         $('.next-of-kin-infor span').hide();
 
         kin_country_id.removeClass('d-none');
@@ -283,65 +286,8 @@
         study_mode_id.show();
         //let actual = $('#class' + classID).val();
 
-        // var displaymode = $('#display-mode' + classID);
-        // var textContent = displaymode.text();
-        // var input = $('#class' + classID);
-        //
-        // var totalElement = $(".assess-total");
-
-        // Get the text content and extract the total value
-        // var totalText = totalElement.text();
-        // var totalValue = totalText.match(/\d+/);
-        //
-        // var newValues = ((actual / 100) * totalValue)
-        //
-        // let apid = $('#apid' + classID).val(),
-        //     student_id = classID,
-        //     programID = $('#program' + classID).val(),
-        //     code = $('#course' + classID).val(),
-        //     title = $('#title' + classID).val(),
-        //     type = $('#assessid' + classID).val(),
-        //     id = $('#idc' + classID).val(),
-        //     userID = $('#userid'+ classID).val();
-
-
-        //url = url.replace(':id', classID);
-        // Perform an AJAX request to update the database with the new value
-        // You can use Laravel's route and controller for this
-        //console.log(newValues);
-        // $.ajax({
-        //     url: url, // Replace with the actual route
-        //     method: 'POST',
-        //     dataType: 'json',
-        //     data: {
-        //         academicPeriodID: apid,
-        //         programID: programID,
-        //         studentID: student_id,
-        //         code: code,
-        //         title: title,
-        //         total: newValues,
-        //         id: id,
-        //         type: type,
-        //         userID: userID
-        //     },
-        //     success: function (resp) {
-        //         // Update the display mode with the new value
-        //         console.log(resp)
-        //         if (resp.ok === true) {
-        //             displaymode.text(newValues);
-        //             displaymode.show();
-        //             input.hide();
-        //         } else {
-        //             displaymode.text(textContent);
-        //             displaymode.show();
-        //             input.hide();
-        //         }
-        //         resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({msg: resp.msg, type: 'danger'});
-        //     }, error: function (xhr, status, error) {
-        //         flash({msg: error, type: 'danger'})
-        //     }
-        // });
     }
+
     //academic classes for assessements
     function getAcClassesPD(ac_id) {
         var url = '<?php echo e(route('class-names', [':id'])); ?>';
@@ -360,12 +306,13 @@
                 $.each(resp, function (i, data) {
                     classId.append($('<option>', {
                         value: data.id,
-                        text: data.course.code+' - '+data.course.name
+                        text: data.course.code + ' - ' + data.course.name
                     }));
                 });
             }
         })
     }
+
     $('.edit-total-link').on('click', function () {
 
         var row = $(this).closest('tr');
@@ -378,6 +325,7 @@
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
+
     function updateExamResults(classID) {
         //date
         let newValuesendDate = $('#enddate' + classID).val();
@@ -417,7 +365,8 @@
             }
         });
     }
-    function downloadCSVtemplate(){
+
+    function downloadCSVtemplate() {
         let url = '{{ route('template.download')}}';
         var classID = $('input[name="classIDTemplate"]').val();
         var AssessID = $('input[name="AssessIDTemplate"]').val();
@@ -442,9 +391,9 @@
                     link.download = 'results_upload_template.csv'; // Set the default file name
                     link.click();
                 } else if (resp.ok && resp.msg) {
-                    flash({ msg: resp.msg, type: 'success' });
+                    flash({msg: resp.msg, type: 'success'});
                 } else {
-                    flash({ msg: resp.msg, type: 'danger' });
+                    flash({msg: resp.msg, type: 'danger'});
                 }
 
             }, error: function (xhr, status, error) {
@@ -453,6 +402,266 @@
         });
     }
 
+    function modifyMarks(id, student, code, name, grades) {
+        const user = JSON.parse(student);
+        //console.log(user);
+        //$('#staticBackdrop').modal('show');
+        var modalBody = $('#staticBackdrop .modal-body');
+        modalBody.empty();
+        const data = JSON.parse(grades);
+        //console.log(data);
+
+        // Check if the response is valid and contains data
+        if (data && data.length > 0) {
+            // Assuming that you want to update the modal body with data from the response
+
+            var title = $('#staticBackdropLabel');
+            title.text(user.first_name + ' ' + user.last_name);
+            // Clear the existing content in the modal body
+            modalBody.empty();
+            var assessmentHtml = '<div>';
+            assessmentHtml += '<p>Student Number : ' + id + '</p>';
+            assessmentHtml += '<p class="title">Code: ' + code + '</p>';
+            assessmentHtml += '<p class="header">Title: ' + name + '</p>';
+            assessmentHtml += '</div>';
+
+            modalBody.append(assessmentHtml);
+            data.forEach(function (assessment) {
+                //var assessmentHtml = '<div>';
+                var assessmentHtml = '<div class="assessment" data-outof="' + assessment.assessment_type.class_assessment.total + '" data-id="' +
+                    assessment.id + '" data-code="' + code+ '">';
+                assessmentHtml += '<p>Assessment: ' + assessment.assessment_type.name + '</p>';
+                assessmentHtml += '<p>' + assessment.total + ' Out of: ' + assessment.assessment_type.class_assessment.total + '</p>';
+                // assessmentHtml += '<label for="total">Total:</label>';
+                //assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="' + assessment.marks + '">';
+                assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
+                assessmentHtml += '<hr>';
+                // Add more fields as needed
+
+                assessmentHtml += '</div>';
+
+                modalBody.append(assessmentHtml);
+            });
+            var assessmentHtml = '<br/>';
+            assessmentHtml += ' <div class="form-check">';
+            assessmentHtml += '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
+            assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault1">Subtract</label>';
+            assessmentHtml += '</div>';
+            assessmentHtml += '<div class="form-check">';
+            assessmentHtml += '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
+            assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault2">Add</label>';
+            assessmentHtml += '</div>';
+            modalBody.append(assessmentHtml);
+
+            // Show the modal
+            $('#staticBackdrop').modal('show');
+        } else {
+            // Handle the case where there is no data or an error occurred
+            flash({msg: 'No Assessments found for the course', type: 'danger'})
+        }
+    }
+
+    function StrMod4All(classID) {
+        var modalBody = $('#staticBackdrop .modal-body');
+        modalBody.empty();
+        var url = '<?php echo e(route('update.assessments')); ?>';
+        $('#assesmentID').val('');
+
+        $.ajax({
+            url: url, // Replace with the actual route
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                classID: classID
+            },
+            success: function (resp) {
+                // Update the display mode with the new value
+                console.log(resp)
+                // Check if the response is valid and contains data
+                if (resp && 'id' in resp) {
+                    // Assuming that you want to update the modal body with data from the response
+
+                    var title = $('#staticBackdropLabel');
+                    title.text(resp.course.code + ' - ' + resp.course.name);
+                    // Clear the existing content in the modal body
+                    modalBody.empty();
+                    var assessmentHtml = '<div>';
+                    assessmentHtml += '<p class="title">Code: ' + resp.course.code + '</p>';
+                    assessmentHtml += '<p class="header">Title: ' + resp.course.name + '</p>';
+                    assessmentHtml += '</div>';
+
+                    modalBody.append(assessmentHtml);
+                    resp.class_assessments.forEach(function (assessment) {
+                        //var assessmentHtml = '<div>';
+                        var assessmentHtml = '<div class="assessment" data-apid="' + resp.academic_period_id + '" data-code="' +
+                            resp.course.code + '" data-id="' + assessment.assessment_type.id + '"data-outof="' + assessment.total + '">';
+                        assessmentHtml += '<p>Assessment: ' + assessment.assessment_type.name + '</p>';
+                        assessmentHtml += '<p>Out of: ' + assessment.total + '</p>';
+                        // assessmentHtml += '<label for="total">Total:</label>';
+                        assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
+                        assessmentHtml += '<hr>';
+                        // Add more fields as needed
+
+                        assessmentHtml += '</div>';
+
+                        modalBody.append(assessmentHtml);
+                    });
+                    var assessmentHtml = '<br/>';
+                    assessmentHtml += ' <div class="form-check">';
+                    assessmentHtml += '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
+                    assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault1">Subtract</label>';
+                    assessmentHtml += '</div>';
+                    assessmentHtml += '<div class="form-check">';
+                    assessmentHtml += '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
+                    assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault2">Add</label>';
+                    assessmentHtml += '</div>';
+                    modalBody.append(assessmentHtml);
+
+                    // Show the modal
+                    $('#staticBackdrop').modal('show');
+                    $('#assesmentID').val('');
+                } else {
+                    // Handle the case where there is no data or an error occurred
+                    console.log('No data found in the response or an error occurred.');
+                    flash({msg: 'No Assessments found for the course', type: 'danger'})
+                    $('#assesmentID').val('');
+                }
+                //resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({msg: resp.msg, type: 'danger'});
+            }, error: function (xhr, status, error) {
+                flash({msg: error, type: 'danger'})
+                $('#assesmentID').val('');
+            }
+
+        });
+        $('#assesmentID').val('');
+        ;
+
+    }
+
+    function SubmitData() {
+        // Create an array to store the updated "Total" and "key" values
+        var updatedAssessments = [];
+        var modalBody = $('#staticBackdrop .modal-body');
+        var assessmentContainers = modalBody.find('.assessment');
+        assessmentContainers.each(function () {
+            var assessment = {};
+            assessment.total = $(this).find('.total-input').val();
+            //assessment.total = $(this).find('.total-input').val();
+            assessment.id = $(this).data('id');
+            assessment.code = $(this).data('code');
+            assessment.apid = $(this).data('apid');
+            assessment.outof = $(this).data('outof');
+            updatedAssessments.push(assessment);
+        });
+
+        let url = '{{ route('BoardofExaminersUpdateResults')}}';
+        var radioButtons = $('input[type="radio"]');
+        var lastClickedRadioButton = radioButtons.filter(':checked');
+        var operation = lastClickedRadioButton.val();
+        if (operation === '' || !lastClickedRadioButton.is(':checked')) {
+            flash({
+                msg: 'Check the operation to undertake',
+                type: 'danger'
+            });
+        } else{
+            $.ajax({
+                url: url,
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    updatedAssessments: updatedAssessments,
+                    operation: operation
+
+                },
+                success: function (resp) {
+                    console.log(resp)
+                    if (resp.ok === true) {
+                        $('#staticBackdrop').modal('hide');
+
+                    } else {
+                        $('#staticBackdrop').modal('hide');
+                    }
+                    resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({
+                        msg: resp.msg,
+                        type: 'danger'
+                    });
+                }, error: function (xhr, status, error) {
+                    flash({msg: error, type: 'danger'})
+                }
+            });
+            $('#staticBackdrop').modal('hide');
+        }
+        // You now have an array containing objects with "Total" and "key" values
+        console.log(updatedAssessments);
+        // $('#staticBackdrop').modal('hide');
+
+        // You can send this data to the server using an AJAX request or perform any other action as needed.
+    }
+
+
+
+    $('.user-all').change(function (e) {
+        var value = $('.user-all:checked').val();
+        if (value == 1) {
+            $('input[name="ckeck_user"]').prop('checked', true);
+            $('.publish-results-board').removeAttr('disabled');
+        } else {
+            $('input[name="ckeck_user"]').prop('checked', false);
+            $('.publish-results-board').attr('disabled', 'disabled');
+        }
+    });
+
+
+    $("input[name='ckeck_user']").change(function () {
+        if ($("input[name='ckeck_user']:checked").length > 0) {
+            $('.publish-results-board').removeAttr('disabled');
+        } else {
+            $('.publish-results-board').attr('disabled', 'disabled');
+        }
+    });
+
+    $('.publish-results-board').click(function (e) {
+        e.preventDefault();
+        var ids = [];
+
+        $.each($('input[name="ckeck_user"]:checked'), function () {
+            ids.push($(this).data('id'));
+        });
+        var academic = $('input[name="academic"]').val();
+        var type = $('input[name="typepublish"]').val();
+        console.log(academic);
+        if (ids != '') {
+            $(this).attr("disabled", true);
+            $(this).html('<i class="fa fa-spinner fa-spin"></i> Publish Results');
+            $.ajax({
+                url: '{{ route('publishProgramResults') }}',
+                type: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    ids: ids,
+                    academicPeriodID: academic,
+                    type:type
+                },
+                success: function (resp) {
+                    console.log(resp)
+                    $('.success-mail').css('display', 'block');
+                    $('.publish-results-board').attr("disabled", false);
+                    $('.publish-results-board').html('<i class="fa fa-share"></i> Publish Results');
+
+                    resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({
+                        msg: resp.msg,
+                        type: 'danger'
+                    });
+
+                }, error: function (xhr, status, error) {
+                    flash({msg: error, type: 'danger'})
+                    $('.success-mail').css('display', 'block');
+                    $('.publish-results-board').attr("disabled", false);
+                    $('.publish-results-board').html('<i class="fa fa-share"></i> Publish Results');
+                }
+            });
+        }
+    });
     function CloseModal() {
         $('#staticBackdrop').modal('hide');
     }
@@ -480,7 +689,7 @@
                         id="closeModalButton" data-bs-dismiss="modal">
                     Close
                 </button>
-                <button type="button" id="submitButton" class="btn btn-primary">Submit</button>
+                <button type="button" onclick="SubmitData()" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </div>

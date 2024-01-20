@@ -109,8 +109,16 @@ class StudentRepository
         $lastID = Student::latest('id')->first();
 
         if ($lastID) {
-            $afterRemovingFirstThree = intval(substr($lastID->id, 3));
-            $addonw = $afterRemovingFirstThree + 1;
+            //$afterRemovingFirstThree = intval(substr($lastID->id, 3));
+            //$addonw = $afterRemovingFirstThree + 1;
+            $firstTwoValues = substr($lastID->student_id, 0, 2);
+            $afterRemovingFirstThree = intval(substr($lastID->student_id, 3));
+            if (intval($firstTwoValues) === intval($year)) {
+                $addonw = $afterRemovingFirstThree + 1;
+            }else{
+                $addonw = 000 + 1;
+            }
+           // $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
 
             $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
         } else {
@@ -183,7 +191,7 @@ class StudentRepository
 
          return $hashedPassword;
     }
-    
+
     public function getStudentInfor($id){
 
         return Student::with('period_type','level','intake','study_mode','program',
@@ -195,24 +203,24 @@ class StudentRepository
     {
         // encrypt password
         $resetPasswordData['password'] = $this->encryptPassword($resetPasswordData['password']);
-    
+
         // get user account
         $user = $this->findUser($resetPasswordData['user_id']);
 
         // remove non essential array properties
         unset($resetPasswordData['user_id']);
         unset($resetPasswordData['password_confirmation']);
-        
+
         // handle checkbox value
         $resetPasswordData['force_password_reset'] = ($resetPasswordData['force_password_reset'] == 'on') ? 1 : 0;
 
         // update user account
         $passwordResetted = $user->update($resetPasswordData);
-    
+
         // give user feedback
         if ($passwordResetted) {
             return true;
         }
     }
-    
+
 }

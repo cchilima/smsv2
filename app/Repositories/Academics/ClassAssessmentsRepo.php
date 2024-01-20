@@ -5,9 +5,13 @@ namespace App\Repositories\Academics;
 use App\Models\Academics\AcademicPeriod;
 use App\Models\Academics\AcademicPeriodClass;
 use App\Models\Academics\ClassAssessment;
+use App\Models\Academics\Course;
 use App\Models\Academics\Grade;
+use App\Models\Academics\Program;
+use App\Models\Academics\ProgramCourses;
 use App\Models\Admissions\Student;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ClassAssessmentsRepo
 {
@@ -18,7 +22,7 @@ class ClassAssessmentsRepo
 
     public function getAll()
     {
-        return ClassAssessment::with('classes','assessments')->get();
+        return ClassAssessment::with('classes', 'assessments')->get();
     }
 
     public function getPeriodType($data)
@@ -33,9 +37,11 @@ class ClassAssessmentsRepo
 
     public function find($id)
     {
-        return ClassAssessment::with('classes','assessments')->find($id);
+        return ClassAssessment::with('classes', 'assessments')->find($id);
     }
-    public function getClassAssessments($class_id,$assess_id){
+
+    public function getClassAssessments($class_id, $assess_id)
+    {
         $user = Auth::user();
 
         if ($user->userType->title == 'instructor') {
@@ -67,15 +73,16 @@ class ClassAssessmentsRepo
             //return AcademicPeriodClass::with('class_assessments.assessment_type','enrollments.user.student', 'academicPeriod', 'instructor', 'course')->find($id);
         }
     }
+
     public static function getAllReadyPublish($order = 'created_at')
     {
         $user = Auth::user();
-        if ($user->userType->title == 'instructor'){
+        if ($user->userType->title == 'instructor') {
             return AcademicPeriod::whereHas('classes', function ($query) use ($user) {
                 $query->where('instructor_id', $user->id);
             })->whereHas('grades')->get();
 
-        }else {
+        } else {
             //$data = now();
             return AcademicPeriod::whereHas('grades')
                 ->where('ac_end_date', '>=', now())
@@ -83,8 +90,324 @@ class ClassAssessmentsRepo
 
         }
     }
-    public function publishAvailablePrograms(){
-        return Student::has('grades')->with('programCourses')->get();
+
+    public function publishAvailablePrograms($id)
+    {
+        $result = Program::join('program_courses', 'programs.id', '=', 'program_courses.program_id')
+            ->join('course_levels', 'course_levels.id', '=', 'program_courses.course_level_id')
+            ->join('grades', 'grades.course_id', '=', 'program_courses.course_id')
+            ->join('qualifications', 'programs.qualification_id', '=', 'qualifications.id')
+            ->groupBy('programs.name', 'programs.code', 'programs.id', 'grades.student_id', 'grades.publication_status', 'qualification', 'course_levels.name', 'course_levels.id')
+            ->select(
+                'programs.name as program_name',
+                'programs.code as program_code',
+                'programs.id as program_id',
+                'course_levels.name as course_level_name',
+                'course_levels.id as course_level_id',
+                'qualifications.name as qualification',
+                'grades.publication_status as status',
+                DB::raw('COUNT(DISTINCT grades.student_id) as students')
+            )
+            ->where('grades.academic_period_id', $id)
+            ->get();
+
+        $programsData = [];
+        foreach ($result as $item) {
+            $programId = $item->program_id;
+            if (!isset($programsData[$programId])) {
+                $programsData[$programId] = [
+                    'name' => $item->program_name,
+                    'code' => $item->program_code,
+                    'id' => $item->program_id,
+                    'qualifications' => $item->qualification,
+                    'status' => $item->status,
+                    'students' => $item->students,
+                    'levels' => [],
+                ];
+            }
+            $programsData[$programId]['levels'][] = [
+                'name' => $item->course_level_name,
+                'id' => $item->course_level_id,
+            ];
+        }
+        return array_values($programsData);
+    }
+
+    public function getCaGrades($level, $pid, $aid)
+    {
+        Student::where('program_id', $pid)->where('course_level_id', $level)->with(['grades' => function ($query) use ($aid) {
+            $query->whereNot('assessment_type_id', 1)->where('academic_period_id', $aid);
+        }, 'program', 'user', 'level', 'grades.assessment_type', 'grades.course'])->paginate(3, ['*'], 'page', 1);
+        //->get();
+
+        return Student::where('program_id', $pid)->where('course_level_id', $level)
+            ->with(['enrollments.class.course.grades' => function ($query) use ($aid) {
+                $query->whereNot('assessment_type_id', 1)->where('academic_period_id', $aid);
+            }, 'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'])->paginate(3, ['*'], 'page', 1);
+
+    }
+
+    public function total_students($level, $pid, $aid)
+    {
+        return Student::where('program_id', $pid)
+            ->where('course_level_id', $level)
+            ->with([
+                'grades' => function ($query) use ($aid) {
+                    $query->whereNot('assessment_type_id', 1)->where('academic_period_id', $aid);
+                },
+                'program',
+                'user',
+                'level',
+                'grades.assessment_type'
+            ])
+            ->count();
+    }
+
+    public function getGrade($id)
+    {
+        $grade = Grade::find($id);
+        return $grade->total;
+    }
+
+    public function getGradeAll($assessmentID, $code, $academicPeriodID, $studentID)
+    {
+        return Grade::where([
+            'assessment_type_id' => $assessmentID,
+            'course_code' => $code,
+            'academic_period_id' => $academicPeriodID,
+            'student_id' => $studentID
+        ])->value('total');
+    }
+
+    public function updateGrade($id, $total)
+    {
+        return Grade::find($id)->update($total);
+    }
+
+    public function getClassAssessmentCas($id)
+    {
+        return AcademicPeriodClass::with('class_assessments.assessment_type', 'course')->find($id);
+    }
+
+    public function getStudentId($code, $assessment_type_id, $academicPeriodID)
+    {
+        $studentTotals = Grade::where([
+            'course_code' => $code,
+            'assessment_type_id' => $assessment_type_id,
+            'academic_period_id' => $academicPeriodID
+        ])->select('student_id')->distinct()->get();
+
+        return $studentTotals->pluck('student_id')->toArray();
+    }
+
+    public function UpdateGradeAll($assessmentID, $code, $academicPeriodID, $studentID, $newTotal)
+    {
+        Grade::where([
+            'assessment_type_id' => $assessmentID,
+            'course_code' => $code,
+            'academic_period_id' => $academicPeriodID,
+            'student_id' => $studentID
+        ])->update([
+            'total' => $newTotal,
+        ]);
+    }
+    public function publishGrades($id, $apid)
+    {
+        Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)
+            ->update([
+                'publication_status' => 1,
+            ]);
+    }
+    public function getStudentDetails($id)
+    {
+        return Student::where('user_id',$id)->with('user','program')->first();
+    }
+
+    public function GetCaStudentGrades($id)
+    {
+        $student_id = Student::where('user_id',$id)->first();
+        $student = $student_id->id;
+
+        $grades = Grade::where('student_id', $student)->whereNot('assessment_type_id', 1)
+            ->with(['academicPeriods','student'])->select('course_id','academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->selectRaw('SUM(total) as total_sum')
+            ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id','course_id')
+            ->orderBy('academic_period_id')
+            ->orderBy('course_code')
+            ->get();
+        $organizedResults = [];
+
+        foreach ($grades as $grade) {
+
+            $academicPeriodId = $grade->academic_period_id;
+            //$academicPeriodId = 'courses';
+            $course = [
+                'course_code' => $grade->course_code,
+                'course_title' => $grade->course_title,
+                'student_id' => $grade->student_id,
+                'total' => $grade->total_sum,
+                'outof' => $this->getoutOfTotal($grade->course_id,$grade->academic_period_id)
+            ];
+
+            if (!isset($organizedResults[$academicPeriodId])) {
+                $organizedResults[$academicPeriodId] = [
+                    'academic_period_name' => $grade->academicPeriods->name,
+                    'academic_period_code' => $grade->academicPeriods->code,
+                    'academic_period_id' => $grade->academicPeriods->id,
+                    'comments' => $this->comments($grade->student_id,$grade->academicPeriods->id),
+                ];
+            }
+
+            $organizedResults[$academicPeriodId]['grades'][] = $course;
+        }
+
+        return $organizedResults;
+    }
+    public function getoutOfTotal($course_id,$apid){
+        $class_id = AcademicPeriodClass::where('academic_period_id',$apid)->where('course_id',$course_id)->first();
+        if ($class_id) {
+            $grades = ClassAssessment::where('academic_period_class_id', $class_id->id)->whereNot('assessment_type_id', 1)
+                ->select('academic_period_class_id')
+                ->selectRaw('SUM(total) as total_sum')
+                ->groupBy('academic_period_class_id')
+                ->orderBy('academic_period_class_id')
+                ->first();
+            return $grades->total_sum;
+        }else{
+            return 0;
+        }
+    }
+
+
+    //for exams
+    public function comments($student, $academicPeriodID)
+    {
+
+        // check all couses failed if they have passed in the current academic period.
+
+        $courses = Grade::where('student_id', $student)->whereNot('assessment_type_id', 1)->where('academic_period_id', $academicPeriodID)
+            ->with(['academicPeriods','student'])->select('academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->selectRaw('SUM(total) as total_sum')
+            ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->orderBy('academic_period_id')
+            ->orderBy('course_code')
+            ->get();
+
+        $courseCount    = count($courses);
+        $courses        = (object)$courses;
+
+        # Filter passed and failed courses
+        $passedCourse = 0;
+        $failedCourse = 0;
+
+        /*----*/
+        foreach ($courses as $course) {
+
+        //    if ($course['gradeType'] == 1) {
+
+                if ($course['total_score'] >= 40 || $course['total_score'] == -1) { # -1 is for exeptions
+
+                    $coursePassed = $course['course_code'];
+                    $passedCourse = $passedCourse + 1;
+
+                    $coursesPassed[]      = $coursePassed;
+                    $coursesPassedArray[] = $course;
+
+                    $passedCourses[]      = $passedCourse;
+                } else {
+
+                    // Check if course was taken before and has been cleared now
+
+                    $courseFailed                   = $course['course_code'];
+                    $courseFailedArray[]            = $course;
+                    $failedCourse                   = $failedCourse + 1;
+                    $coursesFailed[]                = $courseFailed;
+                }
+                // will be a grading for CBU based on the program
+//            } else {
+//
+//                if ($course['total_score'] >= 50 || $course['total_score'] == -1) { # -1 is for exeptions
+//
+//                    $coursePassed = $course['course_code'];
+//                    $passedCourse = $passedCourse + 1;
+//
+//                    $coursesPassed[]      = $coursePassed;
+//                    $coursesPassedArray[] = $course;
+//
+//                    $passedCourses[]      = $passedCourse;
+//                } else {
+//
+//                    $courseFailed                   = $course['course_code'];
+//                    $courseFailedArray[]            = $course;
+//                    $failedCourse                   = $failedCourse + 1;
+//                    $coursesFailed[]                = $courseFailed;
+//                }
+//            }
+        }
+
+        if ($courseCount == $failedCourse) {
+
+            foreach ($courses as $course) {
+                if ($course['total_score'] == 0) {
+                    $comment = '';
+                } else {
+                    $comment = 'Part Time';
+                    //$comment = 'Repeat year';
+                }
+            }
+        }
+        $status = '';
+        if ($passedCourse == $courseCount) {
+            $comment = "Clear Pass";
+            $status = 'new';
+        }
+        if ($courseCount - 1 == $passedCourse) {
+            $coursesToRepeat = implode(", ", $coursesFailed);
+            $comment = 'Proceed, RPT ' . $coursesToRepeat;
+            $status = 'new';
+        }
+        if ($courseCount - 2 == $passedCourse) {
+            $coursesToRepeat = implode(", ", $coursesFailed);
+            $comment = 'Proceed, RPT ' . $coursesToRepeat;
+            $status = 'new';
+        }
+
+        if ($courseCount - 3 == $passedCourse) {
+            $coursesToRepeat = implode(", ", $coursesFailed);
+            $comment = 'Part time ' . $coursesToRepeat;
+            $status = 'same';
+        }
+
+        if ($courseCount - 4 == $passedCourse) {
+            $coursesToRepeat = implode(", ", $coursesFailed);
+            //$coursesToRepeat = array_merge($data['coursesFailed'],$data['coursesPassed']); //with comment Repeat year
+            // $comment = 'Repeat Year ';
+            $comment = 'Part time ' . $coursesToRepeat;
+            $status = 'same';
+        }
+
+
+        if (empty($comment)) {
+            $comment = '';
+            $status = 'same';
+        }
+
+
+        if (empty($courseFailedArray)) {
+            $courseFailedArray = [];
+        }
+        if (empty($coursesPassedArray)) {
+            $coursesPassedArray = [];
+        }
+
+        return $data = [
+            'comment'            => $comment,
+            'coursesPassed'      => $coursesPassedArray,
+            'coursesPassedCount' => $passedCourse,
+            'coursesFailed'      => $courseFailedArray,
+            'coursesFailedCount' => $failedCourse,
+            'status'             => $status,
+        ];
     }
 
 }

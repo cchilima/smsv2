@@ -18,10 +18,10 @@ class ProgramCourses extends Model
         return $this->belongsTo(Course::class, 'course_id', 'id');
     }
 
-//    public function programs()
-//    {
-//        return $this->belongsTo(Program::class, 'program_id', 'id');
-//    }
+    public function programs()
+    {
+        return $this->belongsTo(Program::class, 'program_id', 'id');
+    }
 
     public function levels()
     {
@@ -50,6 +50,6 @@ class ProgramCourses extends Model
 
     public function grade()
     {
-        return $this->hasOne(Grade::class, 'course_id', 'course_id');
+        return $this->hasOne(Grade::class, 'course_id');
     }
 }

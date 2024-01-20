@@ -12,9 +12,9 @@ class Grade extends Model
 
     protected $fillable = ['course_code', 'course_title', 'total', 'publication_status', 'student_id', 'academic_period_id', 'assessment_type_id','course_id'];
 
-    public function classAssessment()
+    public function assessment_type()
     {
-        return $this->hasMany(ClassAssessment::class, 'class_assessment_id','id');
+        return $this->belongsTo(AssessmentType::class, 'assessment_type_id','id');
     }
     public function users()
     {
@@ -22,7 +22,7 @@ class Grade extends Model
     }
     public function academicPeriods()
     {
-        return $this->hasMany(AcademicPeriod::class, 'academic_period_id','id');
+        return $this->belongsTo(AcademicPeriod::class, 'academic_period_id','id');
     }
 
     public function student()
@@ -32,6 +32,25 @@ class Grade extends Model
 
     public function programCourses()
     {
+        return $this->hasMany(ProgramCourses::class, 'course_id', 'course_id');
+    }
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+    public function programCourse()
+    {
         return $this->belongsTo(ProgramCourses::class, 'course_id', 'course_id');
     }
+    public function class_assessment()
+    {
+        return $this->belongsTo(ClassAssessment::class, 'assessment_type_id', 'assessment_type_id');
+    }
+    public function academic_periods()
+    {
+        return $this->belongsTo(AcademicPeriod::class, 'academic_period_id', 'id');
+    }
+
+
+
 }

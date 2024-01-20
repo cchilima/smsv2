@@ -51,6 +51,9 @@ Route::group(['prefix' => 'assess'], function (){
     Route::get('/student-list/{class}/{assessid}',[ClassAssessmentsController::class,'StudentListResults'])->name('myClassStudentList');
     Route::post('/process',[ClassAssessmentsController::class,'ProcessUploadedResults'])->name('import.process');
     Route::post('/results-upload-template',[ClassAssessmentsController::class,'DownloadResultsTemplate'])->name('template.download');
+    Route::post('/get-results-update',[ClassAssessmentsController::class,'getAssessToUpdate'])->name('update.assessments');
+    Route::post('/board-exam-update',[ClassAssessmentsController::class,'BoardofExaminersUpdateResults'])->name('BoardofExaminersUpdateResults');
+    Route::post('/publish-program-results',[ClassAssessmentsController::class,'PublishProgramResults'])->name('publishProgramResults');
 
     Route::group(['prefix' => 'cas'], function (){
         Route::get('/publish-cas-program-list/{id}',[ClassAssessmentsController::class,'GetProgramsToPublishCas'])->name('getPublishProgramsCas');
@@ -58,6 +61,12 @@ Route::group(['prefix' => 'assess'], function (){
         Route::post('/load-more',[ClassAssessmentsController::class,'LoadMoreResultsCas'])->name('load.more.results.board.Cas');
     });
 
+});
+Route::group(['prefix' => 'student'], function (){
+
+    Route::get('/results',[ClassAssessmentsController::class,'MyResults'])->name('student-exam_results');
+    Route::get('/ca-results',[ClassAssessmentsController::class,'MyCAResults'])->name('student_ca_results');
+    Route::get('/exam-registration',[ClassAssessmentsController::class,'ExamRegistration'])->name('student-exam_registration');
 });
 
 Route::resource('courses', CourseController::class);
