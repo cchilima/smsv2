@@ -302,7 +302,7 @@
 
                                                     </ul>
                                                 </li>
-                                                <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['smyClassList','getPublishPrograms','getPramResults']) ? 'nav-item-expanded nav-item-open' : 'getPublishPrograms' }}">
+                                                <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['smyClassList','getPublishPrograms','getPramResults','getPublishPrograms','getPramResultsLevel']) ? 'nav-item-expanded nav-item-open' : 'getPublishPrograms' }}">
                                                     <a href="#" class="nav-link"><span> Publish results</span></a>
                                                     <ul class="nav nav-group-sub"
                                                         data-submenu-title="Manage Students">
@@ -312,12 +312,12 @@
                                                                    class="nav-link {{ in_array(Route::currentRouteName(), ['getPublishPrograms','getPramResults' ]) ? 'active' : '' }}">Academic
                                                                     Periods</a>
                                                                 <ul class="nav nav-group-sub">
-{{--                                                                    @foreach(\App\Repositories\Academicperiods::getAllReadyPublish('code') as $c)--}}
-{{--                                                                        <li class="nav-item"><a--}}
-{{--                                                                                href="{{ route('getPublishPrograms', Qs::hash($c->id)) }}"--}}
-{{--                                                                                class="nav-link  {{ in_array(Route::currentRouteName(), ['getPublishPrograms','getPramResults' ]) ? 'active' : '' }}">{{ $c->code }}</a>--}}
-{{--                                                                        </li>--}}
-{{--                                                                    @endforeach--}}
+                                                                    @foreach(\App\Repositories\Academics\ClassAssessmentsRepo::getAllReadyPublish('code') as $c)
+                                                                        <li class="nav-item"><a
+                                                                                href="{{ route('getPublishPrograms', Qs::hash($c->id)) }}"
+                                                                                class="nav-link  {{ in_array(Route::currentRouteName(), ['getPublishPrograms' ]) ? 'active' : '' }}">{{ $c->code }}</a>
+                                                                        </li>
+                                                                    @endforeach
                                                                 </ul>
 
                                                             </li>

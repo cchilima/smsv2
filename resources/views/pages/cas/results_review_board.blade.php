@@ -51,7 +51,7 @@
                                         @endphp
                                         <select data-placeholder="Choose..." required name="assesmentID"
                                                 id="assesmentID" class=" select-search form-control"
-                                                onchange="StrMod4All(this.value)">
+                                                onchange="StrMod4All(this.value,0)">
                                             <option value=""></option>
                                             @foreach ($grades as $student)
                                                 @foreach($student->enrollments as $courses)
@@ -96,7 +96,7 @@
                                                 <input type="hidden" name="level_name"
                                                        value="{{ $student->course_level_id }}">
                                                 <input type="hidden" name="type"
-                                                       value="typepublish">
+                                                       value="0">
                                             </div>
 
                                             <thead>
@@ -168,31 +168,5 @@
                 </div>
             </div>
         </div>
-        <!-- Modal -->
-{{--        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"--}}
-{{--             aria-labelledby="staticBackdropLabel" aria-hidden="false">--}}
-{{--            <div class="modal-dialog modal-dialog-centered">--}}
-{{--                <div class="modal-content row col card card-body">--}}
-{{--                    <div class="modal-header">--}}
-{{--                        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>--}}
-{{--                        --}}{{--                        <div class="list-icons">--}}
-{{--                        --}}{{--                            <a class="list-icons-item closeModalButton" onclick="modifyMarksCloseModal()"--}}
-{{--                        --}}{{--                               data-action="remove"></a>--}}
-{{--                        --}}{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                    <div class="modal-body p-3">--}}
-{{--                        ...--}}
-{{--                    </div>--}}
-{{--                    <div class="modal-footer">--}}
-{{--                        <button type="button" class="btn btn-secondary closeModalButton"--}}
-{{--                                onclick="modifyMarksCloseModal()"--}}
-{{--                                id="closeModalButton" data-bs-dismiss="modal">--}}
-{{--                            Close--}}
-{{--                        </button>--}}
-{{--                        <button type="button" id="submitButton" class="btn btn-primary">Submit</button>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
 @endsection
 

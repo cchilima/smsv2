@@ -135,16 +135,119 @@ class ClassAssessmentsRepo
 
     public function getCaGrades($level, $pid, $aid)
     {
-        Student::where('program_id', $pid)->where('course_level_id', $level)->with(['grades' => function ($query) use ($aid) {
-            $query->whereNot('assessment_type_id', 1)->where('academic_period_id', $aid);
-        }, 'program', 'user', 'level', 'grades.assessment_type', 'grades.course'])->paginate(3, ['*'], 'page', 1);
-        //->get();
-
         return Student::where('program_id', $pid)->where('course_level_id', $level)
-            ->with(['enrollments.class.course.grades' => function ($query) use ($aid) {
+            ->with(['enrollments.class' => function ($query) use ($aid) {
+                $query->where('academic_period_id', $aid);
+            }, 'enrollments.class.course.grades' => function ($query) use ($aid) {
                 $query->whereNot('assessment_type_id', 1)->where('academic_period_id', $aid);
             }, 'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'])->paginate(3, ['*'], 'page', 1);
 
+    }
+
+    public function getCaGradesLoad($level, $pid, $aid, $current_page, $last_page, $per_page)
+    {
+        return Student::where('program_id', $pid)->where('course_level_id', $level)
+            ->with(['enrollments.class' => function ($query) use ($aid) {
+                $query->where('academic_period_id', $aid);
+            }, 'enrollments.class.course.grades' => function ($query) use ($aid) {
+                $query->whereNot('assessment_type_id', 1)->where('academic_period_id', $aid);
+            }, 'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'])->paginate($per_page, ['*'], 'page', $current_page + 1);
+
+    }
+
+    public function getGrades($level, $pid, $aid)
+    {
+//        return Student::where('program_id', $pid)->where('course_level_id', $level)
+//            ->with(['enrollments.class' => function ($query) use ($aid) {
+//                $query->where('academic_period_id', $aid);
+//            },'enrollments.class.course.grades' => function ($query) use ($aid) {
+//                $query->whereNot('assessment_type_id', 1)->where('academic_period_id', $aid);
+//            }, 'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'])->paginate(3, ['*'], 'page', 1);
+//        return Student::where('program_id', $pid)->where('course_level_id', $level)
+//            ->with([
+//                'enrollments.class' => function ($query) use ($aid) {
+//                    $query->where('academic_period_id', $aid);
+//                },
+//                'enrollments.class.course.grades' => function ($query) use ($aid) {
+//                    $query->select('course_id', 'academic_period_id',
+//                        DB::raw('SUM(CASE WHEN assessment_type_id = 1 THEN total ELSE 0 END) as exam'),
+//                        DB::raw('SUM(CASE WHEN assessment_type_id != 1 THEN total ELSE 0 END) as ca'),
+//                        DB::raw('SUM(total) as total_sum')
+//                    )
+//                        ->where('academic_period_id', $aid)
+//                        ->groupBy('course_id', 'academic_period_id');
+//                },
+//                'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'
+//            ])->paginate(3, ['*'], 'page', 1);
+
+
+        $result = Student::where('program_id', $pid)->where('course_level_id', $level)
+            ->with([
+                'enrollments.class' => function ($query) use ($aid) {
+                    $query->where('academic_period_id', $aid);
+                },
+                'enrollments.class.course.grades' => function ($query) use ($aid) {
+                    $query->select('course_id', 'academic_period_id', 'course_code', 'course_title',
+                        DB::raw('SUM(CASE WHEN assessment_type_id = 1 THEN total ELSE 0 END) as exam'),
+                        DB::raw('SUM(CASE WHEN assessment_type_id != 1 THEN total ELSE 0 END) as ca'),
+                        DB::raw('SUM(total) as total_sum')
+                    )
+                        ->where('academic_period_id', $aid)
+                        ->groupBy('course_code', 'course_title', 'course_id', 'academic_period_id');
+                },
+                'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'
+            ])->paginate(3, ['*'], 'page', 1);
+        $result->getCollection()->transform(function ($item) use ($aid) {
+            $item['calculated_grade'] = $this->comments($item['id'], $aid, 1);
+            $item->enrollments->transform(function ($enrollment) use ($item, $aid) {
+                $enrollment->class->course->grades->transform(function ($grade) use ($item, $aid) {
+                    $grade['grade'] = $this->calculateGrade($grade->total_sum);
+                    $grade['outof'] = $this->getClassAssessmentExams($grade->course_id, $aid);
+                    $gradeID = Grade::where('assessment_type_id', 1)->where('academic_period_id', $aid)->where('course_id', $grade->course_id)->where('student_id', $item['id'])->first();
+                    $grade['id'] = $gradeID->id;
+                    return $grade;
+                });
+                return $enrollment;
+            });
+            return $item;
+        });
+        return $result;
+    }
+
+    public function getGradesLoad($level, $pid, $aid, $current_page, $last_page, $per_page)
+    {
+        $result = Student::where('program_id', $pid)->where('course_level_id', $level)
+            ->with([
+                'enrollments.class' => function ($query) use ($aid) {
+                    $query->where('academic_period_id', $aid);
+                },
+                'enrollments.class.course.grades' => function ($query) use ($aid) {
+                    $query->select('course_id', 'academic_period_id', 'course_code', 'course_title',
+                        DB::raw('SUM(CASE WHEN assessment_type_id = 1 THEN total ELSE 0 END) as exam'),
+                        DB::raw('SUM(CASE WHEN assessment_type_id != 1 THEN total ELSE 0 END) as ca'),
+                        DB::raw('SUM(total) as total_sum')
+                    )
+                        ->where('academic_period_id', $aid)
+                        ->groupBy('course_code', 'course_title', 'course_id', 'academic_period_id');
+                },
+                'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'
+            ])->paginate($per_page, ['*'], 'page', $current_page + 1);
+
+        $result->getCollection()->transform(function ($item) use ($aid) {
+            $item['calculated_grade'] = $this->comments($item['id'], $aid, 1);
+            $item->enrollments->transform(function ($enrollment) use ($item, $aid) {
+                $enrollment->class->course->grades->transform(function ($grade) use ($item, $aid) {
+                    $grade['grade'] = $this->calculateGrade($grade->total_sum);
+                    $grade['outof'] = $this->getClassAssessmentExams($grade->course_id, $aid);
+                    $gradeID = Grade::where('assessment_type_id', 1)->where('academic_period_id', $aid)->where('course_id', $grade->course_id)->where('student_id', $item['id'])->first();
+                    $grade['id'] = $gradeID->id;
+                    return $grade;
+                });
+                return $enrollment;
+            });
+            return $item;
+        });
+        return $result;
     }
 
     public function total_students($level, $pid, $aid)
@@ -184,9 +287,32 @@ class ClassAssessmentsRepo
         return Grade::find($id)->update($total);
     }
 
-    public function getClassAssessmentCas($id)
+    public function getClassAssessmentCas($id, $exam)
     {
-        return AcademicPeriodClass::with('class_assessments.assessment_type', 'course')->find($id);
+        //dd($exam);
+        if ($exam == 1) {
+            return AcademicPeriodClass::with(['class_assessments' => function ($query) {
+                $query->where('assessment_type_id', 1);
+            }, 'course', 'class_assessments.assessment_type'])->find($id);
+
+        } else {
+            ///return AcademicPeriodClass::with('class_assessments.assessment_type', 'course')->find($id);
+            //return AcademicPeriodClass::with('class_assessments.assessment_type', 'course')->find($id);
+            return AcademicPeriodClass::with(['class_assessments' => function ($query) {
+                $query->whereNot('assessment_type_id', 1);
+            }, 'course', 'class_assessments.assessment_type'])->find($id);
+        }
+
+    }
+
+    public function getClassAssessmentExams($course_id, $apid)
+    {
+        $class = AcademicPeriodClass::where('course_id', $course_id)->where('academic_period_id', $apid)->with(['class_assessments'
+        => function ($query) use ($apid) {
+                $query->where('assessment_type_id', 1);
+            }, 'course'])->first();
+        //dd($class->class_assessments[0]->total);
+        return $class->class_assessments[0]->total;
     }
 
     public function getStudentId($code, $assessment_type_id, $academicPeriodID)
@@ -211,27 +337,36 @@ class ClassAssessmentsRepo
             'total' => $newTotal,
         ]);
     }
-    public function publishGrades($id, $apid)
+
+    public function publishGrades($id, $apid, $type)
     {
-        Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)
-            ->update([
-                'publication_status' => 1,
-            ]);
+        if ($type == 1) {
+            Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->where('assessment_type_id', 1)
+                ->update([
+                    'publication_status' => 1,
+                ]);
+        } else {
+            Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->whereNot('assessment_type_id', 1)
+                ->update([
+                    'publication_status' => 1,
+                ]);
+        }
     }
+
     public function getStudentDetails($id)
     {
-        return Student::where('user_id',$id)->with('user','program')->first();
+        return Student::where('user_id', $id)->with('user', 'program')->first();
     }
 
     public function GetCaStudentGrades($id)
     {
-        $student_id = Student::where('user_id',$id)->first();
+        $student_id = Student::where('user_id', $id)->first();
         $student = $student_id->id;
 
         $grades = Grade::where('student_id', $student)->whereNot('assessment_type_id', 1)
-            ->with(['academicPeriods','student'])->select('course_id','academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->with(['academicPeriods', 'student'])->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
             ->selectRaw('SUM(total) as total_sum')
-            ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id','course_id')
+            ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id', 'course_id')
             ->orderBy('academic_period_id')
             ->orderBy('course_code')
             ->get();
@@ -246,7 +381,7 @@ class ClassAssessmentsRepo
                 'course_title' => $grade->course_title,
                 'student_id' => $grade->student_id,
                 'total' => $grade->total_sum,
-                'outof' => $this->getoutOfTotal($grade->course_id,$grade->academic_period_id)
+                'outof' => $this->getoutOfTotal($grade->course_id, $grade->academic_period_id)
             ];
 
             if (!isset($organizedResults[$academicPeriodId])) {
@@ -254,7 +389,7 @@ class ClassAssessmentsRepo
                     'academic_period_name' => $grade->academicPeriods->name,
                     'academic_period_code' => $grade->academicPeriods->code,
                     'academic_period_id' => $grade->academicPeriods->id,
-                    'comments' => $this->comments($grade->student_id,$grade->academicPeriods->id),
+                    'comments' => $this->comments($grade->student_id, $grade->academicPeriods->id, 0),
                 ];
             }
 
@@ -263,8 +398,51 @@ class ClassAssessmentsRepo
 
         return $organizedResults;
     }
-    public function getoutOfTotal($course_id,$apid){
-        $class_id = AcademicPeriodClass::where('academic_period_id',$apid)->where('course_id',$course_id)->first();
+
+    public function GetExamGrades($id)
+    {
+        $student_id = Student::where('user_id', $id)->first();
+        $student = $student_id->id;
+
+        $grades = Grade::where('student_id', $student)
+            ->with(['academicPeriods', 'student'])->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->selectRaw('SUM(total) as total_sum')
+            ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id', 'course_id')
+            ->orderBy('academic_period_id')
+            ->orderBy('course_code')
+            ->get();
+        $organizedResults = [];
+
+        foreach ($grades as $grade) {
+
+            $academicPeriodId = $grade->academic_period_id;
+            //$academicPeriodId = 'courses';
+            $course = [
+                'course_code' => $grade->course_code,
+                'course_title' => $grade->course_title,
+                'student_id' => $grade->student_id,
+                'total' => $grade->total_sum,
+                'grade' => $this->calculateGrade($grade->total_sum)
+            ];
+
+            if (!isset($organizedResults[$academicPeriodId])) {
+                $organizedResults[$academicPeriodId] = [
+                    'academic_period_name' => $grade->academicPeriods->name,
+                    'academic_period_code' => $grade->academicPeriods->code,
+                    'academic_period_id' => $grade->academicPeriods->id,
+                    'comments' => $this->comments($grade->student_id, $grade->academicPeriods->id, 1),
+                ];
+            }
+
+            $organizedResults[$academicPeriodId]['grades'][] = $course;
+        }
+
+        return $organizedResults;
+    }
+
+    public function getoutOfTotal($course_id, $apid)
+    {
+        $class_id = AcademicPeriodClass::where('academic_period_id', $apid)->where('course_id', $course_id)->first();
         if ($class_id) {
             $grades = ClassAssessment::where('academic_period_class_id', $class_id->id)->whereNot('assessment_type_id', 1)
                 ->select('academic_period_class_id')
@@ -273,60 +451,73 @@ class ClassAssessmentsRepo
                 ->orderBy('academic_period_class_id')
                 ->first();
             return $grades->total_sum;
-        }else{
+        } else {
             return 0;
         }
     }
 
 
     //for exams
-    public function comments($student, $academicPeriodID)
+    public function comments($student, $academicPeriodID, $type)
     {
 
         // check all couses failed if they have passed in the current academic period.
+        if ($type == 1) {
+            $courses = Grade::where('student_id', $student)->where('academic_period_id', $academicPeriodID)
+                ->with(['academicPeriods', 'student'])->select('academic_period_id', 'course_code', 'course_title', 'student_id')
+                ->selectRaw('SUM(total) as total_score')
+                ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id')
+                ->orderBy('academic_period_id')
+                ->orderBy('course_code')
+                ->get();
 
-        $courses = Grade::where('student_id', $student)->whereNot('assessment_type_id', 1)->where('academic_period_id', $academicPeriodID)
-            ->with(['academicPeriods','student'])->select('academic_period_id', 'course_code', 'course_title', 'student_id')
-            ->selectRaw('SUM(total) as total_sum')
-            ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id')
-            ->orderBy('academic_period_id')
-            ->orderBy('course_code')
-            ->get();
+        } else {
+            $courses = Grade::where('student_id', $student)->whereNot('assessment_type_id', 1)->where('academic_period_id', $academicPeriodID)
+                ->with(['academicPeriods', 'student'])->select('academic_period_id', 'course_code', 'course_title', 'student_id')
+                ->selectRaw('SUM(total) as total_score')
+                ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id')
+                ->orderBy('academic_period_id')
+                ->orderBy('course_code')
+                ->get();
 
-        $courseCount    = count($courses);
-        $courses        = (object)$courses;
+        }
+
+        $courseCount = count($courses);
+        //$courses = (object)$courses;
 
         # Filter passed and failed courses
         $passedCourse = 0;
         $failedCourse = 0;
 
+        //  dd($courses);
+
         /*----*/
         foreach ($courses as $course) {
+            //dd($course->total_score);
+            //    if ($course['gradeType'] == 1) {
 
-        //    if ($course['gradeType'] == 1) {
+            if ($course->total_score >= 50 || $course->total_score == -1) { # -1 is for exeptions
 
-                if ($course['total_score'] >= 40 || $course['total_score'] == -1) { # -1 is for exeptions
+                $coursePassed = $course->course_code;
+                $passedCourse = $passedCourse + 1;
 
-                    $coursePassed = $course['course_code'];
-                    $passedCourse = $passedCourse + 1;
+                $coursesPassed[] = $coursePassed;
+                $coursesPassedArray[] = $course;
 
-                    $coursesPassed[]      = $coursePassed;
-                    $coursesPassedArray[] = $course;
+                $passedCourses[] = $passedCourse;
+            } else {
 
-                    $passedCourses[]      = $passedCourse;
-                } else {
+                // Check if course was taken before and has been cleared now
 
-                    // Check if course was taken before and has been cleared now
-
-                    $courseFailed                   = $course['course_code'];
-                    $courseFailedArray[]            = $course;
-                    $failedCourse                   = $failedCourse + 1;
-                    $coursesFailed[]                = $courseFailed;
-                }
-                // will be a grading for CBU based on the program
+                $courseFailed = $course->course_code;
+                $courseFailedArray[] = $course;
+                $failedCourse = $failedCourse + 1;
+                $coursesFailed[] = $courseFailed;
+            }
+            // will be a grading for CBU based on the program
 //            } else {
 //
-//                if ($course['total_score'] >= 50 || $course['total_score'] == -1) { # -1 is for exeptions
+//                if ($course['total_score'] >= 40 || $course['total_score'] == -1) { # -1 is for exeptions
 //
 //                    $coursePassed = $course['course_code'];
 //                    $passedCourse = $passedCourse + 1;
@@ -401,13 +592,46 @@ class ClassAssessmentsRepo
         }
 
         return $data = [
-            'comment'            => $comment,
-            'coursesPassed'      => $coursesPassedArray,
+            'comment' => $comment,
+            'coursesPassed' => $coursesPassedArray,
             'coursesPassedCount' => $passedCourse,
-            'coursesFailed'      => $courseFailedArray,
+            'coursesFailed' => $courseFailedArray,
             'coursesFailedCount' => $failedCourse,
-            'status'             => $status,
+            'status' => $status,
         ];
+    }
+
+    public
+    static function calculateGrade($total)
+    {
+        // Define your grade thresholds and corresponding values here
+        if ($total == 0) {
+            return 'Not Examined';
+        } else if ($total == -1) {
+            return 'Exempted';
+        } else if ($total == -2) {
+            return 'Withdrew with Permission';
+        } else if ($total == -3) {
+            return 'Disqualified';
+        } else if ($total == 0) {
+            return 'NE';
+        } else if ($total >= 1 && $total <= 39) {
+            return 'D';
+        } else if ($total >= 40 && $total <= 49) {
+            return 'D+';
+        } else if ($total >= 50 && $total <= 55) {
+            return 'C';
+        } else if ($total >= 56 && $total <= 61) {
+            return 'C+';
+        } else if ($total >= 62 && $total <= 67) {
+            return 'B';
+        } else if ($total >= 68 && $total <= 75) {
+            return 'B+';
+        } else if ($total >= 76 && $total <= 85) {
+            return 'A';
+        } else if ($total >= 86 && $total <= 100) {
+            return 'A+';
+        }
     }
 
 }

@@ -310,12 +310,19 @@ class ClassAssessmentsController extends Controller
     public function GetProgramsToPublishCas(string $id)
     {
         $id = Qs::decodeHash($id);
-
+        $period = $this->academic->find($id);
+        $programs = $this->classaAsessmentRepo->publishAvailablePrograms($id);
+        //dd($programs);
+        return view('pages.cas.edit', compact('programs', 'period'));
+    }
+    public function GetProgramsToPublish(string $id)
+    {
+        $id = Qs::decodeHash($id);
         $period = $this->academic->find($id);
 
         $programs = $this->classaAsessmentRepo->publishAvailablePrograms($id);
         //dd($programs);
-        return view('pages.cas.edit', compact('programs', 'period'));
+        return view('pages.class_assessments.edit', compact('programs','period'));
     }
 
     public function GetProgramResultsLevelCas(Request $request)
@@ -327,16 +334,64 @@ class ClassAssessmentsController extends Controller
         $pid = Qs::decodeHash($pid);
         $level = Qs::decodeHash($level);
         $grades = $this->classaAsessmentRepo->getCaGrades($level, $pid, $aid);
-
         $data['period'] = $this->academic->find($aid);
         $data['program_data'] = $this->programsRepo->findOne($pid);
         $data['level'] = $this->levels->find($level);
         $data['students'] = $this->classaAsessmentRepo->total_students($level, $pid, $aid);
         //dd($grades);
         return view('pages.cas.results_review_board', compact('grades'), $data);
-        //return view('pages.academics.class_assessments.update_marks', compact('results'));
     }
+    public function LoadMoreResultsCas(Request $request)
+    {
+        $aid = $request->query('aid');
+        $pid = $request->query('pid');
+        $level = $request->query('level');
+        $current_page = $request->input('current_page');
+        $last_page = $request->input('last_page');
+        $per_page = $request->input('per_page');
 
+//        $aid = Qs::decodeHash($aid);
+//        $pid = Qs::decodeHash($pid);
+//        $level = Qs::decodeHash($level);
+        $grades = $this->classaAsessmentRepo->getCaGradesLoad($level, $pid, $aid,$current_page,$last_page,$per_page);
+        return response()->json($grades);
+    }
+    public function LoadMoreResults(Request $request)
+    {
+
+
+      $aid = $request->query('aid');
+        $pid = $request->query('pid');
+        $level = $request->query('level');
+//        $aid = Qs::decodeHash($aid);
+//        $pid = Qs::decodeHash($pid);
+//        $level = Qs::decodeHash($level);
+        $current_page = $request->input('current_page');
+        $last_page = $request->input('last_page');
+        $per_page = $request->input('per_page');
+
+        $grades = $this->classaAsessmentRepo->getGradesLoad($level, $pid, $aid,$current_page,$last_page,$per_page);
+
+        return response()->json($grades);
+    }
+    public function GetProgramResultsLevel(Request $request)
+    {
+        $aid = $request->query('aid');
+        $pid = $request->query('pid');
+        $level = $request->query('level');
+        $aid = Qs::decodeHash($aid);
+        $pid = Qs::decodeHash($pid);
+        $level = Qs::decodeHash($level);
+
+        $grades = $this->classaAsessmentRepo->getGrades($level, $pid, $aid);
+
+        $data['period'] = $this->academic->find($aid);
+        $data['program_data'] = $this->programsRepo->findOne($pid);
+        $data['level'] = $this->levels->find($level);
+        $data['students'] = $this->classaAsessmentRepo->total_students($level, $pid, $aid);
+        //dd($grades);
+        return view('pages.class_assessments.results_review_board', compact('grades'),$data);
+    }
     public
     function BoardofExaminersUpdateResults(Request $request)
     {
@@ -385,16 +440,18 @@ class ClassAssessmentsController extends Controller
     function getAssessToUpdate(Request $request)
     {
         $class_id = $request->input('classID');
-        $data = $this->classaAsessmentRepo->getClassAssessmentCas($class_id);
+        $exam = $request->input('exam');
+        $data = $this->classaAsessmentRepo->getClassAssessmentCas($class_id,$exam);
         return response()->json($data);
     }
     public
     function PublishProgramResults(Request $request)
     {
-        //dd($request);
+        ;
         $student_id = $request->input('ids');
         $academicPeriodID = $request->input('academicPeriodID');
-        $this->classaAsessmentRepo->publishGrades($request->ids, $academicPeriodID);
+        $type = $request->input('type');
+        $this->classaAsessmentRepo->publishGrades($request->ids, $academicPeriodID,$type);
         return Qs::json('Marks updated successfully', true);
     }
     public function MyCAResults()
@@ -404,6 +461,14 @@ class ClassAssessmentsController extends Controller
         $student = $this->classaAsessmentRepo->getStudentDetails($user->id);
         //dd($results);
         return view('pages.students.exams.ca_results',compact('results','student'));
+    }
+    public function MyResults()
+    {
+        $user = Auth::user();
+        $results = $this->classaAsessmentRepo->GetExamGrades($user->id);
+        $student = $this->classaAsessmentRepo->getStudentDetails($user->id);
+        //dd($results);
+        return view('pages.students.exams.exam_results',compact('results','student'));
     }
 
 }

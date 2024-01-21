@@ -27,7 +27,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $program['name'] }}</td>
-                        <td>{{ $program['qualification'] }}</td>
+                        <td>{{ $program['qualifications'] }}</td>
                         <td>{{ $program['students'] }}</td>
                         <td>
                             {{ ($program['status'] == 0 ? 'unpublished' : 'published') }}
@@ -47,11 +47,11 @@
 
                                     <div class="dropdown-menu dropdown-menu-left">
 
-                                        <a href="{{ route('getPramResults',['aid'=>Qs::hash($apid),'pid'=>Qs::hash($program['id'])]) }}"
+                                        <a href="{{ route('getPramResults',['aid'=>Qs::hash($period->id),'pid'=>Qs::hash($program['id'])]) }}"
                                            class="dropdown-item">View Results <i class="icon-pencil"></i></a>
                                         @foreach($program['levels'] as $level)
-                                            <a href="{{ route('getPramResultsLevel',['aid'=>Qs::hash($apid),'pid'=>Qs::hash($program['id']),'level'=>Qs::hash($level['level_id'] )]) }}"
-                                               class="dropdown-item">View {{ $level['level_name'] }} Results <i class="icon-pencil"></i></a>
+                                            <a href="{{ route('getPramResultsLevel',['aid'=>Qs::hash($period->id),'pid'=>Qs::hash($program['id']),'level'=>Qs::hash($level['id'] )])  }}"
+                                               class="dropdown-item">View {{ $level['name'] }} Results <i class="icon-pencil"></i></a>
                                         @endforeach
 
                                     @if($program['status'] == 0)
@@ -59,7 +59,7 @@
                                                 @csrf
 
                                                 <input type="hidden" name="programID" value="{{ $program['id'] }}">
-                                                <input type="hidden" name="academicPeriodID" value="{{ $apid }}">
+                                                <input type="hidden" name="academicPeriodID" value="{{ $period->id }}">
 
                                                 <div class="text-right">
                                                     <button id="ajax-btn" type="submit" class="dropdown-item">Publish Results <i class="icon-paperplane ml-2"></i></button>

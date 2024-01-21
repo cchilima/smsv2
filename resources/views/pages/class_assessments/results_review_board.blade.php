@@ -1,11 +1,6 @@
 @extends('layouts.master')
-@if (!empty($results))
-    @php
-        $firstAcademicData = reset($results);
-        $academicData = $firstAcademicData['academic'];
-    @endphp
-    @section('page_title', $firstAcademicData['academicperiodname'] .'s Results')
-
+@if (!empty($grades))
+    @section('page_title', $period->name .'s Results')
 @else
     @section('page_title', 'No results found')
 
@@ -34,19 +29,19 @@
                 <div class="container">
                     <div class="row justify-content-end">
                         <div class="col-md-12">
-                            @if (!empty($results))
+                            @if (!empty($grades))
                                 <div class="d-flex justify-content-between align-items-center float-right">
                                     <label class="mb-2">
                                         Publish All <input type="checkbox" value="1" name="user-all"
                                                            class="user-all form-check">
                                     </label>
                                 </div>
-                                <h3>Program: {{ $firstAcademicData['program_name'] }}
-                                    ({{ $firstAcademicData['program_code'] }}
+                                <h3>Program: {{ $program_data->name }}
+                                    ({{ $program_data->code }}
                                     )</h3>
-                                <h4>{{ $firstAcademicData['level_name'] }}'s Results</h4>
-                                <h4 class="mb-4 mt-0">Results for {{ $firstAcademicData['total_students'] }}
-                                    Students</h4>
+                                <h4>{{ $level->name }}'s Results</h4>
+                                <h4 class="mb-4 mt-0">Results for {{ $students }}
+                                    Students out</h4>
                                 <div class="row">
                                     <label for="assesmentID" class="col-lg-3 col-form-label font-weight-semibold">Course(Moderate
                                         for all): <span class="text-danger">*</span></label>
@@ -56,18 +51,18 @@
                                         @endphp
                                         <select data-placeholder="Choose..." required name="assesmentID"
                                                 id="assesmentID" class=" select-search form-control"
-                                                onchange="StrMod4All('{{$firstAcademicData['program']}}','{{$firstAcademicData['academic']}}', this.value)">
+                                                onchange="StrMod4All(this.value,1)">
                                             <option value=""></option>
-                                            @foreach ($results as $academicData)
-                                                @foreach ($academicData['students'] as $student)
-                                                    @foreach($student['courses'] as $course)
+                                            @foreach ($grades as $student)
+                                                @foreach($student->enrollments as $courses)
+                                                    @foreach($courses->class->course->grades as $course)
                                                         @php
-                                                            $code = $course['code'];
-                                                            $title = $course['title'];
+                                                            $code = $course->course_code;
+                                                            $title = $course->course_title;
                                                             $optionValue = $code . ' - ' . $title;
                                                         @endphp
                                                         @if (!in_array($optionValue, $uniqueCourseCodes))
-                                                            <option value="{{ $code }}">{{ $optionValue }}</option>
+                                                            <option value="{{ $courses->class->id }}">{{ $optionValue }}</option>
                                                             @php
                                                                 $uniqueCourseCodes[] = $optionValue;
                                                             @endphp
@@ -84,117 +79,100 @@
                                 <h3>Results not found</h3>
                             @endif
                             <div class="loading-more-results pr-4" style="height: 600px; overflow-y: scroll">
-                                @foreach ($results as $academicData)
-                                    <div style="height: 800px;overflow-y: scroll">
-                                        @foreach ($academicData['students'] as $student)
-                                            <table class="table table-hover table-striped-columns mb-3">
-                                                <div class="justify-content-between">
-                                                    <h5><strong>{{ $student['name'] }}</strong></h5>
-                                                    <h5><strong>{{ $student['student_id'] }}</strong></h5>
-                                                    <input type="hidden" name="academic"
-                                                           value="{{ $firstAcademicData['academic'] }}">
-                                                    <input type="hidden" name="program"
-                                                           value="{{ $firstAcademicData['program'] }}">
-                                                    <input type="hidden" name="level_name"
-                                                           value="{{ $firstAcademicData['level_id'] }}">
-                                                    <input type="hidden" name="typepublish"
-                                                           value="Exam">
-                                                </div>
+                                <div style="height: 800px;overflow-y: scroll">
+                                    @foreach ($grades as $student)
+                                        <table class="table table-hover table-striped-columns mb-3">
+                                            <div class="justify-content-between">
+                                                <h5>
+                                                    <strong>{{ $student->user->first_name.' '.$student->user->last_name }}</strong>
+                                                </h5>
+                                                <h5><strong>{{ $student->student_id }}</strong></h5>
+                                                <input type="hidden" name="academic"
+                                                       value="{{ $period->id }}">
+                                                <input type="hidden" name="program"
+                                                       value="{{ $program_data->id }}">
+                                                <input type="hidden" name="level_name"
+                                                       value="{{ $program_data->id }}">
+                                                <input type="hidden" name="level_name"
+                                                       value="{{ $student->course_level_id }}">
+                                                <input type="hidden" name="type"
+                                                       value="1">
+                                            </div>
 
-                                                <thead>
+                                            <thead>
+                                            <tr>
+                                                <th>S/N</th>
+                                                <th>Course Code</th>
+                                                <th>Course Name</th>
+
+                                                <th>Assessments</th>
+                                                <th>Modify</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach ($student->enrollments as $courses)
                                                 <tr>
-                                                    <th>S/N</th>
-                                                    <th>Course Code</th>
-                                                    <th>Course Name</th>
-                                                    <th>CA</th>
-                                                    <th>Exam</th>
-                                                    <th>Total</th>
-                                                    <th>Grade</th>
-                                                    <th>Modify</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                @foreach ($student['courses'] as $course)
-                                                    <tr>
-                                                        <th>{{ $loop->iteration }}</th>
-                                                        <td>{{ $course['code'] }}</td>
-                                                        <td>{{ $course['title'] }}</td>
-                                                        <td>{{ $course['CA']  }}</td>
-                                                        <td>
-                                                            @foreach($course['assessments'] as $assess)
-                                                                @if(!empty($assess['assessment_name']) && $assess['assessment_name']=='Exam')
-                                                                    {{ $assess['total'] }}
-                                                                @endif
+                                                    <th>{{ $loop->iteration }}</th>
+                                                    <td>{{ $courses->class->course->code  }}</td>
+                                                    <td>{{ $courses->class->course->name  }}</td>
+                                                    <td>
+                                                        <table class="table table-bordered table-hover table-striped">
+                                                            <tbody>
+                                                            <tr>
+                                                            <td>CA</td>
+                                                            <td>Exam</td>
+                                                            <td>Total</td>
+                                                            <td>Grade</td>
+                                                            </tr>
+                                                            @foreach ($courses->class->course->grades as $grade)
+                                                                <tr>
+                                                                    <td>{{ $grade->ca }}</td>
+                                                                    <td>{{ $grade->exam .' out of '.$grade->outof }}</td>
+                                                                    <td>{{ $grade->total_sum }}</td>
+                                                                    <td>{{ $grade->grade }}</td>
+                                                                </tr>
                                                             @endforeach
-                                                        </td>
-                                                        {{--                                        <td>{{ $course['CA'] }}</td>--}}
-                                                        <td>{{ $course['total'] }}</td>
-                                                        <td>{{ $course['grade'] }}</td>
-                                                        <td>
-                                                            @if(Qs::userIsTeamSA())
-                                                                <a onclick="modifyMarks('{{$student['student_id']}}','{{$firstAcademicData['program']}}','{{$firstAcademicData['academic']}}','{{ $course['code'] }}','exam')"
-                                                                   class="nav-link"><i class="icon-pencil"></i></a>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                                </tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td>
+                                                        @if(Qs::userIsTeamSA())
+                                                            <a onclick="modifyMarksExam('{{ $student->id }}','{{ $student->user }}','{{ $courses->class->course->code }}','{{ $courses->class->course->name }}','{{ $courses->class->course->grades }}')"
+                                                               class="nav-link"><i class="icon-pencil"></i></a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
 
-                                            </table>
-                                            <p class="bg-success p-3 align-bottom">Comment
-                                                : {{ $student['commentData'] }}
-                                                {{ Form::checkbox('ckeck_user', 1, false,['class'=>'ckeck_user  float-right p-5','data-id' => $student['student_id'] ]) }} {{ Form::label('publish', 'Publish', ['class' => 'mr-3 float-right']) }}</p>
-                                            <hr>
-                                        @endforeach
-
-                                    </div>
-                                @endforeach
+                                        </table>
+                                        <p class="bg-success p-4 align-bottom">
+                                            {{ $student->calculated_grade['comment'] }}
+                                            {{ Form::checkbox('ckeck_user', 1, false,['class'=>'ckeck_user  float-right p-5','data-id' => $student->id ]) }} {{ Form::label('publish', 'Publish', ['class' => 'mr-3 float-right']) }}</p>
+                                        <hr>
+                                    @endforeach
+                                </div>
                             </div>
                             <div>
                                 <button type="button" class="btn btn-primary publish-results-board btn-sm mt-3"
                                         disabled="disabled"><i class="fa fa-share"></i> Publish Results
                                 </button>
-                                @if($firstAcademicData['current_page'] === $firstAcademicData['last_page'])
+                                @if($grades->currentPage() === $grades->lastPage())
 
                                 @else
-                                    <button type="button" class="float-right mr-5 btn btn-primary load-more-results load-more-results-first btn-sm mt-3"
-                                    onclick="LoadMoreResults('{{ $firstAcademicData['current_page'] }}','{{ $firstAcademicData['last_page'] }}','{{ $firstAcademicData['per_page'] }}','{{$firstAcademicData['program']}}','{{$firstAcademicData['academic']}}','{{$firstAcademicData['level_id']}}')">
-                                    <i class="fa fa-share"></i> Load More
+                                    <button type="button"
+                                            class="float-right mr-5 btn btn-primary load-more-results load-more-results-first btn-sm mt-3"
+                                            onclick="LoadMoreResults('{{ $grades->currentPage() }}','{{ $grades->lastPage() }}','{{ $grades->perPage() }}','{{$program_data->id}}','{{ $period->id }}','{{ $student->course_level_id }}')">
+                                        <i class="fa fa-share"></i> Load More
                                     </button>
                                 @endif
 
 
-                                <p class="text-center" id="pagenumbers">page {{ $firstAcademicData['current_page'] }}
-                                    of {{ $firstAcademicData['last_page'] }}</p>
+                                <p class="text-center" id="pagenumbers">page {{ $grades->currentPage() }}
+                                    of {{ $grades->lastPage() }}</p>
 
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Modal -->
-        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-             aria-labelledby="staticBackdropLabel" aria-hidden="false">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content row col card card-body">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-                        {{--                        <div class="list-icons">--}}
-                        {{--                            <a class="list-icons-item closeModalButton" onclick="modifyMarksCloseModal()"--}}
-                        {{--                               data-action="remove"></a>--}}
-                        {{--                        </div>--}}
-                    </div>
-                    <div class="modal-body p-3">
-                        ...
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary closeModalButton"
-                                onclick="modifyMarksCloseModal()"
-                                id="closeModalButton" data-bs-dismiss="modal">
-                            Close
-                        </button>
-                        <button type="button" id="submitButton" class="btn btn-primary">Submit</button>
                     </div>
                 </div>
             </div>

@@ -61,13 +61,21 @@ Route::group(['prefix' => 'assess'], function (){
         Route::post('/load-more',[ClassAssessmentsController::class,'LoadMoreResultsCas'])->name('load.more.results.board.Cas');
     });
 
+    Route::group(['prefix' => 'exams'], function (){
+        Route::get('/publish-program-list/{id}',[ClassAssessmentsController::class,'GetProgramsToPublish'])->name('getPublishPrograms');
+        Route::get('/program-results/{aid}/{pid}',[ClassAssessmentsController::class,'GetProgramResults'])->name('getPramResults');
+        Route::get('/program-results-levels',[ClassAssessmentsController::class,'GetProgramResultsLevel'])->name('getPramResultsLevel');
+        Route::get('/results',[ClassAssessmentsController::class,'MyResults'])->name('student-exam_results');
+        Route::post('/load-more',[ClassAssessmentsController::class,'LoadMoreResults'])->name('load.more.results.board');
+    });
+
 });
 Route::group(['prefix' => 'student'], function (){
-
     Route::get('/results',[ClassAssessmentsController::class,'MyResults'])->name('student-exam_results');
     Route::get('/ca-results',[ClassAssessmentsController::class,'MyCAResults'])->name('student_ca_results');
     Route::get('/exam-registration',[ClassAssessmentsController::class,'ExamRegistration'])->name('student-exam_registration');
 });
+
 
 Route::resource('courses', CourseController::class);
 Route::resource('programs', ProgramController::class);
