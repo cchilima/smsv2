@@ -85,6 +85,7 @@
                                             <div class="justify-content-between">
                                                 <h5>
                                                     <strong>{{ $student->user->first_name.' '.$student->user->last_name }}</strong>
+                                                    <p>{{ $student->id }}</p>
                                                 </h5>
                                                 <h5><strong>{{ $student->student_id }}</strong></h5>
                                                 <input type="hidden" name="academic"
@@ -104,7 +105,6 @@
                                                 <th>S/N</th>
                                                 <th>Course Code</th>
                                                 <th>Course Name</th>
-
                                                 <th>Assessments</th>
                                                 <th>Modify</th>
                                             </tr>
@@ -124,7 +124,8 @@
                                                             <td>Total</td>
                                                             <td>Grade</td>
                                                             </tr>
-                                                            @foreach ($courses->class->course->grades as $grade)
+{{--                                                            @foreach ($courses->class->course->grades as $grade)--}}
+                                                            @foreach ($courses->class->course->grades->where('student_id', $student->id) as $grade)
                                                                 <tr>
                                                                     <td>{{ $grade->ca }}</td>
                                                                     <td>{{ $grade->exam .' out of '.$grade->outof }}</td>
@@ -147,7 +148,11 @@
 
                                         </table>
                                         <p class="bg-success p-4 align-bottom">
-                                            {{ $student->calculated_grade['comment'] }}
+                                            @if($student->calculated_grade['student_id'] == $student->id)
+                                                {{ $student->calculated_grade['comment'] }}
+                                            @endif
+
+
                                             {{ Form::checkbox('ckeck_user', 1, false,['class'=>'ckeck_user  float-right p-5','data-id' => $student->id ]) }} {{ Form::label('publish', 'Publish', ['class' => 'mr-3 float-right']) }}</p>
                                         <hr>
                                     @endforeach

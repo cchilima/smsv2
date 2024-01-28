@@ -403,13 +403,17 @@
     }
 
     function modifyMarks(id, student, code, name, grades) {
+        console.log(student );
+
         const user = JSON.parse(student);
         //console.log(user);
+        //console.log(typeof user );
         //$('#staticBackdrop').modal('show');
         var modalBody = $('#staticBackdrop .modal-body');
         modalBody.empty();
         const data = JSON.parse(grades);
         //console.log(data);
+
 
         // Check if the response is valid and contains data
         if (data && data.length > 0) {
@@ -427,20 +431,90 @@
 
             modalBody.append(assessmentHtml);
             data.forEach(function (assessment) {
-                //var assessmentHtml = '<div>';
-                var assessmentHtml = '<div class="assessment" data-outof="' + assessment.assessment_type.class_assessment.total + '" data-id="' +
-                    assessment.id + '" data-code="' + code + '">';
-                assessmentHtml += '<p>Assessment: ' + assessment.assessment_type.name + '</p>';
-                assessmentHtml += '<p>' + assessment.total + ' Out of: ' + assessment.assessment_type.class_assessment.total + '</p>';
-                // assessmentHtml += '<label for="total">Total:</label>';
-                //assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="' + assessment.marks + '">';
-                assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
-                assessmentHtml += '<hr>';
-                // Add more fields as needed
+                if (parseInt(assessment.student_id) === parseInt(id)) {
+                    //var assessmentHtml = '<div>';
+                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.assessment_type.class_assessment.total + '" data-id="' +
+                        assessment.id + '" data-code="' + code + '">';
+                    assessmentHtml += '<p>Assessment: ' + assessment.assessment_type.name + '</p>';
+                    assessmentHtml += '<p>' + assessment.total + ' Out of: ' + assessment.assessment_type.class_assessment.total + '</p>';
+                    // assessmentHtml += '<label for="total">Total:</label>';
+                    //assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="' + assessment.marks + '">';
+                    assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
+                    assessmentHtml += '<hr>';
+                    // Add more fields as needed
 
-                assessmentHtml += '</div>';
+                    assessmentHtml += '</div>';
 
-                modalBody.append(assessmentHtml);
+                    modalBody.append(assessmentHtml);
+                }
+            });
+            var assessmentHtml = '<br/>';
+            assessmentHtml += ' <div class="form-check">';
+            assessmentHtml += '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
+            assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault1">Subtract</label>';
+            assessmentHtml += '</div>';
+            assessmentHtml += '<div class="form-check">';
+            assessmentHtml += '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
+            assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault2">Add</label>';
+            assessmentHtml += '</div>';
+            modalBody.append(assessmentHtml);
+
+            // Show the modal
+            $('#staticBackdrop').modal('show');
+        } else {
+            // Handle the case where there is no data or an error occurred
+            flash({msg: 'No Assessments found for the course', type: 'danger'})
+        }
+    }
+    function modifyMarksCAsL(id, student, code, name, grades) {
+        console.log(student );
+
+       // const user = JSON.parse(student);
+        //console.log(user);
+        //console.log(typeof user );
+        //$('#staticBackdrop').modal('show');
+        var modalBody = $('#staticBackdrop .modal-body');
+        modalBody.empty();
+      //  const data = JSON.parse(grades);
+
+
+        const user = JSON.parse(decodeURIComponent(student));
+        const data = JSON.parse(decodeURIComponent(grades));
+        //console.log(data);
+
+
+        // Check if the response is valid and contains data
+        if (data && data.length > 0) {
+            // Assuming that you want to update the modal body with data from the response
+
+            var title = $('#staticBackdropLabel');
+            title.text(user.first_name + ' ' + user.last_name);
+            // Clear the existing content in the modal body
+            modalBody.empty();
+            var assessmentHtml = '<div>';
+            assessmentHtml += '<p>Student Number : ' + id + '</p>';
+            assessmentHtml += '<p class="title">Code: ' + code + '</p>';
+            assessmentHtml += '<p class="header">Title: ' + name + '</p>';
+            assessmentHtml += '</div>';
+
+            modalBody.append(assessmentHtml);
+            data.forEach(function (assessment) {
+                if (parseInt(assessment.student_id) === parseInt(id)) {
+                    //var assessmentHtml = '<div>';
+                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.assessment_type.class_assessment.total + '" data-id="' +
+                        assessment.id + '" data-code="' + code + '">';
+                    assessmentHtml += '<p>Assessment: ' + assessment.assessment_type.name + '</p>';
+                    assessmentHtml += '<p>' + assessment.total + ' Out of: ' + assessment.assessment_type.class_assessment.total + '</p>';
+                    // assessmentHtml += '<label for="total">Total:</label>';
+                    //assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="' + assessment.marks + '">';
+                    assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
+                    assessmentHtml += '<hr>';
+                    // Add more fields as needed
+
+                    assessmentHtml += '</div>';
+
+                    modalBody.append(assessmentHtml);
+                }
             });
             var assessmentHtml = '<br/>';
             assessmentHtml += ' <div class="form-check">';
@@ -468,7 +542,7 @@
         var modalBody = $('#staticBackdrop .modal-body');
         modalBody.empty();
         const data = JSON.parse(grades);
-        //console.log(data);
+        console.log(data);
 
         // Check if the response is valid and contains data
         if (data && data.length > 0) {
@@ -486,20 +560,84 @@
 
             modalBody.append(assessmentHtml);
             data.forEach(function (assessment) {
-                //var assessmentHtml = '<div>';
-                var assessmentHtml = '<div class="assessment" data-outof="' + assessment.outof + '" data-id="' +
-                    assessment.id + '" data-code="' + code + '">';
-                assessmentHtml += '<p>Assessment: Exam</p>';
-                assessmentHtml += '<p>' + assessment.exam + ' Out of: ' + assessment.outof + '</p>';
-                // assessmentHtml += '<label for="total">Total:</label>';
-                //assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="' + assessment.marks + '">';
-                assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
-                assessmentHtml += '<hr>';
-                // Add more fields as needed
+                if (assessment.student_id === parseInt(id)) {
+                    //var assessmentHtml = '<div>';
+                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.outof + '" data-id="' +
+                        assessment.id + '" data-code="' + code + '">';
+                    assessmentHtml += '<p>Assessment: Exam</p>';
+                    assessmentHtml += '<p>' + assessment.exam + ' Out of: ' + assessment.outof + '</p>';
+                    // assessmentHtml += '<label for="total">Total:</label>';
+                    //assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="' + assessment.marks + '">';
+                    assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
+                    assessmentHtml += '<hr>';
+                    // Add more fields as needed
 
-                assessmentHtml += '</div>';
+                    assessmentHtml += '</div>';
 
-                modalBody.append(assessmentHtml);
+                    modalBody.append(assessmentHtml);
+                }
+            });
+            var assessmentHtml = '<br/>';
+            assessmentHtml += ' <div class="form-check">';
+            assessmentHtml += '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
+            assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault1">Subtract</label>';
+            assessmentHtml += '</div>';
+            assessmentHtml += '<div class="form-check">';
+            assessmentHtml += '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
+            assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault2">Add</label>';
+            assessmentHtml += '</div>';
+            modalBody.append(assessmentHtml);
+
+            // Show the modal
+            $('#staticBackdrop').modal('show');
+        } else {
+            // Handle the case where there is no data or an error occurred
+            flash({msg: 'No Assessments found for the course', type: 'danger'})
+        }
+    }
+
+    function modifyMarksExamAjax(id, student, code, name, grades) {
+
+        var modalBody = $('#staticBackdrop .modal-body');
+        modalBody.empty();
+
+        const user = JSON.parse(decodeURIComponent(student));
+        const data = JSON.parse(decodeURIComponent(grades));
+        console.log(data);
+
+        // Check if the response is valid and contains data
+        if (data && data.length > 0) {
+            // Assuming that you want to update the modal body with data from the response
+
+            var title = $('#staticBackdropLabel');
+            title.text(user.first_name + ' ' + user.last_name);
+            // Clear the existing content in the modal body
+            modalBody.empty();
+            var assessmentHtml = '<div>';
+            assessmentHtml += '<p>Student Number : ' + id + '</p>';
+            assessmentHtml += '<p class="title">Code: ' + code + '</p>';
+            assessmentHtml += '<p class="header">Title: ' + name + '</p>';
+            assessmentHtml += '</div>';
+
+            modalBody.append(assessmentHtml);
+            //data.each(function (index, assessment) {
+                data.forEach(function (assessment) {
+                if (assessment.student_id === parseInt(id)) {
+                    //var assessmentHtml = '<div>';
+                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.outof + '" data-id="' +
+                        assessment.id + '" data-code="' + code + '">';
+                    assessmentHtml += '<p>Assessment: Exam</p>';
+                    assessmentHtml += '<p>' + assessment.exam + ' Out of: ' + assessment.outof + '</p>';
+                    // assessmentHtml += '<label for="total">Total:</label>';
+                    //assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="' + assessment.marks + '">';
+                    assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
+                    assessmentHtml += '<hr>';
+                    // Add more fields as needed
+
+                    assessmentHtml += '</div>';
+
+                    modalBody.append(assessmentHtml);
+                }
             });
             var assessmentHtml = '<br/>';
             assessmentHtml += ' <div class="form-check">';
@@ -739,29 +877,41 @@
                 per_page: per_page,
                 program: program,
                 academic: academic,
-                level_name: level
+                level: level
             },
-            success: function (data) {
-                console.log(data)
-                if (data && Object.keys(data).length > 0) {
-                    $.each(data, function (academicId, academicData) {
+            success: function (response) {
+                console.log(response)
+                if (response && Object.keys(response.data).length > 0) {
+                    $.each(response.data, function (index, student) {
                         // Loop through the students in each academic data
-                        $.each(academicData.students, function (studentId, student) {
-                            // Create a table row for each course
-                            var coursesHtml = '';
-                            var i = 1;
-                            $.each(student.courses, function (courseCode, course) {
+                        var coursesHtml = '';
+                        $.each(student.enrollments, function (index, infor) {
                                 coursesHtml += `
                                 <tr>
-                                    <td>${i++}</td>
-                                    <td>${courseCode}</td>
-                                    <td>${course.title}</td>
-                                    <td>${course.CA}</td>
-                                    <td>`;
+                                    <td>${(index+1)}</td>
+                                    <td>${infor.class.course.code }</td>
+                                    <td>${infor.class.course.name }</td>
+                                    <td>
+                                    <table class="table table-bordered table-hover table-striped">
+                                                            <tbody>`
+                                $.each(infor.class.course.grades, function (index, grade) {
+                                    if(parseInt(grade.student_id) === parseInt(student.id)){
+                                    coursesHtml += ` <tr>
+                                <td>${grade.assessment_type.name}</td>
+                                <td>${grade.total}</td>
+                                                                </tr>`
+                                }
+                                                           });
+                                    coursesHtml += `
+                                                                </tbody>
+                                                            </table>
+                                </td>
+                                        <td>`;
 
                                 if (true) {
+                                    var useri = JSON.stringify(student.user);
                                     coursesHtml += `<td>
-                                  <a onclick="modifyMarks('${student.student_id}','${academicData.program}','${academicData.academic}','${courseCode}')" class="nav-link"><i class="icon-pencil"></i></a>
+                                  <a onclick="modifyMarksCAsL('${ student.id }','${ encodeURIComponent(JSON.stringify(student.user)) }','${infor.class.course.code }','${ infor.class.course.name }','${ encodeURIComponent(JSON.stringify(infor.class.course.grades)) }')" class="nav-link"><i class="icon-pencil"></i></a>
                                 </td>`;
                                 }
                                 coursesHtml += `</td>
@@ -772,38 +922,35 @@
                             var studentHtml = `
                             <table class="table table-hover table-striped-columns mb-3">
                                 <div class="justify-content-between">
-                                                    <h5><strong>${student.name}</strong></h5>
-                                                    <h5><strong>${student.student_id}</strong></h5>
-
+                                                    <h5><strong>${student.user.first_name +' '+ student.user.first_name}</strong></h5>
+                                                    <h5><strong>${student.id}</strong></h5>
                                                 </div>
                                 <thead>
                                     <tr>
                                         <th>S/N</th>
-<th>Course Code</th>
+                                        <th>Course Code</th>
                                         <th>Course Name</th>
-                                        <th>Total</th>
+                                        <th>Assessments</th>
                                         <th>Modify</th>
                                     </tr>
                                 </thead>
                                 <tbody>${coursesHtml}</tbody>
                             </table>
-                            <p class="bg-success p-3 align-bottom">Comment: ${student.commentData}
-
-                            <input onchange="checkdata()" type="checkbox" name="ckeck_user" value="${1}" class="ckeck_user float-right p-5" data-id="${student.student_id}">
+                            <p class="bg-success p-3 align-bottom">
+                            <input onchange="checkdata()" type="checkbox" name="ckeck_user" value="${1}" class="ckeck_user float-right p-5" data-id="${student.id}">
                                 <label for="publish" class="mr-3 float-right">Publish</label>
                                 </p>
                             <hr>
                         `;
-                            updateLoadMoreButton(academicData);
-                            if (academicData.last_page === academicData.current_page) {
+                        updateLoadMoreButtonCAs(response, program, academic, level);
+                            if (response.last_page === response.current_page) {
                                 $('.load-more-results').hide();
                             }
 
                             // Append the studentHtml to a container div
                             $('.loading-more-results').append(studentHtml);
                         });
-                        $('#pagenumbers').text('Page ' + academicData.current_page + ' of ' + academicData.last_page)
-                    });
+                        $('#pagenumbers').text('Page ' + response.current_page + ' of ' + response.last_page)
 
                     // Append studentHtml to the resultsContainer
                     flash({msg: 'success', type: 'success'});
@@ -825,6 +972,7 @@
 
         // $('.load-more-results').attr("disabled", true);
         // $('.load-more-results').html('<i class="fa fa-spinner fa-spin"></i> Load More');
+        //console.log(current_page, last_page, per_page, program, academic, level);
 
 
         $.ajax({
@@ -837,82 +985,104 @@
                 per_page: per_page,
                 program: program,
                 academic: academic,
-                level_name: level
+                level: level
             },
-            success: function (data) {
-                console.log(data)
-                if (data && Object.keys(data).length > 0) {
-                    $.each(data, function (academicId, academicData) {
-                        // Loop through the students in each academic data
-                        $.each(academicData.students, function (studentId, student) {
+            success: function (response) {
+                console.log(response.data)
+                if (response && Object.keys(response.data).length > 0) {
+                    var coursesHtml = '';
+                    $.each(response.data, function (index, student) {
+                        // console.log(student.id)
+                        $.each(student.enrollments, function (index, infor) {
                             // Create a table row for each course
-                            var coursesHtml = '';
-                            $.each(student.courses, function (courseCode, course) {
-                                coursesHtml += `
+                            coursesHtml += `
                                 <tr>
-                                    <td>${courseCode}</td>
-                                    <td>${course.title}</td>
-                                    <td>${course.CA}</td>
-                                    <td>`;
-                                // Loop through assessments for the "Exam" value
-                                $.each(course.assessments, function (assessmentName, assessment) {
-                                    if (assessment.assessment_name === 'Exam') {
-                                        coursesHtml += `${assessment.total}`;
-                                    }
-                                });
-                                coursesHtml += `</td>
-                                    <td>${course.total}</td>
-                                    <td>${course.grade}</td>
-                                    <td>`;
-                                if (true) {
-                                    coursesHtml += `<td>
-                                  <a onclick="modifyMarks('${student.student_id}','${academicData.program}','${academicData.academic}','${courseCode}')" class="nav-link"><i class="icon-pencil"></i></a>
-                                </td>`;
+                                    <td>${1 + index}</td>
+                                    <td>${infor.class.course.code}</td>
+                                    <td>${infor.class.course.name}</td>
+
+                                    <td>
+                                    <table class="table table-bordered table-hover table-striped">
+                                                            <tbody>
+                                                            <tr>
+                                                            <td>CA</td>
+                                                            <td>Exam</td>
+                                                            <td>Total</td>
+                                                            <td>Grade</td>
+                                                            </tr>`;
+                            // Loop through assessments for the "Exam" value
+                            $.each(infor.class.course.grades, function (index, grade) {
+                                if (grade.student_id === student.id) {
+                                    coursesHtml += `<tr>
+                                                            <td>${grade.ca}</td>
+                                                            <td>${grade.exam + ' out of ' + grade.outof}</td>
+                                                            <td>${grade.total_sum}</td>
+                                                            <td>${grade.grade}</td>
+                                                        </tr>`;
                                 }
-                                coursesHtml += `</td>
-                                </tr>`;
                             });
 
-                            // Append the student data to your table
-                            var studentHtml = `
+
+                            coursesHtml += `   </tbody>
+                                                        </table>`;
+                            if (true) {
+                                coursesHtml += `<td>
+                                  <a onclick="modifyMarksExamAjax('${student.id}','${encodeURIComponent(JSON.stringify(student.user))}','${infor.class.course.code}','${infor.class.course.name}','${encodeURIComponent(JSON.stringify(infor.class.course.grades))}')" class="nav-link"><i class="icon-pencil"></i></a>
+                                </td>`;
+                            }
+                        });
+                        coursesHtml += `</td>
+                                </tr>`;
+                        // Append the student data to your table
+                        var studentHtml = `
                             <table class="table table-hover table-striped-columns mb-3">
-                                <div class="justify-content-between">
-                                                    <h5><strong>${student.name}</strong></h5>
-                                                    <h5><strong>${student.student_id}</strong></h5>
+                                            <div class="justify-content-between">
+                                                <h5>
+                                                    <strong>${student.user.first_name + ' ' + student.user.last_name}</strong>
+                                                    <p>${student.id}</p>
+                                                </h5>
+                                                <input type="hidden" name="academic"
+                                                       value="${academic}">
+                                                <input type="hidden" name="program"
+                                                       value="${student.program.id}">
+                                                <input type="hidden" name="level_name"
+                                                       value="${student.course_level_id}">
+                                                <input type="hidden" name="type"
+                                                       value="1">
+                                            </div>
 
-                                                </div>
-                                <thead>
-                                    <tr>
-                                        <th>Course Code</th>
-                                        <th>Course Name</th>
-                                        <th>CA</th>
-                                        <th>Exam</th>
-                                        <th>Total</th>
-                                        <th>Grade</th>
-                                        <th>Modify</th>
-                                    </tr>
-                                </thead>
-                                <tbody>${coursesHtml}</tbody>
+                                            <thead>
+                                            <tr>
+                                                <th>S/N</th>
+                                                <th>Course Code</th>
+                                                <th>Course Name</th>
+                                                <th>Assessments</th>
+                                                <th>Modify</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>${coursesHtml}</tbody>
                             </table>
-                            <p class="bg-success p-3 align-bottom">Comment: ${student.commentData}
+                            <p class="bg-success p-3 align-bottom">Comment: ${student.calculated_grade.comment}
 
-                            <input onchange="checkdata()" type="checkbox" name="ckeck_user" value="${1}" class="ckeck_user float-right p-5" data-id="${student.student_id}">
+                            <input onchange="checkdata()" type="checkbox" name="ckeck_user" value="${1}" class="ckeck_user float-right p-5" data-id="${student.id}">
                                 <label for="publish" class="mr-3 float-right">Publish</label>
                                 </p>
                             <hr>
                         `;
-                            updateLoadMoreButton(academicData);
-                            if (academicData.last_page === academicData.current_page) {
-                                $('.load-more-results').hide();
-                            }
+                        //  });
+                        updateLoadMoreButton(response, program, academic, level);
+                        if (response.last_page === response.current_page) {
+                            $('.load-more-results').hide();
+                        }
 
-                            // Append the studentHtml to a container div
-                            $('.loading-more-results').append(studentHtml);
-                        });
-                        $('#pagenumbers').text('Page ' + academicData.current_page + ' of ' + academicData.last_page)
+                        // Append the studentHtml to a container div
+                        $('.loading-more-results').append(studentHtml);
+
+
+                        $('#pagenumbers').text('Page ' + response.current_page + ' of ' + response.last_page)
+                        //  }
                     });
 
-                    // Append studentHtml to the resultsContainer
                     flash({msg: 'success', type: 'success'});
                 } else {
                     $('.load-more-results').hide();
@@ -921,17 +1091,19 @@
                 // $('.load-more-results-first').hide();
             }, error: function (xhr, status, error) {
                 flash({msg: error, type: 'danger'})
-
-                // $('.loading-more-results').attr("disabled", false);
-                // $('.loading-more-results').html('<i class="fa fa-share"></i> Load More');
             }
         });
     }
 
-    function updateLoadMoreButton(academicData) {
+    function updateLoadMoreButton(academicData, program, academic, level) {
         // Dynamically set the onclick function with the new academicData
         var button = $('.load-more-results-first');
-        button.attr('onclick', `LoadMoreResults('${academicData.current_page}', '${academicData.last_page}', '${academicData.per_page}', '${academicData.program}', '${academicData.academic}', '${academicData.level_name}')`);
+        button.attr('onclick', `LoadMoreResults('${academicData.current_page}', '${academicData.last_page}', '${academicData.per_page}', '${program}', '${academic}', '${level}')`);
+    }
+    function updateLoadMoreButtonCAs(academicData, program, academic, level) {
+        // Dynamically set the onclick function with the new academicData
+        var button = $('.load-more-results-first-cas');
+        button.attr('onclick', `LoadMoreResultsCas('${academicData.current_page}', '${academicData.last_page}', '${academicData.per_page}', '${program}', '${academic}', '${level}')`);
     }
 
     function checkdata() {

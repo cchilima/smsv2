@@ -62,7 +62,8 @@
                                                             $optionValue = $code . ' - ' . $title;
                                                         @endphp
                                                         @if (!in_array($optionValue, $uniqueCourseCodes))
-                                                            <option value="{{ $courses->class->id }}">{{ $optionValue }}</option>
+                                                            <option
+                                                                value="{{ $courses->class->id }}">{{ $optionValue }}</option>
                                                             @php
                                                                 $uniqueCourseCodes[] = $optionValue;
                                                             @endphp
@@ -86,7 +87,7 @@
                                                 <h5>
                                                     <strong>{{ $student->user->first_name.' '.$student->user->last_name }}</strong>
                                                 </h5>
-                                                <h5><strong>{{ $student->student_id }}</strong></h5>
+                                                <h5><strong>{{ $student->id }}</strong></h5>
                                                 <input type="hidden" name="academic"
                                                        value="{{ $period->id }}">
                                                 <input type="hidden" name="program"
@@ -118,7 +119,8 @@
                                                     <td>
                                                         <table class="table table-bordered table-hover table-striped">
                                                             <tbody>
-                                                            @foreach ($courses->class->course->grades as $grade)
+                                                            {{--                                                            @foreach ($courses->class->course->grades as $grade)--}}
+                                                            @foreach ($courses->class->course->grades->where('student_id', $student->id) as $grade)
                                                                 <tr>
                                                                     <td>{{ $grade->assessment_type->name }}</td>
                                                                     <td>{{ $grade->total }}</td>
@@ -152,7 +154,7 @@
 
                                 @else
                                     <button type="button"
-                                            class="float-right mr-5 btn btn-primary load-more-results load-more-results-first btn-sm mt-3"
+                                            class="float-right mr-5 btn btn-primary load-more-results load-more-results-first-cas btn-sm mt-3"
                                             onclick="LoadMoreResultsCas('{{ $grades->currentPage() }}','{{ $grades->lastPage() }}','{{ $grades->perPage() }}','{{$program_data->id}}','{{ $period->id }}','{{ $student->course_level_id }}')">
                                         <i class="fa fa-share"></i> Load More
                                     </button>

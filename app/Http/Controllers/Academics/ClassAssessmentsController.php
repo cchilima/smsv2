@@ -343,9 +343,9 @@ class ClassAssessmentsController extends Controller
     }
     public function LoadMoreResultsCas(Request $request)
     {
-        $aid = $request->query('aid');
-        $pid = $request->query('pid');
-        $level = $request->query('level');
+        $aid = $request->input('academic');
+        $pid = $request->input('program');
+        $level = $request->input('level');
         $current_page = $request->input('current_page');
         $last_page = $request->input('last_page');
         $per_page = $request->input('per_page');
@@ -360,18 +360,19 @@ class ClassAssessmentsController extends Controller
     {
 
 
-      $aid = $request->query('aid');
-        $pid = $request->query('pid');
-        $level = $request->query('level');
+      $aid = $request->input('academic');
+        $pid = $request->input('program');
+        $level = $request->input('level');
 //        $aid = Qs::decodeHash($aid);
 //        $pid = Qs::decodeHash($pid);
 //        $level = Qs::decodeHash($level);
+
         $current_page = $request->input('current_page');
         $last_page = $request->input('last_page');
         $per_page = $request->input('per_page');
 
         $grades = $this->classaAsessmentRepo->getGradesLoad($level, $pid, $aid,$current_page,$last_page,$per_page);
-
+        //dd($level, $pid, $aid,$current_page,$last_page,$per_page);
         return response()->json($grades);
     }
     public function GetProgramResultsLevel(Request $request)

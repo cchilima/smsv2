@@ -102,6 +102,44 @@ class StudentRepository
     public function addStudentId($studentData)
     {
 
+//        $year = date("y");
+//        $semester = (date("m") <= 6) ? 1 : 2;
+//
+//        // Get the latest student ID from the database
+//        $lastID = Student::latest('id')->first();
+//
+//        if ($lastID) {
+//            //$afterRemovingFirstThree = intval(substr($lastID->id, 3));
+//            //$addonw = $afterRemovingFirstThree + 1;
+//            $firstTwoValues = substr($lastID->student_id, 0, 2);
+//            $afterRemovingFirstThree = intval(substr($lastID->student_id, 3));
+//            if (intval($firstTwoValues) === intval($year)) {
+//                $addonw = $afterRemovingFirstThree + 1;
+//            }else{
+//                $addonw = 000 + 1;
+//            }
+//           // $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
+//
+//            $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
+//        } else {
+//            // If there is no last ID, use an ID starting with the current year and zeros
+//            $studentNumber = '0001';
+//        }
+//
+//        $finalID = strlen($studentNumber);
+//
+//        if ($finalID == 1) {
+//            $concatStudentNumber = "000$studentNumber";
+//        } else if ($finalID == 2) {
+//            $concatStudentNumber = "00$studentNumber";
+//        } else if ($finalID == 3) {
+//            $concatStudentNumber = "0$studentNumber";
+//        } else if ($finalID == 4) {
+//            $concatStudentNumber = "$studentNumber";
+//        }
+//
+//        $semester = (date("m") <= 6) ? 1 : 2;
+
         $year = date("y");
         $semester = (date("m") <= 6) ? 1 : 2;
 
@@ -109,17 +147,13 @@ class StudentRepository
         $lastID = Student::latest('id')->first();
 
         if ($lastID) {
-            //$afterRemovingFirstThree = intval(substr($lastID->id, 3));
-            //$addonw = $afterRemovingFirstThree + 1;
-            $firstTwoValues = substr($lastID->student_id, 0, 2);
-            $afterRemovingFirstThree = intval(substr($lastID->student_id, 3));
+            $firstTwoValues = substr($lastID->id, 0, 2);
+            $afterRemovingFirstThree = intval(substr($lastID->id, 3));
             if (intval($firstTwoValues) === intval($year)) {
                 $addonw = $afterRemovingFirstThree + 1;
             }else{
                 $addonw = 000 + 1;
             }
-           // $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
-
             $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
         } else {
             // If there is no last ID, use an ID starting with the current year and zeros
@@ -139,6 +173,13 @@ class StudentRepository
         }
 
         $semester = (date("m") <= 6) ? 1 : 2;
+
+        //$studentData =  $year . $semester . $concatStudentNumber;
+
+        //echo $finalID;
+        //echo $studentData['id'];
+
+        //return $studentData;
 
         $studentData['id'] =  $year . $semester . $concatStudentNumber;
 

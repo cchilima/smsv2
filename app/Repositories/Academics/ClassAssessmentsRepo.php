@@ -112,8 +112,27 @@ class ClassAssessmentsRepo
             ->get();
 
         $programsData = [];
+//        foreach ($result as $item) {
+//            $programId = $item->program_id;
+//            if (!isset($programsData[$programId])) {
+//                $programsData[$programId] = [
+//                    'name' => $item->program_name,
+//                    'code' => $item->program_code,
+//                    'id' => $item->program_id,
+//                    'qualifications' => $item->qualification,
+//                    'status' => $item->status,
+//                    'students' => $item->students,
+//                    'levels' => [],
+//                ];
+//            }
+//            $programsData[$programId]['levels'][] = [
+//                'name' => $item->course_level_name,
+//                'id' => $item->course_level_id,
+//            ];
+//        }
         foreach ($result as $item) {
             $programId = $item->program_id;
+
             if (!isset($programsData[$programId])) {
                 $programsData[$programId] = [
                     'name' => $item->program_name,
@@ -125,11 +144,19 @@ class ClassAssessmentsRepo
                     'levels' => [],
                 ];
             }
-            $programsData[$programId]['levels'][] = [
-                'name' => $item->course_level_name,
-                'id' => $item->course_level_id,
-            ];
+
+            $levelId = $item->course_level_id;
+            $levelName = $item->course_level_name;
+
+            // Check if the level with the same id already exists for the program
+            if (!isset($programsData[$programId]['levels'][$levelId])) {
+                $programsData[$programId]['levels'][$levelId] = [
+                    'name' => $levelName,
+                    'id' => $levelId,
+                ];
+            }
         }
+        // dd($programsData);
         return array_values($programsData);
     }
 
@@ -140,7 +167,7 @@ class ClassAssessmentsRepo
                 $query->where('academic_period_id', $aid);
             }, 'enrollments.class.course.grades' => function ($query) use ($aid) {
                 $query->whereNot('assessment_type_id', 1)->where('academic_period_id', $aid);
-            }, 'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'])->paginate(3, ['*'], 'page', 1);
+            }, 'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'])->paginate(1, ['*'], 'page', 1);
 
     }
 
@@ -157,61 +184,30 @@ class ClassAssessmentsRepo
 
     public function getGrades($level, $pid, $aid)
     {
-//        return Student::where('program_id', $pid)->where('course_level_id', $level)
-//            ->with(['enrollments.class' => function ($query) use ($aid) {
-//                $query->where('academic_period_id', $aid);
-//            },'enrollments.class.course.grades' => function ($query) use ($aid) {
-//                $query->whereNot('assessment_type_id', 1)->where('academic_period_id', $aid);
-//            }, 'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'])->paginate(3, ['*'], 'page', 1);
-//        return Student::where('program_id', $pid)->where('course_level_id', $level)
-//            ->with([
-//                'enrollments.class' => function ($query) use ($aid) {
-//                    $query->where('academic_period_id', $aid);
-//                },
-//                'enrollments.class.course.grades' => function ($query) use ($aid) {
-//                    $query->select('course_id', 'academic_period_id',
-//                        DB::raw('SUM(CASE WHEN assessment_type_id = 1 THEN total ELSE 0 END) as exam'),
-//                        DB::raw('SUM(CASE WHEN assessment_type_id != 1 THEN total ELSE 0 END) as ca'),
-//                        DB::raw('SUM(total) as total_sum')
-//                    )
-//                        ->where('academic_period_id', $aid)
-//                        ->groupBy('course_id', 'academic_period_id');
-//                },
-//                'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'
-//            ])->paginate(3, ['*'], 'page', 1);
-
-
         $result = Student::where('program_id', $pid)->where('course_level_id', $level)
             ->with([
                 'enrollments.class' => function ($query) use ($aid) {
                     $query->where('academic_period_id', $aid);
                 },
                 'enrollments.class.course.grades' => function ($query) use ($aid) {
-                    $query->select('course_id', 'academic_period_id', 'course_code', 'course_title',
-                        DB::raw('SUM(CASE WHEN assessment_type_id = 1 THEN total ELSE 0 END) as exam'),
-                        DB::raw('SUM(CASE WHEN assessment_type_id != 1 THEN total ELSE 0 END) as ca'),
+                    $query->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id',
+                        DB::raw('SUM(CASE WHEN assessment_type_id = 1 THEN total ELSE 00 END) as exam'),
+                        DB::raw('SUM(CASE WHEN assessment_type_id != 1 THEN total ELSE 00 END) as ca'),
                         DB::raw('SUM(total) as total_sum')
                     )
                         ->where('academic_period_id', $aid)
-                        ->groupBy('course_code', 'course_title', 'course_id', 'academic_period_id');
+                        ->groupBy('course_code', 'course_title', 'course_id', 'academic_period_id', 'student_id');
                 },
                 'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'
-            ])->paginate(3, ['*'], 'page', 1);
-        $result->getCollection()->transform(function ($item) use ($aid) {
-            $item['calculated_grade'] = $this->comments($item['id'], $aid, 1);
-            $item->enrollments->transform(function ($enrollment) use ($item, $aid) {
-                $enrollment->class->course->grades->transform(function ($grade) use ($item, $aid) {
-                    $grade['grade'] = $this->calculateGrade($grade->total_sum);
-                    $grade['outof'] = $this->getClassAssessmentExams($grade->course_id, $aid);
-                    $gradeID = Grade::where('assessment_type_id', 1)->where('academic_period_id', $aid)->where('course_id', $grade->course_id)->where('student_id', $item['id'])->first();
-                    $grade['id'] = $gradeID->id;
-                    return $grade;
-                });
-                return $enrollment;
-            });
-            return $item;
-        });
-        return $result;
+            ])->paginate(1, ['*'], 'page', 1);
+        return $this->extracted($result, $aid);
+    }
+
+    public function getGradeID($aid, $course_id, $student)
+    {
+        $gradeID = Grade::where('assessment_type_id', 1)->where('academic_period_id', $aid)->where('course_id', $course_id)->where('student_id', $student)->first();
+        //return $gradeID->id;
+        return $gradeID ? $gradeID->id : '';
     }
 
     public function getGradesLoad($level, $pid, $aid, $current_page, $last_page, $per_page)
@@ -222,32 +218,18 @@ class ClassAssessmentsRepo
                     $query->where('academic_period_id', $aid);
                 },
                 'enrollments.class.course.grades' => function ($query) use ($aid) {
-                    $query->select('course_id', 'academic_period_id', 'course_code', 'course_title',
-                        DB::raw('SUM(CASE WHEN assessment_type_id = 1 THEN total ELSE 0 END) as exam'),
-                        DB::raw('SUM(CASE WHEN assessment_type_id != 1 THEN total ELSE 0 END) as ca'),
+                    $query->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id',
+                        DB::raw('SUM(CASE WHEN assessment_type_id = 1 THEN total ELSE 00 END) as exam'),
+                        DB::raw('SUM(CASE WHEN assessment_type_id != 1 THEN total ELSE 00 END) as ca'),
                         DB::raw('SUM(total) as total_sum')
                     )
                         ->where('academic_period_id', $aid)
-                        ->groupBy('course_code', 'course_title', 'course_id', 'academic_period_id');
+                        ->groupBy('course_code', 'course_title', 'course_id', 'academic_period_id', 'student_id');
                 },
                 'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'
-            ])->paginate($per_page, ['*'], 'page', $current_page + 1);
+            ])->paginate($per_page, ['*'], 'page', $current_page+1);
 
-        $result->getCollection()->transform(function ($item) use ($aid) {
-            $item['calculated_grade'] = $this->comments($item['id'], $aid, 1);
-            $item->enrollments->transform(function ($enrollment) use ($item, $aid) {
-                $enrollment->class->course->grades->transform(function ($grade) use ($item, $aid) {
-                    $grade['grade'] = $this->calculateGrade($grade->total_sum);
-                    $grade['outof'] = $this->getClassAssessmentExams($grade->course_id, $aid);
-                    $gradeID = Grade::where('assessment_type_id', 1)->where('academic_period_id', $aid)->where('course_id', $grade->course_id)->where('student_id', $item['id'])->first();
-                    $grade['id'] = $gradeID->id;
-                    return $grade;
-                });
-                return $enrollment;
-            });
-            return $item;
-        });
-        return $result;
+        return $this->extracted($result, $aid);
     }
 
     public function total_students($level, $pid, $aid)
@@ -311,7 +293,7 @@ class ClassAssessmentsRepo
         => function ($query) use ($apid) {
                 $query->where('assessment_type_id', 1);
             }, 'course'])->first();
-        //dd($class->class_assessments[0]->total);
+       // dd($course_id);
         return $class->class_assessments[0]->total;
     }
 
@@ -592,6 +574,7 @@ class ClassAssessmentsRepo
         }
 
         return $data = [
+            'student_id' => $student,
             'comment' => $comment,
             'coursesPassed' => $coursesPassedArray,
             'coursesPassedCount' => $passedCourse,
@@ -632,6 +615,33 @@ class ClassAssessmentsRepo
         } else if ($total >= 86 && $total <= 100) {
             return 'A+';
         }
+    }
+
+    /**
+     * @param $result
+     * @param $aid
+     * @return mixed
+     */
+    public function extracted($result, $aid): mixed
+    {
+        $result->getCollection()->transform(function ($item) use ($aid) {
+            $item['calculated_grade'] = $this->comments($item['id'], $aid, 1);
+            $item->enrollments->transform(function ($enrollment) use ($item, $aid) {
+                $enrollment->class->course->grades->transform(function ($grade) use ($item, $aid) {
+                    // Perform calculations here based on the data retrieved
+                    $grade['grade'] = $this->calculateGrade($grade->total_sum);
+                    $grade['outof'] = $this->getClassAssessmentExams($grade->course_id, $aid);
+                    $grade['id'] = $this->getGradeID($aid, $grade->course_id, $item['id']);
+                    return $grade;
+                });
+                return $enrollment;
+            });
+
+            return $item;
+        });
+
+        //dd($result);
+        return $result;
     }
 
 }
