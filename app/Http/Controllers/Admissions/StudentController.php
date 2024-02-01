@@ -275,9 +275,12 @@ class StudentController extends Controller
         $data['periodTypes'] = $this->studentRepo->getPeriodTypes();
         $data['relationships'] = $this->studentRepo->getRelationships();
         $data['maritalStatuses'] = $this->studentRepo->getMaritalStatuses();
+        $data['fees'] = $this->studentRepo->getFees($id);
 
         // Find student
         $student = $this->studentRepo->findUser($id);
+
+        $x = $this->studentRepo->getStudentInfor($id);
 
         $data['courses'] = $this->registrationRepo->getAll($student->student->id);
         $data['isRegistered'] = $this->registrationRepo->getRegisterationStatus($student->student->id);

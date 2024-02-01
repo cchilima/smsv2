@@ -18,6 +18,7 @@ use App\Http\Controllers\Academics\QualificationController;
 use App\Http\Controllers\Academics\SchoolController;
 use App\Http\Controllers\Academics\StudyModeController;
 use App\Http\Controllers\Academics\CourseController;
+use App\Http\Controllers\Accounting\{InvoiceController, StatementController};
 use App\Http\Controllers\Academics\AcademicPeriodController;
 use App\Http\Controllers\Academics\AcademicPeriodClassController;
 use App\Http\Controllers\Academics\StudentRegistrationController;
@@ -31,6 +32,7 @@ use App\Http\Controllers\Accounting\FeeController;
 use App\Http\Controllers\Users\UserController;
 
 use App\Http\Controllers\Enrollments\EnrollmentController;
+
 
 
 Route::get('/', function () {
@@ -74,6 +76,13 @@ Route::resource('academic-period-management', APManagementController::class);
 Route::resource('academic-period-fees', APFeesController::class);
 Route::resource('students', StudentController::class);
 Route::resource('users', UserController::class);
+
+Route::resource('statements', StatementController::class);
+
+Route::resource('invoices', InvoiceController::class);
+Route::post('custom-invoice', [InvoiceController::class, 'customInvoice'])->name('invoices.custom-invoice');
+Route::post('batch-invoice-process', [InvoiceController::class, 'batchInvoicing'])->name('invoices.batchInvoicing');
+Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->name('invoices.invoice');
 
 Route::resource('enrollments', EnrollmentController::class);
 Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');

@@ -25,4 +25,8 @@ class AcademicPeriod extends Model
         return $this->hasMany(AcademicPeriodClass::class,'academic_period_id','id');
     }
 
+    public function academic_period_fees(){
+        return $this->hasMany(AcademicPeriodFee::class,'academic_period_id','id');
+    }
+
 }

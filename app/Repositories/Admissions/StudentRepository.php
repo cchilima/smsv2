@@ -5,6 +5,7 @@ namespace App\Repositories\Admissions;
 
 use Ramsey\Uuid\Type\Integer;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Accounting\Fee;
 use App\Models\Users\{User, UserType};
 use App\Models\Residency\{Town, Province, Country};
 use App\Models\Profile\{MaritalStatus, Relationship};
@@ -168,12 +169,27 @@ class StudentRepository
             ->orWhere('id','LIKE','%'.$searchText.'%')->get();
     }
 
+    public function getFees($student_id)
+    {
+        // get student
+        $student = $this->getStudentInfor($student_id);
+
+        // get current academic period fees
+        $academic_period_fees = $student->academic_info->academic_period->academic_period_fees;
+
+        // extract only the fee ids
+        $academic_period_fee_ids = $academic_period_fees->pluck('fee_id');
+
+        // get all fees minus the fees in current academic period
+        $fees = Fee::whereNotIn('id', $academic_period_fee_ids)->get();
+
+        return $fees;
+    }
+
     private function getStudentUserType()
     {
         $userTypeId = UserType::where('name', 'Student')->value('id');
-
         return $userTypeId;
-
     }
 
     private function encryptPassword($password)
