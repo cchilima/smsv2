@@ -155,32 +155,32 @@
                                     </td>
 
                                     <td class="text-center">
-                                                                                <div class="list-icons">
-                                                                                    <div class="dropdown">
-                                                                                        <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                                                            <i class="icon-menu9"></i>
-                                                                                        </a>
+                                        <div class="list-icons">
+                                            <div class="dropdown">
+                                                <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                                    <i class="icon-menu9"></i>
+                                                </a>
 
-                                                                                        <div class="dropdown-menu dropdown-menu-left">
+                                                <div class="dropdown-menu dropdown-menu-left">
 
-{{--                                                                                            <a href="{{ route('classAssessments.show', Qs::hash($classAssessment['class_assessment_id'])) }}"--}}
-{{--                                                                                               class="dropdown-item"><i class="icon-eye"></i> View Profile</a>--}}
+                                                    {{--                                                                                            <a href="{{ route('classAssessments.show', Qs::hash($classAssessment['class_assessment_id'])) }}"--}}
+                                                    {{--                                                                                               class="dropdown-item"><i class="icon-eye"></i> View Profile</a>--}}
 
-                                                                                            <a href="#" class="dropdown-item edit-total-link"><i
-                                                                                                        class="icon-pencil"></i> Edit</a>
-{{--                                                                                            @if(Qs::userIsSuperAdmin())--}}
-{{--                                                                                                <a id="{{ Qs::hash($classAssessment['class_assessment_id']) }}"--}}
-{{--                                                                                                   onclick="confirmDelete(this.id)" href="#"--}}
-{{--                                                                                                   class="dropdown-item"><i class="icon-trash"></i> Delete</a>--}}
-{{--                                                                                                <form method="post"--}}
-{{--                                                                                                      id="item-delete-{{ Qs::hash($classAssessment['class_assessment_id']) }}"--}}
-{{--                                                                                                      action="{{ route('classAssessments.destroy', Qs::hash($classAssessment['class_assessment_id'])) }}"--}}
-{{--                                                                                                      class="hidden">@csrf @method('delete')</form>--}}
-{{--                                                                                            @endif--}}
+                                                    <a href="#" class="dropdown-item edit-total-link"><i
+                                                            class="icon-pencil"></i> Edit</a>
+                                                    {{--                                                                                            @if(Qs::userIsSuperAdmin())--}}
+                                                    {{--                                                                                                <a id="{{ Qs::hash($classAssessment['class_assessment_id']) }}"--}}
+                                                    {{--                                                                                                   onclick="confirmDelete(this.id)" href="#"--}}
+                                                    {{--                                                                                                   class="dropdown-item"><i class="icon-trash"></i> Delete</a>--}}
+                                                    {{--                                                                                                <form method="post"--}}
+                                                    {{--                                                                                                      id="item-delete-{{ Qs::hash($classAssessment['class_assessment_id']) }}"--}}
+                                                    {{--                                                                                                      action="{{ route('classAssessments.destroy', Qs::hash($classAssessment['class_assessment_id'])) }}"--}}
+                                                    {{--                                                                                                      class="hidden">@csrf @method('delete')</form>--}}
+                                                    {{--                                                                                            @endif--}}
 
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

@@ -2,6 +2,7 @@
 
 namespace App\Models\Academics;
 
+use App\Models\Admissions\Student;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,10 +18,10 @@ class ProgramCourses extends Model
         return $this->belongsTo(Course::class, 'course_id', 'id');
     }
 
-//    public function programs()
-//    {
-//        return $this->belongsTo(Program::class, 'program_id', 'id');
-//    }
+    public function programs()
+    {
+        return $this->belongsTo(Program::class, 'program_id', 'id');
+    }
 
     public function levels()
     {
@@ -40,5 +41,15 @@ class ProgramCourses extends Model
     public function course()
     {
         return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'program_id', 'program_id');
+    }
+
+    public function grade()
+    {
+        return $this->hasOne(Grade::class, 'course_id');
     }
 }

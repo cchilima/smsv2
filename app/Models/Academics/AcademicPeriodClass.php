@@ -2,6 +2,7 @@
 
 namespace App\Models\Academics;
 
+use App\Models\Enrollments\Enrollment;
 use App\Models\Users\User;
 use App\Models\Enrollments\Enrollment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,6 +32,11 @@ class AcademicPeriodClass extends Model
     {
         return $this->hasMany(ClassAssessment::class, 'academic_period_class_id');
     }
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class, 'academic_period_class_id','id');
+    }
+
 
     public function enrollments()
     {

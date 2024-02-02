@@ -47,28 +47,28 @@
 
                                     <div class="dropdown-menu dropdown-menu-left">
 
-                                        <a href="{{ route('getPramResults',['aid'=>Qs::hash($period->id),'pid'=>Qs::hash($program['id'])]) }}"
-                                           class="dropdown-item">View Results <i class="icon-pencil"></i></a>
+{{--                                        <a href="{{ route('getPramResults',['aid'=>Qs::hash($apid),'pid'=>Qs::hash($program['id'])]) }}"--}}
+{{--                                           class="dropdown-item">View Results <i class="icon-pencil"></i></a>--}}
                                         @foreach($program['levels'] as $level)
-                                            <a href="{{ route('getPramResultsLevel',['aid'=>Qs::hash($period->id),'pid'=>Qs::hash($program['id']),'level'=>Qs::hash($level['id'] )])  }}"
+                                            <a href="{{ route('getPramResultsLevelCas',['aid'=>Qs::hash($period->id),'pid'=>Qs::hash($program['id']),'level'=>Qs::hash($level['id'] )]) }}"
                                                class="dropdown-item">View {{ $level['name'] }} Results <i class="icon-pencil"></i></a>
                                         @endforeach
 
-                                    @if($program['status'] == 0)
-                                            <form class="ajax-store-publish" method="post" action="{{ route('publishProgramResults')  }}">
-                                                @csrf
+{{--                                    @if($program['status'] == 0)--}}
+{{--                                            <form class="ajax-store-publish" method="post" action="{{ route('publishProgramResults')  }}">--}}
+{{--                                                @csrf--}}
 
-                                                <input type="hidden" name="programID" value="{{ $program['id'] }}">
-                                                <input type="hidden" name="academicPeriodID" value="{{ $period->id }}">
+{{--                                                <input type="hidden" name="programID" value="{{ $program['id'] }}">--}}
+{{--                                                <input type="hidden" name="academicPeriodID" value="{{ $apid }}">--}}
 
-                                                <div class="text-right">
-                                                    <button id="ajax-btn" type="submit" class="dropdown-item">Publish Results <i class="icon-paperplane ml-2"></i></button>
-                                                </div>
-                                            </form>
+{{--                                                <div class="text-right">--}}
+{{--                                                    <button id="ajax-btn" type="submit" class="dropdown-item">Publish Results <i class="icon-paperplane ml-2"></i></button>--}}
+{{--                                                </div>--}}
+{{--                                            </form>--}}
 {{--                                            <a href="{{ route('publishProgramResults',['aid'=>Qs::hash($apid),'pid'=>Qs::hash($program->id)]) }}"--}}
 {{--                                               class="dropdown-item"><i class="icon-eye"></i> Publish Results</a>--}}
 
-                                    @endif
+{{--                                    @endif--}}
                                     </div>
                                 </div>
                             </div>

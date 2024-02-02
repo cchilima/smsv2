@@ -4,11 +4,14 @@ namespace App\Models\Admissions;
 
 use App\Models\Users\User;
 use App\Models\Academics\CourseLevel;
+use App\Models\Academics\Grade;
 use App\Models\Academics\PeriodType;
 use App\Models\Academics\Program;
+use App\Models\Academics\ProgramCourses;
 use App\Models\Academics\StudyMode;
 use App\Models\Academics\AcademicPeriodInformation;
 use App\Models\Accounting\{Invoice, Statement, Receipt};
+use App\Models\Enrollments\Enrollment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -66,6 +69,19 @@ class Student extends Model
     public function statementsWithoutInvoice()
     {
         return $this->hasMany(Statement::class, 'collected_from')->whereNull('invoice_id')->where('amount', '>' , 0)->orderBy('created_at');
+    }
+    public function grades()
+    {
+        return $this->hasMany(Grade::class, 'student_id', 'id');
+    }
+
+    public function programCourses()
+    {
+        return $this->hasManyThrough(ProgramCourses::class, Grade::class, 'student_id', 'course_id', 'id', 'course_id');
+    }
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class,'student_id');
     }
 
 }

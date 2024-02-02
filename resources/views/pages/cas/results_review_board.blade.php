@@ -51,7 +51,7 @@
                                         @endphp
                                         <select data-placeholder="Choose..." required name="assesmentID"
                                                 id="assesmentID" class=" select-search form-control"
-                                                onchange="StrMod4All(this.value,1)">
+                                                onchange="StrMod4All(this.value,0)">
                                             <option value=""></option>
                                             @foreach ($grades as $student)
                                                 @foreach($student->enrollments as $courses)
@@ -62,7 +62,8 @@
                                                             $optionValue = $code . ' - ' . $title;
                                                         @endphp
                                                         @if (!in_array($optionValue, $uniqueCourseCodes))
-                                                            <option value="{{ $courses->class->id }}">{{ $optionValue }}</option>
+                                                            <option
+                                                                value="{{ $courses->class->id }}">{{ $optionValue }}</option>
                                                             @php
                                                                 $uniqueCourseCodes[] = $optionValue;
                                                             @endphp
@@ -85,9 +86,8 @@
                                             <div class="justify-content-between">
                                                 <h5>
                                                     <strong>{{ $student->user->first_name.' '.$student->user->last_name }}</strong>
-                                                    <p>{{ $student->id }}</p>
                                                 </h5>
-                                                <h5><strong>{{ $student->student_id }}</strong></h5>
+                                                <h5><strong>{{ $student->id }}</strong></h5>
                                                 <input type="hidden" name="academic"
                                                        value="{{ $period->id }}">
                                                 <input type="hidden" name="program"
@@ -97,7 +97,7 @@
                                                 <input type="hidden" name="level_name"
                                                        value="{{ $student->course_level_id }}">
                                                 <input type="hidden" name="type"
-                                                       value="1">
+                                                       value="0">
                                             </div>
 
                                             <thead>
@@ -105,6 +105,7 @@
                                                 <th>S/N</th>
                                                 <th>Course Code</th>
                                                 <th>Course Name</th>
+
                                                 <th>Assessments</th>
                                                 <th>Modify</th>
                                             </tr>
@@ -118,19 +119,11 @@
                                                     <td>
                                                         <table class="table table-bordered table-hover table-striped">
                                                             <tbody>
-                                                            <tr>
-                                                            <td>CA</td>
-                                                            <td>Exam</td>
-                                                            <td>Total</td>
-                                                            <td>Grade</td>
-                                                            </tr>
-{{--                                                            @foreach ($courses->class->course->grades as $grade)--}}
+                                                            {{--                                                            @foreach ($courses->class->course->grades as $grade)--}}
                                                             @foreach ($courses->class->course->grades->where('student_id', $student->id) as $grade)
                                                                 <tr>
-                                                                    <td>{{ $grade->ca }}</td>
-                                                                    <td>{{ $grade->exam .' out of '.$grade->outof }}</td>
-                                                                    <td>{{ $grade->total_sum }}</td>
-                                                                    <td>{{ $grade->grade }}</td>
+                                                                    <td>{{ $grade->assessment_type->name }}</td>
+                                                                    <td>{{ $grade->total }}</td>
                                                                 </tr>
                                                             @endforeach
                                                             </tbody>
@@ -138,7 +131,7 @@
                                                     </td>
                                                     <td>
                                                         @if(Qs::userIsTeamSA())
-                                                            <a onclick="modifyMarksExam('{{ $student->id }}','{{ $student->user }}','{{ $courses->class->course->code }}','{{ $courses->class->course->name }}','{{ $courses->class->course->grades }}')"
+                                                            <a onclick="modifyMarks('{{ $student->id }}','{{ $student->user }}','{{ $courses->class->course->code }}','{{ $courses->class->course->name }}','{{ $courses->class->course->grades }}')"
                                                                class="nav-link"><i class="icon-pencil"></i></a>
                                                         @endif
                                                     </td>
@@ -148,11 +141,6 @@
 
                                         </table>
                                         <p class="bg-success p-4 align-bottom">
-                                            @if($student->calculated_grade['student_id'] == $student->id)
-                                                {{ $student->calculated_grade['comment'] }}
-                                            @endif
-
-
                                             {{ Form::checkbox('ckeck_user', 1, false,['class'=>'ckeck_user  float-right p-5','data-id' => $student->id ]) }} {{ Form::label('publish', 'Publish', ['class' => 'mr-3 float-right']) }}</p>
                                         <hr>
                                     @endforeach
@@ -166,8 +154,8 @@
 
                                 @else
                                     <button type="button"
-                                            class="float-right mr-5 btn btn-primary load-more-results load-more-results-first btn-sm mt-3"
-                                            onclick="LoadMoreResults('{{ $grades->currentPage() }}','{{ $grades->lastPage() }}','{{ $grades->perPage() }}','{{$program_data->id}}','{{ $period->id }}','{{ $student->course_level_id }}')">
+                                            class="float-right mr-5 btn btn-primary load-more-results load-more-results-first-cas btn-sm mt-3"
+                                            onclick="LoadMoreResultsCas('{{ $grades->currentPage() }}','{{ $grades->lastPage() }}','{{ $grades->perPage() }}','{{$program_data->id}}','{{ $period->id }}','{{ $student->course_level_id }}')">
                                         <i class="fa fa-share"></i> Load More
                                     </button>
                                 @endif
