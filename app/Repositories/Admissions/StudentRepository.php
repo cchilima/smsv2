@@ -226,6 +226,7 @@ class StudentRepository
         // get current academic period fees
         $academic_period_fees = $student->academic_info->academic_period->academic_period_fees;
 
+
         // extract only the fee ids
         $academic_period_fee_ids = $academic_period_fees->pluck('fee_id');
 
