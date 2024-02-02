@@ -21,7 +21,7 @@ class CreateReceiptsTable extends Migration
             $table->timestamps();
 
             // Indexes
-            $table->index('invoices');
+            $table->index('invoice_id');
             $table->index('student_id');
         });
     }
