@@ -31,6 +31,10 @@ class DepartmentsRepository
     {
         return Department::with('programs')->find($id);
     }
+    public function findBySlug($slug)
+    {
+        return Department::where('slug', $slug)->first();
+    }
 
     //GET SCHOOLS
     public function getSchools()

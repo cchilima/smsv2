@@ -26,4 +26,12 @@ class SchooolRepository
     {
         return School::find($id);
     }
+    public function findBySlug($slug)
+    {
+        return School::where('slug', $slug)->first();
+    }
+    public function getDepartmentsBySchoolSlug($slug)
+    {
+        return School::where('slug', $slug)->first()->departments;
+    }
 }

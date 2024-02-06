@@ -19,11 +19,11 @@ class Student extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['id', 'graduated', 'program_id', 'academic_period_intake_id', 'study_mode_id', 'course_level_id', 'period_type_id', 'user_id', 'admission_year' ];
+    protected $fillable = ['id', 'graduated', 'program_id', 'academic_period_intake_id', 'study_mode_id', 'course_level_id', 'period_type_id', 'user_id', 'admission_year'];
 
     public function user()
     {
-        return $this->belongsTo(User::class,'user_id','id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
     public function program()
     {
@@ -68,7 +68,7 @@ class Student extends Model
 
     public function statementsWithoutInvoice()
     {
-        return $this->hasMany(Statement::class, 'collected_from')->whereNull('invoice_id')->where('amount', '>' , 0)->orderBy('created_at');
+        return $this->hasMany(Statement::class, 'collected_from')->whereNull('invoice_id')->where('amount', '>', 0)->orderBy('created_at');
     }
     public function grades()
     {
@@ -81,7 +81,6 @@ class Student extends Model
     }
     public function enrollments()
     {
-        return $this->hasMany(Enrollment::class,'student_id');
+        return $this->hasMany(Enrollment::class, 'student_id');
     }
-
 }
