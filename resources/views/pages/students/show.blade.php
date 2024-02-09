@@ -504,6 +504,7 @@
                                 </tbody>
                             </table>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -515,107 +516,251 @@
                 </div>
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-tabs-highlight">
+
                         <li class="nav-item">
-                            <a href="#account-info" class="nav-link active"
-                               data-toggle="tab">{{ 'Account Details' }}</a>
+                            <a href="#invoice" class="nav-link" data-toggle="tab">{{ 'Invoice Student - Academic period' }}</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#profile-info" class="nav-link" data-toggle="tab">{{ 'Profile Details' }}</a>
+                            <a href="#invoice-custom" class="nav-link" data-toggle="tab">{{ 'Invoice Student' }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#invoices" class="nav-link" data-toggle="tab">{{ 'Invoices' }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#statements" class="nav-link" data-toggle="tab">{{ 'Statements' }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#payment-history" class="nav-link" data-toggle="tab">{{ 'Payment History' }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#collect-payment" class="nav-link" data-toggle="tab">{{ 'Collect Payment' }}</a>
                         </li>
                     </ul>
 
                     <div class="tab-content">
-                        {{--Basic Info--}}
-                        <div class="tab-pane fade show active" id="account-info">
-                            <table class="table table-bordered">
-                                <tbody>
-                                <tr>
-                                    <td class="font-weight-bold">Student ID</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Year of Study</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Academic Year</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Study Category</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Status</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Programme Name</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Programme Code</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Intake</td>
-                                    {{--                                <td>{{ $data['intake'] }}</td>--}}
-                                </tr>
 
+
+
+                    <div class="tab-pane fade show" id="invoice-custom">
+                        <form class="ajax-store" method="post" action="{{ route('invoices.custom-invoice') }}">
+                            @csrf
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="fee">Fees: <span class="text-danger">*</span></label>
+                                        <select data-placeholder="Select Fee" required class="select-search form-control" name="fee_id" id="fee">
+                                            <option value=""></option>
+                                            @foreach($fees as $fee)
+                                                <option value="{{ $fee->id }}">{{ $fee->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="invoice-amount">Enter Amount</label>
+                                        <input type="number" class="form-control" id="invoice-amount" name="amount" placeholder="ZMW" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input name="student_id" type="hidden" value="{{ $student->id }}">
+
+                            <div class="form-group text-left">
+                                <button id="ajax-btn" type="submit" class="btn btn-primary">Invoice Student <i class="icon-paperplane ml-2"></i></button>
+                            </div>
+                        </form>
+                    </div>
+
+
+
+                        <div class="tab-pane fade show" id="invoice">
+                            <form class="ajax-store" method="post" action="{{ route('invoices.invoice' ) }}">
+                                @csrf
+                                <input name="academic_period" hidden value="{{$student->academic_info->academic_period_id}}" type="text">
+                                <input name="student_id" hidden value="{{$student->id}}" type="text">
+                                <div class="text-left">
+                                    <button id="ajax-btn" type="submit" class="btn btn-primary">invoice student<i class="icon-paperplane ml-2"></i></button>
+                                </div>
+                            </form>
+                        </div>
+
+
+                        <div class="tab-pane fade show" id="collect-payment">
+
+                        <form class="ajax-store" method="post" action="{{ route('statements.store') }}">
+                            @csrf
+                            <div class="form-group">
+                                <label for="amount">Enter Amount</label>
+                                <input type="number" class="form-control" id="amount" name="amount" placeholder="ZMW" required>
+                            </div>
+
+                            <div class="form-group">
+                                <input hidden type="number" class="form-control" name="academic_period" value="{{$student->academic_info->academic_period_id}}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <input hidden type="text" class="form-control" name="student_id" value="{{$student->id}}" required>
+                            </div>
+
+
+                            <div class="text-left">
+                                <button id="ajax-btn" type="submit" class="btn btn-primary">Submit <i class="icon-paperplane ml-2"></i></button>
+                            </div>
+                        </form>
+
+                            
+                        </div>
+
+
+                        <div class="tab-pane fade show" id="statements">
+                        @foreach($student->invoices as $key => $invoice)
+
+
+                        <br>
+
+                            <table class="table table-bordered">
+                                <thead>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    
+                                </thead>
+                                <tbody>
+                                    
+                                    <tr>
+                                        <h4>INV - {{++$key}}</h4>
+                                    </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td>Opening Balance </td>
+                                            <td>K {{ $invoice->details->sum('amount') }}</td>
+                                        </tr>
+                                      @foreach($invoice->statements as $key => $statement)
+                                        <tr>
+                                            <td>{{++$key}}</td>
+                                            <td>{{ $statement->created_at->format('Y-m-d') }}</td>
+                                            <td>payment</td>
+                                            <td>K {{$statement->amount}}</td>
+                                        </tr>
+                                        @endforeach
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td><b>Closing Balance  </b></td>
+                                            <td>K {{ $invoice->details->sum('amount') - $invoice->statements->sum('amount') }}</td>
+                                        </tr>
+                                    
+                                </tbody>
+                            </table>
+                            @endforeach
+
+                            <br>
+
+                            @if($student->statementsWithoutInvoice->sum('amount') > 0)
+
+                            <table class="table table-bordered">
+                                <thead>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    
+                                </thead>
+                                <tbody>
+
+                                    <tr>
+                                        <h4>Not Invoiced</h4>
+                                    </tr>
+
+                                    @foreach($student->statementsWithoutInvoice as $key => $statement)
+                                        <tr>
+                                            <td>{{++$key}}</td>
+                                            <td>{{ $statement->created_at->format('Y-m-d') }}</td>
+                                            <td>Payment</td>
+                                            <td>K {{$statement->amount}}</td>
+                                        </tr>
+                                    @endforeach
+
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td>Total</td>
+                                            <td>
+                                                - K {{$student->statementsWithoutInvoice->sum('amount')}}.00
+                                            </td>
+                                        </tr>
+
+                                </tbody>
+                            </table>
+                            
+                            @endif
+
+                        </div>
+
+
+
+                        <div class="tab-pane fade show" id="invoices">
+                        @foreach($student->invoices as $key => $invoice)
+                            <table class="table table-bordered">
+                                <thead>
+                                    <th>#</th>
+                                    <th>Fee type</th>
+                                    <th>Amount</th>
+                                </thead>
+                                <tbody>
+                                    
+                                        <tr>
+                                            <h4>INV - {{++$key}}</h4>
+                                        </tr>
+                                      @foreach($invoice->details as $key =>  $detail)
+                                        <tr>
+                                            <td>{{++$key}}</td>
+                                            <td>{{$detail->fee->name}}</td>
+                                            <td>K {{$detail->amount}}</td>
+                                        </tr>
+                                        @endforeach
+                                        <tr>
+                                            <td></td>
+                                            <td><b>Total</b></td>
+                                            <td>K {{$invoice->details->sum('amount')}}</td>
+                                        </tr>
+                                    
+                                </tbody>
+                            </table>
+
+                            @endforeach
+
+                        </div>
+
+                        <div class="tab-pane fade show" id="payment-history">
+                        
+                            <table class="table table-bordered">
+                                <thead>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                </thead>
+                                <tbody>
+                                @foreach($student->receipts as $key => $receipt)
+                                    <tr>
+                                        <td>{{++$key}}</td>
+                                        <td>{{$receipt->created_at->format('Y-m-d') }}</td>
+                                        <td>K {{$receipt->amount}}</td>
+                                    </tr>
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>
 
-                        <div class="tab-pane fade show" id="profile-info">
-                            <table class="table table-bordered">
-                                <tbody>
-                                <tr>
-                                    <td class="font-weight-bold">Gender</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Email</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">NRC</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Date of Birth</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Marital Status</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Mobile</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Street</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Province</td>
-                                    <td></td>
-                                </tr>
 
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
-
-
 
 
 

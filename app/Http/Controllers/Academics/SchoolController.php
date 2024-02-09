@@ -19,8 +19,8 @@ class SchoolController extends Controller
     protected $schoolRepo;
     public function __construct(SchooolRepository $schoolRepo)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->schoolRepo = $schoolRepo;
     }
@@ -29,7 +29,7 @@ class SchoolController extends Controller
     public function index()
     {
         $schools['schools'] = $this->schoolRepo->getAll();
-        return view('pages.schools.index',$schools);
+        return view('pages.schools.index', $schools);
     }
 
     /**
@@ -46,7 +46,7 @@ class SchoolController extends Controller
     public function store(School $req)
     {
         //$data = $req->only(['name', 'description']);
-        $data = $req->only(['name','description']);
+        $data = $req->only(['name', 'slug', 'description']);
         $this->schoolRepo->create($data);
 
         return Qs::jsonStoreOk();
@@ -67,7 +67,7 @@ class SchoolController extends Controller
     {
         $school['school'] = $school = $this->schoolRepo->find($id);
 
-        return !is_null($school ) ? view('pages.schools.edit', $school)
+        return !is_null($school) ? view('pages.schools.edit', $school)
             : Qs::goWithDanger('schools.index');
     }
 

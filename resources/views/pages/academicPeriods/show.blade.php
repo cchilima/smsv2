@@ -316,6 +316,31 @@
                     </div>
                 </div>
             </div>
+
+
+
+            <div class="card">
+                <div class="card-header header-elements-inline">
+                    <h6 class="card-title">Batch Invoicing</h6>
+                    {!! Qs::getPanelOptions() !!}
+                </div>
+                <div class="card-body collapse">
+                    <div class="tab-content">
+
+                        <form class="ajax-store" method="post" action="{{ route('invoices.batchInvoicing', $academicPeriod->id ) }}">
+                            @csrf
+                            <input name="academic_period" hidden value="{{$academicPeriod->id}}" type="text">
+                            <div class="text-left">
+                                <button id="ajax-btn" type="submit" class="btn btn-primary">invoice students<i class="icon-paperplane ml-2"></i></button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+
+
         </div>
     </div>
 @endsection

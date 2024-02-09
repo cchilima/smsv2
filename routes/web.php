@@ -18,6 +18,7 @@ use App\Http\Controllers\Academics\QualificationController;
 use App\Http\Controllers\Academics\SchoolController;
 use App\Http\Controllers\Academics\StudyModeController;
 use App\Http\Controllers\Academics\CourseController;
+use App\Http\Controllers\Accounting\{InvoiceController, StatementController};
 use App\Http\Controllers\Academics\AcademicPeriodController;
 use App\Http\Controllers\Academics\AcademicPeriodClassController;
 use App\Http\Controllers\Academics\StudentRegistrationController;
@@ -33,6 +34,7 @@ use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Enrollments\EnrollmentController;
 
 
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -44,36 +46,35 @@ Route::group(['prefix' => 'students'], function () {
     Route::post('/search', [StudentController::class, 'search'])->name('students.lists');
     Route::get('/profile/{id}', [StudentController::class, 'studentShow'])->name('show.student');
 });
-Route::group(['prefix' => 'assess'], function (){
-    Route::get('/classes/{id}',[ClassAssessmentsController::class,'getClasses'])->name('class-names');
-    Route::post('/updateExams/{id}',[ClassAssessmentsController::class,'UpdateTotalResultsExams'])->name('assessmentUpdate');
-    Route::get('/class-list/{id}',[ClassAssessmentsController::class,'getClassesToPublish'])->name('class-list');
-    Route::get('/student-list/{class}/{assessid}',[ClassAssessmentsController::class,'StudentListResults'])->name('myClassStudentList');
-    Route::post('/process',[ClassAssessmentsController::class,'ProcessUploadedResults'])->name('import.process');
-    Route::post('/results-upload-template',[ClassAssessmentsController::class,'DownloadResultsTemplate'])->name('template.download');
-    Route::post('/get-results-update',[ClassAssessmentsController::class,'getAssessToUpdate'])->name('update.assessments');
-    Route::post('/board-exam-update',[ClassAssessmentsController::class,'BoardofExaminersUpdateResults'])->name('BoardofExaminersUpdateResults');
-    Route::post('/publish-program-results',[ClassAssessmentsController::class,'PublishProgramResults'])->name('publishProgramResults');
+Route::group(['prefix' => 'assess'], function () {
+    Route::get('/classes/{id}', [ClassAssessmentsController::class, 'getClasses'])->name('class-names');
+    Route::post('/updateExams/{id}', [ClassAssessmentsController::class, 'UpdateTotalResultsExams'])->name('assessmentUpdate');
+    Route::get('/class-list/{id}', [ClassAssessmentsController::class, 'getClassesToPublish'])->name('class-list');
+    Route::get('/student-list/{class}/{assessid}', [ClassAssessmentsController::class, 'StudentListResults'])->name('myClassStudentList');
+    Route::post('/process', [ClassAssessmentsController::class, 'ProcessUploadedResults'])->name('import.process');
+    Route::post('/results-upload-template', [ClassAssessmentsController::class, 'DownloadResultsTemplate'])->name('template.download');
+    Route::post('/get-results-update', [ClassAssessmentsController::class, 'getAssessToUpdate'])->name('update.assessments');
+    Route::post('/board-exam-update', [ClassAssessmentsController::class, 'BoardofExaminersUpdateResults'])->name('BoardofExaminersUpdateResults');
+    Route::post('/publish-program-results', [ClassAssessmentsController::class, 'PublishProgramResults'])->name('publishProgramResults');
 
-    Route::group(['prefix' => 'cas'], function (){
-        Route::get('/publish-cas-program-list/{id}',[ClassAssessmentsController::class,'GetProgramsToPublishCas'])->name('getPublishProgramsCas');
-        Route::get('/program-results-levels',[ClassAssessmentsController::class,'GetProgramResultsLevelCas'])->name('getPramResultsLevelCas');
-        Route::post('/load-more',[ClassAssessmentsController::class,'LoadMoreResultsCas'])->name('load.more.results.board.Cas');
+    Route::group(['prefix' => 'cas'], function () {
+        Route::get('/publish-cas-program-list/{id}', [ClassAssessmentsController::class, 'GetProgramsToPublishCas'])->name('getPublishProgramsCas');
+        Route::get('/program-results-levels', [ClassAssessmentsController::class, 'GetProgramResultsLevelCas'])->name('getPramResultsLevelCas');
+        Route::post('/load-more', [ClassAssessmentsController::class, 'LoadMoreResultsCas'])->name('load.more.results.board.Cas');
     });
 
-    Route::group(['prefix' => 'exams'], function (){
-        Route::get('/publish-program-list/{id}',[ClassAssessmentsController::class,'GetProgramsToPublish'])->name('getPublishPrograms');
-        Route::get('/program-results/{aid}/{pid}',[ClassAssessmentsController::class,'GetProgramResults'])->name('getPramResults');
-        Route::get('/program-results-levels',[ClassAssessmentsController::class,'GetProgramResultsLevel'])->name('getPramResultsLevel');
-        Route::get('/results',[ClassAssessmentsController::class,'MyResults'])->name('student-exam_results');
-        Route::post('/load-more',[ClassAssessmentsController::class,'LoadMoreResults'])->name('load.more.results.board');
+    Route::group(['prefix' => 'exams'], function () {
+        Route::get('/publish-program-list/{id}', [ClassAssessmentsController::class, 'GetProgramsToPublish'])->name('getPublishPrograms');
+        Route::get('/program-results/{aid}/{pid}', [ClassAssessmentsController::class, 'GetProgramResults'])->name('getPramResults');
+        Route::get('/program-results-levels', [ClassAssessmentsController::class, 'GetProgramResultsLevel'])->name('getPramResultsLevel');
+        Route::get('/results', [ClassAssessmentsController::class, 'MyResults'])->name('student-exam_results');
+        Route::post('/load-more', [ClassAssessmentsController::class, 'LoadMoreResults'])->name('load.more.results.board');
     });
-
 });
-Route::group(['prefix' => 'student'], function (){
-    Route::get('/results',[ClassAssessmentsController::class,'MyResults'])->name('student-exam_results');
-    Route::get('/ca-results',[ClassAssessmentsController::class,'MyCAResults'])->name('student_ca_results');
-    Route::get('/exam-registration',[ClassAssessmentsController::class,'ExamRegistration'])->name('student-exam_registration');
+Route::group(['prefix' => 'student'], function () {
+    Route::get('/results', [ClassAssessmentsController::class, 'MyResults'])->name('student-exam_results');
+    Route::get('/ca-results', [ClassAssessmentsController::class, 'MyCAResults'])->name('student_ca_results');
+    Route::get('/exam-registration', [ClassAssessmentsController::class, 'ExamRegistration'])->name('student-exam_registration');
 });
 
 
@@ -101,8 +102,14 @@ Route::resource('academic-period-fees', APFeesController::class);
 Route::resource('students', StudentController::class);
 Route::resource('users', UserController::class);
 
+Route::resource('statements', StatementController::class);
+
+Route::resource('invoices', InvoiceController::class);
+Route::post('custom-invoice', [InvoiceController::class, 'customInvoice'])->name('invoices.custom-invoice');
+Route::post('batch-invoice-process', [InvoiceController::class, 'batchInvoicing'])->name('invoices.batchInvoicing');
+Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->name('invoices.invoice');
+
 Route::resource('enrollments', EnrollmentController::class);
 Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 
 Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])->name('students.resetAccountPassword');
-
