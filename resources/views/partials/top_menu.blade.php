@@ -2,17 +2,6 @@
     use App\Helpers\Qs;
 @endphp
 <div class="navbar navbar-expand-md navbar-dark">
-    <div class="py-1">
-        <a href="{{ route('home') }}" class="d-flex align-items-center">
-            <img style="height: 50px; width: auto" class="mr-2" src="{{ asset('images/logo-v2.png') }}" alt="ZUT Logo">
-            <h4 class="text-bold text-white m-0">{{ Qs::getSystemName() }}</h4>
-        </a>
-    </div>
-    {{--    <div class="navbar-brand"> --}}
-    {{--        <a href="index.html" class="d-inline-block"> --}}
-    {{--            <img src="{{ asset('global_assets/images/logo_light.png') }}" alt=""> --}}
-    {{--        </a> --}}
-    {{--    </div> --}}
 
     <div class="d-md-none">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-mobile">
@@ -23,7 +12,7 @@
         </button>
     </div>
 
-    <div class="collapse navbar-collapse" id="navbar-mobile">
+    <div class="collapse navbar-collapse flex-md-grow-0" id="navbar-mobile">
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a href="#" class="navbar-nav-link sidebar-control sidebar-main-toggle d-none d-md-block">
@@ -55,5 +44,13 @@
             {{--                </div> --}}
             {{--            </li> --}}
         </ul>
+    </div>
+
+    <div class="py-1">
+        <a href="{{ route('home') }}" class="d-flex align-items-center">
+            <img style="max-height: 40px; height: 90%; width: auto" class="mr-2"
+                src="{{ asset('images/logo-v2.png') }}" alt="ZUT Logo">
+            <h4 class="text-bold text-white m-0">{{ Qs::getSystemName() }}</h4>
+        </a>
     </div>
 </div>
