@@ -79,4 +79,16 @@ class AccountReportsController extends Controller
     public function Transactions(){
         return view('pages.reports.accounts.transactions');
     }
+    public function FailedPayments(){
+        return view('pages.reports.accounts.failed_transactions');
+    }
+    public function AgedReceivables(){
+        return view('pages.reports.accounts.aged_receivables');
+    }
+    public function CreditNotes(){
+        return view('pages.reports.accounts.credit_notes');
+    }
+    public function StudentList(){
+        return view('pages.reports.accounts.student_list');
+    }
 }
