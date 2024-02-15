@@ -72,10 +72,11 @@ Route::group(['prefix' => 'assess'], function () {
         Route::post('/load-more', [ClassAssessmentsController::class, 'LoadMoreResults'])->name('load.more.results.board');
     });
 });
-Route::group(['prefix' => 'student'], function () {
+Route::group(['prefix' => 'accounts'], function () {
     Route::group(['prefix' => 'reports'], function () {
-        Route::post('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue.analysis');
-        Route::post('/invoices', [AccountReportsController::class, 'invoices'])->name('invoices');
+        Route::get('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue.analysis');
+        Route::get('/invoices', [AccountReportsController::class, 'invoices'])->name('invoices');
+        Route::get('/transactions', [AccountReportsController::class, 'Transactions'])->name('transactions');
     });
 });
 

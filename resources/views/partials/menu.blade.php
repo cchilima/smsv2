@@ -204,25 +204,25 @@
                                                     <ul class="nav nav-group-sub">
                                                         <li class="nav-item"><a
                                                                 href="{{ route('revenue.analysis') }}"
-                                                                class="nav-link ">Revenue Analysis</a>
+                                                                class="nav-link {{ in_array(Route::currentRouteName(), ['revenue.analysis']) ? 'active' : '' }}">Revenue Analysis</a>
                                                         </li>
                                                         <li class="nav-item"><a
                                                                 href="{{ route('invoices') }}"
-                                                                class="nav-link ">Invoices</a>
+                                                                class="nav-link {{ in_array(Route::currentRouteName(), ['invoices' ]) ? 'active' : '' }}">Invoices</a>
                                                         </li>
                                                     </ul>
 
                                                 </li>
                                             @endif
                                             @if(true)
-                                                <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['myClassStudentList','smyClassList','myClassList']) ? 'nav-item-expanded nav-item-open' : '' }}">
+                                                <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['transactions','smyClassList','myClassList']) ? 'nav-item-expanded nav-item-open' : '' }}">
                                                     <a href="#"
-                                                       class="nav-link {{ in_array(Route::currentRouteName(), ['smyClassList','myClassList' ]) ? 'active' : '' }}">
+                                                       class="nav-link {{ in_array(Route::currentRouteName(), ['transactions','myClassList' ]) ? 'active' : '' }}">
                                                         Receivables</a>
                                                     <ul class="nav nav-group-sub">
                                                         <li class="nav-item"><a
-                                                                href="#"
-                                                                class="nav-link ">Transactions</a>
+                                                                href="{{route('transactions')}}"
+                                                                class="nav-link {{ in_array(Route::currentRouteName(), ['transactions']) ? 'active' : '' }}">Transactions</a>
                                                         </li>
                                                         <li class="nav-item"><a
                                                                 href="#"

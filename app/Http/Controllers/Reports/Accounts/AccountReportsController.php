@@ -3,10 +3,17 @@
 namespace App\Http\Controllers\Reports\Accounts;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\Custom\SuperAdmin;
+use App\Http\Middleware\Custom\TeamSA;
 use Illuminate\Http\Request;
 
 class AccountReportsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -63,10 +70,13 @@ class AccountReportsController extends Controller
         //
     }
     public function RevenueAnalysis(){
-
+        return view('pages.reports.accounts.revenue_analysis');
     }
 
     public function invoices(){
-
+        return view('pages.reports.accounts.invoices');
+    }
+    public function Transactions(){
+        return view('pages.reports.accounts.transactions');
     }
 }
