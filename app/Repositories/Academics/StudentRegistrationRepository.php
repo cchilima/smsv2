@@ -120,7 +120,7 @@ class StudentRegistrationRepository
         $invoice = $this->getInvoice($student_id, $academicInfo->academic_period_id);
 
         // Get payment standing
-        $percentage_paid = $this->paymentStanding($invoice->id);
+         $percentage_paid = $invoice ? $this->paymentStanding($invoice->id) : 0;
 
         // Check if current date is within registration period
         if ($currentDate->gte($registrationDate) && $currentDate->lte($lateRegistrationEndDate) && $percentage_paid >= $academicInfo->registration_threshold) {
