@@ -577,6 +577,7 @@
 
 
                         <div class="tab-pane fade show" id="invoice">
+                        @if(!$isInvoiced)
                             <form class="ajax-store" method="post" action="{{ route('invoices.invoice' ) }}">
                                 @csrf
                                 <input name="academic_period" hidden value="{{$student->academic_info->academic_period_id}}" type="text">
@@ -585,6 +586,11 @@
                                     <button id="ajax-btn" type="submit" class="btn btn-primary">invoice student<i class="icon-paperplane ml-2"></i></button>
                                 </div>
                             </form>
+                        @else
+                        <div class="container">
+                            <p>{{ $student->user->first_name.' '.$student->user->last_name }}, has already been invoice for this academic period.</p>
+                        </div>
+                        @endif
                         </div>
 
 
@@ -1237,7 +1243,7 @@
                 <h6 class="card-title">Courses available for registration</h6>
                 {!! Qs::getPanelOptions() !!}
             </div>
-
+            @if($courses)
             <div class="card-body">
 
                         <table class="table table-bordered">
@@ -1259,12 +1265,25 @@
                                     </tbody>
                             </table>
 
+                            @if($isWithinRegistrationPeriod)
+                              @if(!$isRegistered)
+
                             <form action="{{ route('enrollments.store') }}" method="post">
                                 @csrf
                                 <input name="student_number" type="hidden" value="{{ $student->id }}" />
                                 <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register</button>
                             </form>
+
+                            @endif
+                           @endif
             </div>
+            @else
+
+            <div class="container ">
+              <h6> No courses available</h6>
+              <p><i>tip - student either has no invoice or is not within the registration period.</i> </p>
+            </div>
+            @endif
             </div>
 
             @endif

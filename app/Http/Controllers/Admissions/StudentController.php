@@ -3,25 +3,28 @@
 namespace App\Http\Controllers\Admissions;
 
 use App\Helpers\Qs;
+use App\Http\Controllers\Controller;
+use App\Http\Middleware\Custom\SuperAdmin;
+use App\Http\Middleware\Custom\TeamSA;
+use App\Http\Requests\Students\{Student, StudentUpdate, UserInfo, PersonalInfo, NextOfKinInfo, AcademicInfo, ResetPasswordInfo};
+use App\Repositories\Academics\StudentRegistrationRepository;
+use App\Repositories\Admissions\StudentRepository;
 use http\Client\Curl\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-use App\Http\Middleware\Custom\TeamSA;
-use App\Http\Middleware\Custom\SuperAdmin;
-use App\Repositories\Admissions\StudentRepository;
-use App\Repositories\Academics\StudentRegistrationRepository;
-use App\Http\Requests\Students\{Student, StudentUpdate, UserInfo, PersonalInfo, NextOfKinInfo, AcademicInfo, ResetPasswordInfo};
 
 class StudentController extends Controller
 {
-
     protected $studentRepo;
 
     public function __construct(StudentRepository $studentRepo, StudentRegistrationRepository $registrationRepo)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
+        $this->middleware(TeamSA::class, ['except' => [
+            'destroy',
+        ]]);
+        $this->middleware(SuperAdmin::class, ['only' => [
+            'destroy',
+        ]]);
 
         $this->studentRepo = $studentRepo;
         $this->registrationRepo = $registrationRepo;
@@ -117,7 +120,6 @@ class StudentController extends Controller
 
             $student = $user->student()->create($studentData);
 
-
             DB::commit();
 
             return Qs::jsonStoreOk();
@@ -125,18 +127,11 @@ class StudentController extends Controller
         } catch (\Exception $e) {
 
             DB::rollBack();
-            // Log the error or handle it accordingly
-            return Qs::json('msg.create_failed => '.$e->getMessage(),false );
+
+            return Qs::json('msg.create_failed => ' . $e->getMessage(), false);
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -159,15 +154,12 @@ class StudentController extends Controller
         return view('pages.students.edit', compact('student', 'user', 'nextOfKin', 'personalInfo'), $dropdownData);
     }
 
-
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-
         try {
-
             DB::beginTransaction();
 
             $userData = null;
@@ -186,67 +178,47 @@ class StudentController extends Controller
                 $studentData = $request->validated();
             }
 
-        
-            if($nextOfKinDataWithPrefix){
-
-            // Remove the "kin_" prefix from keys
+            if ($nextOfKinDataWithPrefix) {
+                // Remove the "kin_" prefix from keys
                 $nextOfKinData = array_combine(
                     array_map(function ($key) {
                         return preg_replace('/^kin_/', '', $key);
                     }, array_keys($nextOfKinDataWithPrefix)),
                     $nextOfKinDataWithPrefix
                 );
-      
-        }
+            }
 
             // Check if the user already exists
             $user = $this->studentRepo->findUser($id);
 
             // Determine what user info to update
 
-            if($userData){
-                
-            // Update the user data
-            $user->update($userData);
-
-            } elseif($personalData){
-
-            // Update or create UserPersonalInfo
-            $userPersonalInfo = $user->userPersonalInfo()->update($personalData);
-
+            if ($userData) {
+                // Update the user data
+                $user->update($userData);
+            } elseif ($personalData) {
+                // Update or create UserPersonalInfo
+                $userPersonalInfo = $user->userPersonalInfo()->update($personalData);
             } elseif ($nextOfKinDataWithPrefix) {
-
-            // Update or create NextOfKin
-            $nextOfKin = $user->userNextOfKin()->update($nextOfKinData);
-
+                // Update or create NextOfKin
+                $nextOfKin = $user->userNextOfKin()->update($nextOfKinData);
             } elseif ($studentData) {
-
-            // Update or create Student
-            $student = $user->student()->update($studentData);
-
+                // Update or create Student
+                $student = $user->student()->update($studentData);
             }
 
             DB::commit();
 
             return Qs::jsonStoreOk();
-
         } catch (\Exception $e) {
-
             DB::rollBack();
 
             dd($e);
             // Log the error or handle it accordingly
-            return Qs::json(false,'failed to update');
+            return Qs::json(false, 'failed to update');
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 
     public function search(Request $request)
     {
@@ -254,16 +226,14 @@ class StudentController extends Controller
             $searchText = $request['query'];
             $users['users'] = $this->studentRepo->studentSearch($searchText);
             return view('pages.students.student_search', $users);
-
         } else {
             return view('pages.students.student_search');
         }
     }
 
-    //student management controller
+    // student management controller
     public function studentShow($id)
     {
-
         $data['student'] = $this->studentRepo->getStudentInfor($id);
         $data['countries'] = $this->studentRepo->getCountries();
         $data['programs'] = $this->studentRepo->getPrograms();
@@ -283,29 +253,25 @@ class StudentController extends Controller
         $x = $this->studentRepo->getStudentInfor($id);
 
         $data['courses'] = $this->registrationRepo->getAll($student->student->id);
-        $data['isRegistered'] = $this->registrationRepo->getRegisterationStatus($student->student->id);
+        $data['isRegistered'] = $this->registrationRepo->getRegistrationStatus($student->student->id);
+        $data['isWithinRegistrationPeriod'] = $this->registrationRepo->checkIfWithinRegistrationPeriod($student->student->id);
+        $data['isInvoiced'] = $this->registrationRepo->checkIfInvoiced($student->student->id);
 
-        //'student','countries','programs','towns','provinces','course_levels','periodIntakes','studyModes','periodTypes','relationships','maritalStatuses'
+        // 'student','countries','programs','towns','provinces','course_levels','periodIntakes','studyModes','periodTypes','relationships','maritalStatuses'
         return view('pages.students.show', $data);
     }
 
     public function resetAccountPassword(ResetPasswordInfo $request)
     {
-
         $resetPasswordData = $request->validated();
 
         try {
-
             $this->studentRepo->resetPassword($resetPasswordData);
 
             return Qs::jsonStoreOk();
-
         } catch (\Exception $e) {
-
             // Log the error or handle it accordingly
-            return Qs::json(false,'failed to reset password');
+            return Qs::json(false, 'failed to reset password');
         }
-
     }
-
 }
