@@ -7,7 +7,7 @@ use Auth;
 use App\Models\Admissions\Student;
 use App\Models\Enrollments\Enrollment;
 use App\Models\Accounting\{Invoice, InvoiceDetail};
-use App\Models\Academics\{AcademicPeriodClass, AcademicPeriodFee};
+use App\Models\Academics\{AcademicPeriodClass, AcademicPeriodFee, AcademicPeriod};
 //use App\Repositories\Accounting\StatementRepository;
 
 class InvoiceRepository
@@ -31,19 +31,17 @@ class InvoiceRepository
     DB::beginTransaction();
 
     try {
+
+
         
             // filtered student list
             $students_filtered_ids = [];
 
-            // get all students enrolled in acacdemic period
+            // get all students with academic period
+            $academic_period = AcademicPeriod::find($academic_period_id);
+            $full_academic_period_info = $academic_period->academic_period_information;
 
-            $students = AcademicPeriodClass::join('enrollments', 'enrollments.academic_period_class_id', 'academic_period_classes.id')
-                ->join('students', 'enrollments.user_id', 'students.user_id')
-                ->where('academic_period_id', $academic_period_id)
-                ->select('students.id') 
-                ->distinct()
-                ->get(); 
-
+            $students = Student::where('academic_period_intake_id', $full_academic_period_info->academic_period_intake_id)->where('period_type_id', $academic_period->period_type_id)->where('study_mode_id', $full_academic_period_info->study_mode_id)->get();
             
             // check if student have already been invoiced
 
@@ -100,15 +98,12 @@ class InvoiceRepository
             // get student object
             $student_obj = $this->getStudent($student_id);
         
-            // get all students enrolled in acacdemic period
+            // get academic period
+            $academic_period = AcademicPeriod::find($academic_period_id);
+            $full_academic_period_info = $academic_period->academic_period_information;
 
-            $student = AcademicPeriodClass::join('enrollments', 'enrollments.academic_period_class_id', 'academic_period_classes.id')
-                ->join('students', 'enrollments.user_id', 'students.user_id')
-                ->where('academic_period_id', $academic_period_id)
-                ->where('students.id', $student_id)
-                ->select('students.id') 
-                ->distinct()
-                ->first(); 
+            $student = Student::where('academic_period_intake_id', $full_academic_period_info->academic_period_intake_id)->where('period_type_id', $academic_period->period_type_id)->where('study_mode_id', $full_academic_period_info->study_mode_id)->where('id', $student_id)->first();
+            
 
             
             // check if student have already been invoiced
