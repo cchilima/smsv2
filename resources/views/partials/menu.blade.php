@@ -192,6 +192,78 @@
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['fees.create', 'fees.edit', 'fees.index']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Fees</span></a>
                                 </li>
+                                @if(true)
+                                    <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['myClassStudentList','smyClassList','myClassList']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                                        <a href="#" class="nav-link"><span> Reports</span></a>
+                                        <ul class="nav nav-group-sub" data-submenu-title="Manage Students">
+                                            @if(true)
+                                                <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['myClassStudentList','smyClassList','myClassList']) ? 'nav-item-expanded nav-item-open' : '' }}">
+                                                    <a href="#"
+                                                       class="nav-link {{ in_array(Route::currentRouteName(), ['smyClassList','myClassList' ]) ? 'active' : '' }}">Revenue</a>
+                                                    <ul class="nav nav-group-sub">
+                                                        <li class="nav-item"><a
+                                                                href="#"
+                                                                class="nav-link ">Revenue Analysis</a>
+                                                        </li>
+                                                        <li class="nav-item"><a
+                                                                href="#"
+                                                                class="nav-link ">Invoices</a>
+                                                        </li>
+                                                    </ul>
+
+                                                </li>
+                                            @endif
+                                            @if(true)
+                                                <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['myClassStudentList','smyClassList','myClassList']) ? 'nav-item-expanded nav-item-open' : '' }}">
+                                                    <a href="#"
+                                                       class="nav-link {{ in_array(Route::currentRouteName(), ['smyClassList','myClassList' ]) ? 'active' : '' }}">
+                                                        Receivables</a>
+                                                    <ul class="nav nav-group-sub">
+                                                        <li class="nav-item"><a
+                                                                href="#"
+                                                                class="nav-link ">Transactions</a>
+                                                        </li>
+                                                        <li class="nav-item"><a
+                                                                href="#"
+                                                                class="nav-link ">Failed Online Transactions</a>
+                                                        </li>
+                                                        <li class="nav-item"><a
+                                                                href="#"
+                                                                class="nav-link ">Aged Receivables</a>
+                                                        </li>
+                                                        <li class="nav-item"><a
+                                                                href="#"
+                                                                class="nav-link ">Bank Reconciliation</a>
+                                                        </li>
+                                                    </ul>
+
+                                                </li>
+                                            @endif
+                                            @if(true)
+                                                <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['myClassStudentList','smyClassList','myClassList']) ? 'nav-item-expanded nav-item-open' : '' }}">
+                                                    <a href="#"
+                                                       class="nav-link {{ in_array(Route::currentRouteName(), ['smyClassList','myClassList' ]) ? 'active' : '' }}">General</a>
+                                                    <ul class="nav nav-group-sub">
+                                                            <li class="nav-item"><a
+                                                                    href="#"
+                                                                    class="nav-link ">Student List</a>
+                                                            </li>
+                                                        <li class="nav-item"><a
+                                                                href="#"
+                                                                class="nav-link ">Chart of Accounts</a>
+                                                        </li>
+                                                        <li class="nav-item"><a
+                                                                href="#"
+                                                                class="nav-link ">Credit Notes</a>
+                                                        </li>
+                                                    </ul>
+
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </li>
+                                @endif
+
 
                             </ul>
                         </li>
@@ -323,10 +395,9 @@
                                         </li>
                                     @endif
 
-                                    {{--                                    --}}{{-- Grades list --}}
-                                    @if (!Qs::userIsInstructor())
-                                        <li
-                                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['getPublishProgramsCas', 'getPramResultsLevel', 'smyClassList', 'getPublishPrograms', 'getPramResults']) ? 'nav-item-expanded nav-item-open' : 'getPublishPrograms' }}">
+                                    {{--                                    --}}{{--Grades list--}}
+                                    @if(!Qs::userIsInstructor())
+                                        <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['getPublishProgramsCas','getPramResultsLevel','smyClassList','getPublishPrograms','getPramResults']) ? 'nav-item-expanded nav-item-open' : 'getPublishPrograms' }}">
                                             <a href="#" class="nav-link"><span>Board of Examiners</span></a>
                                             <ul class="nav nav-group-sub" data-submenu-title="Manage Students">
                                                 <li
@@ -341,12 +412,12 @@
                                                                     class="nav-link {{ in_array(Route::currentRouteName(), ['reports.index']) ? 'active' : '' }}">Academic
                                                                     Periods</a>
                                                                 <ul class="nav nav-group-sub">
-                                                                    {{--                                                                    @foreach (\App\Repositories\Academicperiods::getAllReadyPublish('code') as $c) --}}
-                                                                    {{--                                                                        <li class="nav-item"><a --}}
-                                                                    {{--                                                                                href="{{ route('reports.index', Qs::hash($c->id)) }}" --}}
-                                                                    {{--                                                                                class="nav-link  {{ in_array(Route::currentRouteName(), ['reports.index' ]) ? 'active' : '' }}">{{ $c->code }}</a> --}}
-                                                                    {{--                                                                        </li> --}}
-                                                                    {{--                                                                    @endforeach --}}
+                                                                    {{--                                                                    @foreach(\App\Repositories\Academicperiods::getAllReadyPublish('code') as $c)--}}
+                                                                    {{--                                                                        <li class="nav-item"><a--}}
+                                                                    {{--                                                                                href="{{ route('reports.index', Qs::hash($c->id)) }}"--}}
+                                                                    {{--                                                                                class="nav-link  {{ in_array(Route::currentRouteName(), ['reports.index' ]) ? 'active' : '' }}">{{ $c->code }}</a>--}}
+                                                                    {{--                                                                        </li>--}}
+                                                                    {{--                                                                    @endforeach--}}
                                                                 </ul>
 
                                                             </li>
