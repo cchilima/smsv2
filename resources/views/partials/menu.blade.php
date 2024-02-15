@@ -22,18 +22,20 @@
         <!-- User menu -->
         <div class="sidebar-user">
             <div class="card-body">
-                <div class="media">
+                <div class="media align-items-center">
                     <div class="mr-3">
-                        <a href="{{ '#' }}"><img src="" width="38" height="38"
+                        <a href="{{ '#' }}"><img src="{{asset('images/default-avatar.png')}}" width="38" height="38"
                                 class="rounded-circle" alt="photo"></a>
                     </div>
 
-                    <div class="media-body">
-                        <div class="media-title font-weight-semibold">{{ Auth::user()->name }}</div>
-                        <div class="font-size-xs opacity-50">
+                    <div class="media-body d-flex">
+                        <div class="media-title font-weight-semibold">{{ Auth::user()->first_name }}</div>
+                        &nbsp;(Type: {{ ucwords(str_replace('_', ' ', Auth::user()->user_type_id)) }})
+
+                        {{-- <div class="font-size-xs opacity-50">
                             <i class="icon-user font-size-sm"></i>
                             &nbsp;{{ ucwords(str_replace('_', ' ', Auth::user()->user_type)) }}
-                        </div>
+                        </div> --}}
                     </div>
 
                     <div class="ml-3 align-self-center">
