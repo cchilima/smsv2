@@ -83,7 +83,12 @@ class InvoiceController extends Controller
 
             $batchInvoiced = $this->invoiceRepo->invoiceStudents($request->academic_period);
 
-            return Qs::jsonStoreOk();
+            if($batchInvoiced){
+                return Qs::jsonStoreOk();
+            } else {
+                return Qs::json(false,'failed to invoice batch');
+            }
+
 
         } catch (\Exception $e) {
 

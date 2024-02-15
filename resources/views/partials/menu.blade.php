@@ -183,7 +183,7 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['fees.create', 'fees.edit', 'fees.index']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['revenue.analysis','invoices','fees.create', 'fees.edit', 'fees.index']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-cash3"></i> <span>
                                     Accounting</span></a>
 
@@ -195,20 +195,21 @@
                                             class="icon-fence"></i> <span>Fees</span></a>
                                 </li>
                                 @if(true)
-                                    <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['myClassStudentList','smyClassList','myClassList']) ? 'nav-item-expanded nav-item-open' : '' }} ">
-                                        <a href="#" class="nav-link"><span> Reports</span></a>
+                                    <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['revenue.analysis','invoices']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                                        <a href="#" class="nav-link"><span><i
+                                                    class="icon-book"></i> Reports</span></a>
                                         <ul class="nav nav-group-sub" data-submenu-title="Manage Students">
                                             @if(true)
-                                                <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['myClassStudentList','smyClassList','myClassList']) ? 'nav-item-expanded nav-item-open' : '' }}">
+                                                <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['revenue.analysis','invoices']) ? 'nav-item-expanded nav-item-open' : '' }}">
                                                     <a href="#"
-                                                       class="nav-link {{ in_array(Route::currentRouteName(), ['smyClassList','myClassList' ]) ? 'active' : '' }}">Revenue</a>
+                                                       class="nav-link {{ in_array(Route::currentRouteName(), ['revenue.analysis','invoices' ]) ? 'active' : '' }}">Revenue</a>
                                                     <ul class="nav nav-group-sub">
                                                         <li class="nav-item"><a
-                                                                href="#"
+                                                                href="{{ route('revenue.analysis') }}"
                                                                 class="nav-link ">Revenue Analysis</a>
                                                         </li>
                                                         <li class="nav-item"><a
-                                                                href="#"
+                                                                href="{{ route('invoices') }}"
                                                                 class="nav-link ">Invoices</a>
                                                         </li>
                                                     </ul>

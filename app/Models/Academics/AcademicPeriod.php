@@ -25,13 +25,11 @@ class AcademicPeriod extends Model
         return $this->hasMany(AcademicPeriodClass::class,'academic_period_id','id');
     }
 
-    public function grades()
-    {
+    public function grades(){
         return $this->hasMany(Grade::class, 'academic_period_id','id');
     }
 
-    public function academic_period_fees()
-    {
+    public function academic_period_fees(){
         return $this->hasMany(AcademicPeriodFee::class);
     }
 

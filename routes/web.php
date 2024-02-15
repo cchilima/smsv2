@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Reports\Accounts\AccountReportsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Home\HomeController;
@@ -72,6 +73,13 @@ Route::group(['prefix' => 'assess'], function () {
     });
 });
 Route::group(['prefix' => 'student'], function () {
+    Route::group(['prefix' => 'reports'], function () {
+        Route::post('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue.analysis');
+        Route::post('/invoices', [AccountReportsController::class, 'invoices'])->name('invoices');
+    });
+});
+
+Route::group(['prefix' => 'accounts'], function () {
     Route::get('/results', [ClassAssessmentsController::class, 'MyResults'])->name('student-exam_results');
     Route::get('/ca-results', [ClassAssessmentsController::class, 'MyCAResults'])->name('student_ca_results');
     Route::get('/exam-registration', [ClassAssessmentsController::class, 'ExamRegistration'])->name('student-exam_registration');
