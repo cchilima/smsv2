@@ -104,6 +104,7 @@ class InvoiceRepository
             $exists = Invoice::where('student_id', $student->id)->where('academic_period_id', $academic_period_id)->exists();
 
             if (!$exists) {
+                
                 // get academic period fees
                 $fees = AcademicPeriodFee::where('academic_period_id', $academic_period_id)->get();
 
