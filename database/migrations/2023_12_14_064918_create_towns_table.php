@@ -14,14 +14,13 @@ return new class extends Migration
         Schema::create('towns', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('province_id')->constrained('provinces')->onDelete('restrict');
+            $table->foreignId('province_id')->nullable()->constrained('provinces')->onDelete('restrict');
             $table->timestamps();
 
             // Add indexes
             $table->index('id');
             $table->index('name');
             $table->index('province_id');
-
         });
     }
 

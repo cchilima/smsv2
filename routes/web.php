@@ -33,8 +33,10 @@ use App\Http\Controllers\Accounting\FeeController;
 use App\Http\Controllers\Users\UserController;
 
 use App\Http\Controllers\Enrollments\EnrollmentController;
-
-
+use App\Http\Controllers\Inputs\CountryController;
+use App\Http\Controllers\Inputs\ProvinceController;
+use App\Http\Controllers\Inputs\ResidencyController;
+use App\Http\Controllers\Inputs\TownController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -127,3 +129,7 @@ Route::resource('enrollments', EnrollmentController::class);
 Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 
 Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])->name('students.resetAccountPassword');
+
+// Residency Input Routes
+Route::get('/countries/{countryId}/provinces/', [CountryController::class, 'getProvincesByCountry'])->name('provinces.getProvincesByCountry');
+Route::get('/provinces/{provinceId}/towns', [ProvinceController::class, 'getTownsByProvince'])->name('towns.getTownsByProvince');

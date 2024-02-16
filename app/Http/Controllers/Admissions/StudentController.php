@@ -17,6 +17,7 @@ class StudentController extends Controller
 {
 
     protected $studentRepo;
+    protected $registrationRepo;
 
     public function __construct(StudentRepository $studentRepo, StudentRegistrationRepository $registrationRepo)
     {
@@ -121,12 +122,11 @@ class StudentController extends Controller
             DB::commit();
 
             return Qs::jsonStoreOk();
-
         } catch (\Exception $e) {
 
             DB::rollBack();
             // Log the error or handle it accordingly
-            return Qs::json('msg.create_failed => '.$e->getMessage(),false );
+            return Qs::json('msg.create_failed => ' . $e->getMessage(), false);
         }
     }
 
@@ -186,57 +186,51 @@ class StudentController extends Controller
                 $studentData = $request->validated();
             }
 
-        
-            if($nextOfKinDataWithPrefix){
 
-            // Remove the "kin_" prefix from keys
+            if ($nextOfKinDataWithPrefix) {
+
+                // Remove the "kin_" prefix from keys
                 $nextOfKinData = array_combine(
                     array_map(function ($key) {
                         return preg_replace('/^kin_/', '', $key);
                     }, array_keys($nextOfKinDataWithPrefix)),
                     $nextOfKinDataWithPrefix
                 );
-      
-        }
+            }
 
             // Check if the user already exists
             $user = $this->studentRepo->findUser($id);
 
             // Determine what user info to update
 
-            if($userData){
-                
-            // Update the user data
-            $user->update($userData);
+            if ($userData) {
 
-            } elseif($personalData){
+                // Update the user data
+                $user->update($userData);
+            } elseif ($personalData) {
 
-            // Update or create UserPersonalInfo
-            $userPersonalInfo = $user->userPersonalInfo()->update($personalData);
-
+                // Update or create UserPersonalInfo
+                $userPersonalInfo = $user->userPersonalInfo()->update($personalData);
             } elseif ($nextOfKinDataWithPrefix) {
 
-            // Update or create NextOfKin
-            $nextOfKin = $user->userNextOfKin()->update($nextOfKinData);
-
+                // Update or create NextOfKin
+                $nextOfKin = $user->userNextOfKin()->update($nextOfKinData);
             } elseif ($studentData) {
 
-            // Update or create Student
-            $student = $user->student()->update($studentData);
-
+                // Update or create Student
+                $student = $user->student()->update($studentData);
             }
 
             DB::commit();
 
             return Qs::jsonStoreOk();
-
         } catch (\Exception $e) {
 
             DB::rollBack();
 
             dd($e);
             // Log the error or handle it accordingly
-            return Qs::json(false,'failed to update');
+            return Qs::json(false, 'failed to update');
         }
     }
 
@@ -254,7 +248,6 @@ class StudentController extends Controller
             $searchText = $request['query'];
             $users['users'] = $this->studentRepo->studentSearch($searchText);
             return view('pages.students.student_search', $users);
-
         } else {
             return view('pages.students.student_search');
         }
@@ -299,13 +292,10 @@ class StudentController extends Controller
             $this->studentRepo->resetPassword($resetPasswordData);
 
             return Qs::jsonStoreOk();
-
         } catch (\Exception $e) {
 
             // Log the error or handle it accordingly
-            return Qs::json(false,'failed to reset password');
+            return Qs::json(false, 'failed to reset password');
         }
-
     }
-
 }

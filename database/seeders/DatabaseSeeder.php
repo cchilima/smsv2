@@ -326,23 +326,32 @@ class DatabaseSeeder extends Seeder
 
         // Seed province
 
-        $province = Province::create([
-
-            'name' => 'Copperbelt',
-            'country_id' => $country->id
-
-        ]);
+        $province = Province::insert(
+            [
+                'name' => 'Copperbelt',
+                'country_id' => $country->id
+            ],
+            [
+                'name' => 'Other',
+                'country_id' => null,
+            ]
+        );
 
 
 
         // Seed town
 
-        $town = Town::create([
+        $town = Town::insert(
+            [
 
-            'name' => 'Kitwe',
-            'province_id' => $province->id
-
-        ]);
+                'name' => 'Kitwe',
+                'province_id' => $province->id
+            ],
+            [
+                'name' => 'Other',
+                'province_id' => null,
+            ]
+        );
 
 
         // Seed marital statuses
