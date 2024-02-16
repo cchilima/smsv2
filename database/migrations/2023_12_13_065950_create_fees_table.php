@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('fees', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('type');
-            $table->string('chart_of_account_id', 255);
+            $table->enum('type', ['recurring', 'once off', 'course repeat fee']);
             $table->integer('archieved')->default(0);
             $table->timestamps();
 
