@@ -15,7 +15,7 @@
     <div class="collapse navbar-collapse flex-md-grow-0" id="navbar-mobile">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a href="#" class="navbar-nav-link sidebar-control sidebar-main-toggle d-none d-md-block">
+                <a href="#" class="navbar-nav-link p-0 sidebar-control sidebar-main-toggle d-none d-md-block">
                     <i class="icon-paragraph-justify3"></i>
                 </a>
             </li>

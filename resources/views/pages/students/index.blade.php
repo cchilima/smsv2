@@ -200,36 +200,42 @@
 
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <label for="lga_id">Town: <span class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Town" required class="select-search form-control"
-                                            name="town_id" id="lga_id">
-                                            <option value=""></option>
-                                            @foreach ($towns as $town)
-                                                <option value="{{ $town->id }}">{{ $town->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label for="country_id">Country: <span class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Country" required
+                                                class="select-search form-control" name="country_id" id="country_id">
+                                                <option disabled selected value=""></option>
+                                                @foreach ($countries as $country)
+                                                    <option value="{{ $country->id }}">{{ $country->country }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label for="province_id">Province: <span class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Province" required
-                                            class="select-search form-control" name="province_id" id="province_id">
-                                            <option value=""></option>
-                                            @foreach ($provinces as $province)
-                                                <option value="{{ $province->id }}">{{ $province->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label for="province_id">Province: <span class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Province" required
+                                                class="select-search form-control" name="province_id" id="province_id">
+                                                <option disabled selected></option>
+                                                {{-- @foreach ($provinces as $province)
+                                                    <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                                @endforeach --}}
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label for="country_id">Country: <span class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Country" required
-                                            class="select-search form-control" name="country_id" id="country_id">
-                                            <option value=""></option>
-                                            @foreach ($countries as $country)
-                                                <option value="{{ $country->id }}">{{ $country->country }}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label for="town_id">Town: <span class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Town" required
+                                                class="select-search form-control" name="town_id" id="town_id">
+                                                <option disabled selected></option>
+                                                {{-- @foreach ($towns as $town)
+                                                    <option value="{{ $town->id }}">{{ $town->name }}</option>
+                                                @endforeach --}}
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -431,4 +437,64 @@
     </div>
 
     {{-- Student List Ends --}}
+
+    {{-- Script for handling dependent select inputs for location input --}}
+    <script>
+        const getProvinces = (countryId, provinceSelector, townSelector) => {
+            $.ajax({
+                url: `/countries/${countryId}/provinces`,
+                type: "GET",
+                dataType: "json",
+                success: (data) => {
+                    $(provinceSelector).empty();
+                    $(townSelector).empty();
+                    $(provinceSelector).append(`<option disabled selected></option>`)
+                    $.each(data, (_, value) => {
+                        $(provinceSelector).append(
+                            `<option value="${value.id}">${value.name}</option>`);
+                    });
+                }
+            });
+        }
+
+        const getTowns = (provinceId, townSelector) => {
+            $.ajax({
+                url: `/provinces/${provinceId}/towns`,
+                type: "GET",
+                dataType: "json",
+                success: (data) => {
+                    $(townSelector).empty();
+                    $(townSelector).append(`<option disabled selected></option>`)
+                    $.each(data, (_, value) => {
+                        $(townSelector).append(
+                            `<option value="${value.id}">${value.name}</option>`);
+                    });
+                }
+            });
+        }
+
+        $(document).ready(() => {
+
+            $('#country_id').change(function() {
+                const countryId = $(this).val();
+
+                if (countryId) {
+                    getProvinces(countryId, '#province_id', '#town_id');
+                } else {
+                    $('#province_id').empty();
+                }
+            });
+
+            $('#province_id').change(function() {
+                const provinceId = $(this).val();
+
+                if (provinceId) {
+                    getTowns(provinceId, '#town_id');
+                } else {
+                    $('#town_id').empty();
+                }
+            });
+
+        });
+    </script>
 @endsection
