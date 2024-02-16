@@ -24,6 +24,11 @@ class Invoice extends Model
         return $this->hasMany(Statement::class, 'invoice_id')->where('amount', '>' , 0);
     }
 
+    public function receipts()
+    {
+        return $this->hasMany(Receipt::class, 'invoice_id');
+    }
+
     public function student()
     {
         return $this->belongsTo(Student::class);

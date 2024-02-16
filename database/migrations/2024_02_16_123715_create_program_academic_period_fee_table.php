@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fees', function (Blueprint $table) {
+        Schema::create('program_academic_period_fee', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->enum('type', ['recurring', 'once off', 'course repeat fee']);
-            $table->integer('archieved')->default(0);
+            $table->foreignId('academic_period_fee_id')->constrained('academic_period_fees')->onDelete('restrict');
+            $table->foreignId('program_id')->constrained('programs')->onDelete('restrict');
             $table->timestamps();
-
-            // Add indexes
-            $table->index('name');
         });
     }
 
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fees');
+        Schema::dropIfExists('program_academic_period_fee');
     }
 };

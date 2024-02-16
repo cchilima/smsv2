@@ -235,4 +235,10 @@ class StatementRepository
     }
 
 
+    public function removeZeroStatementAmounts()
+    {
+        Statement::where('amount', 0.00)->delete();
+    }
+
+
 }
