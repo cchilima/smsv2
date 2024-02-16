@@ -326,7 +326,7 @@ class DatabaseSeeder extends Seeder
 
         // Seed province
 
-        $province = Province::insert(
+        Province::insert(
             [
                 'name' => 'Copperbelt',
                 'country_id' => $country->id
@@ -337,11 +337,11 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-
+        $province = Province::first();
 
         // Seed town
 
-        $town = Town::insert(
+        Town::insert(
             [
 
                 'name' => 'Kitwe',
@@ -353,6 +353,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        $town = Town::first();
 
         // Seed marital statuses
 
