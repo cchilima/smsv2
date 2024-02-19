@@ -62,7 +62,7 @@ class InvoiceRepository
 
                 foreach ($fees as $fee) {
                     // create invoice details
-                    $invoiceDetails = InvoiceDetail::create(['invoice_id' => $invoice->id, 'fee_id' => $fee->id, 'amount' => $fee->amount]);
+                    $invoiceDetails = InvoiceDetail::create(['invoice_id' => $invoice->id, 'fee_id' => $fee->fee_id, 'amount' => $fee->amount]);
                 }
 
                 // get student
@@ -81,7 +81,10 @@ class InvoiceRepository
             return true;
 
         } catch (\Exception $e) {
+
             DB::rollback();
+
+            dd($e);
         }
     }
 
@@ -115,7 +118,7 @@ class InvoiceRepository
 
                 foreach ($fees as $fee) {
                     // create invoice details
-                    $invoiceDetails = InvoiceDetail::create(['invoice_id' => $invoice->id, 'fee_id' => $fee->id, 'amount' => $fee->amount]);
+                    $invoiceDetails = InvoiceDetail::create(['invoice_id' => $invoice->id, 'fee_id' => $fee->fee_id, 'amount' => $fee->amount]);
                 }
 
                 // check for any hanging money and push any money found towards invoice

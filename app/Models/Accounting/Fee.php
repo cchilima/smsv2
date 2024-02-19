@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Fee extends Model
 {
-    protected $fillable = ['name','type','chart_of_account_id'];
+    protected $fillable = ['name','type'];
     use HasFactory;
 }
