@@ -103,43 +103,43 @@ class StudentRepository
     public function addStudentId($studentData)
     {
 
-//        $year = date("y");
-//        $semester = (date("m") <= 6) ? 1 : 2;
-//
-//        // Get the latest student ID from the database
-//        $lastID = Student::latest('id')->first();
-//
-//        if ($lastID) {
-//            //$afterRemovingFirstThree = intval(substr($lastID->id, 3));
-//            //$addonw = $afterRemovingFirstThree + 1;
-//            $firstTwoValues = substr($lastID->student_id, 0, 2);
-//            $afterRemovingFirstThree = intval(substr($lastID->student_id, 3));
-//            if (intval($firstTwoValues) === intval($year)) {
-//                $addonw = $afterRemovingFirstThree + 1;
-//            }else{
-//                $addonw = 000 + 1;
-//            }
-//           // $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
-//
-//            $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
-//        } else {
-//            // If there is no last ID, use an ID starting with the current year and zeros
-//            $studentNumber = '0001';
-//        }
-//
-//        $finalID = strlen($studentNumber);
-//
-//        if ($finalID == 1) {
-//            $concatStudentNumber = "000$studentNumber";
-//        } else if ($finalID == 2) {
-//            $concatStudentNumber = "00$studentNumber";
-//        } else if ($finalID == 3) {
-//            $concatStudentNumber = "0$studentNumber";
-//        } else if ($finalID == 4) {
-//            $concatStudentNumber = "$studentNumber";
-//        }
-//
-//        $semester = (date("m") <= 6) ? 1 : 2;
+        //        $year = date("y");
+        //        $semester = (date("m") <= 6) ? 1 : 2;
+        //
+        //        // Get the latest student ID from the database
+        //        $lastID = Student::latest('id')->first();
+        //
+        //        if ($lastID) {
+        //            //$afterRemovingFirstThree = intval(substr($lastID->id, 3));
+        //            //$addonw = $afterRemovingFirstThree + 1;
+        //            $firstTwoValues = substr($lastID->student_id, 0, 2);
+        //            $afterRemovingFirstThree = intval(substr($lastID->student_id, 3));
+        //            if (intval($firstTwoValues) === intval($year)) {
+        //                $addonw = $afterRemovingFirstThree + 1;
+        //            }else{
+        //                $addonw = 000 + 1;
+        //            }
+        //           // $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
+        //
+        //            $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
+        //        } else {
+        //            // If there is no last ID, use an ID starting with the current year and zeros
+        //            $studentNumber = '0001';
+        //        }
+        //
+        //        $finalID = strlen($studentNumber);
+        //
+        //        if ($finalID == 1) {
+        //            $concatStudentNumber = "000$studentNumber";
+        //        } else if ($finalID == 2) {
+        //            $concatStudentNumber = "00$studentNumber";
+        //        } else if ($finalID == 3) {
+        //            $concatStudentNumber = "0$studentNumber";
+        //        } else if ($finalID == 4) {
+        //            $concatStudentNumber = "$studentNumber";
+        //        }
+        //
+        //        $semester = (date("m") <= 6) ? 1 : 2;
 
         $year = date("y");
         $semester = (date("m") <= 6) ? 1 : 2;
@@ -152,7 +152,7 @@ class StudentRepository
             $afterRemovingFirstThree = intval(substr($lastID->id, 3));
             if (intval($firstTwoValues) === intval($year)) {
                 $addonw = $afterRemovingFirstThree + 1;
-            }else{
+            } else {
                 $addonw = 000 + 1;
             }
             $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
@@ -185,7 +185,6 @@ class StudentRepository
         $studentData['id'] =  $year . $semester . $concatStudentNumber;
 
         return $studentData;
-
     }
 
     public function removePrefixes($nextOfKinDataWithPrefix)
@@ -193,15 +192,14 @@ class StudentRepository
         // Remove the "kin_" prefix from keys
         $nextOfKinData = array_combine(
 
-        array_map(function ($key) {
-            return preg_replace('/^kin_/', '', $key);
-        }, array_keys($nextOfKinDataWithPrefix)),
+            array_map(function ($key) {
+                return preg_replace('/^kin_/', '', $key);
+            }, array_keys($nextOfKinDataWithPrefix)),
 
             $nextOfKinDataWithPrefix
         );
 
         return $nextOfKinData;
-
     }
 
     public function changeDBOFromat($personalData)
@@ -211,11 +209,12 @@ class StudentRepository
         return $personalData;
     }
 
-    public function studentSearch($searchText){
+    public function studentSearch($searchText)
+    {
 
-        return User::where('first_name','LIKE','%'.$searchText.'%')
-            ->orWhere('last_name','LIKE','%'.$searchText.'%')
-            ->orWhere('id','LIKE','%'.$searchText.'%')->get();
+        return User::where('first_name', 'LIKE', '%' . $searchText . '%')
+            ->orWhere('last_name', 'LIKE', '%' . $searchText . '%')
+            ->orWhere('id', 'LIKE', '%' . $searchText . '%')->get();
     }
 
     public function getFees($student_id)
@@ -244,17 +243,28 @@ class StudentRepository
 
     private function encryptPassword($password)
     {
-         // Hash the password before creating the user
-         $hashedPassword = Hash::make($password);
+        // Hash the password before creating the user
+        $hashedPassword = Hash::make($password);
 
-         return $hashedPassword;
+        return $hashedPassword;
     }
 
-    public function getStudentInfor($id){
+    public function getStudentInfor($id)
+    {
 
-        return Student::with('period_type','level','intake','study_mode','program',
-            'user.userPersonalInfo','user.userNextOfKin.relationship','user.userPersonalInfo.userMaritalStatus',
-            'user.userPersonalInfo.province','user.userPersonalInfo.country','user.userPersonalInfo.town')->where('user_id',$id)->get()->first();
+        return Student::with(
+            'period_type',
+            'level',
+            'intake',
+            'study_mode',
+            'program',
+            'user.userPersonalInfo',
+            'user.userNextOfKin.relationship',
+            'user.userPersonalInfo.userMaritalStatus',
+            'user.userPersonalInfo.province',
+            'user.userPersonalInfo.country',
+            'user.userPersonalInfo.town'
+        )->where('user_id', $id)->get()->first();
     }
 
     public function resetPassword($resetPasswordData)
@@ -281,4 +291,13 @@ class StudentRepository
         }
     }
 
+    public function destroy($id)
+    {
+        $student = Student::find($id);
+
+        // Delete user & cascade
+        // $student->user()->delete();
+
+        dd($student);
+    }
 }

@@ -175,9 +175,10 @@
 
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label>NRC: <span class="text-danger">*</span></label>
-                                            <input type="nrc" value="{{ old('nrc') }}" required name="nrc"
-                                                class="form-control" placeholder="XXXXXX/XX/X">
+                                            <label for="nrc">NRC: <span class="text-danger">*</span></label>
+                                            <input type="text" maxlength="11" id="nrc"
+                                                value="{{ old('nrc') }}" required name="nrc" class="form-control"
+                                                placeholder="XXXXXX/XX/X">
                                         </div>
                                     </div>
 
@@ -288,53 +289,63 @@
 
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label for="kin_relationship_id">Relationship: <span
-                                                class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Relationship" required
-                                            class="select-search form-control" name="kin_relationship_id"
-                                            id="kin_relationship_id">
-                                            <option value=""></option>
-                                            @foreach ($relationships as $relationship)
-                                                <option value="{{ $relationship->id }}">{{ $relationship->relationship }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label for="kin_relationship_id">Relationship: <span
+                                                    class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Relationship" required
+                                                class="select-search form-control" name="kin_relationship_id"
+                                                id="kin_relationship_id">
+                                                <option value=""></option>
+                                                @foreach ($relationships as $relationship)
+                                                    <option value="{{ $relationship->id }}">
+                                                        {{ $relationship->relationship }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-4">
-                                        <label for="kin_town_id">Town: <span class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Town" required class="select-search form-control"
-                                            name="kin_town_id" id="kin_town_id">
-                                            <option value=""></option>
-                                            @foreach ($towns as $town)
-                                                <option value="{{ $town->id }}">{{ $town->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label for="kin_country_id">Country: <span
+                                                    class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Country" required
+                                                class="select-search form-control" name="kin_country_id"
+                                                id="kin_country_id">
+                                                <option value=""></option>
+                                                @foreach ($countries as $country)
+                                                    <option value="{{ $country->id }}">{{ $country->country }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-4">
-                                        <label for="kin_province_id">Province: <span class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Province" required
-                                            class="select-search form-control" name="kin_province_id"
-                                            id="kin_province_id">
-                                            <option value=""></option>
-                                            @foreach ($provinces as $province)
-                                                <option value="{{ $province->id }}">{{ $province->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label for="kin_province_id">Province: <span
+                                                    class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Province" required
+                                                class="select-search form-control" name="kin_province_id"
+                                                id="kin_province_id">
+                                                <option disabled selected></option>
+                                                {{-- @foreach ($provinces as $province)
+                                                    <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                                @endforeach --}}
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="row">
                                     <div class="col-md-4">
-                                        <label for="kin_country_id">Country: <span class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Country" required
-                                            class="select-search form-control" name="kin_country_id" id="kin_country_id">
-                                            <option value=""></option>
-                                            @foreach ($countries as $country)
-                                                <option value="{{ $country->id }}">{{ $country->country }}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label for="kin_town_id">Town: <span class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Town" required
+                                                class="select-search form-control" name="kin_town_id" id="kin_town_id">
+                                                <option disabled selected></option>
+                                                {{-- @foreach ($towns as $town)
+                                                    <option value="{{ $town->id }}">{{ $town->name }}</option>
+                                                @endforeach --}}
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </fieldset>
@@ -345,72 +356,86 @@
                                 <legend>Academics Information</legend>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label for="program_id">Program: <span class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Program" required
-                                            class="select-search form-control" name="program_id" id="program_id">
-                                            <option value=""></option>
-                                            @foreach ($programs as $program)
-                                                <option value="{{ $program->id }}">{{ $program->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label for="program_id">Program: <span class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Program" required
+                                                class="select-search form-control" name="program_id" id="program_id">
+                                                <option value=""></option>
+                                                @foreach ($programs as $program)
+                                                    <option value="{{ $program->id }}">{{ $program->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-4">
-                                        <label for="academic_period_intake_id">Academic Period Intake: <span
-                                                class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Academic Period Intake" required
-                                            class="select-search form-control" name="academic_period_intake_id"
-                                            id="academic_period_intake_id">
-                                            <option value=""></option>
-                                            @foreach ($periodIntakes as $intake)
-                                                <option value="{{ $intake->id }}">{{ $intake->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label for="academic_period_intake_id">Academic Period Intake: <span
+                                                    class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Academic Period Intake" required
+                                                class="select-search form-control" name="academic_period_intake_id"
+                                                id="academic_period_intake_id">
+                                                <option value=""></option>
+                                                @foreach ($periodIntakes as $intake)
+                                                    <option value="{{ $intake->id }}">{{ $intake->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-4">
-                                        <label for="study_mode_id">Study Mode: <span class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Study Mode" required
-                                            class="select-search form-control" name="study_mode_id" id="study_mode_id">
-                                            <option value=""></option>
-                                            @foreach ($studyModes as $mode)
-                                                <option value="{{ $mode->id }}">{{ $mode->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label for="study_mode_id">Study Mode: <span
+                                                    class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Study Mode" required
+                                                class="select-search form-control" name="study_mode_id"
+                                                id="study_mode_id">
+                                                <option value=""></option>
+                                                @foreach ($studyModes as $mode)
+                                                    <option value="{{ $mode->id }}">{{ $mode->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label for="course_level_id">Course Level: <span
-                                                class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Course Level" required
-                                            class="select-search form-control" name="course_level_id"
-                                            id="course_level_id">
-                                            <option value=""></option>
-                                            @foreach ($courseLevels as $level)
-                                                <option value="{{ $level->id }}">{{ $level->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label for="course_level_id">Course Level: <span
+                                                    class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Course Level" required
+                                                class="select-search form-control" name="course_level_id"
+                                                id="course_level_id">
+                                                <option value=""></option>
+                                                @foreach ($courseLevels as $level)
+                                                    <option value="{{ $level->id }}">{{ $level->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-4">
-                                        <label for="period_type_id">Period Type: <span
-                                                class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Period Type" required
-                                            class="select-search form-control" name="period_type_id" id="period_type_id">
-                                            <option value=""></option>
-                                            @foreach ($periodTypes as $type)
-                                                <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label for="period_type_id">Period Type: <span
+                                                    class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Period Type" required
+                                                class="select-search form-control" name="period_type_id"
+                                                id="period_type_id">
+                                                <option value=""></option>
+                                                @foreach ($periodTypes as $type)
+                                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Admission Year: <span class="text-danger">*</span></label>
-                                            <input value="{{ old('admission_year') }}" required type="year"
-                                                name="admission_year" class="form-control" placeholder="Admission Year">
+                                            <input value="{{ old('admission_year') ?: date('Y') }}" required
+                                                type="number" name="admission_year" class="form-control"
+                                                placeholder="Admission Year">
                                         </div>
                                     </div>
                                 </div>
@@ -440,7 +465,7 @@
 
     {{-- Student List Ends --}}
 
-    {{-- Script for handling dependent select inputs for location input --}}
+    {{-- Handle user input --}}
     <script>
         const getProvinces = (countryId, provinceSelector, townSelector) => {
             $.ajax({
@@ -475,6 +500,22 @@
             });
         }
 
+        const maskNRC = () => {
+            $('#nrc').on('input', function() {
+                var nrc = $(this).val().replace(/\D/g, '');
+
+                if (nrc.length > 6) {
+                    nrc = nrc.substring(0, 6) + '/' + nrc.substring(6);
+                }
+
+                if (nrc.length > 9) {
+                    nrc = nrc.substring(0, 9) + '/' + nrc.substring(9);
+                }
+
+                $(this).val(nrc);
+            });
+        }
+
         $(document).ready(() => {
 
             $('#country_id').change(function() {
@@ -487,6 +528,16 @@
                 }
             });
 
+            $('#kin_country_id').change(function() {
+                const countryId = $(this).val();
+
+                if (countryId) {
+                    getProvinces(countryId, '#kin_province_id', '#kin_town_id');
+                } else {
+                    $('#kin_province_id').empty();
+                }
+            });
+
             $('#province_id').change(function() {
                 const provinceId = $(this).val();
 
@@ -496,6 +547,18 @@
                     $('#town_id').empty();
                 }
             });
+
+            $('#kin_province_id').change(function() {
+                const provinceId = $(this).val();
+
+                if (provinceId) {
+                    getTowns(provinceId, '#kin_town_id');
+                } else {
+                    $('#kin_town_id').empty();
+                }
+            });
+
+            maskNRC();
 
         });
     </script>

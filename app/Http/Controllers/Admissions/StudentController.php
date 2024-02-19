@@ -95,7 +95,7 @@ class StudentController extends Controller
             DB::beginTransaction();
 
             $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
-            $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport_number', 'passport_photo_path']);
+            $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport_number']);
             $studentData = $request->only(['program_id', 'study_mode_id', 'period_type_id', 'academic_period_intake_id', 'course_level_id', 'graduated', 'admission_year']);
 
             // Extract nextOfKinData with the "kin_" prefix
@@ -113,8 +113,8 @@ class StudentController extends Controller
             $personalData = $this->studentRepo->changeDBOFromat($personalData);
 
             // Upload passport photo if a file is chosen
-            if ($personalData['passport_photo_path']) {
-                $personalData['passport_photo_path'] = $this->userPersonalInfoRepo->uploadPassportPhoto($personalData['passport_photo_path']);
+            if ($passportPhotoPath = $personalData['passport_photo_path'] ?? null) {
+                $personalData['passport_photo_path'] = $this->userPersonalInfoRepo->uploadPassportPhoto($passportPhotoPath);
             }
 
             // Create personal info record
@@ -289,6 +289,21 @@ class StudentController extends Controller
         } catch (\Exception $e) {
             // Log the error or handle it accordingly
             return Qs::json(false, 'failed to reset password');
+        }
+    }
+
+    public function destroy($studentId)
+    {
+        try {
+            DB::beginTransaction();
+
+            $this->studentRepo->destroy($studentId);
+
+            DB::commit();
+
+            return redirect(route('students.index'));
+        } catch (\Exception $e) {
+            return Qs::json('msg.delete_failed => ' . $e->getMessage(), false);
         }
     }
 }
