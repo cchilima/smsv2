@@ -8,8 +8,11 @@ use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\APInformation\APinformation;
 use App\Http\Requests\APInformation\APinformationUpdate;
+use App\Models\Academics\ProgramCourses;
 use App\Repositories\Academics\AcademicPeriodClassRepository;
 use App\Repositories\Academics\AcademicPeriodRepository;
+use App\Repositories\Academics\ProgramCoursesRepository;
+use App\Repositories\Academics\ProgramsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,15 +21,16 @@ class APManagementController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $periods, $periodClasses;
+    protected $periods, $periodClasses,$programsCourses;
 
-    public function __construct(AcademicPeriodRepository $periods,AcademicPeriodClassRepository $periodClasses)
+    public function __construct(AcademicPeriodRepository $periods,AcademicPeriodClassRepository $periodClasses, AcademicPeriodClassRepository $programsCourses)
     {
         $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
         $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
 
         $this->periods = $periods;
         $this->periodClasses = $periodClasses;
+        $this->programsCourses = $programsCourses;
     }
 
     public function index()
@@ -38,7 +42,9 @@ class APManagementController extends Controller
         $fees = $this->periods->getFees();
         $courses = $this->periodClasses->getCourses();
         $instructors = $this->periodClasses->getInstructors();
-        return view('pages.academicPeriodInformation.index', compact('courses', 'studyModes', 'intakes','academic','instructors','fees'));
+        $programsCourses = $this->programsCourses->academicPrograms($acid);
+        //dd($programsCourses);
+        return view('pages.academicPeriodInformation.index', compact('courses', 'studyModes','programsCourses', 'intakes','academic','instructors','fees'));
     }
 
     /**

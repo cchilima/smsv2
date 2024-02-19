@@ -34,6 +34,8 @@
                                             class="text-danger">*</span></label>
                                     <div class="col-lg-9">
                                         <select name="course_id" class="form-control select-search" required>
+                                            <option
+                                                value="">select option</option>
                                             @foreach ($courses as $course)
                                                 <option value="{{ $course->id }}">{{ $course->name }}
                                                     - {{ $course->code }}</option>
@@ -47,6 +49,8 @@
                                             class="text-danger">*</span></label>
                                     <div class="col-lg-9">
                                         <select name="instructor_id" class="form-control select-search" required>
+                                            <option
+                                                value="">select option</option>
                                             @foreach ($instructors as $instructor)
                                                 <option
                                                     value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option>
@@ -125,7 +129,7 @@
                                     <div class="col-lg-9">
                                         <input name="exam_slip_threshold" maxlength="3" max="100"
                                                value="{{ old('exam_slip_threshold') }}" required type="number"
-                                               class="form-control" placeholder="Code">
+                                               class="form-control" placeholder="Exam Slip Threshold">
                                     </div>
                                 </div>
 
@@ -134,7 +138,7 @@
                                         <span class="text-danger">*</span></label>
                                     <div class="col-lg-9">
                                         <input name="registration_threshold" value="{{ old('registration_threshold') }}"
-                                               required type="text" class="form-control" placeholder="Code">
+                                               required type="text" class="form-control" placeholder="Registration Threshold">
                                     </div>
                                 </div>
 
@@ -203,7 +207,20 @@
                                             class="text-danger">*</span></label>
                                     <div class="col-lg-9">
                                         <input name="amount" value="{{ old('view_results_threshold') }}" required
-                                               type="number" class="form-control" placeholder="View results Threshold">
+                                               type="number" class="form-control" placeholder="Amount">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="program_id" class="col-lg-3 col-form-label font-weight-semibold">Program Name
+                                        (<span class="text-warning">optional</span>)</label>
+                                    <div class="col-lg-9">
+                                        <select required data-placeholder="Select type" multiple
+                                                class="form-control select-search multiselect" name="program_id[]" id="program_id">
+                                            <option value=""></option>
+                                            @foreach ($programsCourses as $p)
+                                                <option value="{{ $p->id }}">{{ $p->code .' - '.$p->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
 

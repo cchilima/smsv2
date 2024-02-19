@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Academics;
 
-use App\Models\Academics\{AcademicPeriodClass, AcademicPeriod, Course};
+use App\Models\Academics\{AcademicPeriodClass, AcademicPeriod, Course, Program, ProgramCourses};
 use App\Models\Users\User;
 
 class AcademicPeriodClassRepository
@@ -42,6 +42,15 @@ class AcademicPeriodClassRepository
     {
         return User::join('user_types', 'user_types.id', 'users.user_type_id')
                     ->where('user_types.title', 'instructor')->get();
-
+    }
+    public function academicPrograms($id)
+    {
+        //return $courses = AcademicPeriodClass::where('academic_period_id',$id)->with('course')->distinct()->get();
+        $courseIds = AcademicPeriodClass::where('academic_period_id', $id)
+            ->with('course')
+            ->distinct('course_id')
+            ->pluck('course_id');
+        $ids = ProgramCourses::whereIn('course_id',$courseIds)->distinct('program_id')->pluck('program_id');
+        return program::whereIn('id',$ids)->get();
     }
 }
