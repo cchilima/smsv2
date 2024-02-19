@@ -44,41 +44,35 @@ class APFeesController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(AcdemicPeriodFees $request)
+    public function store(Request $request)
     {
         try {
 
             DB::beginTransaction();
+            
             $data = $request->only(['amount', 'fee_id', 'academic_period_id', 'program_id']);
-
-            // $period = $this->periods->APFeeCreate($data);
+    
+            // Create the academic period fee
             $period = $this->periods->APFeeCreate($data);
             $periodId = $period->id;
-
+    
+            // Attach the academic period fee to each program
             foreach ($data['program_id'] as $program_id) {
                 $program = Program::find($program_id);
-                $academicPeriodFee = AcademicPeriodFee::find($data['fee_id']);
-
-                $program->academicPeriodFee()->attach($academicPeriodFee->id);
-
-//                $this->periods->create([
-//                    'academic_period_fee_id' => $periodId,
-//                    'program_id' => $program_id
-//                ]);
+                $academicPeriodFee = AcademicPeriodFee::where('fee_id', $data['fee_id'])->first();
+    
+                $program->academicPeriodFees()->attach($academicPeriodFee->id);
             }
-
-            if ($period) {
-                return Qs::jsonStoreOk();
-            } else {
-                return Qs::json(false, 'failed to create message');
-            }
+    
+            DB::commit();
+    
+            return Qs::jsonStoreOk();
         } catch (\Exception $e) {
-
             DB::rollBack();
-
             return Qs::json('msg.create_failed => ' . $e->getMessage(), false);
         }
     }
+    
 
     /**
      * Display the specified resource.
