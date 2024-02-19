@@ -13,7 +13,7 @@ class UserPersonalInformation extends Model
 {
     use HasFactory;
 
-    protected $fillable = [ 'date_of_birth', 'street_main', ' post_code', 'nrc', 'passport' ,'user_id', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id' ];
+    protected $fillable = ['date_of_birth', 'street_main', ' post_code', 'nrc', 'passport_number', 'passport_photo_path', 'user_id', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id'];
 
     public function user()
     {
@@ -21,20 +21,18 @@ class UserPersonalInformation extends Model
     }
     public function userMaritalStatus()
     {
-        return $this->belongsTo(MaritalStatus::class,'marital_status_id');
+        return $this->belongsTo(MaritalStatus::class, 'marital_status_id');
     }
     public function country()
     {
-        return $this->belongsTo(Country::class,'country_id');
+        return $this->belongsTo(Country::class, 'country_id');
     }
     public function town()
     {
-        return $this->belongsTo(Town::class,'town_id');
+        return $this->belongsTo(Town::class, 'town_id');
     }
     public function province()
     {
-        return $this->belongsTo(Province::class,'province_id');
+        return $this->belongsTo(Province::class, 'province_id');
     }
 }
-
-

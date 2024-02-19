@@ -40,6 +40,7 @@ class Student extends FormRequest
             'country_id' => 'required|exists:countries,id',
             'nrc' => 'required|string|max:20',
             'passport' => 'nullable|string|max:20',
+            'passport_photo_path' => 'nullable|file|mimes:jpeg,jpg,png|max:2048',
 
             'program_id' => 'required|exists:programs,id',
             'study_mode_id' => 'required|exists:study_modes,id',

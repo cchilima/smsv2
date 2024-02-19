@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('full_name');
             $table->string('mobile');
-            $table->string('telephone');
+            $table->string('telephone')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('restrict');
             $table->string('relationship_id')->constrained('relationships')->onDelete('restrict');
             $table->string('town_id')->constrained('towns')->onDelete('restrict');
@@ -26,7 +26,6 @@ return new class extends Migration
             // Add indexes
             $table->index('id');
             $table->index('full_name');
-
         });
     }
 

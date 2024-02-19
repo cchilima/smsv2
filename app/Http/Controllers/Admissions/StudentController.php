@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Students\{Student, StudentUpdate, UserInfo, PersonalInfo, NextOfKinInfo, AcademicInfo, ResetPasswordInfo};
 use App\Repositories\Academics\StudentRegistrationRepository;
 use App\Repositories\Admissions\StudentRepository;
+use App\Repositories\Users\UserPersonalInfoRepository;
 use http\Client\Curl\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,9 +18,13 @@ class StudentController extends Controller
 {
     protected $studentRepo;
     protected $registrationRepo;
+    protected $userPersonalInfoRepo;
 
-    public function __construct(StudentRepository $studentRepo, StudentRegistrationRepository $registrationRepo)
-    {
+    public function __construct(
+        StudentRepository $studentRepo,
+        StudentRegistrationRepository $registrationRepo,
+        UserPersonalInfoRepository $userPersonalInfoRepo
+    ) {
         $this->middleware(TeamSA::class, ['except' => [
             'destroy',
         ]]);
@@ -29,6 +34,7 @@ class StudentController extends Controller
 
         $this->studentRepo = $studentRepo;
         $this->registrationRepo = $registrationRepo;
+        $this->userPersonalInfoRepo = $userPersonalInfoRepo;
     }
 
     /**
@@ -89,7 +95,7 @@ class StudentController extends Controller
             DB::beginTransaction();
 
             $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
-            $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport_number']);
+            $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport_number', 'passport_photo_path']);
             $studentData = $request->only(['program_id', 'study_mode_id', 'period_type_id', 'academic_period_intake_id', 'course_level_id', 'graduated', 'admission_year']);
 
             // Extract nextOfKinData with the "kin_" prefix
@@ -105,6 +111,11 @@ class StudentController extends Controller
 
             // Change DOB date format
             $personalData = $this->studentRepo->changeDBOFromat($personalData);
+
+            // Upload passport photo if a file is chosen
+            if ($personalData['passport_photo_path']) {
+                $personalData['passport_photo_path'] = $this->userPersonalInfoRepo->uploadPassportPhoto($personalData['passport_photo_path']);
+            }
 
             // Create personal info record
             $userPersonalInfo = $user->userPersonalInfo()->create($personalData);

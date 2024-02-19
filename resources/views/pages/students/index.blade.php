@@ -177,15 +177,16 @@
                                         <div class="form-group">
                                             <label>NRC: <span class="text-danger">*</span></label>
                                             <input type="nrc" value="{{ old('nrc') }}" required name="nrc"
-                                                class="form-control" placeholder="NRC Number xxxxxx/xx/x">
+                                                class="form-control" placeholder="XXXXXX/XX/X">
                                         </div>
                                     </div>
 
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Passport Number: </label>
-                                            <input type="text" value="{{ old('passport_number') }}" name="passport"
-                                                class="form-control" placeholder="Passport Number">
+                                            <input type="text" value="{{ old('passport_number') }}"
+                                                name="passport_number" class="form-control"
+                                                placeholder="Passport Number">
                                         </div>
                                     </div>
 
@@ -243,8 +244,9 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="d-block">Upload Passport Photo:</label>
-                                            <input value="{{ old('photo') }}" accept="image/*" type="file"
-                                                name="photo" class="form-input-styled" data-fouc>
+                                            <input value="{{ old('passport_photo_path') }}" accept="image/*"
+                                                type="file" name="passport_photo_path" class="form-input-styled"
+                                                data-fouc>
                                             <span class="form-text text-muted">Accepted Images: jpeg, png. Max file size
                                                 2Mb</span>
                                         </div>
