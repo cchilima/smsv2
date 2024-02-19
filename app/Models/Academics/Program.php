@@ -46,6 +46,11 @@ class Program extends Model
         return $this->hasManyThrough(CourseLevel::class, ProgramCourses::class, 'program_id', 'id', 'id', 'course_level_id');
     }
 
+    public function academicPeriodFees()
+    {
+        return $this->belongsToMany(AcademicPeriodFee::class, 'program_academic_period_fee', 'program_id', 'academic_period_fee_id')->withTimestamps();
+    }
+
 //    public function courses()
 //    {
 //        return $this->hasManyThrough(Course::class, ProgramCourses::class, 'program_id', 'id', 'id', 'course_id');
