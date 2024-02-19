@@ -21,6 +21,6 @@ class AcademicPeriodFee extends Model
     }
 
     public function programs(){
-        return $this->belongsToMany(Program::class, 'program_academic_period_fee', 'academic_period_fee_id', 'program_id');
+        return $this->belongsToMany(Program::class, 'program_academic_period_fee', 'academic_period_fee_id', 'program_id')->withTimestamps();
     }
 }
