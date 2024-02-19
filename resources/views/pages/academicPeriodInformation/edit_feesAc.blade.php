@@ -34,6 +34,19 @@
                                 <input name="amount" value="{{ $feeInformation->amount }}" required type="number" class="form-control" placeholder="Amount">
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label for="program_id" class="col-lg-3 col-form-label font-weight-semibold">Program Name
+                                (<span class="text-warning">optional</span>)</label>
+                            <div class="col-lg-9">
+                                <select required data-placeholder="Select type" multiple class="form-control select-search multiselect" name="program_id[]" id="program_id">
+                                    @foreach ($programsCourses as $p)
+                                        <option value="{{ $p->id }}" {{ $feeInformation->programs->contains($p->id) ? 'selected' : '' }}>
+                                            {{ $p->code .' - '.$p->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
 
                         <div class="text-right">
                             <button id="ajax-btn" type="submit" class="btn btn-primary">Submit form <i class="icon-paperplane ml-2"></i></button>

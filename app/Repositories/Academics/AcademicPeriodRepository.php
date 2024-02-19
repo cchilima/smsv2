@@ -100,7 +100,7 @@ class AcademicPeriodRepository
 
     public function getOneAPFeeInformation($id)
     {
-        return AcademicPeriodFee::with('academic_period','fee')->find($id);
+        return AcademicPeriodFee::with('academic_period','fee','programs')->find($id);
     }
 
     public function APFeeUpdate($id,$data)
