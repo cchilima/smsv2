@@ -131,36 +131,43 @@
 
                 <div class="row">
                     <div class="col-md-3">
-                        <label for="lga_id">Town: <span class="text-danger">*</span></label>
-                        <select data-placeholder="Select Town" required class="select-search form-control" name="town_id"
-                            id="lga_id">
-                            <option value=""></option>
-                            @foreach ($towns as $town)
-                                <option value="{{ $town->id }}">{{ $town->name }}</option>
-                            @endforeach
-                        </select>
+                        <div class="form-group">
+                            <label for="lga_id">Town: <span class="text-danger">*</span></label>
+                            <select data-placeholder="Select Town" required class="select-search form-control"
+                                name="town_id" id="lga_id">
+                                <option value=""></option>
+                                @foreach ($towns as $town)
+                                    <option value="{{ $town->id }}">{{ $town->name }}</option>
+                                @endforeach
+                            </select>
+
+                        </div>
                     </div>
 
                     <div class="col-md-3">
-                        <label for="province_id">Province: <span class="text-danger">*</span></label>
-                        <select data-placeholder="Select Province" required class="select-search form-control"
-                            name="province_id" id="province_id">
-                            <option value=""></option>
-                            @foreach ($provinces as $province)
-                                <option value="{{ $province->id }}">{{ $province->name }}</option>
-                            @endforeach
-                        </select>
+                        <div class="form-group">
+                            <label for="province_id">Province: <span class="text-danger">*</span></label>
+                            <select data-placeholder="Select Province" required class="select-search form-control"
+                                name="province_id" id="province_id">
+                                <option value=""></option>
+                                @foreach ($provinces as $province)
+                                    <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
 
                     <div class="col-md-3">
-                        <label for="country_id">Country: <span class="text-danger">*</span></label>
-                        <select data-placeholder="Select Country" required class="select-search form-control"
-                            name="country_id" id="country_id">
-                            <option value=""></option>
-                            @foreach ($countries as $country)
-                                <option value="{{ $country->id }}">{{ $country->country }}</option>
-                            @endforeach
-                        </select>
+                        <div class="form-group">
+                            <label for="country_id">Country: <span class="text-danger">*</span></label>
+                            <select data-placeholder="Select Country" required class="select-search form-control"
+                                name="country_id" id="country_id">
+                                <option value=""></option>
+                                @foreach ($countries as $country)
+                                    <option value="{{ $country->id }}">{{ $country->country }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -347,10 +354,4 @@
 
         </form>
     </div>
-
-    @script
-        <script>
-            console.log('Hello')
-        </script>
-    @endscript
 @endsection

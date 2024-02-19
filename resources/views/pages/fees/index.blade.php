@@ -69,13 +69,13 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Courses <span
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Type <span
                                             class="text-danger">*</span></label>
                                     <div class="col-lg-9">
                                         <select name="type" class="form-control" required>
-                                                <option value="0">Recurring</option>
-                                            <option value="1">Once Off</option>
-                                            <option value="2">Course Repeat Fee</option>
+                                                <option value="Recurring">Recurring</option>
+                                            <option value="Once off">Once off</option>
+                                            <option value="Course repeat fee">Course repeat fee</option>
                                         </select>
                                     </div>
                                 </div>

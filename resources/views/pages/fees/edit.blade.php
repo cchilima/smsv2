@@ -22,6 +22,18 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Type <span
+                                            class="text-danger">*</span></label>
+                                    <div class="col-lg-9">
+                                        <select name="type" class="form-control" required>
+                                                <option value="Recurring">Recurring</option>
+                                            <option value="Once off">Once off</option>
+                                            <option value="Course repeat fee">Course repeat fee</option>
+                                        </select>
+                                    </div>
+                                </div>
+
                         <div class="text-right">
                             <button type="submit" class="btn btn-primary">Update form <i class="icon-pencil ml-2"></i></button>
                         </div>
