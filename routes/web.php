@@ -77,6 +77,8 @@ Route::group(['prefix' => 'assess'], function () {
 Route::group(['prefix' => 'accounts'], function () {
     Route::group(['prefix' => 'reports'], function () {
         Route::get('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue.analysis');
+        Route::post('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue-revenue-result');
+
         Route::get('/invoices', [AccountReportsController::class, 'invoices'])->name('invoices');
         Route::get('/transactions', [AccountReportsController::class, 'Transactions'])->name('transactions');
 

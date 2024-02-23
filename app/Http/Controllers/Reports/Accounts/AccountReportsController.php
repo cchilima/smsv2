@@ -5,14 +5,18 @@ namespace App\Http\Controllers\Reports\Accounts;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
+use App\Repositories\Accounting\InvoiceRepository;
+use App\Repositories\Reports\Accounts\AccountsReportsRepository;
 use Illuminate\Http\Request;
 
 class AccountReportsController extends Controller
 {
-    public function __construct()
+    protected $revenue_analysis;
+    public function __construct(AccountsReportsRepository $revenue_analysis)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
+        //$this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        //$this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
+        $this->revenue_analysis = $revenue_analysis;
     }
     /**
      * Display a listing of the resource.
@@ -69,8 +73,23 @@ class AccountReportsController extends Controller
     {
         //
     }
-    public function RevenueAnalysis(){
-        return view('pages.reports.accounts.revenue_analysis');
+    public function RevenueAnalysis(Request $request){
+
+        if (isset($request['from_date']) && !$request['from_date'] == '' && isset($request['to_date']) && !$request['to_date'] == '') {
+//            $from_date = $request['from_date'];
+//            $to_date = $request['to_date'];
+//            $from_date = date('Y-m-d', strtotime($request['from_date']));
+//            $to_date = date('Y-m-d', strtotime($request['to_date']));
+            $revenue['revenue_analysis'] = $this->revenue_analysis->RevenueAnalysis(date('Y-m-d', strtotime($request['from_date'])),date('Y-m-d', strtotime($request['to_date'])));
+           // return view('pages.students.student_search', $users);
+            //dd($revenue['revenue_analysis']);
+            return view('pages.reports.accounts.revenue_analysis',$revenue);
+        } else {
+            return view('pages.reports.accounts.revenue_analysis');
+        }
+        //$revenue_analysis = $this->revenue_analysis->RevenueAnalysis();
+       // dd($revenue_analysis);
+        //return view('pages.reports.accounts.revenue_analysis');
     }
 
     public function invoices(){
