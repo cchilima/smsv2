@@ -4,17 +4,21 @@ namespace App\Http\Controllers\Applications;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Applications\ApplicantRepository;
-use App\Http\Requests\Applicants\{Applicant};
+use App\Http\Requests\Applications\{ApplicationStep1};
 
 class ApplicantController extends Controller
 {
 
     protected $applicantRepo;
+    protected $studentRepo;
 
-    public function __construct(ApplicantRepository $applicantRepo)
+    public function __construct(ApplicantRepository $applicantRepo, StudentRepository $studentRepo)
     {
         $this->applicantRepo = $applicantRepo;
+        $this->studentRepo = $studentRepo;
     }
 
     /**
@@ -22,7 +26,9 @@ class ApplicantController extends Controller
      */
     public function index()
     {
-        //
+
+        // Application step 1
+        return view('pages.applications.initiate_application');
     }
 
     /**
@@ -77,8 +83,58 @@ class ApplicantController extends Controller
     /**
      * Initiate application process.
      */
-    public function startApplication(Applicant $request)
+    public function startApplication(ApplicationStep1 $request)
     {
-        $this->applicantRepo->initiateApplication($request);
+        $data = $request->only(['nrc','passport']);
+
+        $application = $this->applicantRepo->initiateApplication($data);
+
+        if ($application) {
+            return redirect()->route('application.complete_application', $application->id);
+        } else {
+            return Qs::json(false,'msg.create_failed');
+        }
+
+        
+    }
+
+
+    /**
+     * Initiate application process.
+     */
+    public function completeApplication()
+    {
+        // Dropdown data
+        $dropdownData = $this->getDropdownData();
+
+         // Application step 2
+         return view('pages.applications.complete_application', $dropdownData);
+    }
+
+        /**
+     * Get dropdown data for the create form.
+     */
+    private function getDropdownData()
+    {
+        $residencyData = [
+            'towns' => $this->studentRepo->getTowns(),
+            'provinces' => $this->studentRepo->getProvinces(),
+            'countries' => $this->studentRepo->getCountries(),
+        ];
+
+        $profileData = [
+            'maritalStatuses' => $this->studentRepo->getMaritalStatuses(),
+            'relationships' => $this->studentRepo->getRelationships(),
+        ];
+
+        $academicData = [
+            'programs' => $this->studentRepo->getPrograms(),
+            'periodIntakes' => $this->studentRepo->getPeriodIntakes(),
+            'studyModes' => $this->studentRepo->getStudyModes(),
+            'courseLevels' => $this->studentRepo->getCourseLevels(),
+            'periodTypes' => $this->studentRepo->getPeriodTypes(),
+        ];
+
+        return array_merge($residencyData, $profileData, $academicData);
     }
 }

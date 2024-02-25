@@ -159,6 +159,7 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
+
         try {
             DB::beginTransaction();
 
@@ -169,12 +170,16 @@ class StudentController extends Controller
 
             // Determine the type of request and validate accordingly
             if ($request instanceof UserInfo) {
+
                 $userData = $request->validated();
             } elseif ($request instanceof PersonalInfo) {
+
                 $personalData = $request->validated();
             } elseif ($request instanceof NextOfKinInfo) {
+
                 $nextOfKinDataWithPrefix = $request->validated();
             } elseif ($request instanceof AcademicInfo) {
+
                 $studentData = $request->validated();
             }
 
@@ -193,20 +198,25 @@ class StudentController extends Controller
             // Check if the user already exists
             $user = $this->studentRepo->findUser($id);
 
+            
+
             // Determine what user info to update
 
             if ($userData) {
 
                 // Update the user data
                 $user->update($userData);
+
             } elseif ($personalData) {
 
                 // Update or create UserPersonalInfo
                 $userPersonalInfo = $user->userPersonalInfo()->update($personalData);
+
             } elseif ($nextOfKinDataWithPrefix) {
 
                 // Update or create NextOfKin
                 $nextOfKin = $user->userNextOfKin()->update($nextOfKinData);
+
             } elseif ($studentData) {
 
                 // Update or create Student
@@ -216,7 +226,9 @@ class StudentController extends Controller
             DB::commit();
 
             return Qs::jsonStoreOk();
+
         } catch (\Exception $e) {
+
             DB::rollBack();
 
             dd($e);
@@ -251,6 +263,7 @@ class StudentController extends Controller
         $data['periodTypes'] = $this->studentRepo->getPeriodTypes();
         $data['relationships'] = $this->studentRepo->getRelationships();
         $data['maritalStatuses'] = $this->studentRepo->getMaritalStatuses();
+        $data['paymentMethods'] = $this->studentRepo->getPaymentMethods();
         $data['fees'] = $this->studentRepo->getFees($id);
 
         // Find student
