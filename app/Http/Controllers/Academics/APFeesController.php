@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\AcademicPeriodFees\AcdemicPeriodFees;
 use App\Models\Academics\AcademicPeriodFee;
 use App\Models\Academics\Program;
+use App\Repositories\Academics\AcademicPeriodClassRepository;
 use App\Repositories\Academics\AcademicPeriodRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,14 +19,15 @@ class APFeesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $periods;
+    protected $periods, $programsCourses;
 
-    public function __construct(AcademicPeriodRepository $periods)
+    public function __construct(AcademicPeriodRepository $periods, AcademicPeriodClassRepository $programsCourses)
     {
         $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
         $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->periods = $periods;
+        $this->programsCourses = $programsCourses;
     }
 
     public function index()
@@ -49,30 +51,27 @@ class APFeesController extends Controller
         try {
 
             DB::beginTransaction();
-            
+
             $data = $request->only(['amount', 'fee_id', 'academic_period_id', 'program_id']);
-    
+
             // Create the academic period fee
             $period = $this->periods->APFeeCreate($data);
             $periodId = $period->id;
-    
             // Attach the academic period fee to each program
             foreach ($data['program_id'] as $program_id) {
                 $program = Program::find($program_id);
-                $academicPeriodFee = AcademicPeriodFee::where('fee_id', $data['fee_id'])->first();
-    
+                $academicPeriodFee = AcademicPeriodFee::find($periodId);//where('fee_id', $data['fee_id'])->first();
                 $program->academicPeriodFees()->attach($academicPeriodFee->id);
             }
-    
             DB::commit();
-    
+
             return Qs::jsonStoreOk();
         } catch (\Exception $e) {
             DB::rollBack();
             return Qs::json('msg.create_failed => ' . $e->getMessage(), false);
         }
     }
-    
+
 
     /**
      * Display the specified resource.
@@ -90,8 +89,11 @@ class APFeesController extends Controller
         $id = Qs::decodeHash($id);
         $fees = $this->periods->getFees();
         $feeInformation = $this->periods->getOneAPFeeInformation($id);
+        $programsCourses = $this->programsCourses->academicProgramsFees($id);
 
-        return view('pages.academicPeriodInformation.edit_feesAc', compact('feeInformation', 'fees'));
+        //dd($feeInformation);
+
+        return view('pages.academicPeriodInformation.edit_feesAc', compact('feeInformation', 'fees', 'programsCourses'));
     }
 
     /**
@@ -99,13 +101,37 @@ class APFeesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $data = $request->only(['amount', 'fee_id']);
-        $period = $this->periods->APFeeUpdate($id, $data);
+//        $data = $request->only(['amount', 'fee_id']);
+//        $period = $this->periods->APFeeUpdate($id, $data);
+//
+//        if ($period) {
+//            return Qs::jsonStoreOk();
+//        } else {
+//            return Qs::json(false, 'failed to create message');
+//        }
 
-        if ($period) {
+
+        try {
+
+            DB::beginTransaction();
+
+            $data = $request->only(['amount', 'fee_id', 'program_id']);
+            $period = $this->periods->APFeeUpdate($id, $data);
+
+            $academicPeriod = AcademicPeriodFee::find($id);
+            $academicPeriod->programs()->detach();
+
+            foreach ($data['program_id'] as $program_id) {
+                $program = Program::find($program_id);
+                $program->academicPeriodFees()->attach($id);
+            }
+
+            DB::commit();
+
             return Qs::jsonStoreOk();
-        } else {
-            return Qs::json(false, 'failed to create message');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return Qs::json('msg.create_failed => ' . $e->getMessage(), false);
         }
     }
 
