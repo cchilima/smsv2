@@ -5,7 +5,7 @@ namespace App\Repositories\Admissions;
 
 use Ramsey\Uuid\Type\Integer;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Accounting\Fee;
+use App\Models\Accounting\{Fee, PaymentMethod};
 use App\Models\Users\{User, UserType};
 use App\Models\Residency\{Town, Province, Country};
 use App\Models\Profile\{MaritalStatus, Relationship};
@@ -235,6 +235,13 @@ class StudentRepository
 
         return $fees;
     }
+
+
+    public function getPaymentMethods()
+    {
+        return PaymentMethod::all(['id', 'name']);
+    }
+
 
     private function getStudentUserType()
     {

@@ -110,7 +110,7 @@ class InvoiceController extends Controller
 
             $student_invoiced = $this->invoiceRepo->invoiceStudent($request->academic_period, $request->student_id);
 
-            return $student_invoiced ? Qs::jsonStoreOk() : Qs::json(false, 'Failed to invoice student.');
+            return $student_invoiced ? Qs::jsonStoreOk() : Qs::json('Failed to invoice student.', false);
 
 
         } catch (\Exception $e) {

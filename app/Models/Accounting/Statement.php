@@ -10,7 +10,7 @@ class Statement extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['invoice_id', 'collected_from', 'collected_by', 'amount'];
+    protected $fillable = ['invoice_id', 'collected_from', 'collected_by', 'amount', 'payment_method_id'];
 
     public function invoice()
     {

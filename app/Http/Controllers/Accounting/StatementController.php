@@ -42,19 +42,20 @@ class StatementController extends Controller
 
         try {
 
-            $collected = $this->statementRepo->collectPayment($request->amount, $request->academic_period, $request->student_id);
+            $collected = $this->statementRepo->collectPayment($request->amount, $request->academic_period, $request->student_id, $request->payment_method_id);
 
             if($collected){
                 return Qs::jsonStoreOk();
             } else {
-                return Qs::json(false,'failed to collect payment');
+                dd($collected);
+                return Qs::json('failed to collect payment', false);
             }
             
 
         } catch (\Exception $e) {
 
             // Log the error or handle it accordingly
-            return Qs::json(false,'failed to collect payment');
+            return Qs::json('failed to collect payment', false);
         }
     }
 
