@@ -80,6 +80,8 @@ Route::group(['prefix' => 'accounts'], function () {
         Route::post('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue-revenue-result');
 
         Route::get('/invoices', [AccountReportsController::class, 'invoices'])->name('invoices');
+        Route::post('/invoices', [AccountReportsController::class, 'invoices'])->name('invoices-results');
+
         Route::get('/transactions', [AccountReportsController::class, 'Transactions'])->name('transactions');
 
         Route::get('/aged-receivables', [AccountReportsController::class, 'AgedReceivables'])->name('aged.receivables');
