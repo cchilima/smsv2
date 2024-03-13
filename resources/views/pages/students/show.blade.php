@@ -15,7 +15,9 @@
                 <div class="card-body p-4">
 
                     @php
-                        $passportPhotoUrl = !$student->user->userPersonalInfo->passport_photo_path ? asset('images/default-avatar.png') : asset($student->user->userPersonalInfo->passport_photo_path);
+                        $passportPhotoUrl = !$student->user->userPersonalInfo->passport_photo_path
+                            ? asset('images/default-avatar.png')
+                            : asset($student->user->userPersonalInfo->passport_photo_path);
                     @endphp
 
                     <img style="aspect-ratio: 1/1" src="{{ $passportPhotoUrl }}" alt="photo"
@@ -628,22 +630,58 @@
                                     <input type="number" class="form-control" id="amount" name="amount"
                                         placeholder="ZMW" required>
                                 </div>
+                                <form class="ajax-store" method="post" action="{{ route('statements.store') }}">
+                                    @csrf
 
-                                <div class="form-group">
-                                    <input hidden type="number" class="form-control" name="academic_period"
-                                        value="{{ $student->academic_info->academic_period_id }}" required>
-                                </div>
+                                    <div class="form-group">
+                                        <label for="method">Method <span class="text-danger">*</span></label>
+                                        <select data-placeholder="Payment method" required
+                                            class="select-search form-control" name="payment_method_id" id="method">
+                                            <option value=""></option>
+                                            @foreach ($paymentMethods as $method)
+                                                <option value="{{ $method->id }}">{{ $method->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                                <div class="form-group">
-                                    <input hidden type="text" class="form-control" name="student_id"
-                                        value="{{ $student->id }}" required>
-                                </div>
+                                    <div class="form-group">
+                                        <label for="amount">Enter Amount</label>
+                                        <input type="number" class="form-control" id="amount" name="amount"
+                                            placeholder="ZMW" required>
+                                    </div>
 
-                                <div class="text-left">
-                                    <button id="ajax-btn" type="submit" class="btn btn-primary">Submit <i
-                                            class="icon-paperplane ml-2"></i></button>
-                                </div>
-                            </form>
+                                    <div class="form-group">
+                                        <label for="method">Method <span class="text-danger">*</span></label>
+                                        <select data-placeholder="Payment method" required
+                                            class="select-search form-control" name="payment_method_id" id="method">
+                                            <option value=""></option>
+                                            @foreach ($paymentMethods as $method)
+                                                <option value="{{ $method->id }}">{{ $method->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="amount">Enter Amount</label>
+                                        <input type="number" class="form-control" id="amount" name="amount"
+                                            placeholder="ZMW" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <input hidden type="number" class="form-control" name="academic_period"
+                                            value="{{ $student->academic_info->academic_period_id }}" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <input hidden type="text" class="form-control" name="student_id"
+                                            value="{{ $student->id }}" required>
+                                    </div>
+
+                                    <div class="text-left">
+                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Submit <i
+                                                class="icon-paperplane ml-2"></i></button>
+                                    </div>
+                                </form>
 
                         </div>
 

@@ -26,6 +26,8 @@ use App\Http\Controllers\Academics\StudentRegistrationController;
 
 use App\Http\Controllers\Admissions\StudentController;
 
+use App\Http\Controllers\Applications\ApplicantController;
+
 use App\Http\Controllers\Profile\MaritalStatusController;
 
 use App\Http\Controllers\Accounting\FeeController;
@@ -77,7 +79,11 @@ Route::group(['prefix' => 'assess'], function () {
 Route::group(['prefix' => 'accounts'], function () {
     Route::group(['prefix' => 'reports'], function () {
         Route::get('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue.analysis');
+        Route::post('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue-revenue-result');
+
         Route::get('/invoices', [AccountReportsController::class, 'invoices'])->name('invoices');
+        Route::post('/invoices', [AccountReportsController::class, 'invoices'])->name('invoices-results');
+
         Route::get('/transactions', [AccountReportsController::class, 'Transactions'])->name('transactions');
 
         Route::get('/aged-receivables', [AccountReportsController::class, 'AgedReceivables'])->name('aged.receivables');
@@ -92,6 +98,13 @@ Route::group(['prefix' => 'accounts'], function () {
     Route::get('/ca-results', [ClassAssessmentsController::class, 'MyCAResults'])->name('student_ca_results');
     Route::get('/exam-registration', [ClassAssessmentsController::class, 'ExamRegistration'])->name('student-exam_registration');
 });
+
+/*Route::group(['prefix' => 'application'], function () { */
+    Route::get('/initiate-application', [ApplicantController::class, 'index'])->name('application.index');
+    Route::post('/application/step-1', [ApplicantController::class, 'startApplication'])->name('application.start_application');
+    Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
+    Route::post('/application/step-3', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
+/*}); */
 
 
 Route::resource('courses', CourseController::class);

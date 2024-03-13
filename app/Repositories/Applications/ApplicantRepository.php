@@ -1,22 +1,28 @@
 <?php
 
-namespace App\Repositories\Applicants;
+namespace App\Repositories\Applications;
 
 use DB;
-use App\Models\Applicants\Applicant;
-use App\Models\Applicants\ApplicantAttachment;
+use App\Models\Applications\Applicant;
+use App\Models\Applications\ApplicantAttachment;
 
 class ApplicantRepository
 {
 
     public function initiateApplication($applicantIdentifier)
     {
-        Applicant::create($applicantIdentifier);
+        $application = Applicant::create($applicantIdentifier);
+
+        if($application){
+            return $application;
+        } else {
+            return false;
+        }
     }
 
     public function saveApplication()
     {
-        //
+        //Applicant::create($applicantIdentifier);
     }
 
     public function completeApplication()
