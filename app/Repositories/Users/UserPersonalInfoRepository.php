@@ -2,8 +2,7 @@
 
 namespace App\Repositories\Users;
 
-// use App\Models\Users\{User};
-
+use App\Http\Requests\Users\User;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 
@@ -12,7 +11,7 @@ class UserPersonalInfoRepository
 {
     public function uploadPassportPhoto($path)
     {
-        $dir_rel = 'app/public/uploads/passport-photos';
+        $dir_rel = 'app/public/uploads/passport-photos/';
         $dir = storage_path($dir_rel);
 
         // Create directory if it doesn't exist
@@ -31,6 +30,21 @@ class UserPersonalInfoRepository
         $image->save($dir . '/' . $imageName, 100, 'jpg');
 
         // Return generated path
-        return $dir_rel . $imageName;
+        return str_replace('app/public', 'storage', $dir_rel) . $imageName;
+    }
+
+    public function deletePassportPhoto($path)
+    {
+        $file = storage_path($path);
+
+        if (file_exists($file)) {
+            unlink($file);
+        }
+    }
+
+    public function destroy($userId)
+    {
+        $user = User::find($userId);
+        return $user->userPersonalInfo()->destroy();
     }
 }

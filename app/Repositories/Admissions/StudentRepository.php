@@ -11,6 +11,8 @@ use App\Models\Residency\{Town, Province, Country};
 use App\Models\Profile\{MaritalStatus, Relationship};
 use App\Models\Admissions\{Student, AcademicPeriodIntake};
 use App\Models\Academics\{AcademicPeriod, Program, CourseLevel, StudyMode, PeriodType};
+use App\Repositories\Users\UserPersonalInfoRepository;
+use Illuminate\Support\Facades\Storage;
 
 class StudentRepository
 {
@@ -44,6 +46,11 @@ class StudentRepository
     public function findUser($id)
     {
         return User::find($id);
+    }
+
+    public function getUserByStudentId($id)
+    {
+        return Student::find($id)->user;
     }
 
     public function getTowns()
@@ -293,11 +300,6 @@ class StudentRepository
 
     public function destroy($id)
     {
-        $student = Student::find($id);
-
-        // Delete user & cascade
-        // $student->user()->delete();
-
-        dd($student);
+        return Student::destroy($id);
     }
 }
