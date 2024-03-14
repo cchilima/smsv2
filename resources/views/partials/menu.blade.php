@@ -20,13 +20,15 @@
     <div class="sidebar-content">
 
         <!-- User menu -->
-        <div class="sidebar-user">
+        {{-- <div class="sidebar-user">
             <div class="card-body">
                 <div class="media align-items-center">
                     <div class="mr-3">
 
                         @php
-                            $passportPhotoUrl = !Auth::user()->userPersonalInfo->passport_photo_path ? asset('images/default-avatar.png') : asset(Auth::user()->userPersonalInfo->passport_photo_path);
+                            $passportPhotoUrl = !Auth::user()->userPersonalInfo->passport_photo_path
+                                ? asset('images/default-avatar.png')
+                                : asset(Auth::user()->userPersonalInfo->passport_photo_path);
                         @endphp
 
                         <a href="{{ '#' }}"><img src="{{ $passportPhotoUrl }}" width="38" height="38"
@@ -36,11 +38,6 @@
                     <div class="media-body d-flex">
                         <div class="media-title font-weight-semibold">{{ Auth::user()->first_name }}</div>
                         &nbsp;(Type: {{ ucwords(str_replace('_', ' ', Auth::user()->user_type_id)) }})
-
-                        {{-- <div class="font-size-xs opacity-50">
-                            <i class="icon-user font-size-sm"></i>
-                            &nbsp;{{ ucwords(str_replace('_', ' ', Auth::user()->user_type)) }}
-                        </div> --}}
                     </div>
 
                     <div class="ml-3 align-self-center">
@@ -48,7 +45,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <!-- /user menu -->
         <!-- Main navigation -->
         <div class="card card-sidebar-mobile">
