@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->char('alpha_2_code', 2);
             $table->char('alpha_3_code', 3);
+            $table->string('dialing_code', 4)->unique();
             $table->string('country');
             $table->string('nationality');
             $table->timestamps();
@@ -23,7 +24,6 @@ return new class extends Migration
             $table->index('id');
             $table->index('country');
             $table->index('nationality');
-
         });
     }
 
