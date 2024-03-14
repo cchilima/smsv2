@@ -26,23 +26,27 @@
 
         <ul class="navbar-nav">
 
-            {{--            <li class="nav-item dropdown dropdown-user"> --}}
-            {{--                <a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown"> --}}
-            {{--                    <img style="width: 38px; height:38px;" src="" class="rounded-circle" alt="photo"> --}}
-            {{--                    <span>{{ Auth::user()->name }}</span> --}}
-            {{--                </a> --}}
+            <li class="nav-item dropdown dropdown-user">
+                <a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown">
+                    <img style="width: 38px; height:38px;" src="" class="rounded-circle" alt="photo">
+                    <span>{{ Auth::user()->name }}</span>
+                </a>
 
-            {{--                <div class="dropdown-menu dropdown-menu-right"> --}}
-            {{--                    <a href="{{ Qs::userIsStudent() ? route('profile', Qs::hash(Auth::user()->id)) : route('users.show', Qs::hash(Auth::user()->id)) }}" class="dropdown-item"><i class="icon-user-plus"></i> My profile</a> --}}
-            {{--                    <div class="dropdown-divider"></div> --}}
-            {{--                    <a href="{{ route('my_account') }}" class="dropdown-item"><i class="icon-cog5"></i> Account settings</a> --}}
-            {{--                    <a href="{{ "#"}}" onclick="event.preventDefault(); --}}
-            {{--          document.getElementById('logout-form').submit();" class="dropdown-item"><i class="icon-switch2"></i> Logout</a> --}}
-            {{--                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> --}}
-            {{--                        @csrf --}}
-            {{--                    </form> --}}
-            {{--                </div> --}}
-            {{--            </li> --}}
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a href="{{ Qs::userIsStudent() ? route('profile', Qs::hash(Auth::user()->id)) : route('users.show', Qs::hash(Auth::user()->id)) }}"
+                        class="dropdown-item"><i class="icon-user-plus"></i> My profile</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ route('my_account') }}" class="dropdown-item"><i class="icon-cog5"></i> Account
+                        settings</a>
+                    <a href="{{ '#' }}"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                        class="dropdown-item"><i class="icon-switch2"></i> Logout</a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </div>
+            </li>
+
         </ul>
     </div>
 
