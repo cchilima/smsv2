@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('mobile');
             $table->string('nrc');
             $table->string('passport_number')->nullable();
+            $table->string('passport_photo_path')->nullable();
             $table->foreignId('marital_status_id')->constrained('marital_statuses')->onDelete('restrict');
             $table->foreignId('town_id')->constrained('towns')->onDelete('restrict');
             $table->foreignId('province_id')->constrained('provinces')->onDelete('restrict');
@@ -29,8 +30,6 @@ return new class extends Migration
 
             // Add indexes
             $table->index('user_id');
-
-
         });
     }
 

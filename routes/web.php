@@ -39,6 +39,8 @@ use App\Http\Controllers\Inputs\CountryController;
 use App\Http\Controllers\Inputs\ProvinceController;
 use App\Http\Controllers\Inputs\ResidencyController;
 use App\Http\Controllers\Inputs\TownController;
+use App\Http\Controllers\Settings\SettingsController;
+use App\Http\Controllers\Settings\SystemSettingsController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -101,10 +103,10 @@ Route::group(['prefix' => 'accounts'], function () {
 });
 
 /*Route::group(['prefix' => 'application'], function () { */
-    Route::get('/initiate-application', [ApplicantController::class, 'index'])->name('application.index');
-    Route::post('/application/step-1', [ApplicantController::class, 'startApplication'])->name('application.start_application');
-    Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
-    Route::post('/application/step-3', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
+Route::get('/initiate-application', [ApplicantController::class, 'index'])->name('application.index');
+Route::post('/application/step-1', [ApplicantController::class, 'startApplication'])->name('application.start_application');
+Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
+Route::post('/application/step-3', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
 /*}); */
 
 
@@ -147,3 +149,6 @@ Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])
 // Residency Input Routes
 Route::get('/countries/{countryId}/provinces/', [CountryController::class, 'getProvincesByCountry'])->name('provinces.getProvincesByCountry');
 Route::get('/provinces/{provinceId}/towns', [ProvinceController::class, 'getTownsByProvince'])->name('towns.getTownsByProvince');
+
+// System Settings Routes
+Route::resource('settings', SettingsController::class);

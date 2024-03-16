@@ -9,6 +9,9 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Students\{Student, StudentUpdate, UserInfo, PersonalInfo, NextOfKinInfo, AcademicInfo, ResetPasswordInfo};
 use App\Repositories\Academics\StudentRegistrationRepository;
 use App\Repositories\Admissions\StudentRepository;
+use App\Repositories\Users\userNextOfKinRepository;
+use App\Repositories\Users\UserPersonalInfoRepository;
+use App\Repositories\Users\UserRepository;
 use http\Client\Curl\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,18 +20,25 @@ class StudentController extends Controller
 {
     protected $studentRepo;
     protected $registrationRepo;
+    protected $userPersonalInfoRepo;
+    protected $userRepo;
+    protected $userNextOfKinRepo;
 
-    public function __construct(StudentRepository $studentRepo, StudentRegistrationRepository $registrationRepo)
-    {
-        $this->middleware(TeamSA::class, ['except' => [
-            'destroy',
-        ]]);
-        $this->middleware(SuperAdmin::class, ['only' => [
-            'destroy',
-        ]]);
+    public function __construct(
+        StudentRepository $studentRepo,
+        StudentRegistrationRepository $registrationRepo,
+        UserPersonalInfoRepository $userPersonalInfoRepo,
+        UserRepository $userRepo,
+        userNextOfKinRepository $userNextOfKinRepo
+    ) {
+        $this->middleware(TeamSA::class, ['except' => ['destroy']]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
 
         $this->studentRepo = $studentRepo;
         $this->registrationRepo = $registrationRepo;
+        $this->userPersonalInfoRepo = $userPersonalInfoRepo;
+        $this->userRepo = $userRepo;
+        $this->userNextOfKinRepo = $userNextOfKinRepo;
     }
 
     /**
@@ -89,7 +99,7 @@ class StudentController extends Controller
             DB::beginTransaction();
 
             $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
-            $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport_number']);
+            $personalData = $request->only(['date_of_birth', 'street_main', 'post_code', 'telephone', 'mobile', 'marital_status_id', 'town_id', 'province_id', 'country_id', 'nrc', 'passport_number', 'passport_photo_path']);
             $studentData = $request->only(['program_id', 'study_mode_id', 'period_type_id', 'academic_period_intake_id', 'course_level_id', 'graduated', 'admission_year']);
 
             // Extract nextOfKinData with the "kin_" prefix
@@ -105,6 +115,11 @@ class StudentController extends Controller
 
             // Change DOB date format
             $personalData = $this->studentRepo->changeDBOFromat($personalData);
+
+            // Upload passport photo
+            if ($passportPhotoPath = $personalData['passport_photo_path'] ?? null) {
+                $personalData['passport_photo_path'] = $this->userPersonalInfoRepo->uploadPassportPhoto($passportPhotoPath);
+            }
 
             // Create personal info record
             $userPersonalInfo = $user->userPersonalInfo()->create($personalData);
@@ -182,6 +197,7 @@ class StudentController extends Controller
 
                 $studentData = $request->validated();
             }
+
 
 
             if ($nextOfKinDataWithPrefix) {
@@ -291,6 +307,43 @@ class StudentController extends Controller
         } catch (\Exception $e) {
             // Log the error or handle it accordingly
             return Qs::json(false, 'failed to reset password');
+        }
+    }
+
+    public function destroy($studentId)
+    {
+        try {
+            DB::beginTransaction();
+
+            $user = $this->studentRepo->getUserByStudentId($studentId);
+            $student = $user->student;
+
+            // Delete uploaded passport photo
+            if ($passportPhotoPath = $user->userPersonalInfo->passport_photo_path ?? null) {
+                $this->userPersonalInfoRepo->deletePassportPhoto($passportPhotoPath);
+            }
+
+            // Delete user personal information
+            $user->userPersonalInfo->delete();
+
+            // Delete next of kin record
+            $user->userNextOfKin->delete();
+
+            // Delete student record
+            $student->delete();
+
+            // Delete user
+            $user->delete();
+
+            DB::commit();
+
+            return redirect(route('students.index'));
+
+            // return Qs::json('Deleted successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return Qs::json('msg.delete_failed => ' . $e->getMessage(), false);
         }
     }
 }

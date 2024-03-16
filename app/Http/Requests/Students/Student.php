@@ -28,8 +28,12 @@ class Student extends FormRequest
             'gender' => 'required|in:Male,Female',
             'email' => 'required|email|max:255|unique:users',
 
-
-            'date_of_birth' => 'required|date',
+            'date_of_birth' => [
+                'required',
+                'date',
+                'before_or_equal:' . (now()->subYears(16)->format('Y-m-d')), // Ensure applicant is at least 16 years old
+                'after:' . (now()->subYears(99)->format('Y-m-d')), // Ensure applicant is not older than 99 yeard old
+            ],
             'street_main' => 'required|string|max:255',
             'post_code' => 'nullable|string|max:20',
             'telephone' => 'nullable|string|max:20',
@@ -38,8 +42,9 @@ class Student extends FormRequest
             'town_id' => 'required|exists:towns,id',
             'province_id' => 'required|exists:provinces,id',
             'country_id' => 'required|exists:countries,id',
-            'nrc' => 'required|string|max:20',
+            'nrc' => 'required|string|max:11|regex:/^\d{6}\/\d{2}\/\d$/',
             'passport' => 'nullable|string|max:20',
+            'passport_photo_path' => 'nullable|file|mimes:jpeg,jpg,png|max:2048',
 
             'program_id' => 'required|exists:programs,id',
             'study_mode_id' => 'required|exists:study_modes,id',
