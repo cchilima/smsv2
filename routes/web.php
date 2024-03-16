@@ -61,6 +61,7 @@ Route::group(['prefix' => 'assess'], function () {
     Route::post('/get-results-update', [ClassAssessmentsController::class, 'getAssessToUpdate'])->name('update.assessments');
     Route::post('/board-exam-update', [ClassAssessmentsController::class, 'BoardofExaminersUpdateResults'])->name('BoardofExaminersUpdateResults');
     Route::post('/publish-program-results', [ClassAssessmentsController::class, 'PublishProgramResults'])->name('publishProgramResults');
+    Route::post('/post-results',[ClassAssessmentsController::class,'PostStudentResults'])->name('postedResults.process');
 
     Route::group(['prefix' => 'cas'], function () {
         Route::get('/publish-cas-program-list/{id}', [ClassAssessmentsController::class, 'GetProgramsToPublishCas'])->name('getPublishProgramsCas');

@@ -8,7 +8,7 @@
     @if (session('status'))
         <?php Qs::goWithSuccessCustom(session('status')); ?>
     @endif
-    
+
     <div class="row">
         <div class="col-md-3 text-center">
             <div class="card">
@@ -609,7 +609,7 @@
                                     @endforeach
                                 </select>
                             </div>
-     
+
                             <div class="form-group">
                                 <label for="amount">Enter Amount</label>
                                 <input type="number" class="form-control" id="amount" name="amount" placeholder="ZMW" required>
@@ -629,7 +629,7 @@
                             </div>
                         </form>
 
-                            
+
                         </div>
 
 
@@ -645,10 +645,10 @@
                                     <th>Date</th>
                                     <th>Description</th>
                                     <th>Amount</th>
-                                    
+
                                 </thead>
                                 <tbody>
-                                    
+
                                     <tr>
                                         <h4>INV - {{++$key}}</h4>
                                     </tr>
@@ -672,7 +672,7 @@
                                             <td><b>Closing Balance  </b></td>
                                             <td>K {{ $invoice->details->sum('amount') - $invoice->statements->sum('amount') }}</td>
                                         </tr>
-                                    
+
                                 </tbody>
                             </table>
                             @endforeach
@@ -687,7 +687,7 @@
                                     <th>Date</th>
                                     <th>Description</th>
                                     <th>Amount</th>
-                                    
+
                                 </thead>
                                 <tbody>
 
@@ -715,7 +715,7 @@
 
                                 </tbody>
                             </table>
-                            
+
                             @endif
 
                         </div>
@@ -731,14 +731,14 @@
                                     <th>Amount</th>
                                 </thead>
                                 <tbody>
-                                    
+
                                         <tr>
                                             <h4>INV - {{++$key}}</h4>
                                         </tr>
                                       @foreach($invoice->details as $key =>  $detail)
                                         <tr>
                                             <td>{{++$key}}</td>
-                                            <td>{{$detail->fee->name}}</td>
+{{--                                            <td>{{$detail->fee->name}}</td>--}}
                                             <td>K {{$detail->amount}}</td>
                                         </tr>
                                         @endforeach
@@ -747,7 +747,7 @@
                                             <td><b>Total</b></td>
                                             <td>K {{$invoice->details->sum('amount')}}</td>
                                         </tr>
-                                    
+
                                 </tbody>
                             </table>
 
@@ -756,7 +756,7 @@
                         </div>
 
                         <div class="tab-pane fade show" id="payment-history">
-                        
+
                             <table class="table table-bordered">
                                 <thead>
                                     <th>#</th>
@@ -805,7 +805,7 @@
                                 <div class="col-md-12">
                                     <form class="ajax-update" data-reload="#page-header" method="post"
                                           action="{{ route('students.resetAccountPassword', $student->user->id) }}">
-                                        @csrf 
+                                        @csrf
                                         @method('PUT')
 
                                         <div class="form-group row">
