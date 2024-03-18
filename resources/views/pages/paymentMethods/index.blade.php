@@ -1,40 +1,39 @@
 @extends('layouts.master')
-@section('page_title', 'Manage System Settings')
+@section('page_title', 'Manage PaymentMethods')
 @section('content')
     @php
         use App\Helpers\Qs;
     @endphp
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h6 class="card-title">Manage System Settings</h6>
+            <h6 class="card-title">Manage PaymentMethods</h6>
             {!! Qs::getPanelOptions() !!}
         </div>
 
         <div class="card-body">
             <ul class="nav nav-tabs nav-tabs-highlight">
-                <li class="nav-item"><a href="#all-settings" class="nav-link active" data-toggle="tab">Manage System
-                        Settings</a></li>
-                {{-- <li class="nav-item"><a href="#new-setting" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
-                        Create New System Setting</a></li> --}}
+                <li class="nav-item"><a href="#all-payment-methods" class="nav-link active" data-toggle="tab">Manage
+                        PaymentMethods</a>
+                </li>
+                <li class="nav-item"><a href="#new-payment-method" class="nav-link" data-toggle="tab"><i
+                            class="icon-plus2"></i>
+                        Create New Payment Method</a></li>
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane fade show active" id="all-settings">
+                <div class="tab-pane fade show active" id="all-payment-methods">
                     <table class="table datatable-button-html5-columns">
                         <thead>
                             <tr>
                                 <th>S/N</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Action</th>
+                                <th>Name</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($settings as $setting)
+                            @foreach ($paymentMethods as $paymentMethod)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $setting->type }}</td>
-                                    <td>{{ $setting->description }}</td>
+                                    <td>{{ $paymentMethod->name }}</td>
                                     <td class="text-center">
                                         <div class="list-icons">
                                             <div class="dropdown">
@@ -44,15 +43,15 @@
 
                                                 <div class="dropdown-menu dropdown-menu-left">
                                                     @if (Qs::userIsTeamSA())
-                                                        <a href="{{ route('settings.edit', $setting->id) }}"
+                                                        <a href="{{ route('payment-methods.edit', $paymentMethod->id) }}"
                                                             class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
                                                     @endif
                                                     @if (Qs::userIsSuperAdmin())
-                                                        <a id="{{ $setting->id }}" onclick="confirmDelete(this.id)"
+                                                        <a id="{{ $paymentMethod->id }}" onclick="confirmDelete(this.id)"
                                                             href="#" class="dropdown-item"><i class="icon-trash"></i>
                                                             Delete</a>
-                                                        <form method="post" id="item-delete-{{ $setting->id }}"
-                                                            action="{{ route('settings.destroy', $setting->id) }}"
+                                                        <form method="post" id="item-delete-{{ $paymentMethod->id }}"
+                                                            action="{{ route('payment-methods.destroy', $paymentMethod->id) }}"
                                                             class="hidden">@csrf @method('delete')</form>
                                                     @endif
                                                 </div>
@@ -65,26 +64,17 @@
                     </table>
                 </div>
 
-                {{-- <div class="tab-pane fade" id="new-setting">
+                <div class="tab-pane fade" id="new-payment-method">
                     <div class="row">
                         <div class="col-md-6">
-                            <form class="ajax-store" method="post" action="{{ route('settings.store') }}">
+                            <form class="ajax-store" method="post" action="{{ route('payment-methods.store') }}">
                                 @csrf
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Type <span
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Payment Method <span
                                             class="text-danger">*</span></label>
                                     <div class="col-lg-9">
-                                        <input name="type" value="{{ old('type') }}" required type="text"
-                                            class="form-control" placeholder="Setting type">
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Description <span
-                                            class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input name="description" value="{{ old('description') }}" required type="text"
-                                            class="form-control" placeholder="Description">
+                                        <input name="name" value="{{ old('name') }}" required type="text"
+                                            class="form-control" placeholder="Zanaco Bill Muster">
                                     </div>
                                 </div>
 
@@ -95,10 +85,10 @@
                             </form>
                         </div>
                     </div>
-                </div> --}}
+                </div>
             </div>
         </div>
     </div>
 
-    {{-- System Setting List Ends --}}
+    {{-- Payment Method List Ends --}}
 @endsection

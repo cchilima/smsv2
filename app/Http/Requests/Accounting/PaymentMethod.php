@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Inputs;
+namespace App\Http\Requests\Accounting;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class Country extends FormRequest
+class PaymentMethod extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +23,12 @@ class Country extends FormRequest
     public function rules(): array
     {
         return [
-            // 'countryId' => 'required'
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('payment_methods', 'name')->ignore($this->payment_method)
+            ]
         ];
     }
 }

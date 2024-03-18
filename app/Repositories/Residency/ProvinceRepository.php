@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Inputs;
+namespace App\Repositories\Residency;
 
 
 use App\Models\Residency\{Province, Town};
@@ -9,7 +9,7 @@ class ProvinceRepository
 {
     public function getAll()
     {
-        return Province::all(['id', 'name']);
+        return Province::all();
     }
 
     public function getTownsByProvince($provinceId)
@@ -21,5 +21,20 @@ class ProvinceRepository
         }
 
         return $towns;
+    }
+
+    public function create($data)
+    {
+        return Province::create($data);
+    }
+
+    public function update($province, $data)
+    {
+        return $province->update($data);
+    }
+
+    public function delete($province)
+    {
+        return $province->delete();
     }
 }
