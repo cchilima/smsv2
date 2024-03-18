@@ -6,6 +6,8 @@ use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
+use App\Repositories\Academics\ClassAssessmentsRepo;
+use App\Repositories\Enrollments\EnrollmentRepository;
 use App\Http\Requests\Students\{Student, StudentUpdate, UserInfo, PersonalInfo, NextOfKinInfo, AcademicInfo, ResetPasswordInfo};
 use App\Repositories\Academics\StudentRegistrationRepository;
 use App\Repositories\Admissions\StudentRepository;
@@ -22,14 +24,16 @@ class StudentController extends Controller
     protected $registrationRepo;
     protected $userPersonalInfoRepo;
     protected $userRepo;
-    protected $userNextOfKinRepo;
+    protected $userNextOfKinRepo,$enrollmentRepo,$classaAsessmentRepo;
 
     public function __construct(
         StudentRepository $studentRepo,
         StudentRegistrationRepository $registrationRepo,
         UserPersonalInfoRepository $userPersonalInfoRepo,
         UserRepository $userRepo,
-        userNextOfKinRepository $userNextOfKinRepo
+        userNextOfKinRepository $userNextOfKinRepo,
+        EnrollmentRepository $enrollmentRepo,
+        ClassAssessmentsRepo $classaAsessmentRepo
     ) {
         $this->middleware(TeamSA::class, ['except' => ['destroy']]);
         $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
@@ -39,6 +43,8 @@ class StudentController extends Controller
         $this->userPersonalInfoRepo = $userPersonalInfoRepo;
         $this->userRepo = $userRepo;
         $this->userNextOfKinRepo = $userNextOfKinRepo;
+        $this->enrollmentRepo = $enrollmentRepo;
+        $this->classaAsessmentRepo = $classaAsessmentRepo;
     }
 
     /**
@@ -214,7 +220,7 @@ class StudentController extends Controller
             // Check if the user already exists
             $user = $this->studentRepo->findUser($id);
 
-            
+
 
             // Determine what user info to update
 
@@ -291,6 +297,10 @@ class StudentController extends Controller
         $data['isRegistered'] = $this->registrationRepo->getRegistrationStatus($student->student->id);
         $data['isWithinRegistrationPeriod'] = $this->registrationRepo->checkIfWithinRegistrationPeriod($student->student->id);
         $data['isInvoiced'] = $this->registrationRepo->checkIfInvoiced($student->student->id);
+        $data['enrollments']  = $this->enrollmentRepo->getEnrollments($student->student->id);
+        $data['results'] = $this->classaAsessmentRepo->GetExamGrades($id);
+        $data['caresults'] = $this->classaAsessmentRepo->GetCaStudentGrades($id);
+        //dd($data['enrollments']);
 
         // 'student','countries','programs','towns','provinces','course_levels','periodIntakes','studyModes','periodTypes','relationships','maritalStatuses'
         return view('pages.students.show', $data);

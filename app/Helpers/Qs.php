@@ -381,6 +381,13 @@ class Qs
     {
         return redirect()->back()->with('flash_success', $msg);
     }
+
+
+
+    public static function jsonApplicationUpdateOk($msg)
+    {
+        return self::json(__($msg));
+    }
     
 
     public static function getDaysOfTheWeek()

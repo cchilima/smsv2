@@ -4,6 +4,10 @@ namespace App\Models\Applications;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Applications\{ApplicantAttachment};
+use App\Models\Academics\{Program,StudyMode};
+use App\Models\Admissions\{AcademicPeriodIntake};
+use App\Models\Residency\{Country, Province, Town};
 
 class Applicant extends Model
 {
@@ -31,5 +35,43 @@ class Applicant extends Model
         'study_mode_id',
         'academic_period_intake_id',
     ];
+    
+
+    public function program()
+    {
+        return $this->belongsTo(Program::class, 'program_id');
+    }
+
+    public function town()
+    {
+        return $this->belongsTo(Town::class, 'town_id');
+    }
+
+    public function province()
+    {
+        return $this->belongsTo(Province::class, 'province_id');
+    }
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class, 'country_id');
+    }
+
+    public function intake()
+    {
+        return $this->belongsTo(AcademicPeriodIntake::class, 'academic_period_intake_id');
+    }
+
+    public function study_mode()
+    {
+        return $this->belongsTo(StudyMode::class, 'academic_period_intake_id');
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(ApplicantAttachment::class, 'applicant_id');
+    }
+
+    
     
 }

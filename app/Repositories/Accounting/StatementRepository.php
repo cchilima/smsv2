@@ -198,10 +198,10 @@ class StatementRepository
                 $remainingNegativeTotal = $negative_total - $invoice_total;
 
                 // Create new statement, to show that collective statement were applied to invoice
-                $this->createStatement($invoice->id, $remainingNegativeTotal, $student->id, $payment_method_id);
+                $this->createStatement($invoice->id, $invoice_total, $student->id, $payment_method_id);
                 
                 // Create a receipt 
-                $this->createReceipt($invoice->id, $remainingNegativeTotal, $student->id, $payment_method_id);
+                $this->createReceipt($invoice->id, $invoice_total, $student->id, $payment_method_id);
             
                 // Iterate over statements to distribute remaining negative total
                 foreach ($student->statementsWithoutInvoice as $statement) {
@@ -210,8 +210,9 @@ class StatementRepository
                         break; // No more amount remaining to distribute
                     }
 
-                    if($statement->amount > $negative_total ){
-                        $statement->update(['amount' => 0]);
+                    if($statement->amount > $invoice_total ){
+                        $statement->update(['amount' => $remainingNegativeTotal]);
+                        break;
                     }
 
                     /*

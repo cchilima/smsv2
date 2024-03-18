@@ -32,8 +32,8 @@
                             @endif
 
                             <div class="form-group ">
-                                <input type="number" class="form-control" name="email" value="{{ old('identity') }}"
-                                    placeholder="Student ID">
+                                <input type="type" class="form-control" name="email" value="{{ old('identity') }}"
+                                    placeholder="Email">
                             </div>
 
                             <div class="form-group ">
@@ -59,10 +59,9 @@
                                         class="icon-circle-right2 ml-2"></i></button>
                             </div>
 
-                            <div class="form-group">
-                                <a href="{{ route('staff') }}" class="btn btn-light btn-block"> Sign as Staff <i
-                                        class="icon-circle-right2 ml-2"></i></a>
-                            </div>
+                            {{-- <div class="form-group">
+                                <a href="#" class="btn btn-light btn-block"><i class="icon-home"></i> Back to Home</a>
+                            </div> --}}
 
                         </div>
                     </div>

@@ -31,4 +31,32 @@ class EnrollmentRepository
             DB::rollback();
         }
     }
+
+    public function getEnrollments($id)
+    {
+        $organizedResults = [];
+        $student = Student::with(['program', 'user', 'level', 'enrollments.class.course','enrollments.class.academicPeriod'])->find($id);
+        foreach ($student->enrollments as $enrollment) {
+
+            $academicPeriodId = $enrollment->class->academic_period_id;
+            //$academicPeriodId = 'courses';
+            $course = [
+                'course_code' => $enrollment->class->course->code,
+                'course_title' => $enrollment->class->course->name,
+            ];
+
+            if (!isset($organizedResults[$academicPeriodId])) {
+                $organizedResults[$academicPeriodId] = [
+                    'academic_period_name' => $enrollment->class->academicPeriod->name,
+                    'academic_period_code' => $enrollment->class->academicPeriod->code,
+                    'academic_period_id' => $enrollment->class->academic_period_id,
+                ];
+            }
+
+            $organizedResults[$academicPeriodId]['courses'][] = $course;
+        }
+
+        return $organizedResults;
+
+    }
 }

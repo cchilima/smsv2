@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Reports\Accounts\AccountReportsController;
+use App\Http\Controllers\Users\MyAccountController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Home\HomeController;
@@ -42,6 +43,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('/staff-login', function () {
+    return view('auth.staff_login');
+})->name('staff');
+
 Auth::routes(['register' => false]);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::group(['prefix' => 'students'], function () {
@@ -75,6 +80,7 @@ Route::group(['prefix' => 'assess'], function () {
         Route::post('/load-more', [ClassAssessmentsController::class, 'LoadMoreResults'])->name('load.more.results.board');
     });
 });
+
 Route::group(['prefix' => 'accounts'], function () {
     Route::group(['prefix' => 'reports'], function () {
         Route::get('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue.analysis');
@@ -141,11 +147,18 @@ Route::resource('enrollments', EnrollmentController::class);
 Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 
 Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])->name('students.resetAccountPassword');
-
+//student controller enrolments
+Route::get('/student-enrollments', [\App\Http\Controllers\Users\StudentController::class, 'Enrollments'])->name('student.enrollments');
 // Residency Routes
 Route::get('/countries/{countryId}/provinces/', [CountryController::class, 'getProvincesByCountry'])->name('provinces.getProvincesByCountry');
 Route::resource('countries', CountryController::class);
 Route::get('/provinces/{provinceId}/towns', [ProvinceController::class, 'getTownsByProvince'])->name('towns.getTownsByProvince');
+//my account
+Route::group(['prefix' => 'my_account'], function () {
+    Route::get('/', [MyAccountController::class, 'index'])->name('my_account');
+    //        Route::put('/', 'MyAccountController@update_profile')->name('my_account.update');
+    Route::put('/change_password', [MyAccountController::class, 'change_pass'])->name('my_account.change_pass');
+});
 Route::resource('provinces', ProvinceController::class);
 Route::resource('towns', TownController::class);
 
