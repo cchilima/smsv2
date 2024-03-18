@@ -1,19 +1,19 @@
 @extends('layouts.master')
-@section('page_title', 'Manage PaymentMethods')
+@section('page_title', 'Manage Payment Methods')
 @section('content')
     @php
         use App\Helpers\Qs;
     @endphp
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h6 class="card-title">Manage PaymentMethods</h6>
+            <h6 class="card-title">Manage Payment Methods</h6>
             {!! Qs::getPanelOptions() !!}
         </div>
 
         <div class="card-body">
             <ul class="nav nav-tabs nav-tabs-highlight">
                 <li class="nav-item"><a href="#all-payment-methods" class="nav-link active" data-toggle="tab">Manage
-                        PaymentMethods</a>
+                        Payment Methods</a>
                 </li>
                 <li class="nav-item"><a href="#new-payment-method" class="nav-link" data-toggle="tab"><i
                             class="icon-plus2"></i>
