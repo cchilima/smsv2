@@ -602,28 +602,6 @@
                                         </select>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="amount">Enter Amount</label>
-                                        <input type="number" class="form-control" id="amount" name="amount"
-                                            placeholder="ZMW" required>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="method">Method <span class="text-danger">*</span></label>
-                                        <select data-placeholder="Payment method" required
-                                            class="select-search form-control" name="payment_method_id" id="method">
-                                            <option value=""></option>
-                                            @foreach ($paymentMethods as $method)
-                                                <option value="{{ $method->id }}">{{ $method->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="amount">Enter Amount</label>
-                                        <input type="number" class="form-control" id="amount" name="amount"
-                                            placeholder="ZMW" required>
-                                    </div>
 
                                     <div class="form-group">
                                         <input hidden type="number" class="form-control" name="academic_period"
