@@ -14,8 +14,8 @@
             <ul class="nav nav-tabs nav-tabs-highlight">
                 <li class="nav-item"><a href="#all-settings" class="nav-link active" data-toggle="tab">Manage System
                         Settings</a></li>
-                <li class="nav-item"><a href="#new-setting" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
-                        Create New System Setting</a></li>
+                {{-- <li class="nav-item"><a href="#new-setting" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
+                        Create New System Setting</a></li> --}}
             </ul>
 
             <div class="tab-content">
@@ -65,7 +65,7 @@
                     </table>
                 </div>
 
-                <div class="tab-pane fade" id="new-setting">
+                {{-- <div class="tab-pane fade" id="new-setting">
                     <div class="row">
                         <div class="col-md-6">
                             <form class="ajax-store" method="post" action="{{ route('settings.store') }}">
@@ -95,7 +95,7 @@
                             </form>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

@@ -17,10 +17,9 @@
                         action="{{ route('settings.update', $setting->id) }}">
                         @csrf @method('PUT')
                         <div class="form-group row">
-                            <label class="col-lg-3 col-form-label font-weight-semibold">Type <span
-                                    class="text-danger">*</span></label>
+                            <label class="col-lg-3 col-form-label font-weight-semibold">Type</label>
                             <div class="col-lg-9">
-                                <input name="type" required type="text" class="form-control"
+                                <input name="type" disabled type="text" class="form-control"
                                     placeholder="Setting type" value="{{ $setting->type }}">
                             </div>
                         </div>
@@ -35,8 +34,7 @@
                         </div>
 
                         <div class="text-right">
-                            <button type="submit" class="btn btn-primary">Update form <i
-                                    class="icon-pencil ml-2"></i></button>
+                            <button type="submit" class="btn btn-primary">Update <i class="icon-pencil ml-2"></i></button>
                         </div>
                     </form>
                 </div>

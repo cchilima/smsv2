@@ -77,7 +77,7 @@ class SettingsController extends Controller
      */
     public function update(SettingRequest $request, Setting $setting)
     {
-        $data = $request->only(['type', 'description']);
+        $data = $request->only(['description']);
         $this->settingsRepo->update($setting, $data);
         return Qs::jsonUpdateOk();
     }
