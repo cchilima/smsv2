@@ -460,11 +460,13 @@
                                         <h5 class="p-2">Name : <strong>{{ $academicData['academic_period_name'] }}</strong></h5>
                                     </div>
                                     <div>
-                                        <form action="{{ route('registration.summary') }}" method="get">
-                                            @csrf
-                                            <input name="student_number" type="hidden" value="{{ $student->id }}" />
-                                            <button type="submit" class="btn btn-primary mt-2">Download summary</button>
-                                        </form>
+                                    <form action="{{ route('registration.summary') }}" method="get">
+                                        @csrf
+                                        <input name="academic_period_id" type="hidden" value="{{ $academicData['academic_period_id'] }}" />
+                                        <input name="student_number" type="hidden" value="{{ $student->id }}" />
+                                        <button type="submit" class="btn btn-primary mt-2">Download summary</button>
+                                    </form>
+
                                     </div>
 
                                 </div>
@@ -1300,7 +1302,7 @@
 
             <div class="card card-collapsed">
                 <div class="card-header header-elements-inline">
-                    <h6 class="card-title">CA Results Information</h6>
+                    <h6 class="card-title">CA Results Information </h6>
                     {!! Qs::getPanelOptions() !!}
                 </div>
                 <div class="card-body">
@@ -1410,6 +1412,7 @@
 
                         <form action="{{ route('registration.summary') }}" method="get">
                             @csrf
+                            <input name="academic_period_id" type="hidden" value="{{ $student->academic_info->academic_period_id }}" />
                             <input name="student_number" type="hidden" value="{{ $student->id }}" />
                             <button type="submit" class="btn btn-primary mt-2">Download summary</button>
                         </form>

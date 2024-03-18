@@ -165,4 +165,27 @@ class StudentRegistrationRepository
     {
         return Invoice::where('student_id', $student_id)->where('academic_period_id', $academic_period)->first();
     }
+
+    public function getSummaryCourses($student_id, $academic_period_id)
+    {
+        $student = Student::with(['program', 'user', 'level', 'enrollments.class.course','enrollments.class.academicPeriod'])->find($student_id);
+        $courses = [];
+        
+        foreach ($student->enrollments as $enrollment) {
+
+            if($academic_period_id == $enrollment->class->academic_period_id) {
+                array_push($courses, $enrollment->class->course);
+            }
+        }
+
+        return $courses;
+    }
+
+    public function getSummaryAcademicInfo($academic_period_id)
+    {
+        $academicInfo = AcademicPeriodInformation::where('academic_period_id', $academic_period_id) ->with(['academic_period', 'study_mode'])->first();
+
+        return $academicInfo ;
+    }
+
 }
