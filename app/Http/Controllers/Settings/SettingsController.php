@@ -47,13 +47,14 @@ class SettingsController extends Controller
      */
     public function store(SettingRequest $request)
     {
-        try {
-            $data = $request->only(['type', 'description']);
-            $this->settingsRepo->create($data);
-            return Qs::jsonStoreOk();
-        } catch (\Throwable $th) {
+        $data = $request->only(['type', 'description']);
+        $setting = $this->settingsRepo->create($data);
+
+        if (!$setting) {
             return Qs::jsonError(__('msg.create_failed'));
         }
+
+        return Qs::jsonStoreOk();
     }
 
     /**

@@ -271,6 +271,11 @@
                                         </ul>
                                     </li>
                                 @endif
+                                <li class="nav-item">
+                                    <a href="{{ route('payment-methods.index') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['payment-methods.create', 'payment-methods.edit', 'payment-methods.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Payment Methods</span></a>
+                                </li>
 
                             </ul>
                         </li>
@@ -318,11 +323,28 @@
                                     Other</span></a>
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Profile">
+                                <li class="nav-item">
+                                    <a href="{{ route('countries.index') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['countries.create', 'countries.edit', 'countries.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Countries</span></a>
+                                </li>
+                                <li class="nav-item">
+
+                                    <a href="{{ route('provinces.index') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['provinces.create', 'provinces.edit', 'provinces.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Provinces</span></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('towns.index') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['towns.create', 'towns.edit', 'towns.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Towns</span></a>
+                                </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('marital-statuses.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}"><i
-                                            class="icon-fence"></i> <span>Marital status</span></a>
+                                            class="icon-fence"></i> <span>Marital statuses</span></a>
                                 </li>
 
                             </ul>

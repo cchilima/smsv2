@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Inputs;
+namespace App\Http\Requests\Residency;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -21,8 +21,17 @@ class Town extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            // 'townId' => 'required|numeric' // Placeholder
-        ];
+        if ($this->isMethod('post') || $this->isMethod('put')) {
+            return [
+                'name' => 'required|string|max:255',
+                'province_id' => 'required|numeric|exists:provinces,id'
+            ];
+        }
+
+        if ($this->isMethod('get')) {
+            return [
+                // 'townId' => 'required|numeric'
+            ];
+        }
     }
 }

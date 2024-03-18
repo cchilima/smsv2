@@ -19,7 +19,7 @@ use App\Http\Controllers\Academics\QualificationController;
 use App\Http\Controllers\Academics\SchoolController;
 use App\Http\Controllers\Academics\StudyModeController;
 use App\Http\Controllers\Academics\CourseController;
-use App\Http\Controllers\Accounting\{InvoiceController, StatementController};
+use App\Http\Controllers\Accounting\{InvoiceController, PaymentMethodController, StatementController};
 use App\Http\Controllers\Academics\AcademicPeriodController;
 use App\Http\Controllers\Academics\AcademicPeriodClassController;
 use App\Http\Controllers\Academics\StudentRegistrationController;
@@ -35,12 +35,8 @@ use App\Http\Controllers\Accounting\FeeController;
 use App\Http\Controllers\Users\UserController;
 
 use App\Http\Controllers\Enrollments\EnrollmentController;
-use App\Http\Controllers\Inputs\CountryController;
-use App\Http\Controllers\Inputs\ProvinceController;
-use App\Http\Controllers\Inputs\ResidencyController;
-use App\Http\Controllers\Inputs\TownController;
+use App\Http\Controllers\Residency\{CountryController, ProvinceController, TownController};
 use App\Http\Controllers\Settings\SettingsController;
-use App\Http\Controllers\Settings\SystemSettingsController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -63,7 +59,7 @@ Route::group(['prefix' => 'assess'], function () {
     Route::post('/get-results-update', [ClassAssessmentsController::class, 'getAssessToUpdate'])->name('update.assessments');
     Route::post('/board-exam-update', [ClassAssessmentsController::class, 'BoardofExaminersUpdateResults'])->name('BoardofExaminersUpdateResults');
     Route::post('/publish-program-results', [ClassAssessmentsController::class, 'PublishProgramResults'])->name('publishProgramResults');
-    Route::post('/post-results',[ClassAssessmentsController::class,'PostStudentResults'])->name('postedResults.process');
+    Route::post('/post-results', [ClassAssessmentsController::class, 'PostStudentResults'])->name('postedResults.process');
 
     Route::group(['prefix' => 'cas'], function () {
         Route::get('/publish-cas-program-list/{id}', [ClassAssessmentsController::class, 'GetProgramsToPublishCas'])->name('getPublishProgramsCas');
@@ -146,9 +142,15 @@ Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('
 
 Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])->name('students.resetAccountPassword');
 
-// Residency Input Routes
+// Residency Routes
 Route::get('/countries/{countryId}/provinces/', [CountryController::class, 'getProvincesByCountry'])->name('provinces.getProvincesByCountry');
+Route::resource('countries', CountryController::class);
 Route::get('/provinces/{provinceId}/towns', [ProvinceController::class, 'getTownsByProvince'])->name('towns.getTownsByProvince');
+Route::resource('provinces', ProvinceController::class);
+Route::resource('towns', TownController::class);
 
 // System Settings Routes
 Route::resource('settings', SettingsController::class);
+
+// Payment Methods Routes
+Route::resource('payment-methods', PaymentMethodController::class);
