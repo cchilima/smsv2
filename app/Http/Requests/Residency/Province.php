@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Inputs;
+namespace App\Http\Requests\Residency;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -21,8 +21,17 @@ class Province extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            // 'provinceId' => 'required|numeric'
-        ];
+        if ($this->isMethod('post') || $this->isMethod('put')) {
+            return [
+                'name' => 'required|string|max:255',
+                'country_id' => 'required|numeric|exists:countries,id'
+            ];
+        }
+
+        if ($this->isMethod('get')) {
+            return [
+                // 'provinceId' => 'required|numeric'
+            ];
+        }
     }
 }

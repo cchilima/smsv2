@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Inputs;
+namespace App\Repositories\Residency;
 
 
 use App\Models\Residency\{Country, Province};
@@ -14,7 +14,7 @@ class CountryRepository
 
     public function getAll()
     {
-        return Country::all(['id', 'name']);
+        return Country::all();
     }
 
     public function getProvincesByCountry($countryId)
@@ -26,5 +26,20 @@ class CountryRepository
         }
 
         return $provinces;
+    }
+
+    public function create($data)
+    {
+        return Country::create($data);
+    }
+
+    public function update($country, $data)
+    {
+        return $country->update($data);
+    }
+
+    public function delete($country)
+    {
+        return $country->delete();
     }
 }

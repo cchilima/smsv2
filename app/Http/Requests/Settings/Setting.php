@@ -24,7 +24,7 @@ class Setting extends FormRequest
     {
         return [
             'type' => [
-                'required',
+                'nullable',
                 'string',
                 'max:255',
                 Rule::unique('settings', 'type')->ignore($this->setting),
