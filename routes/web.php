@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Reports\Accounts\AccountReportsController;
+use App\Http\Controllers\Users\MyAccountController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Home\HomeController;
@@ -155,6 +156,11 @@ Route::get('/student-enrollments', [\App\Http\Controllers\Users\StudentControlle
 // Residency Input Routes
 Route::get('/countries/{countryId}/provinces/', [CountryController::class, 'getProvincesByCountry'])->name('provinces.getProvincesByCountry');
 Route::get('/provinces/{provinceId}/towns', [ProvinceController::class, 'getTownsByProvince'])->name('towns.getTownsByProvince');
-
+//my account
+Route::group(['prefix' => 'my_account'], function() {
+    Route::get('/', [MyAccountController::class,'index'])->name('my_account');
+//        Route::put('/', 'MyAccountController@update_profile')->name('my_account.update');
+    Route::put('/change_password',[MyAccountController::class,'change_pass'])->name('my_account.change_pass');
+});
 // System Settings Routes
 Route::resource('settings', SettingsController::class);
