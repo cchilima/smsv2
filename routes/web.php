@@ -146,19 +146,10 @@ Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->n
 Route::resource('enrollments', EnrollmentController::class);
 Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 
-Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])->name('students.resetAccountPassword');
-//student controller enrolments
-Route::get('/student-enrollments', [\App\Http\Controllers\Users\StudentController::class, 'Enrollments'])->name('student.enrollments');
 // Residency Routes
 Route::get('/countries/{countryId}/provinces/', [CountryController::class, 'getProvincesByCountry'])->name('provinces.getProvincesByCountry');
 Route::resource('countries', CountryController::class);
 Route::get('/provinces/{provinceId}/towns', [ProvinceController::class, 'getTownsByProvince'])->name('towns.getTownsByProvince');
-//my account
-Route::group(['prefix' => 'my_account'], function () {
-    Route::get('/', [MyAccountController::class, 'index'])->name('my_account');
-    //        Route::put('/', 'MyAccountController@update_profile')->name('my_account.update');
-    Route::put('/change_password', [MyAccountController::class, 'change_pass'])->name('my_account.change_pass');
-});
 Route::resource('provinces', ProvinceController::class);
 Route::resource('towns', TownController::class);
 
@@ -167,3 +158,14 @@ Route::resource('settings', SettingsController::class);
 
 // Payment Methods Routes
 Route::resource('payment-methods', PaymentMethodController::class);
+
+//my account
+Route::group(['prefix' => 'my_account'], function () {
+    Route::get('/', [MyAccountController::class, 'index'])->name('my_account');
+    //        Route::put('/', 'MyAccountController@update_profile')->name('my_account.update');
+    Route::put('/change_password', [MyAccountController::class, 'change_pass'])->name('my_account.change_pass');
+});
+
+Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])->name('students.resetAccountPassword');
+//student controller enrolments
+Route::get('/student-enrollments', [\App\Http\Controllers\Users\StudentController::class, 'Enrollments'])->name('student.enrollments');
