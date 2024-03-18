@@ -26,13 +26,13 @@ return new class extends Migration
             $table->string('phone_number')->nullable();
             $table->date('application_date')->nullable();
             $table->enum('status', ['incomplete','pending', 'accepted', 'rejected'])->default('incomplete');
-            $table->foreignId('town_id')->constrained('towns')->onDelete('restrict')->nullable();
-            $table->foreignId('province_id')->constrained('provinces')->onDelete('restrict')->nullable();
-            $table->foreignId('country_id')->constrained('countries')->onDelete('restrict')->nullable();
-            $table->foreignId('program_id')->constrained('programs')->onDelete('restrict')->nullable();
-            $table->foreignId('period_type_id')->constrained('period_types')->onDelete('restrict')->nullable();
-            $table->foreignId('study_mode_id')->constrained('study_modes')->onDelete('restrict')->nullable();
-            $table->foreignId('academic_period_intake_id')->constrained('academic_period_intakes')->onDelete('restrict')->nullable();
+            $table->foreignId('town_id')->nullable()->constrained('towns')->onDelete('restrict');
+            $table->foreignId('province_id')->nullable()->constrained('provinces')->onDelete('restrict');
+            $table->foreignId('country_id')->nullable()->constrained('countries')->onDelete('restrict');
+            $table->foreignId('program_id')->nullable()->constrained('programs')->onDelete('restrict');
+            $table->foreignId('period_type_id')->nullable()->constrained('period_types')->onDelete('restrict');
+            $table->foreignId('study_mode_id')->nullable()->constrained('study_modes')->onDelete('restrict');
+            $table->foreignId('academic_period_intake_id')->nullable()->constrained('academic_period_intakes')->onDelete('restrict');
             $table->timestamps();
         });
     }

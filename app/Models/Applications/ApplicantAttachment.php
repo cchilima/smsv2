@@ -14,4 +14,9 @@ class ApplicantAttachment extends Model
         'attachment',
         'applicant_id',
     ];
+
+    public function application()
+    {
+        return $this->belongsTo(Application::class);
+    }
 }

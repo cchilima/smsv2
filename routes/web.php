@@ -44,6 +44,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('/staff-login', function () {
+    return view('auth.staff_login');
+})->name('staff');
+
 Auth::routes(['register' => false]);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::group(['prefix' => 'students'], function () {
@@ -76,6 +80,7 @@ Route::group(['prefix' => 'assess'], function () {
         Route::post('/load-more', [ClassAssessmentsController::class, 'LoadMoreResults'])->name('load.more.results.board');
     });
 });
+
 Route::group(['prefix' => 'accounts'], function () {
     Route::group(['prefix' => 'reports'], function () {
         Route::get('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue.analysis');
@@ -101,7 +106,8 @@ Route::group(['prefix' => 'accounts'], function () {
     Route::get('/initiate-application', [ApplicantController::class, 'index'])->name('application.index');
     Route::post('/application/step-1', [ApplicantController::class, 'startApplication'])->name('application.start_application');
     Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
-    Route::post('/application/step-3', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
+    Route::put('/application/step-3/{application_id}', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
+
 /*}); */
 
 

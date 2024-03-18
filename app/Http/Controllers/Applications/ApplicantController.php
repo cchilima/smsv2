@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Applications;
 
+use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\Applications\{ApplicationStep1};
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Applications\ApplicantRepository;
-use App\Http\Requests\Applications\{ApplicationStep1};
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class ApplicantController extends Controller
 {
-
     protected $applicantRepo;
     protected $studentRepo;
 
@@ -26,7 +26,6 @@ class ApplicantController extends Controller
      */
     public function index()
     {
-
         // Application step 1
         return view('pages.applications.initiate_application');
     }
@@ -68,7 +67,7 @@ class ApplicantController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        dd('update hit');
     }
 
     /**
@@ -79,39 +78,53 @@ class ApplicantController extends Controller
         //
     }
 
-
     /**
      * Initiate application process.
      */
     public function startApplication(ApplicationStep1 $request)
     {
-        $data = $request->only(['nrc','passport']);
+        $data = $request->only(['nrc', 'passport']);
 
-        $application = $this->applicantRepo->initiateApplication($data);
+        // check if applicant has incomplete applications
+        $applications = $this->applicantRepo->checkApplications($data);
 
-        if ($application) {
-            return redirect()->route('application.complete_application', $application->id);
+
+        if(count($applications) == 0){
+
+            $application = $this->applicantRepo->initiateApplication($data);
+
+            if ($application) {
+
+                  return redirect()->route('application.complete_application', $application->id);
+
+              } else {
+                  return Qs::json(false, 'msg.create_failed');
+              }
+
         } else {
-            return Qs::json(false,'msg.create_failed');
+
+            return view('pages.applications.my_applications', compact('applications'));
         }
+    
 
-        
     }
-
 
     /**
      * Initiate application process.
      */
-    public function completeApplication()
+    public function completeApplication($application_id)
     {
         // Dropdown data
         $dropdownData = $this->getDropdownData();
 
-         // Application step 2
-         return view('pages.applications.complete_application', $dropdownData);
+        // Application
+        $application = $this->applicantRepo->getApplication($application_id);
+
+        // Application step 2
+        return view('pages.applications.complete_application', array_merge($dropdownData, ['application_id' => $application_id, 'application' => $application]));
     }
 
-        /**
+    /**
      * Get dropdown data for the create form.
      */
     private function getDropdownData()
@@ -136,5 +149,57 @@ class ApplicantController extends Controller
         ];
 
         return array_merge($residencyData, $profileData, $academicData);
+    }
+
+    /**
+     * Initiate application process.
+     */
+    public function saveApplication(Request $request, $id)
+    {
+
+        $data = $request;
+        
+     /*   $data = $request->only([ 
+
+            'nrc',
+            'passport',
+            'first_name',
+            'middle_name',
+            'last_name',
+            'date_of_birth',
+            'gender',
+            'address',
+            'postal_code',
+            'email',
+            'phone_number',
+            'application_date',
+            'status',
+            'town_id',
+            'province_id',
+            'country_id',
+            'program_id',
+            'period_type_id',
+            'study_mode_id',
+            'academic_period_intake_id',
+            'attachment'
+
+        ]); */
+
+
+
+        $data = $this->applicantRepo->changeDBOFromat($data);
+
+        $application = $this->applicantRepo->saveApplication($data , $id);
+
+        if ($application) {
+
+         return Qs::jsonApplicationUpdateOk('Application details saved successfully, but come back to complete your application.');
+
+       //  return redirect()->route('application.complete_application', $application);
+
+
+        } else {
+            return Qs::json(false, 'msg.create_failed');
+        }
     }
 }
