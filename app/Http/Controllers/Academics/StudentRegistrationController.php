@@ -98,10 +98,12 @@ class StudentRegistrationController extends Controller
 
         // Incase request from management get student number
         $studentNumber = $request->input('student_number');
+        $academicPeriodId = $request->input('academic_period_id');
 
-       $courses = $this->registrationRepo->getAll($studentNumber);
+       $courses = $this->registrationRepo->getSummaryCourses($studentNumber, $academicPeriodId);
        $student = $this->registrationRepo->getStudent($studentNumber);
-       $academicInfo = $this->registrationRepo->getAcademicInfo($studentNumber);
+       $academicInfo = $this->registrationRepo->getSummaryAcademicInfo($academicPeriodId);
+
 
        $filename = 'registration_summary.pdf';
 

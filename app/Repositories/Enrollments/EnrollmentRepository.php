@@ -36,6 +36,7 @@ class EnrollmentRepository
     {
         $organizedResults = [];
         $student = Student::with(['program', 'user', 'level', 'enrollments.class.course','enrollments.class.academicPeriod'])->find($id);
+        
         foreach ($student->enrollments as $enrollment) {
 
             $academicPeriodId = $enrollment->class->academic_period_id;
