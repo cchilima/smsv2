@@ -36,10 +36,22 @@
                             <div class="tab-pane fade show" id="account-{{ $academicData['academic_period_id'] }}">
 
                                 <table class="table table-hover table-striped-columns mb-3">
-                                    <h5 class="p-2"> Code :
-                                        <strong>{{ $academicData['academic_period_code'] }}</strong>
-                                    </h5>
-                                    <h5 class="p-2">Name : <strong>{{ $academicData['academic_period_name'] }}</strong></h5>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex">
+                                            <h5 class="p-2"> Code :
+                                                <strong>{{ $academicData['academic_period_code'] }}</strong>
+                                            </h5>
+                                            <h5 class="p-2">Name : <strong>{{ $academicData['academic_period_name'] }}</strong></h5>
+                                        </div>
+                                        <div>
+                                            <form action="{{ route('registration.summary') }}" method="get">
+                                                @csrf
+                                                <input name="student_number" type="hidden" value="{{ Auth::user()->id }}" />
+                                                <button type="submit" class="btn btn-primary mt-2">Download Registration summary</button>
+                                            </form>
+                                        </div>
+
+                                    </div>
                                     <thead>
                                     <tr>
                                         <th>S/N</th>
