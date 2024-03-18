@@ -81,19 +81,23 @@ class AccountReportsController extends Controller
 //            $from_date = date('Y-m-d', strtotime($request['from_date']));
 //            $to_date = date('Y-m-d', strtotime($request['to_date']));
             $revenue['revenue_analysis'] = $this->revenue_analysis->RevenueAnalysis(date('Y-m-d', strtotime($request['from_date'])),date('Y-m-d', strtotime($request['to_date'])));
-           // return view('pages.students.student_search', $users);
-            //dd($revenue['revenue_analysis']);
             return view('pages.reports.accounts.revenue_analysis',$revenue);
         } else {
             return view('pages.reports.accounts.revenue_analysis');
         }
-        //$revenue_analysis = $this->revenue_analysis->RevenueAnalysis();
-       // dd($revenue_analysis);
-        //return view('pages.reports.accounts.revenue_analysis');
     }
 
-    public function invoices(){
-        return view('pages.reports.accounts.invoices');
+    public function invoices(Request $request){
+
+        if (isset($request['from_date']) && !$request['from_date'] == '' && isset($request['to_date']) && !$request['to_date'] == '') {
+            $revenue['revenue_analysis'] = $this->revenue_analysis->RevenueAnalysisSummary(date('Y-m-d', strtotime($request['from_date'])),date('Y-m-d', strtotime($request['to_date'])));
+
+           // dd($revenue);
+            return view('pages.reports.accounts.invoices',$revenue);
+        } else {
+            return view('pages.reports.accounts.invoices');
+        }
+        //return view('pages.reports.accounts.invoices');
     }
     public function Transactions(){
         return view('pages.reports.accounts.transactions');

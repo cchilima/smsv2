@@ -45,12 +45,14 @@
 
                         @foreach($class_ass->enrollments as $enroll)
                             <tr>
+{{--                                @dd($enroll)--}}
+                                @if($enroll->student)
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $enroll->user->first_name.' '.$enroll->user->last_name }}</td>
-                                <td>{{ $enroll->user->student->id }}</td>
+                                <td>{{ $enroll->student->user->first_name.' '.$enroll->student->user->last_name }}</td>
+                                <td>{{ $enroll->student->id }}</td>
                                 <td>{{ $class_ass->class_assessments[0]->assessment_type->name }}</td>
                                 <td class="edit-total-link">
-                                    @if(!empty($enroll->user->student->grades[0]))
+                                    @if(!empty($enroll->student->grades[0]))
 {{--                                    <input type="hidden" id="course{{ Qs::hash($classAssessment['student_id']) }}"--}}
 {{--                                           value="{{ $class[0]['courseCode'] }}">--}}
 {{--                                    <input type="hidden" id="title{{ Qs::hash($classAssessment['student_id']) }}"--}}
@@ -63,16 +65,17 @@
 {{--                                           value="{{ $class[0]['apid'] }}">--}}
 {{--                                    <input type="hidden" id="assessid{{ Qs::hash($classAssessment['student_id']) }}"--}}
 {{--                                           value="{{ $class[0]['assessmentId'] }}">--}}
-{{--                                    <input type="hidden" id="userid{{ Qs::hash($classAssessment['student_id']) }}"--}}
-{{--                                           value="{{ $classAssessment['userID'] }}">--}}
+                                    <input type="hidden" id="gradeid{{ Qs::hash($enroll->student->id) }}"
+                                           value="{{ $enroll->student->grades[0]->id}}">
                                     <span class="display-mode"
-                                          id="display-mode{{ Qs::hash($enroll->user->student->id) }}">{{ $enroll->user->student->grades[0]->total }}</span>
-{{--                                    <input type="text" class="edit-mode form-control"--}}
-{{--                                           id="class{{ Qs::hash($classAssessment['student_id']) }}"--}}
-{{--                                           value="{{ $classAssessment['total'] }}" style="display: none;"--}}
-{{--                                           onchange="EnterResults('{{Qs::hash($classAssessment['student_id'])}}')">--}}
+                                          id="display-mode{{ Qs::hash($enroll->student->id) }}">{{ $enroll->student->grades[0]->total }}</span>
+                                    <input type="text" class="edit-mode form-control"
+                                           id="class{{ Qs::hash($enroll->student->id) }}"
+                                           value="{{ $enroll->student->grades[0]->total  }}" style="display: none;"
+                                           onchange="EnterResults('{{Qs::hash($enroll->student->id)}}','{{$class_ass->class_assessments[0]->total}}')">
                                     @endif
                                 </td>
+                                @endif
                             </tr>
                         @endforeach
                         </tbody>

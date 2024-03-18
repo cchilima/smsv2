@@ -12,7 +12,8 @@
     {{-- <div class="navbar-collapse collapse" id="navbar-footer"> --}}
     <div class="" id="navbar-footer">
         <span class="navbar-text">
-            &copy; {{ date('Y') }} - <a href="#">{{ Qs::getSystemName() }}</a> by <a href="#">LV</a>
+            {{ Qs::getSystemName() }} &copy; {{ date('Y') }} by <a target="_blank" href="https://zut.ac.zm">SMART
+                Center</a>
         </span>
 
         <ul class="navbar-nav ml-lg-auto">

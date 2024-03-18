@@ -43,6 +43,7 @@
                             <th>Student Name</th>
                             <th>Program</th>
                             <th>Invoice Details</th>
+                            <th>Date Created</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -71,6 +72,7 @@
                                         </tbody>
                                     </table>
                                 </td>
+                                <td>{{ date('j F Y', strtotime($u->created_at)) }}</td>
                             </tr>
                         @endforeach
 

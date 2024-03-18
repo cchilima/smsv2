@@ -52,7 +52,7 @@ class ClassAssessmentsRepo
                 ->whereHas('class_assessments', function ($query) use ($assess_id) {
                     $query->where('assessment_type_id', $assess_id);
                 })
-                ->with('class_assessments.assessment_type', 'enrollments.user.student', 'academicPeriod', 'instructor', 'course')
+                ->with('class_assessments.assessment_type', 'enrollments.student.user','enrollments.user.student', 'academicPeriod', 'instructor', 'course')
                 ->first();
         } else {
             return AcademicPeriodClass::with([
@@ -60,9 +60,10 @@ class ClassAssessmentsRepo
                     $query->where('assessment_type_id', $assess_id);
                 },
                 'class_assessments.assessment_type',
-                'enrollments.user.student.grades' => function ($query) use ($assess_id) {
+                'enrollments.student.grades' => function ($query) use ($assess_id) {
                     $query->where('assessment_type_id', $assess_id);
                 },
+                'enrollments.student.user',
                 'academicPeriod',
                 'instructor',
                 'course',
@@ -642,6 +643,11 @@ class ClassAssessmentsRepo
 
         //dd($result);
         return $result;
+    }
+    public function updatetotaGrade($id,$newTotal){
+        Grade::find($id)->update([
+            'total' => $newTotal,
+        ]);
     }
 
 }

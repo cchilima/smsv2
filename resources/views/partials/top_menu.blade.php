@@ -26,31 +26,43 @@
 
         <ul class="navbar-nav">
 
-            {{--            <li class="nav-item dropdown dropdown-user"> --}}
-            {{--                <a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown"> --}}
-            {{--                    <img style="width: 38px; height:38px;" src="" class="rounded-circle" alt="photo"> --}}
-            {{--                    <span>{{ Auth::user()->name }}</span> --}}
-            {{--                </a> --}}
+            <li class="nav-item dropdown dropdown-user">
+                <a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown">
+                    @php
+                        $passportPhotoUrl = Auth::user()->userPersonalInfo && Auth::user()->userPersonalInfo->passport_photo_path
+                        ? asset(Auth::user()->userPersonalInfo->passport_photo_path)
+                        : asset('images/default-avatar.png');
 
-            {{--                <div class="dropdown-menu dropdown-menu-right"> --}}
-            {{--                    <a href="{{ Qs::userIsStudent() ? route('profile', Qs::hash(Auth::user()->id)) : route('users.show', Qs::hash(Auth::user()->id)) }}" class="dropdown-item"><i class="icon-user-plus"></i> My profile</a> --}}
-            {{--                    <div class="dropdown-divider"></div> --}}
-            {{--                    <a href="{{ route('my_account') }}" class="dropdown-item"><i class="icon-cog5"></i> Account settings</a> --}}
-            {{--                    <a href="{{ "#"}}" onclick="event.preventDefault(); --}}
-            {{--          document.getElementById('logout-form').submit();" class="dropdown-item"><i class="icon-switch2"></i> Logout</a> --}}
-            {{--                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> --}}
-            {{--                        @csrf --}}
-            {{--                    </form> --}}
-            {{--                </div> --}}
-            {{--            </li> --}}
+                    @endphp
+
+                    <img style="width: 38px; height:38px;" src="{{ $passportPhotoUrl }}" class="rounded-circle"
+                         alt="photo">
+                    <span>{{ Auth::user()->first_name . ' ' . Auth::user()->last_name }}</span>
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a href="{{ Qs::userIsStudent() ? '#'/*route('profile', ''Qs::hash(Auth::user()->id))*/ : route('users.show', Qs::hash(Auth::user()->id)) }}"
+                       class="dropdown-item"><i class="icon-user-plus"></i> My profile</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ route('settings.index') }}" class="dropdown-item"><i class="icon-cog5"></i>System
+                        Settings</a>
+                    <a href="{{ '#' }}"
+                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                       class="dropdown-item"><i class="icon-switch2"></i> Logout</a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </div>
+            </li>
+
         </ul>
     </div>
 
-    <div class="py-1">
+    <div class="py-1 ml-auto">
         <a href="{{ route('home') }}" class="d-flex align-items-center">
             <img style="max-height: 40px; height: 90%; width: auto" class="mr-2"
-                src="{{ asset('images/logo-v2.png') }}" alt="ZUT Logo">
-            <h4 class="text-bold text-white m-0">{{ Qs::getSystemName() }}</h4>
+                 src="{{ asset('images/logo-v2.png') }}" alt="ZUT Logo">
+            {{-- <h4 class="text-bold text-white m-0">{{ Qs::getSystemName() }}</h4> --}}
         </a>
     </div>
 </div>

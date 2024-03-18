@@ -3,7 +3,7 @@
 namespace App\Repositories\Users;
 
 use Illuminate\Support\Facades\Hash;
-use App\Models\Users\{ User, UserType };
+use App\Models\Users\{User, UserType};
 
 class UserRepository
 {
@@ -30,6 +30,11 @@ class UserRepository
         return User::find($id);
     }
 
+    public function destroy($id)
+    {
+        return User::destroy($id);
+    }
+
     public function getUserTypes()
     {
         return UserType::all(['id', 'name']);
@@ -37,9 +42,9 @@ class UserRepository
 
     private function encryptPassword($password)
     {
-         // Hash the password before creating the user
-         $hashedPassword = Hash::make($password);
+        // Hash the password before creating the user
+        $hashedPassword = Hash::make($password);
 
-         return $hashedPassword;
+        return $hashedPassword;
     }
 }

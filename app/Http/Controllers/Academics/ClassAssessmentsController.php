@@ -190,10 +190,10 @@ class ClassAssessmentsController extends Controller
         $csvContent .= "First Name,Last Name,Student ID,Course Code,Course Name,AcademicPeriod,Program,Assessment type,Marked out of,Total\n";
         // Extract data from Blade template loop for Enrolments By Program
         foreach ($class_ass->enrollments as $classData) {
-            $last_name = $classData->user->first_name;
-            $firstname = $classData->user->last_name;
-            $studentID = $classData->user->student->id;
-            $program = $classData->user->student->program_id;
+            $last_name = $classData->student->user->first_name;
+            $firstname = $classData->student->user->last_name;
+            $studentID = $classData->student->id;
+            $program = $classData->student->program_id;
             $courseCode = $class_ass->course->code;
             $courseName = $class_ass->course->name;
             $apid = $class_ass->academic_period_id;
@@ -470,6 +470,17 @@ class ClassAssessmentsController extends Controller
         $student = $this->classaAsessmentRepo->getStudentDetails($user->id);
         //dd($results);
         return view('pages.students.exams.exam_results',compact('results','student'));
+    }
+    public
+    function PostStudentResults(Request $request)
+    {
+        $id = $request->input('id');
+        $data['total'] = $request->input('total');
+        //dd($id);
+
+        //$this->classaAsessmentRepo->update($id,$data);
+        $this->classaAsessmentRepo->updatetotaGrade($id,$data['total']);
+            return Qs::jsonStoreOk();
     }
 
 }

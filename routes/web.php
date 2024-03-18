@@ -39,6 +39,8 @@ use App\Http\Controllers\Inputs\CountryController;
 use App\Http\Controllers\Inputs\ProvinceController;
 use App\Http\Controllers\Inputs\ResidencyController;
 use App\Http\Controllers\Inputs\TownController;
+use App\Http\Controllers\Settings\SettingsController;
+use App\Http\Controllers\Settings\SystemSettingsController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -65,6 +67,7 @@ Route::group(['prefix' => 'assess'], function () {
     Route::post('/get-results-update', [ClassAssessmentsController::class, 'getAssessToUpdate'])->name('update.assessments');
     Route::post('/board-exam-update', [ClassAssessmentsController::class, 'BoardofExaminersUpdateResults'])->name('BoardofExaminersUpdateResults');
     Route::post('/publish-program-results', [ClassAssessmentsController::class, 'PublishProgramResults'])->name('publishProgramResults');
+    Route::post('/post-results',[ClassAssessmentsController::class,'PostStudentResults'])->name('postedResults.process');
 
     Route::group(['prefix' => 'cas'], function () {
         Route::get('/publish-cas-program-list/{id}', [ClassAssessmentsController::class, 'GetProgramsToPublishCas'])->name('getPublishProgramsCas');
@@ -87,6 +90,8 @@ Route::group(['prefix' => 'accounts'], function () {
         Route::post('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue-revenue-result');
 
         Route::get('/invoices', [AccountReportsController::class, 'invoices'])->name('invoices');
+        Route::post('/invoices', [AccountReportsController::class, 'invoices'])->name('invoices-results');
+
         Route::get('/transactions', [AccountReportsController::class, 'Transactions'])->name('transactions');
 
         Route::get('/aged-receivables', [AccountReportsController::class, 'AgedReceivables'])->name('aged.receivables');
@@ -103,11 +108,10 @@ Route::group(['prefix' => 'accounts'], function () {
 });
 
 /*Route::group(['prefix' => 'application'], function () { */
-    Route::get('/initiate-application', [ApplicantController::class, 'index'])->name('application.index');
-    Route::post('/application/step-1', [ApplicantController::class, 'startApplication'])->name('application.start_application');
-    Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
-    Route::put('/application/step-3/{application_id}', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
-
+Route::get('/initiate-application', [ApplicantController::class, 'index'])->name('application.index');
+Route::post('/application/step-1', [ApplicantController::class, 'startApplication'])->name('application.start_application');
+Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
+Route::post('/application/step-3', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
 /*}); */
 
 
@@ -146,7 +150,11 @@ Route::resource('enrollments', EnrollmentController::class);
 Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 
 Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])->name('students.resetAccountPassword');
-
+//student controller enrolments
+Route::get('/student-enrollments', [\App\Http\Controllers\Users\StudentController::class, 'Enrollments'])->name('student.enrollments');
 // Residency Input Routes
 Route::get('/countries/{countryId}/provinces/', [CountryController::class, 'getProvincesByCountry'])->name('provinces.getProvincesByCountry');
 Route::get('/provinces/{provinceId}/towns', [ProvinceController::class, 'getTownsByProvince'])->name('towns.getTownsByProvince');
+
+// System Settings Routes
+Route::resource('settings', SettingsController::class);

@@ -320,6 +320,51 @@
         row.find('.edit-mode').show();
     });
     //});
+    function EnterResults(classID,total) {
+        let actual = $('#class' + classID).val();
+
+        var displaymode = $('#display-mode' + classID);
+        var textContent = displaymode.text();
+        var input = $('#class' + classID);
+
+        var totalElement = $(".assess-total");
+
+        // Get the text content and extract the total value
+        var totalText = totalElement.text();
+        var totalValue = totalText.match(/\d+/);
+
+        var newValues = ((actual / 100) * total).toFixed(2);
+
+        let id = $('#gradeid' + classID).val();
+
+        let url = '{{ route('postedResults.process')}}';
+        $.ajax({
+            url: url, // Replace with the actual route
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                total: newValues,
+                id: id,
+            },
+            success: function (resp) {
+                // Update the display mode with the new value
+                console.log(resp)
+                if (resp.ok === true) {
+                    displaymode.text(newValues);
+                    displaymode.show();
+                    input.hide();
+                } else {
+                    displaymode.text(textContent);
+                    displaymode.show();
+                    input.hide();
+                }
+                resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({msg: resp.msg, type: 'danger'});
+            }, error: function (xhr, status, error) {
+                flash({msg: error, type: 'danger'})
+            }
+        });
+    }
+
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
