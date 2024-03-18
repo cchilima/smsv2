@@ -8,6 +8,15 @@
     </ul>
 </li>
 
+<li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['student.enrollments']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+    <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Academics </span></a>
+    <ul class="nav nav-group-sub" data-submenu-title="Manage Academics">
+        <li class="nav-item"><a href="{{ route('student.enrollments') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['student.enrollments']) ? 'active' : '' }}">Registration Summary</a></li>
+        <li class="nav-item"><a href="#" class="nav-link {{ in_array(Route::currentRouteName(), ['student_ca_results']) ? 'active' : '' }}">Exam slip</a></li>
+        <li class="nav-item"><a href="#" class="nav-link {{ in_array(Route::currentRouteName(), ['student-exam_registration']) ? 'active' : '' }}">Exam registration</a></li>
+    </ul>
+</li>
+
 <li class="nav-item">
     <a href="/registration"
         class="nav-link {{ in_array(Route::currentRouteName(), ['registration.index']) ? 'active' : '' }}"><i

@@ -438,10 +438,12 @@
                 </div>
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-tabs-highlight">
+                        @foreach ($enrollments as $innerIndex =>$academicData)
                         <li class="nav-item">
-                            <a href="#account-info" class="nav-link active"
-                                data-toggle="tab">{{ 'Account Details' }}</a>
+                            <a href="#account-{{ $academicData['academic_period_id'] }}" class="nav-link"
+                                data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
                         </li>
+                        @endforeach
                         <li class="nav-item">
                             <a href="#profile-info" class="nav-link" data-toggle="tab">{{ 'Profile Details' }}</a>
                         </li>
@@ -449,7 +451,7 @@
 
                     <div class="tab-content">
                         {{-- Basic Info --}}
-                        <div class="tab-pane fade show active" id="account-info">
+                        <div class="tab-pane fade show active" id="profile-info">
                             <table class="table table-bordered">
                                 <tbody>
                                     <tr>
@@ -488,46 +490,35 @@
                                 </tbody>
                             </table>
                         </div>
+                        @foreach ($enrollments as $innerIndex =>$academicData)
+                        <div class="tab-pane fade show" id="account-{{ $academicData['academic_period_id'] }}">
 
-                        <div class="tab-pane fade show" id="profile-info">
-                            <table class="table table-bordered">
+                            <table class="table table-hover table-striped-columns mb-3">
+                                <h5 class="p-2"> Code :
+                                    <strong>{{ $academicData['academic_period_code'] }}</strong>
+                                </h5>
+                                <h5 class="p-2">Name : <strong>{{ $academicData['academic_period_name'] }}</strong></h5>
+                                <thead>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Course Code</th>
+                                    <th>Course Name</th>
+                                </tr>
+                                </thead>
                                 <tbody>
+                                @foreach ($academicData['courses'] as $course)
                                     <tr>
-                                        <td class="font-weight-bold">Gender</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Email</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">NRC</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Date of Birth</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Marital Status</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Mobile</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Street</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Province</td>
-                                        <td></td>
+                                        <th>{{ $loop->iteration }}</th>
+                                        <td>{{ $course['course_code'] }}</td>
+                                        <td>{{ $course['course_title'] }}</td>
                                     </tr>
 
+                                @endforeach
                                 </tbody>
+
                             </table>
                         </div>
+                        @endforeach
 
                     </div>
                 </div>
@@ -685,6 +676,7 @@
 
                         </div>
 
+
                         <div class="tab-pane fade show" id="statements">
                             @foreach ($student->invoices as $key => $invoice)
                                 <br>
@@ -788,7 +780,7 @@
                                         @foreach ($invoice->details as $key => $detail)
                                             <tr>
                                                 <td>{{ ++$key }}</td>
-                                                <td>{{ $detail->fee->name }}</td>
+{{--                                                <td>{{ $detail->fee->name }}</td>--}}
                                                 <td>K {{ $detail->amount }}</td>
                                             </tr>
                                         @endforeach
@@ -848,7 +840,6 @@
 
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="account-information">
-
                             <!-- Add your account info content here -->
                             <div class="row">
                                 <div class="col-md-12">
@@ -1270,57 +1261,55 @@
                 </div>
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-tabs-highlight">
+                        @foreach ($results as $innerIndex =>$academicData)
+                            <li class="nav-item {{ $innerIndex == 0 ? 'active' : '' }}">
+                                <a href="#results-{{ $academicData['academic_period_id'] }}" class="nav-link"
+                                   data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
+                            </li>
+                        @endforeach
                         <li class="nav-item">
-                            <a href="#account-info" class="nav-link active"
-                                data-toggle="tab">{{ 'Account Details' }}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/#profile-info" class="nav-link" data-toggle="tab">{{ 'Profile Details' }}</a>
+                            <a href="#profile-info" class="nav-link" data-toggle="tab">{{ 'Profile Details' }}</a>
                         </li>
                     </ul>
 
                     <div class="tab-content">
                         {{-- Basic Info --}}
-                        <div class="tab-pane fade show active" id="account-info">
-                            <table class="table table-bordered">
-                                <tbody>
+                        @foreach ($results as $innerIndex => $academicData)
+                        <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}" id="results-{{ $academicData['academic_period_id'] }}">
+                            <h5 class="p-2">
+                                <strong>{{ $academicData['academic_period_code'] .' - '.$academicData['academic_period_name'] }}</strong>
+                            </h5>
+                            <h5 class="p-2"><strong>{{ $student->id }}</strong></h5>
+                                <table class="table table-hover table-striped-columns mb-3">
+                                    <thead>
                                     <tr>
-                                        <td class="font-weight-bold">Student ID</td>
-                                        <td></td>
+                                        <th>S/N</th>
+                                        <th>Course Code</th>
+                                        <th>Course Name</th>
+                                        <th>Mark</th>
+                                        <th>Grade</th>
                                     </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Year of Study</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Academic Year</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Study Category</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Status</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Programme Name</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Programme Code</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Intake</td>
-                                        {{--                                <td>{{ $data['intake'] }}</td> --}}
-                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach ($academicData['grades'] as $course)
+                                        <tr>
+                                            <th>{{ $loop->iteration }}</th>
+                                            <td>{{ $course['course_code'] }}</td>
+                                            <td>{{ $course['course_title'] }}</td>
+                                            <td> {{ $course['total']  }}</td>
+                                            <td>{{ $course['grade']  }}</td>
+                                        </tr>
 
-                                </tbody>
-                            </table>
+                                    @endforeach
+                                    </tbody>
+
+                                </table>
+                                <p class="bg-success p-3 align-bottom">Comment
+                                    : {{ $academicData['comments']['comment'] }}</p>
+                                <hr>
+
                         </div>
-
+                        @endforeach
                         <div class="tab-pane fade show" id="profile-info">
                             <table class="table table-bordered">
                                 <tbody>
@@ -1356,6 +1345,105 @@
                                         <td class="font-weight-bold text-justify">Province</td>
                                         <td></td>
                                     </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-collapsed">
+                <div class="card-header header-elements-inline">
+                    <h6 class="card-title">CA Results Information</h6>
+                    {!! Qs::getPanelOptions() !!}
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs nav-tabs-highlight">
+                        @foreach ($caresults as $innerIndex =>$academicData)
+                            <li class="nav-item {{ $innerIndex == 0 ? 'active' : '' }}">
+                                <a href="#results-{{ $academicData['academic_period_id'] }}" class="nav-link"
+                                   data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
+                            </li>
+                        @endforeach
+                        <li class="nav-item">
+                            <a href="#profile-info" class="nav-link" data-toggle="tab">{{ 'Profile Details' }}</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        {{-- Basic Info --}}
+                        @foreach ($results as $innerIndex => $academicData)
+                            <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}" id="results-{{ $academicData['academic_period_id'] }}">
+                                <h5 class="p-2">
+                                    <strong>{{ $academicData['academic_period_code'] .' - '.$academicData['academic_period_name'] }}</strong>
+                                </h5>
+                                <h5 class="p-2"><strong>{{ $student->id }}</strong></h5>
+                                <table class="table table-hover table-striped-columns mb-3">
+                                    <thead>
+                                    <tr>
+                                        <th>S/N</th>
+                                        <th>Course Code</th>
+                                        <th>Course Name</th>
+                                        <th>Mark</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach ($academicData['grades'] as $course)
+                                        <tr>
+                                            <th>{{ $loop->iteration }}</th>
+                                            <td>{{ $course['course_code'] }}</td>
+                                            <td>{{ $course['course_title'] }}</td>
+                                            <td> {{ $course['total']  }}</td>
+                                            <td>{{ $course['grade']  }}</td>
+                                        </tr>
+
+                                    @endforeach
+                                    </tbody>
+
+                                </table>
+                                <p class="bg-success p-3 align-bottom">Comment
+                                    : {{ $academicData['comments']['comment'] }}</p>
+                                <hr>
+
+                            </div>
+                        @endforeach
+                        <div class="tab-pane fade show" id="profile-info">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td class="font-weight-bold">Gender</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold text-justify">Email</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold text-justify">NRC</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold text-justify">Date of Birth</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold text-justify">Marital Status</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold text-justify">Mobile</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold text-justify">Street</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold text-justify">Province</td>
+                                    <td></td>
+                                </tr>
 
                                 </tbody>
                             </table>
