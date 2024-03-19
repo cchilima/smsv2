@@ -32,12 +32,14 @@ class AcademicPeriodController extends Controller
      */
     public function index()
     {
-        $periods = $this->periods->getAll();
-        $periodTypes = $this->periods->getPeriodTypes();
-        $studyModes = $this->periods->getStudyModes();
-        $intakes = $this->periods->getIntakes();
+        $data['open'] = $this->periods->getAllOpenedAc();
+        $data['closed'] = $this->periods->getAllClosed();
+        $data['periods'] = $this->periods->getAll();
+        $data['periodTypes'] = $this->periods->getPeriodTypes();
+        $data['studyModes'] = $this->periods->getStudyModes();
+        $data['intakes'] = $this->periods->getIntakes();
 
-        return view('pages.academicPeriods.index', compact('periods', 'periodTypes', 'studyModes', 'intakes'));
+        return view('pages.academicPeriods.index', $data);
     }
 
 

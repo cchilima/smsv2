@@ -19,7 +19,7 @@ class StudentRegistrationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    
+
     public function __construct(StudentRegistrationRepository $registrationRepo)
     {
        // $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
@@ -34,7 +34,7 @@ class StudentRegistrationController extends Controller
      */
     public function index()
     {
-        $isRegistered = $this->registrationRepo->getRegisterationStatus();
+        $isRegistered = $this->registrationRepo->getRegistrationStatus();
         $courses = $this->registrationRepo->getAll();
         $academicInfo = $this->registrationRepo->getAcademicInfo();
 
@@ -118,7 +118,7 @@ class StudentRegistrationController extends Controller
         'academic_period' => $academicInfo->academic_period->name,
         'registered_courses' => $courses,
     ];
-    
+
 
        // HTML content
        $html  = '<p style="text-align:center"><img width="80px" height="80px" src="https://www.zictcollege.ac.zm/images/logo-white.png" /></p>';
@@ -139,7 +139,7 @@ class StudentRegistrationController extends Controller
 
        // Create a new TCPDF object
        $pdf = new TCPDF();
-         
+
        $pdf::SetTitle('Registration Summary');
        $pdf::AddPage();
        $pdf::writeHTML($html, true, false, true, false, '');

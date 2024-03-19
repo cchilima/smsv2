@@ -24,6 +24,17 @@ class AcademicPeriodRepository
     {
         return AcademicPeriod::with('period_types')->orderBy($order)->get();
     }
+    public function getAllOpenedAc($order = 'created_at')
+    {
+        return AcademicPeriod::with('period_types')->whereDate('ac_end_date', '>=', now())->orderByDesc($order)->get();
+    }
+    public function getAllClosed($order = 'created_at')
+    {
+        return AcademicPeriod::with('period_types')->whereDate('ac_end_date', '<', now())->orderByDesc($order)->get();
+    }
+//ac_start_date
+//ac_end_date
+
 
     public function update($id, $data)
     {
@@ -110,7 +121,7 @@ class AcademicPeriodRepository
     //academic period assessment types
     public function getAcadeperiodClassAssessments()
     {
-        return AcademicPeriod::with('classes.class_assessments.assessment_type','classes.instructor','classes.course')->get();
+        return AcademicPeriod::whereDate('ac_end_date', '>=', now())->with('classes.class_assessments.assessment_type','classes.instructor','classes.course')->get();
     }
     public static function getAllOpened($order = 'created_at')
     {
@@ -137,6 +148,7 @@ class AcademicPeriodRepository
                 ->find($id);
         } else {
             // If the authenticated user is not an instructor, get all AcademicPeriods with related classes
+           // dd(AcademicPeriod::with('classes.class_assessments.assessment_type', 'classes.instructor', 'classes.course')->find($id));
             return AcademicPeriod::with('classes.class_assessments.assessment_type', 'classes.instructor', 'classes.course')->find($id);
         }
     }
