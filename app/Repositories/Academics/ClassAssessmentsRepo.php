@@ -68,17 +68,15 @@ class ClassAssessmentsRepo
 //                'instructor',
 //                'course',
 //            ])->find($class_id);
-
+            $ac = AcademicPeriodClass::find($class_id);
             return AcademicPeriodClass::with([
                 'class_assessments' => function ($query) use ($assess_id) {
                     $query->where('assessment_type_id', $assess_id);
                 },
                 'class_assessments.assessment_type',
-                'enrollments.student.grades' => function ($query) use ($assess_id) {
-                    $query->where('assessment_type_id', $assess_id);
-                },
-                'academicPeriod' => function ($query){
-                    $query->whereColumn('academic_periods.id', 'enrollments.student.grades.academic_period_id');
+                'enrollments.student.grades' => function ($query) use ($ac, $assess_id) {
+                    $query->where('assessment_type_id', $assess_id)
+                        ->where('grades.academic_period_id', $ac);
                 },
                 'enrollments.student.user',
                 'academicPeriod',
