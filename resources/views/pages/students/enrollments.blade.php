@@ -46,8 +46,9 @@
                                         <div>
                                             <form action="{{ route('registration.summary') }}" method="get">
                                                 @csrf
-                                                <input name="student_number" type="hidden" value="{{ Auth::user()->id }}" />
-                                                <button type="submit" class="btn btn-primary mt-2">Download Registration summary</button>
+                                                <input name="academic_period_id" type="hidden" value="{{ $academicData['academic_period_id'] }}" />
+                                                <input name="student_number" type="hidden" value="{{ $academicData['student_id'] }}" />
+                                                <button type="submit" class="btn btn-primary mt-2">Download summary</button>
                                             </form>
                                         </div>
 
