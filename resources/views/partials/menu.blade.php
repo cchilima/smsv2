@@ -318,7 +318,7 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['marital-statuses.create', 'marital-statuses.edit', 'marital-statuses.index', 'countries.index', 'countries.edit', 'provinces.index', 'provinces.edit', 'towns.index', 'towns.edit']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-equalizer"></i> <span>
                                     Other</span></a>
 
