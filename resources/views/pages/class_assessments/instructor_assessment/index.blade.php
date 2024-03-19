@@ -52,7 +52,7 @@
                                 <td>{{ $enroll->student->id }}</td>
                                 <td>{{ $class_ass->class_assessments[0]->assessment_type->name }}</td>
                                 <td class="edit-total-link">
-                                    @if(!empty($enroll->student->grades[0]) && $enroll->student->grades[0]->academic_period_id == $class_ass->academic_period_id)
+                                    @if(!empty($enroll->student->grades[0])s)
 {{--                                    <input type="hidden" id="course{{ Qs::hash($classAssessment['student_id']) }}"--}}
 {{--                                           value="{{ $class[0]['courseCode'] }}">--}}
 {{--                                    <input type="hidden" id="title{{ Qs::hash($classAssessment['student_id']) }}"--}}
