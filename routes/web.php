@@ -90,6 +90,7 @@ Route::group(['prefix' => 'accounts'], function () {
         Route::post('/invoices', [AccountReportsController::class, 'invoices'])->name('invoices-results');
 
         Route::get('/transactions', [AccountReportsController::class, 'Transactions'])->name('transactions');
+        Route::post('/transactions', [AccountReportsController::class, 'Transactions'])->name('transaction-results');
 
         Route::get('/aged-receivables', [AccountReportsController::class, 'AgedReceivables'])->name('aged.receivables');
         Route::get('/failed-transactions', [AccountReportsController::class, 'FailedPayments'])->name('failed.transaction');

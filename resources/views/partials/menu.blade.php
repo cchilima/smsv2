@@ -53,7 +53,7 @@
 
                 <!-- Main -->
                 <li class="nav-item">
-                    <a href="" class="nav-link {{ Route::is('dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('home') }}" class="nav-link {{ Route::is('dashboard') ? 'active' : '' }}">
                         <i class="icon-home4"></i>
                         <span>Dashboard</span>
                     </a>

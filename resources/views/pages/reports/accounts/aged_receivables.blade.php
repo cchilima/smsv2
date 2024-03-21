@@ -18,9 +18,9 @@
                             <form class="ajax-store" method="post" action="{{ route('students.lists')  }}">
                                 @csrf
                                 <div class="form-group row">
-                                    <div class="col-md-6"> From
-                                        <input name="query" value="{{ old('name') }}" type="text" class="form-control date-pick" placeholder="Date">
-                                    </div>
+{{--                                    <div class="col-md-6"> From--}}
+{{--                                        <input name="query" value="{{ old('name') }}" type="text" class="form-control date-pick" placeholder="Date">--}}
+{{--                                    </div>--}}
                                     <div class="col-md-6"> To
                                         <input name="query" value="{{ old('name') }}" type="text" class="form-control date-pick" placeholder="Date">
                                     </div>
