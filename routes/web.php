@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Reports\Accounts\AccountReportsController;
+use App\Http\Controllers\Reports\Enrollments\EnrollmentReportsController;
 use App\Http\Controllers\Users\MyAccountController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -81,8 +82,9 @@ Route::group(['prefix' => 'assess'], function () {
     });
 });
 
-Route::group(['prefix' => 'accounts'], function () {
+
     Route::group(['prefix' => 'reports'], function () {
+        Route::group(['prefix' => 'accounts'], function () {
         Route::get('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue.analysis');
         Route::post('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue-revenue-result');
 
@@ -93,10 +95,18 @@ Route::group(['prefix' => 'accounts'], function () {
         Route::post('/transactions', [AccountReportsController::class, 'Transactions'])->name('transaction-results');
 
         Route::get('/aged-receivables', [AccountReportsController::class, 'AgedReceivables'])->name('aged.receivables');
+        Route::post('/aged-receivables', [AccountReportsController::class, 'AgedReceivables'])->name('aged.receivables.post');
+
         Route::get('/failed-transactions', [AccountReportsController::class, 'FailedPayments'])->name('failed.transaction');
+
         Route::get('/student-list', [AccountReportsController::class, 'StudentList'])->name('student.list');
+        Route::post('/student-list', [AccountReportsController::class, 'StudentList'])->name('student.list.post');
+
         Route::get('/credit-notes', [AccountReportsController::class, 'CreditNotes'])->name('credit.notes');
     });
+        Route::group(['prefix' => 'enrollments'], function () {
+            Route::get('/enrollments', [EnrollmentReportsController::class, 'index'])->name('enrollments.reports');
+        });
 });
 
 Route::group(['prefix' => 'accounts'], function () {

@@ -118,13 +118,32 @@ class AccountReportsController extends Controller
     public function FailedPayments(){
         return view('pages.reports.accounts.failed_transactions');
     }
-    public function AgedReceivables(){
-        return view('pages.reports.accounts.aged_receivables');
+    public function AgedReceivables(Request $request){
+
+        if (isset($request['to_date']) && !$request['to_date'] == '') {
+
+            $revenue['age_analysis'] = $this->revenue_analysis->Aged_Receivables(date('Y-m-d', strtotime($request['to_date'])));
+            //dd($revenue['transactions']);
+            return view('pages.reports.accounts.aged_receivables',$revenue);
+        } else {
+            return view('pages.reports.accounts.aged_receivables');
+        }
+        //return view('pages.reports.accounts.aged_receivables');
     }
     public function CreditNotes(){
         return view('pages.reports.accounts.credit_notes');
     }
-    public function StudentList(){
-        return view('pages.reports.accounts.student_list');
+    public function StudentList(Request $request){
+
+        if (isset($request['from_date']) && !$request['from_date'] == '' && isset($request['to_date']) && !$request['to_date'] == '') {
+
+            $revenue['student_list'] = $this->revenue_analysis->StudentList(date('Y-m-d', strtotime($request['from_date'])),date('Y-m-d', strtotime($request['to_date'])));
+           /// dd($revenue['student_list']);
+            return view('pages.reports.accounts.student_list',$revenue);
+        } else {
+            return view('pages.reports.accounts.student_list');
+        }
+
+       // return view('pages.reports.accounts.student_list');
     }
 }
