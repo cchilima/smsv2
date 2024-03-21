@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers\Accounting;
 
+use App\Exports\InvoicesExport;
 use App\Helpers\Qs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Accounting\Invoice;
+use App\Models\Admissions\Student;
 use App\Repositories\Accounting\InvoiceRepository;
-
+use Barryvdh\DomPDF\Facade\Pdf;
+use Elibyy\TCPDF\Facades\TCPDF;
+use Intervention\Image\Colors\Rgb\Channels\Red;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InvoiceController extends Controller
 {
@@ -83,19 +89,16 @@ class InvoiceController extends Controller
 
             $batchInvoiced = $this->invoiceRepo->invoiceStudents($request->academic_period);
 
-            if($batchInvoiced){
+            if ($batchInvoiced) {
 
                 return Qs::jsonStoreOk();
-                
             } else {
-                return Qs::json(false,'failed to invoice batch');
+                return Qs::json(false, 'failed to invoice batch');
             }
-
-
         } catch (\Exception $e) {
 
             // Log the error or handle it accordingly
-            return Qs::json(false,'failed to invoice batch');
+            return Qs::json(false, 'failed to invoice batch');
         }
     }
 
@@ -111,8 +114,6 @@ class InvoiceController extends Controller
             $student_invoiced = $this->invoiceRepo->invoiceStudent($request->academic_period, $request->student_id);
 
             return $student_invoiced ? Qs::jsonStoreOk() : Qs::json('Failed to invoice student.', false);
-
-
         } catch (\Exception $e) {
 
             // Log the error or handle it accordingly
@@ -124,16 +125,32 @@ class InvoiceController extends Controller
     {
         try {
 
-        // custom invoice student
-        $student_invoiced = $this->invoiceRepo->customInvoiceStudent($request->amount, $request->fee_id, $request->student_id);
+            // custom invoice student
+            $student_invoiced = $this->invoiceRepo->customInvoiceStudent($request->amount, $request->fee_id, $request->student_id);
 
-        // give user feedback
-        return $student_invoiced ? Qs::jsonStoreOk() : Qs::json(false, 'Failed to invoice student.');
-
+            // give user feedback
+            return $student_invoiced ? Qs::jsonStoreOk() : Qs::json(false, 'Failed to invoice student.');
         } catch (\Exception $e) {
             //throw $th;
         }
-      
+    }
 
+    public function downloadInvoice(Request $request, Invoice $invoice)
+    {
+        $student = $invoice->student;
+        $fileName = $student->id . '-invoice-' . $invoice->created_at->format('d-m-Y') . '.pdf';
+
+        $pdf = Pdf::loadView('templates.pdf.invoice', compact('invoice', 'student'));
+
+        return $pdf->download($fileName);
+    }
+
+    public function exportInvoices(Request $request, Student $student)
+    {
+        $fileName = $student->id . '-invoices-' . now()->format('d-m-Y-His') . '.xlsx';
+        $export = new InvoicesExport($student);
+
+
+        return Excel::download($export, $fileName);
     }
 }

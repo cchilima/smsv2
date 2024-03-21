@@ -38,6 +38,7 @@ use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Enrollments\EnrollmentController;
 use App\Http\Controllers\Residency\{CountryController, ProvinceController, TownController};
 use App\Http\Controllers\Settings\SettingsController;
+use App\Http\Controllers\Users\StudentController as UsersStudentController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -162,10 +163,20 @@ Route::resource('payment-methods', PaymentMethodController::class);
 //my account
 Route::group(['prefix' => 'my_account'], function () {
     Route::get('/', [MyAccountController::class, 'index'])->name('my_account');
-    //        Route::put('/', 'MyAccountController@update_profile')->name('my_account.update');
+    // Route::put('/', 'MyAccountController@update_profile')->name('my_account.update');
     Route::put('/change_password', [MyAccountController::class, 'change_pass'])->name('my_account.change_pass');
 });
 
 Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])->name('students.resetAccountPassword');
-//student controller enrolments
-Route::get('/student-enrollments', [\App\Http\Controllers\Users\StudentController::class, 'Enrollments'])->name('student.enrollments');
+
+// Student-specific Routes
+Route::group(['prefix' => 'student'], function () {
+    Route::get('/enrollments', [UsersStudentController::class, 'enrollments'])->name('student.enrollments');
+    Route::get('/finances', [UsersStudentController::class, 'finances'])->name('student.finances');
+
+    // Financial statements generator/download routes
+    Route::get('/invoices/{invoice}/download/', [InvoiceController::class, 'downloadInvoice'])->name('student.download-invoice');
+    Route::get('/invoices/{student}/export/', [InvoiceController::class, 'exportInvoices'])->name('student.export-invoices');
+    Route::get('/statements/{invoice}/download/', [StatementController::class, 'downloadStatement'])->name('student.download-statement');
+    Route::get('/statements/{student}/export/', [StatementController::class, 'exportStatements'])->name('student.export-statements');
+});
