@@ -105,6 +105,7 @@ class StudentRegistrationController extends Controller
         $studentUserPersonalInfo = $student->user->userPersonalInfo;
         $nextOfKin = $student->user->userNextOfKin;
         $academicInfo = $this->registrationRepo->getSummaryAcademicInfo($academicPeriodId);
+        $latestEnrollment = $student->enrollments->sortBy('created_at')->last();
 
         $fileName = $student->id . '-registration-summary-' . now()->format('d-m-Y-His') . '.pdf';
 
@@ -122,7 +123,7 @@ class StudentRegistrationController extends Controller
         $admissionInfo = [
             'Program of Study' => $student->program->name . ' (' . $student->program->code . ')',
             'Mode of Study' => $student->study_mode->name,
-            // 'Registration Date' => 
+            'Registration Date' => $latestEnrollment->created_at->format('d F Y H:i'),
             'Academic Period' => $academicInfo->academic_period->name,
             'Year of Study' => $student->level->name
         ];

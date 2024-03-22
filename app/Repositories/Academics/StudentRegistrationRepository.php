@@ -120,7 +120,7 @@ class StudentRegistrationRepository
         $invoice = $this->getInvoice($student_id, $academicInfo->academic_period_id);
 
         // Get payment standing
-         $percentage_paid = $invoice ? $this->paymentStanding($invoice->id) : 0;
+        $percentage_paid = $invoice ? $this->paymentStanding($invoice->id) : 0;
 
         // Check if current date is within registration period
         if ($currentDate->gte($registrationDate) && $currentDate->lte($lateRegistrationEndDate) && $percentage_paid >= $academicInfo->registration_threshold) {
@@ -168,12 +168,12 @@ class StudentRegistrationRepository
 
     public function getSummaryCourses($student_id, $academic_period_id)
     {
-        $student = Student::with(['program', 'user', 'level', 'enrollments.class.course','enrollments.class.academicPeriod'])->find($student_id);
+        $student = Student::with(['program', 'user', 'level', 'enrollments.class.course', 'enrollments.class.academicPeriod'])->find($student_id);
         $courses = [];
-        
+
         foreach ($student->enrollments as $enrollment) {
 
-            if($academic_period_id == $enrollment->class->academic_period_id) {
+            if ($academic_period_id == $enrollment->class->academic_period_id) {
                 array_push($courses, $enrollment->class->course);
             }
         }
@@ -183,9 +183,8 @@ class StudentRegistrationRepository
 
     public function getSummaryAcademicInfo($academic_period_id)
     {
-        $academicInfo = AcademicPeriodInformation::where('academic_period_id', $academic_period_id) ->with(['academic_period', 'study_mode'])->first();
+        $academicInfo = AcademicPeriodInformation::where('academic_period_id', $academic_period_id)->with(['academic_period', 'study_mode'])->first();
 
-        return $academicInfo ;
+        return $academicInfo;
     }
-
 }
