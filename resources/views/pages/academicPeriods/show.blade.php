@@ -288,29 +288,21 @@
                                         <td>{{ $p->students_count }}</td>
 
                                         <td class="text-center">
-{{--                                            <div class="list-icons">--}}
-{{--                                                <div class="dropdown">--}}
-{{--                                                    <a href="#" class="list-icons-item" data-toggle="dropdown">--}}
-{{--                                                        <i class="icon-menu9"></i>--}}
-{{--                                                    </a>--}}
+                                            <div class="list-icons">
+                                                <div class="dropdown">
+                                                    <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                                        <i class="icon-menu9"></i>
+                                                    </a>
 
-{{--                                                    <div class="dropdown-menu dropdown-menu-left">--}}
-{{--                                                        @if(Qs::userIsTeamSA())--}}
-{{--                                                            <a href="{{ route('academic-period-classes.edit', $period->id) }}"--}}
-{{--                                                               class="dropdown-item"><i class="icon-pencil"></i>--}}
-{{--                                                                Edit</a>--}}
-{{--                                                        @endif--}}
-{{--                                                        @if(Qs::userIsSuperAdmin())--}}
-{{--                                                            <a id="{{ $period->id }}" onclick="confirmDelete(this.id)"--}}
-{{--                                                               href="#" class="dropdown-item"><i class="icon-trash"></i>--}}
-{{--                                                                Delete</a>--}}
-{{--                                                            <form method="post" id="item-delete-{{ $period->id }}"--}}
-{{--                                                                  action="{{ route('academic-period-classes.destroy', $period->id) }}"--}}
-{{--                                                                  class="hidden">@csrf @method('delete')</form>--}}
-{{--                                                        @endif--}}
-{{--                                                    </div>--}}
-{{--                                                </div>--}}
-{{--                                            </div>--}}
+                                                    <div class="dropdown-menu dropdown-menu-left">
+                                                        @if(Qs::userIsTeamSA())
+                                                            <a href="{{ route('academic-period-classes.edit', $period->id) }}"
+                                                               class="dropdown-item"><i class="icon-paperplane"></i>
+                                                                Download List</a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
