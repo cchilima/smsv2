@@ -14,7 +14,7 @@
                 <div class="tab-pane fade show active" id="all-classes">
                     <div class="row mt-0 mb-1">
                         <div class="col-md-12">
-                            <form class="ajax-store-test" method="post" action="{{ route('invoices-results')  }}">
+                            <form class="ajax-store-test" method="post" action="{{ route('transaction-results')  }}">
                                 @csrf
                                 <div class="form-group row">
                                     <div class="col-md-4"> From
@@ -28,10 +28,9 @@
                                                 class="select-search form-control" name="payment_method"
                                                 id="payment_method">
                                             <option value="">select</option>
-                                            <option value="">select</option>
-                                            {{--                                            @foreach($countries as $country)--}}
-                                            {{--                                                <option value="{{$country->id}}">{{$country->country}}</option>--}}
-                                            {{--                                            @endforeach--}}
+                                            @foreach($payment_methods as $p)
+                                                <option value="{{$p->id}}">{{$p->name}}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -43,11 +42,11 @@
                             </form>
                         </div>
                     </div>
-                    @if(isset($revenue_analysis))
+                    @if(isset($transactions))
                         <table class="table datatable-button-html5-columns">
                             <thead>
                             <tr>
-                                <th>Invoice ID</th>
+                                <th>Receipt ID</th>
                                 <th>Student ID</th>
                                 <th>Student Name</th>
                                 <th>Program</th>
@@ -57,14 +56,14 @@
                             </thead>
                             <tbody>
 
-                            @foreach($revenue_analysis as $u)
+                            @foreach($transactions as $u)
                                 <tr>
-                                    <td>{{ $u['invoice']->id  }}</td>
-                                    <td>{{ $u['invoice']->student_id }}</td>
-                                    <td>{{ $u['invoice']->student->user->first_name.' '.$u['invoice']->student->user->last_name }}</td>
-                                    <td>{{ $u['invoice']->student->program->name}}</td>
-                                    <td>K{{ $u['totalAmount'] }}</td>
-                                    <td>{{ date('j F Y', strtotime($u['invoice']->created_at)) }}</td>
+                                    <td>{{ $u->id  }}</td>
+                                    <td>{{ $u->student_id }}</td>
+                                    <td>{{ $u->student->user->first_name.' '.$u->student->user->last_name }}</td>
+                                    <td>{{ $u->student->program->name}}</td>
+                                    <td>K{{ $u->amount }}</td>
+                                    <td>{{ date('j F Y', strtotime($u->created_at)) }}</td>
                                 </tr>
                             @endforeach
 
