@@ -79,13 +79,14 @@ class AcademicPeriodController extends Controller
     {
         $academicPeriod = $this->periods->find($id);
 
-        $periodClasses = $this->periodClasses->getAll();
+        $periodClasses = $this->periodClasses->getAllAcClasses($id);
 
         $periods = $this->periods->getAPInformation($id);
         $academic= $this->periods->findOne($id);
         $studyModes = $this->periods->getStudyModes();
         $students = $this->periodClasses->academicPeriodStudents($id);
-        $programs = $this->periodClasses->academicPrograms($id);
+        $programs = $this->periodClasses->academicProgramStudents($id);//academicPrograms($id);
+        //dd($programs);
         $feeInformation = $this->periods->getAPFeeInformation($id);
 
         return  view('pages.academicPeriods.show', compact('academicPeriod','feeInformation','periods','periodClasses','programs','students'));

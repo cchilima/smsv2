@@ -129,7 +129,7 @@
                                                 <div class="form-group row">
                                                     <label class="col-lg-3 col-form-label font-weight-semibold">User Type: <span class="text-danger">*</span></label>
                                                     <div class="col-lg-9">
-                                                        <select class="select form-control" required id="user_type" name="user_type_id" data-fouc data-placeholder="Choose..">
+                                                        <select class="select form-control select-search" required id="user_type" name="user_type_id" data-fouc data-placeholder="Choose..">
                                                             <option value=""></option>
                                                             @foreach($userTypes as $type)
                                                             <option value="{{$type->id}}">{{$type->name}}</option>
