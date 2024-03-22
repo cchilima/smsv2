@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Accounting;
 
+use App\Exports\StatementsExport;
 use App\Helpers\Qs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -10,6 +11,7 @@ use App\Models\Admissions\Student;
 use App\Repositories\Accounting\StatementRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Elibyy\TCPDF\Facades\TCPDF;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StatementController extends Controller
 {
@@ -106,6 +108,9 @@ class StatementController extends Controller
 
     public function exportStatements(Request $request, Student $student)
     {
-        dd('Hi from the statement exporter :)');
+        $fileName = $student->id . '-statements-' . now()->format('d-m-Y-His') . '.xlsx';
+        $export = new StatementsExport($student);
+
+        return Excel::download($export, $fileName);
     }
 }

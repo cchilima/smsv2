@@ -6,7 +6,7 @@ use App\Models\Admissions\Student;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 
-class InvoicesExport implements FromView
+class StatementsExport implements FromView
 {
     protected $student;
 
@@ -17,7 +17,7 @@ class InvoicesExport implements FromView
 
     public function view(): View
     {
-        return view('templates.spreadsheets.all-invoices', [
+        return view('templates.spreadsheets.all-statements', [
             'invoices' => $this->student->invoices
         ]);
     }

@@ -150,7 +150,6 @@ class InvoiceController extends Controller
         $fileName = $student->id . '-invoices-' . now()->format('d-m-Y-His') . '.xlsx';
         $export = new InvoicesExport($student);
 
-
         return Excel::download($export, $fileName);
     }
 }
