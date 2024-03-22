@@ -11,6 +11,13 @@
                     <img style="width: 90%; height:90%" src="{{ '' }}" alt="photo" class="rounded-circle">
                     <br>
                     <h3 class="mt-3">{{ $academicPeriod->code.' - '.$academicPeriod->name }}</h3>
+                    <p>Registered Students : {{ $students }}</p>
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex">
+                            <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
+                               class="dropdown-item"><i class="icon-file-download"></i> Download Enrollment report</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -123,8 +130,17 @@
                             @endif
                         </div>
                         <div class="tab-pane fade" id="all-fees">
-                            <table class="table table-bordered table-hover table-striped">
-                                <tbody>
+{{--                            <table class="table table-bordered table-hover table-striped datatable-button-html5-columns">--}}
+                            <table class="table datatable-button-html5-columns table-bordered table-hover ">
+                                    <thead>
+                                    <tr>
+                                        <th>Fee Name</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
                                 @foreach($feeInformation as $fee)
                                     <tr>
                                         <td>{{ $fee->fee->name }}</td>
@@ -135,7 +151,7 @@
                                                class="dropdown-item"><i class="icon-pencil"></i></a>
                                             @if($fee->status == 0)
                                                 <a href="{{ route('academic-period-fees.edit', Qs::hash($fee->id)) }}"
-                                                   class="dropdown-item"><i class="icon-eye"></i> publish</a>
+                                                   class="dropdown-item"><i class="icon-eye"></i></a>
                                             @endif
 
                                         </td>
@@ -180,17 +196,19 @@
                             <table class="table datatable-button-html5-columns">
                                 <div class="d-flex justify-content-between">
                                     <div class="d-flex">
-
+                                        <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
+                                           class="dropdown-item"><i class="icon-file-download"></i> Download</a>
                                     </div>
                                     <div>
                                         <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
                                            class="dropdown-item"><i class="icon-add-to-list"></i> Add Class</a>
                                     </div>
+                                </div>
                                 <thead>
                                 <tr>
                                     <th>S/N</th>
-                                    <th>Academic Period</th>
                                     <th>Course</th>
+                                    <th>Students</th>
                                     <th>Instructor</th>
                                     <th>Action</th>
                                 </tr>
@@ -199,8 +217,8 @@
                                 @foreach($periodClasses as $period)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $period->academicPeriod->code }}</td>
                                         <td>{{ $period->course->code}}</td>
+                                        <td>{{ count($period->enrollments) }}</td>
                                         <td>{{ $period->instructor->first_name}}</td>
 
                                         <td class="text-center">
@@ -216,6 +234,9 @@
                                                                class="dropdown-item"><i class="icon-pencil"></i>
                                                                 Edit</a>
                                                         @endif
+                                                            <a href="{{ route('academic-period-classes.edit', $period->id) }}"
+                                                               class="dropdown-item"><i class="icon-paperplane"></i>
+                                                                Download List</a>
                                                         @if(Qs::userIsSuperAdmin())
                                                             <a id="{{ $period->id }}" onclick="confirmDelete(this.id)"
                                                                href="#" class="dropdown-item"><i class="icon-trash"></i>
@@ -234,6 +255,16 @@
                             </table>
                         </div>
                         <div class="tab-pane fade" id="all-ac-programs">
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex">
+                                    <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
+                                       class="dropdown-item"><i class="icon-file-download"></i> Download</a>
+                                </div>
+                                <div>
+                                    <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
+                                       class="dropdown-item"><i class="icon-add-to-list"></i> Add Class</a>
+                                </div>
+                            </div>
                             <table class="table datatable-button-html5-columns">
                                 <thead>
                                 <tr>
@@ -254,7 +285,7 @@
                                         <td>{{ $p->name}}</td>
                                         <td>{{ $p->qualification->name }}</td>
                                         <td>{{ $p->department->name }}</td>
-                                        <td>{{ 0 }}</td>
+                                        <td>{{ $p->students_count }}</td>
 
                                         <td class="text-center">
 {{--                                            <div class="list-icons">--}}
