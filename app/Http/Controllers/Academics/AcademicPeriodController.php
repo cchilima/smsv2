@@ -84,10 +84,11 @@ class AcademicPeriodController extends Controller
         $periods = $this->periods->getAPInformation($id);
         $academic= $this->periods->findOne($id);
         $studyModes = $this->periods->getStudyModes();
-        $intakes = $this->periods->getIntakes();
+        $students = $this->periodClasses->academicPeriodStudents($id);
+        $programs = $this->periodClasses->academicPrograms($id);
         $feeInformation = $this->periods->getAPFeeInformation($id);
 
-        return  view('pages.academicPeriods.show', compact('academicPeriod','feeInformation','periods','periodClasses'));
+        return  view('pages.academicPeriods.show', compact('academicPeriod','feeInformation','periods','periodClasses','programs','students'));
     }
 
     /**
