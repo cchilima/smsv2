@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('page_title', 'Enrollment Report')
+@section('page_title', 'Student List Report')
 @section('content')
     @php
         use App\Helpers\Qs;
@@ -25,10 +25,10 @@
                                                 <select name="instructor_id" class="form-control select-search" required>
                                                     <option
                                                         value="">select option</option>
-{{--                                                    @foreach ($instructors as $instructor)--}}
-{{--                                                        <option--}}
-{{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option>--}}
-{{--                                                    @endforeach--}}
+                                                    {{--                                                    @foreach ($instructors as $instructor)--}}
+                                                    {{--                                                        <option--}}
+                                                    {{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option>--}}
+                                                    {{--                                                    @endforeach--}}
                                                 </select>
                                             </div>
                                         </div>
@@ -41,20 +41,11 @@
                                                 <select name="instructor_id" class="form-control select-search" required>
                                                     <option
                                                         value="">select option</option>
-{{--                                                    @foreach ($instructors as $instructor)--}}
-{{--                                                        <option--}}
-{{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option>--}}
-{{--                                                    @endforeach--}}
+                                                    {{--                                                    @foreach ($instructors as $instructor)--}}
+                                                    {{--                                                        <option--}}
+                                                    {{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option>--}}
+                                                    {{--                                                    @endforeach--}}
                                                 </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group row">
-                                            <label class="col-lg-3 col-form-label font-weight-semibold">Payment Threshold <span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-lg-9">
-                                                <input name="to_date" type="text" class="form-control date-pick" placeholder="Date">
                                             </div>
                                         </div>
                                     </div>

@@ -324,15 +324,29 @@
                             </li>
                     @endif
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['enrollments.reports']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['audit.trail.reports','student.list.reports','registers.reports','enrollments.reports']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-users4"></i> <span> Reports</span></a>
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Users">
-
                                 <li class="nav-item">
                                     <a href="{{ route('enrollments.reports') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.reports']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Enrollments</span></a>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('registers.reports') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['registers.reports']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Exam Registers</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('student.list.reports') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['student.list.reports']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Student List</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('audit.trail.reports') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['audit.trail.reports']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Audit Trail</span></a>
                                 </li>
 
                             </ul>
