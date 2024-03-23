@@ -6,17 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
 use App\Repositories\Accounting\InvoiceRepository;
+use App\Repositories\Accounting\PaymentMethodRepository;
 use App\Repositories\Reports\Accounts\AccountsReportsRepository;
 use Illuminate\Http\Request;
 
 class AccountReportsController extends Controller
 {
-    protected $revenue_analysis;
-    public function __construct(AccountsReportsRepository $revenue_analysis)
+    protected $revenue_analysis,$payment_methods;
+    public function __construct(AccountsReportsRepository $revenue_analysis,PaymentMethodRepository $payment_methods)
     {
         //$this->middleware(TeamSA::class, ['except' => ['destroy',]]);
         //$this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
         $this->revenue_analysis = $revenue_analysis;
+        $this->payment_methods = $payment_methods;
     }
     /**
      * Display a listing of the resource.
@@ -99,19 +101,49 @@ class AccountReportsController extends Controller
         }
         //return view('pages.reports.accounts.invoices');
     }
-    public function Transactions(){
-        return view('pages.reports.accounts.transactions');
+    public function Transactions(Request $request){
+
+        if (isset($request['from_date']) && !$request['from_date'] == '' && isset($request['to_date']) && !$request['to_date'] == '' && isset($request['payment_method']) && !$request['payment_method'] == '') {
+            $revenue['transactions'] = $this->revenue_analysis->Transactions(date('Y-m-d', strtotime($request['from_date'])),date('Y-m-d', strtotime($request['to_date'])),$request['payment_method']);
+            $revenue['payment_methods'] = $this->payment_methods->getAll();
+            return view('pages.reports.accounts.transactions',$revenue);
+        } else {
+            $payment_methods = $this->payment_methods->getAll();
+            //dd($payment_methods);
+            return view('pages.reports.accounts.transactions',compact('payment_methods'));
+           // return view('pages.reports.accounts.invoices');
+        }
+
     }
     public function FailedPayments(){
         return view('pages.reports.accounts.failed_transactions');
     }
-    public function AgedReceivables(){
-        return view('pages.reports.accounts.aged_receivables');
+    public function AgedReceivables(Request $request){
+
+        if (isset($request['to_date']) && !$request['to_date'] == '') {
+
+            $revenue['age_analysis'] = $this->revenue_analysis->Aged_Receivables(date('Y-m-d', strtotime($request['to_date'])));
+            //dd($revenue['transactions']);
+            return view('pages.reports.accounts.aged_receivables',$revenue);
+        } else {
+            return view('pages.reports.accounts.aged_receivables');
+        }
+        //return view('pages.reports.accounts.aged_receivables');
     }
     public function CreditNotes(){
         return view('pages.reports.accounts.credit_notes');
     }
-    public function StudentList(){
-        return view('pages.reports.accounts.student_list');
+    public function StudentList(Request $request){
+
+        if (isset($request['from_date']) && !$request['from_date'] == '' && isset($request['to_date']) && !$request['to_date'] == '') {
+
+            $revenue['student_list'] = $this->revenue_analysis->StudentList(date('Y-m-d', strtotime($request['from_date'])),date('Y-m-d', strtotime($request['to_date'])));
+           /// dd($revenue['student_list']);
+            return view('pages.reports.accounts.student_list',$revenue);
+        } else {
+            return view('pages.reports.accounts.student_list');
+        }
+
+       // return view('pages.reports.accounts.student_list');
     }
 }

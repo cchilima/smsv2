@@ -10,19 +10,21 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\AcademicPeriodClasses\PeriodClass;
 use App\Http\Requests\AcademicPeriodClasses\PeriodClassUpdate;
 use App\Repositories\Academics\AcademicPeriodClassRepository;
+use App\Repositories\Academics\AcademicPeriodRepository;
 use Illuminate\Http\Request;
 
 class AcademicPeriodClassController extends Controller
 {
 
-    protected $periodClasses;
+    protected $periodClasses,$academicPeriodRepository;
 
-    public function __construct(AcademicPeriodClassRepository $periodClasses)
+    public function __construct(AcademicPeriodClassRepository $periodClasses,AcademicPeriodRepository $academicPeriodRepository)
     {
         $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
         $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
 
         $this->periodClasses = $periodClasses;
+        $this->academicPeriodRepository = $academicPeriodRepository;
     }
 
     /**
@@ -34,7 +36,7 @@ class AcademicPeriodClassController extends Controller
 
         $courses = $this->periodClasses->getCourses();
         $instructors = $this->periodClasses->getInstructors();
-        $academicPeriods = $this->periodClasses->getAcademicPeriods();
+        $academicPeriods = $this->academicPeriodRepository->getAllOpenedAc();;
 
         return view('pages.academicPeriodClasses.index', compact('periodClasses', 'courses', 'instructors', 'academicPeriods'));
     }
@@ -57,7 +59,7 @@ class AcademicPeriodClassController extends Controller
      */
     public function store(PeriodClass $request)
     {
-        
+
         $data = $request->only(['instructor_id', 'course_id', 'academic_period_id']);
         $data['key'] = rand(2,23);
 

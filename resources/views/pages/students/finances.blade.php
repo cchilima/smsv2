@@ -1,249 +1,209 @@
 @extends('layouts.master')
-@section('page_title', 'Student Profile - ')
+@section('page_title', 'Finances - ' . auth()->user()->first_name . ' ' . auth()->user()->last_name)
 @section('content')
     @php
         use App\Helpers\Qs;
     @endphp
     <div class="row">
-        <div class="col-md-3 text-center">
+        <div class="col-12">
             <div class="card">
-                <div class="card-body">
-                    <img style="width: 90%; height:90%" src="{{ 00 }}" alt="photo" class="rounded-circle">
-                    <br>
-                    <h3 class="mt-3">Names</h3>
-                </div>
-            </div>
-            <div class="justify-content-between">
-                <button type="button" class="btn btn-primary">
-                    Launch static backdrop modal
-                </button>
-
-                <button type="button" class="btn btn-primary">
-                    Launch static backdrop modal
-                </button>
-
-            </div>
-        </div>
-        <div class="col-md-9">
-            <div class="card card-collapsed">
                 <div class="card-header header-elements-inline">
-                    <h6 class="card-title">Account</h6>
+                    <h6 class="card-title">Financial Information</h6>
                     {!! Qs::getPanelOptions() !!}
                 </div>
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-tabs-highlight">
+
                         <li class="nav-item">
-                            <a href="#account-info" class="nav-link active"
-                               data-toggle="tab">{{ 'Account Details' }}</a>
+                            <a href="#invoices" class="nav-link active" data-toggle="tab">{{ 'Invoices' }}</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#profile-info" class="nav-link" data-toggle="tab">{{ 'Profile Details' }}</a>
+                            <a href="#statements" class="nav-link" data-toggle="tab">{{ 'Statements' }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#payment-history" class="nav-link" data-toggle="tab">{{ 'Payment History' }}</a>
                         </li>
                     </ul>
 
                     <div class="tab-content">
-                        {{--Basic Info--}}
-                        <div class="tab-pane fade show active" id="account-info">
-                            <div class="card card-collapsed">
-                                <div class="card-header header-elements-inline">
-                                    <h6 class="card-title">Accounting Information</h6>
-                                    {!! Qs::getPanelOptions() !!}
-                                </div>
-                                <div class="card-body">
-                                    <ul class="nav nav-tabs nav-tabs-highlight">
-                                        <li class="nav-item"><a href="#summary" class="nav-link active">Summary</a></li>
-                                        <li class="nav-item"><a href="#quotations" class="nav-link">Quotations</a></li>
-                                        <li class="nav-item"><a href="#invoices" class="nav-link">Invoices</a></li>
-                                        <li class="nav-item"><a href="#receipts" class="nav-link">Receipts</a></li>
-                                        <li class="nav-item"><a href="#credit-notes" class="nav-link">Credit Notes</a>
-                                        </li>
-                                        <li class="nav-item"><a href="#non-cash-payments" class="nav-link">Non Cash
-                                                Payments</a></li>
-                                        <li class="nav-item"><a href="#statement" class="nav-link">Statement of
-                                                Account</a></li>
-                                    </ul>
+                        <div class="tab-pane fade show active" id="invoices">
+                            @foreach ($finances['invoices'] as $key => $invoice)
+                                <table class="table table-bordered  mb-3 mb-lg-4">
+                                    <thead>
+                                        <th>#</th>
+                                        <th>Fee type</th>
+                                        <th>Amount</th>
+                                    </thead>
+                                    <tbody>
 
-                                    <div class="tab-content">
-                                        {{--Basic Info--}}
-                                        <div class="tab-pane fade show active" id="summary">
+                                        <tr>
+                                            <h4 class="d-flex align-items-center justify-content-between">
+                                                <span>INV - {{ ++$key }}</span>
 
-                                        </div>
-                                        <div class="tab-pane fade show" id="quotations">
-                                            <table class="table datatable-button-html5-columns">
-                                                <thead>
-                                                <tr>
-                                                    <th>Quotation #</th>
-                                                    <th>Names</th>
-                                                    <th>Date</th>
-                                                    <th>Grand Total</th>
-                                                    <th>Operation</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                @foreach($accounting['quotations'] as $quot)
-                                                    <tr>
-                                                        <td>{{ $quot['id'] }}</td>
-                                                        <td>{{ $quot['names'] }}</td>
-                                                        <td>{{ $quot['date'] }}</td>
-                                                        <td>{{ $quot['total'] }}</td>
-                                                        <td></td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="mr-2 mr-lg-3">
+                                                        <form action="{{ route('student.download-invoice', $invoice->id) }}"
+                                                            method="get">
+                                                            @csrf
+                                                            <input type="hidden" class="d-none" name="file-type"
+                                                                value="pdf">
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="icon-download4 mr-1 lr-lg-2"></i>
+                                                                <span>PDF</span>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
 
-                                                    </tr>
-                                                @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="tab-pane fade show" id="invoices">
-                                            <table class="table datatable-button-html5-columns">
-                                                <thead>
-                                                <tr>
-                                                    <th>Invoice #</th>
-                                                    <th>Academic Period</th>
-                                                    <th>Raised By</th>
-                                                    <th>Date</th>
-                                                    <th>Grand Total</th>
-                                                    <th>Operation</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                @foreach($accounting['invoices'] as $inv)
-                                                    <tr>
-                                                        <td>{{ $inv['id'] }}</td>
-                                                        <td>{{ $inv['academicPeriod'] }}</td>
-                                                        <td>{{ $inv['raisedby'] }}</td>
-                                                        <td>{{ $inv['date'] }}</td>
-                                                        <td>{{ $inv['total'] }}</td>
-                                                        <td></td>
-                                                    </tr>
-                                                @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="tab-pane fade show" id="receipts">
-                                            <table class="table datatable-button-html5-columns">
-                                                <thead>
-                                                <tr>
-                                                    <th>Receipt #</th>
-                                                    <th>Payment Method</th>
-                                                    <th>Collected By</th>
-                                                    <th>Date</th>
-                                                    <th>Grand Total</th>
-                                                    <th>Operation</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                @foreach($accounting['receipts'] as $recei)
-                                                    <tr>
-                                                        <td>{{ $recei['id'] }}</td>
-                                                        <td>{{ $recei['payment_method'] }}</td>
-                                                        <td>{{ $recei['collectedBy'] }}</td>
-                                                        <td>{{ $recei['date'] }}</td>
-                                                        <td>ZMW {{ $recei['ammount_paid'] }}</td>
-                                                        <td></td>
+                                            </h4>
+                                        </tr>
+                                        @foreach ($invoice->details as $key => $detail)
+                                            <tr>
+                                                <td>{{ ++$key }}</td>
+                                                <td>{{ $detail->fee->name }}</td>
+                                                <td>K {{ $detail->amount }}</td>
+                                            </tr>
+                                        @endforeach
+                                        <tr>
+                                            <td></td>
+                                            <td><b>Total</b></td>
+                                            <td>K {{ $invoice->details->sum('amount') }}</td>
+                                        </tr>
 
-                                                    </tr>
-                                                @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="tab-pane fade show" id="credit-notes">
-                                            <table class="table datatable-button-html5-columns">
-                                                <thead>
-                                                <tr>
-                                                    <th>Credit Note #</th>
-                                                    <th>Invoice No#</th>
-                                                    <th>Names</th>
-                                                    <th>Student ID</th>
-                                                    <th>Total</th>
-                                                    <th>Status</th>
-                                                    <th>Issued By</th>
-                                                    <th>Authorized By</th>
-                                                    <th>operation</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                @foreach($accounting['credit_notes'] as $cd)
-                                                    <tr>
-                                                        <td>{{ $cd['id'] }}</td>
-                                                        <td>{{ $cd['invoice_id'] }}</td>
-                                                        <td>{{ $cd['name'] }}</td>
-                                                        <td>{{ $cd['studentid'] }}</td>
-                                                        <td>ZMW {{ $cd['total'] }}</td>
-                                                        <td>{{ $cd['status'] }}</td>
-                                                        <td>{{ $cd['issued_by'] }}</td>
-                                                        <td>{{ $cd['authorized_by'] }}</td>
-                                                        <td>{{ $cd['status'] }}</td>
-                                                    </tr>
-                                                @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="tab-pane fade show" id="non-cash-payments">
-                                            <table class="table datatable-button-html5-columns">
-                                                <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Invoice No.</th>
-                                                    <th>Amount</th>
-                                                    <th>Discount</th>
-                                                    <th>Comment</th>
-                                                    <th>Status</th>
-                                                    <th>Raised By</th>
-                                                    <th>Processed By</th>
-                                                    <th>Date</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {{--                                @foreach($accounting['nonCashPayments'] as $ncp)--}}
-                                                {{--                                    <tr>--}}
-                                                {{--                                        <td>{{ $ncp['id'] }}</td>--}}
-                                                {{--                                        <td>{{ $cd['invoice_id'] }}</td>--}}
-                                                {{--                                        <td>{{ $cd['name'] }}</td>--}}
-                                                {{--                                        <td>{{ $cd['student_id'] }}</td>--}}
-                                                {{--                                        <td>ZMW {{ $cd['total'] }}</td>--}}
-                                                {{--                                        <td>{{ $cd['status'] }}</td>--}}
-                                                {{--                                        <td>{{ $cd['issued_by'] }}</td>--}}
-                                                {{--                                        <td>{{ $cd['authorized_by'] }}</td>--}}
-                                                {{--                                        <td>{{ $cd['status'] }}</td>--}}
-                                                {{--                                    </tr>--}}
-                                                {{--                                @endforeach--}}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="tab-pane fade show" id="statement">
-                                            <table class="table datatable-button-html5-columns">
-                                                <thead>
-                                                <tr>
-                                                    <th>Date</th>
-                                                    <th>Reference #</th>
-                                                    <th>Description</th>
-                                                    <th>Debit</th>
-                                                    <th>Credit</th>
-                                                    <th>Balance</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                @foreach($accounting['statement'] as $stmt)
-                                                    <tr>
-                                                        <td>{{ $stmt['date'] }}</td>
-                                                        <td>{{ $stmt['reference'] }}</td>
-                                                        <th>{{ $stmt['description'] }}</th>
-                                                        <td>{{ $stmt['debit'] }}</td>
-                                                        <td>{{ $stmt['credit'] }}</td>
-                                                        <td>ZMW {{ $stmt['balance'] }}</td>
-                                                    </tr>
-                                                @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                    </tbody>
+                                </table>
+                            @endforeach
+
                         </div>
+
+                        <div class="tab-pane fade show" id="statements">
+                            @foreach ($finances['invoices'] as $key => $invoice)
+                                <table class="table table-bordered  mb-3 mb-lg-4">
+                                    <thead>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+
+                                    </thead>
+                                    <tbody>
+
+                                        <tr>
+                                            <h4 class="d-flex align-items-center justify-content-between">
+                                                <span>INV - {{ ++$key }}</span>
+
+                                                <div class="d-flex align-items-center">
+                                                    <div class="mr-2 mr-lg-3">
+                                                        <form
+                                                            action="{{ route('student.download-statement', $invoice->id) }}"
+                                                            method="get">
+                                                            @csrf
+                                                            <input type="hidden" class="d-none" name="file-type"
+                                                                value="pdf">
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="icon-download4 mr-1 lr-lg-2"></i>
+                                                                <span>PDF</span>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+
+                                            </h4>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td><b>Opening Balance</b> </td>
+                                            <td>K {{ $invoice->details->sum('amount') }}</td>
+                                        </tr>
+                                        @foreach ($invoice->statements as $key => $statement)
+                                            <tr>
+                                                <td>{{ ++$key }}</td>
+                                                <td>{{ $statement->created_at->format('d F Y') }}</td>
+                                                <td>Payment</td>
+                                                <td>K {{ $statement->amount }}</td>
+                                            </tr>
+                                        @endforeach
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td><b>Closing Balance </b></td>
+                                            <td>K
+                                                {{ $invoice->details->sum('amount') - $invoice->statements->sum('amount') }}
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            @endforeach
+
+                            <br>
+
+                            @if ($finances['statementsWithoutInvoice']->sum('amount') > 0)
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+
+                                    </thead>
+                                    <tbody>
+
+                                        <tr>
+                                            <h4>Not Invoiced</h4>
+                                        </tr>
+
+                                        @foreach ($student->statementsWithoutInvoice as $key => $statement)
+                                            <tr>
+                                                <td>{{ ++$key }}</td>
+                                                <td>{{ $statement->created_at->format('d F Y') }}</td>
+                                                <td>Payment</td>
+                                                <td>K {{ $statement->amount }}</td>
+                                            </tr>
+                                        @endforeach
+
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td>Total</td>
+                                            <td>
+                                                - K {{ $student->statementsWithoutInvoice->sum('amount') }}.00
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            @endif
+
+                        </div>
+
+                        <div class="tab-pane fade show" id="payment-history">
+
+                            <table class="table table-bordered">
+                                <thead>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                </thead>
+                                <tbody>
+                                    @foreach ($finances['receipts'] as $key => $receipt)
+                                        <tr>
+                                            <td>{{ ++$key }}</td>
+                                            <td>{{ $receipt->created_at->format('d F Y') }}</td>
+                                            <td>K {{ $receipt->amount }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
                 </div>
             </div>
+
         </div>
+
     </div>
 @endsection
-

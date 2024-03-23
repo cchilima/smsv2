@@ -12,12 +12,13 @@
 
         <div class="card-body">
             <ul class="nav nav-tabs nav-tabs-highlight">
-                <li class="nav-item"><a href="#all-periods" class="nav-link active" data-toggle="tab">Manage Academic Periods</a></li>
+                <li class="nav-item"><a href="#all-open" class="nav-link active" data-toggle="tab">Open Academic Periods</a></li>
+                <li class="nav-item"><a href="#all-closed" class="nav-link" data-toggle="tab">Closed Academic Periods</a></li>
                 <li class="nav-item"><a href="#new-period" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i> Create New Academic Period</a></li>
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane fade show active" id="all-periods">
+                <div class="tab-pane fade show active" id="all-open">
                     <table class="table datatable-button-html5-columns">
                         <thead>
                         <tr>
@@ -31,7 +32,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($periods as $period)
+                        @foreach($open as $period)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $period->name }}</td>
@@ -56,6 +57,58 @@
                                                     @if(Qs::userIsTeamSA())
                                                         <a href="{{ route('academic-period-management.index', ['ac'=>$period->id]) }}" class="dropdown-item"><i class="icon-paperplane"></i> Manage</a>
                                                     @endif
+                                                @if(Qs::userIsSuperAdmin())
+                                                    <a id="{{ $period->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>
+                                                    <form method="post" id="item-delete-{{ $period->id }}" action="{{ route('academic-periods.destroy', $period->id) }}" class="hidden">@csrf @method('delete')</form>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade show" id="all-closed">
+                    <table class="table datatable-button-html5-columns">
+                        <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Name</th>
+                            <th>Code</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Period Type</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($closed as $period)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $period->name }}</td>
+                                <td>{{ $period->code }}</td>
+                                <td>{{ $period->ac_start_date }}</td>
+                                <td>{{ $period->ac_end_date  }}</td>
+                                <td>{{ $period->period_types->name  }}</td>
+                                <td class="text-center">
+                                    <div class="list-icons">
+                                        <div class="dropdown">
+                                            <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                                <i class="icon-menu9"></i>
+                                            </a>
+
+                                            <div class="dropdown-menu dropdown-menu-left">
+                                                @if(Qs::userIsTeamSA())
+                                                    <a href="{{ route('academic-periods.edit', $period->id) }}" class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
+                                                @endif
+                                                @if(Qs::userIsTeamSA())
+                                                    <a href="{{ route('academic-periods.show', $period->id) }}" class="dropdown-item"><i class="icon-eye"></i> Show</a>
+                                                @endif
+                                                @if(Qs::userIsTeamSA())
+                                                    <a href="{{ route('academic-period-management.index', ['ac'=>$period->id]) }}" class="dropdown-item"><i class="icon-paperplane"></i> Manage</a>
+                                                @endif
                                                 @if(Qs::userIsSuperAdmin())
                                                     <a id="{{ $period->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>
                                                     <form method="post" id="item-delete-{{ $period->id }}" action="{{ route('academic-periods.destroy', $period->id) }}" class="hidden">@csrf @method('delete')</form>

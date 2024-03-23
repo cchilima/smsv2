@@ -26,16 +26,7 @@
                     <h3 class="mt-3">{{ $student->user->first_name . ' ' . $student->user->last_name }}</h3>
                 </div>
             </div>
-            <div class="justify-content-between">
-                <button type="button" class="btn btn-primary">
-                    Launch static backdrop modal
-                </button>
 
-                <button type="button" class="btn btn-primary">
-                    Launch static backdrop modal
-                </button>
-
-            </div>
         </div>
         <div class="col-md-9">
             <div class="card card-collapsed">
@@ -438,58 +429,62 @@
                 </div>
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-tabs-highlight">
-                        @foreach ($enrollments as $innerIndex =>$academicData)
-                        <li class="nav-item">
-                            <a href="#account-{{ $academicData['academic_period_id'] }}" class="nav-link"
-                                data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
-                        </li>
+                        @foreach ($enrollments as $innerIndex => $academicData)
+                            <li class="nav-item">
+                                <a href="#account-{{ $academicData['academic_period_id'] }}" class="nav-link"
+                                    data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
+                            </li>
                         @endforeach
                     </ul>
 
                     <div class="tab-content">
                         {{-- Basic Info --}}
-                        @foreach ($enrollments as $innerIndex =>$academicData)
-                        <div class="tab-pane fade show" id="account-{{ $academicData['academic_period_id'] }}">
+                        @foreach ($enrollments as $innerIndex => $academicData)
+                            <div class="tab-pane fade show" id="account-{{ $academicData['academic_period_id'] }}">
 
-                            <table class="table table-hover table-striped-columns mb-3">
-                                <div class="d-flex justify-content-between">
-                                    <div class="d-flex">
-                                        <h5 class="p-2"> Code :
-                                            <strong>{{ $academicData['academic_period_code'] }}</strong>
-                                        </h5>
-                                        <h5 class="p-2">Name : <strong>{{ $academicData['academic_period_name'] }}</strong></h5>
+                                <table class="table table-hover table-striped-columns mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex">
+                                            <h5 class="p-2"> Code :
+                                                <strong>{{ $academicData['academic_period_code'] }}</strong>
+                                            </h5>
+                                            <h5 class="p-2">Name :
+                                                <strong>{{ $academicData['academic_period_name'] }}</strong>
+                                            </h5>
+                                        </div>
+                                        <div>
+                                            <form action="{{ route('registration.summary') }}" method="get">
+                                                @csrf
+                                                <input name="academic_period_id" type="hidden"
+                                                    value="{{ $academicData['academic_period_id'] }}" />
+                                                <input name="student_number" type="hidden"
+                                                    value="{{ $student->id }}" />
+                                                <button type="submit" class="btn btn-primary mt-2">Download
+                                                    summary</button>
+                                            </form>
+
+                                        </div>
+
                                     </div>
-                                    <div>
-                                    <form action="{{ route('registration.summary') }}" method="get">
-                                        @csrf
-                                        <input name="academic_period_id" type="hidden" value="{{ $academicData['academic_period_id'] }}" />
-                                        <input name="student_number" type="hidden" value="{{ $student->id }}" />
-                                        <button type="submit" class="btn btn-primary mt-2">Download summary</button>
-                                    </form>
+                                    <thead>
+                                        <tr>
+                                            <th>S/N</th>
+                                            <th>Course Code</th>
+                                            <th>Course Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($academicData['courses'] as $course)
+                                            <tr>
+                                                <th>{{ $loop->iteration }}</th>
+                                                <td>{{ $course['course_code'] }}</td>
+                                                <td>{{ $course['course_title'] }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
 
-                                    </div>
-
-                                </div>
-                                <thead>
-                                <tr>
-                                    <th>S/N</th>
-                                    <th>Course Code</th>
-                                    <th>Course Name</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach ($academicData['courses'] as $course)
-                                    <tr>
-                                        <th>{{ $loop->iteration }}</th>
-                                        <td>{{ $course['course_code'] }}</td>
-                                        <td>{{ $course['course_title'] }}</td>
-                                    </tr>
-
-                                @endforeach
-                                </tbody>
-
-                            </table>
-                        </div>
+                                </table>
+                            </div>
                         @endforeach
 
                     </div>
@@ -593,42 +588,48 @@
                                     <input type="number" class="form-control" id="amount" name="amount"
                                         placeholder="ZMW" required>
                                 </div>
-                                    <div class="form-group">
-                                        <label for="method">Method <span class="text-danger">*</span></label>
-                                        <select data-placeholder="Payment method" required
-                                            class="select-search form-control" name="payment_method_id" id="method">
-                                            <option value=""></option>
-                                            @foreach ($paymentMethods as $method)
-                                                <option value="{{ $method->id }}">{{ $method->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                <div class="form-group">
+                                    <label for="method">Method <span class="text-danger">*</span></label>
+                                    <select data-placeholder="Payment method" required class="select-search form-control"
+                                        name="payment_method_id" id="method">
+                                        <option value=""></option>
+                                        @foreach ($paymentMethods as $method)
+                                            <option value="{{ $method->id }}">{{ $method->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
+                                <div class="form-group">
+                                    <input hidden type="number" class="form-control" name="academic_period"
+                                        value="{{ $student->academic_info->academic_period_id }}" required>
+                                </div>
 
-                                    <div class="form-group">
-                                        <input hidden type="number" class="form-control" name="academic_period"
-                                            value="{{ $student->academic_info->academic_period_id }}" required>
-                                    </div>
+                                <div class="form-group">
+                                    <input hidden type="text" class="form-control" name="student_id"
+                                        value="{{ $student->id }}" required>
+                                </div>
 
-                                    <div class="form-group">
-                                        <input hidden type="text" class="form-control" name="student_id"
-                                            value="{{ $student->id }}" required>
-                                    </div>
-
-                                    <div class="text-left">
-                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Submit <i
-                                                class="icon-paperplane ml-2"></i></button>
-                                    </div>
-                                </form>
+                                <div class="text-left">
+                                    <button id="ajax-btn" type="submit" class="btn btn-primary">Submit <i
+                                            class="icon-paperplane ml-2"></i></button>
+                                </div>
+                            </form>
 
                         </div>
 
-
                         <div class="tab-pane fade show" id="statements">
-                            @foreach ($student->invoices as $key => $invoice)
-                                <br>
+                            <div class="mb-2 d-flex justify-content-end">
+                                <form action="{{ route('student.export-statements', $student->id) }}" method="get">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="icon-download4 mr-1 lr-lg-2"></i>
+                                        <span>Export Statements</span>
+                                    </button>
+                                </form>
+                            </div>
 
-                                <table class="table table-bordered">
+                            @foreach ($student->invoices as $key => $invoice)
+                                <table class="table table-bordered mb-3 mb-lg-4">
                                     <thead>
                                         <th>#</th>
                                         <th>Date</th>
@@ -639,19 +640,37 @@
                                     <tbody>
 
                                         <tr>
-                                            <h4>INV - {{ ++$key }}</h4>
+                                            <h4 class="d-flex align-items-center justify-content-between">
+                                                <span>INV - {{ ++$key }}</span>
+
+                                                <div class="d-flex align-items-center">
+                                                    <div class="">
+                                                        <form
+                                                            action="{{ route('student.download-statement', $invoice->id) }}"
+                                                            method="get">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="icon-download4 lr-lg-2"></i>
+                                                                <span>PDF</span>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+
+                                                </div>
+
+                                            </h4>
                                         </tr>
                                         <tr>
                                             <td></td>
                                             <td></td>
-                                            <td>Opening Balance </td>
+                                            <td><b>Opening Balance</b></td>
                                             <td>K {{ $invoice->details->sum('amount') }}</td>
                                         </tr>
                                         @foreach ($invoice->statements as $key => $statement)
                                             <tr>
                                                 <td>{{ ++$key }}</td>
-                                                <td>{{ $statement->created_at->format('Y-m-d') }}</td>
-                                                <td>payment</td>
+                                                <td>{{ $statement->created_at->format('d F Y') }}</td>
+                                                <td>Payment</td>
                                                 <td>K {{ $statement->amount }}</td>
                                             </tr>
                                         @endforeach
@@ -689,7 +708,7 @@
                                         @foreach ($student->statementsWithoutInvoice as $key => $statement)
                                             <tr>
                                                 <td>{{ ++$key }}</td>
-                                                <td>{{ $statement->created_at->format('Y-m-d') }}</td>
+                                                <td>{{ $statement->created_at->format('d F Y') }}</td>
                                                 <td>Payment</td>
                                                 <td>K {{ $statement->amount }}</td>
                                             </tr>
@@ -712,8 +731,18 @@
                         </div>
 
                         <div class="tab-pane fade show" id="invoices">
+                            <div class="mb-2 d-flex justify-content-end">
+                                <form action="{{ route('student.export-invoices', $student->id) }}" method="get">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="icon-download4 mr-1 lr-lg-2"></i>
+                                        <span>Export Invoices</span>
+                                    </button>
+                                </form>
+                            </div>
+
                             @foreach ($student->invoices as $key => $invoice)
-                                <table class="table table-bordered">
+                                <table class="table table-bordered mb-3 mb-lg-4">
                                     <thead>
                                         <th>#</th>
                                         <th>Fee type</th>
@@ -722,12 +751,30 @@
                                     <tbody>
 
                                         <tr>
-                                            <h4>INV - {{ ++$key }}</h4>
+                                            <h4 class="d-flex align-items-center justify-content-between">
+                                                <span>INV - {{ ++$key }}</span>
+
+                                                <div class="d-flex align-items-center">
+                                                    <div class="">
+                                                        <form
+                                                            action="{{ route('student.download-invoice', $invoice->id) }}"
+                                                            method="get">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="icon-download4 mr-1 lr-lg-2"></i>
+                                                                <span>PDF</span>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+
+                                                </div>
+
+                                            </h4>
                                         </tr>
                                         @foreach ($invoice->details as $key => $detail)
                                             <tr>
                                                 <td>{{ ++$key }}</td>
-{{--                                                <td>{{ $detail->fee->name }}</td>--}}
+                                                <td>{{ $detail->fee->name }}</td>
                                                 <td>K {{ $detail->amount }}</td>
                                             </tr>
                                         @endforeach
@@ -755,7 +802,7 @@
                                     @foreach ($student->receipts as $key => $receipt)
                                         <tr>
                                             <td>{{ ++$key }}</td>
-                                            <td>{{ $receipt->created_at->format('Y-m-d') }}</td>
+                                            <td>{{ $receipt->created_at->format('d F Y') }}</td>
                                             <td>K {{ $receipt->amount }}</td>
                                         </tr>
                                     @endforeach
@@ -1208,10 +1255,10 @@
                 </div>
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-tabs-highlight">
-                        @foreach ($results as $innerIndex =>$academicData)
+                        @foreach ($results as $innerIndex => $academicData)
                             <li class="nav-item {{ $innerIndex == 0 ? 'active' : '' }}">
                                 <a href="#results-{{ $academicData['academic_period_id'] }}" class="nav-link"
-                                   data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
+                                    data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
                             </li>
                         @endforeach
                         <li class="nav-item">
@@ -1222,32 +1269,32 @@
                     <div class="tab-content">
                         {{-- Basic Info --}}
                         @foreach ($results as $innerIndex => $academicData)
-                        <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}" id="results-{{ $academicData['academic_period_id'] }}">
-                            <h5 class="p-2">
-                                <strong>{{ $academicData['academic_period_code'] .' - '.$academicData['academic_period_name'] }}</strong>
-                            </h5>
-                            <h5 class="p-2"><strong>{{ $student->id }}</strong></h5>
+                            <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
+                                id="results-{{ $academicData['academic_period_id'] }}">
+                                <h5 class="p-2">
+                                    <strong>{{ $academicData['academic_period_code'] . ' - ' . $academicData['academic_period_name'] }}</strong>
+                                </h5>
+                                <h5 class="p-2"><strong>{{ $student->id }}</strong></h5>
                                 <table class="table table-hover table-striped-columns mb-3">
                                     <thead>
-                                    <tr>
-                                        <th>S/N</th>
-                                        <th>Course Code</th>
-                                        <th>Course Name</th>
-                                        <th>Mark</th>
-                                        <th>Grade</th>
-                                    </tr>
+                                        <tr>
+                                            <th>S/N</th>
+                                            <th>Course Code</th>
+                                            <th>Course Name</th>
+                                            <th>Mark</th>
+                                            <th>Grade</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach ($academicData['grades'] as $course)
-                                        <tr>
-                                            <th>{{ $loop->iteration }}</th>
-                                            <td>{{ $course['course_code'] }}</td>
-                                            <td>{{ $course['course_title'] }}</td>
-                                            <td> {{ $course['total']  }}</td>
-                                            <td>{{ $course['grade']  }}</td>
-                                        </tr>
-
-                                    @endforeach
+                                        @foreach ($academicData['grades'] as $course)
+                                            <tr>
+                                                <th>{{ $loop->iteration }}</th>
+                                                <td>{{ $course['course_code'] }}</td>
+                                                <td>{{ $course['course_title'] }}</td>
+                                                <td> {{ $course['total'] }}</td>
+                                                <td>{{ $course['grade'] }}</td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
 
                                 </table>
@@ -1255,7 +1302,7 @@
                                     : {{ $academicData['comments']['comment'] }}</p>
                                 <hr>
 
-                        </div>
+                            </div>
                         @endforeach
                         <div class="tab-pane fade show" id="profile-info">
                             <table class="table table-bordered">
@@ -1307,10 +1354,10 @@
                 </div>
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-tabs-highlight">
-                        @foreach ($caresults as $innerIndex =>$academicData)
+                        @foreach ($caresults as $innerIndex => $academicData)
                             <li class="nav-item {{ $innerIndex == 0 ? 'active' : '' }}">
                                 <a href="#results-{{ $academicData['academic_period_id'] }}" class="nav-link"
-                                   data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
+                                    data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
                             </li>
                         @endforeach
                         <li class="nav-item">
@@ -1321,32 +1368,32 @@
                     <div class="tab-content">
                         {{-- Basic Info --}}
                         @foreach ($results as $innerIndex => $academicData)
-                            <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}" id="results-{{ $academicData['academic_period_id'] }}">
+                            <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
+                                id="results-{{ $academicData['academic_period_id'] }}">
                                 <h5 class="p-2">
-                                    <strong>{{ $academicData['academic_period_code'] .' - '.$academicData['academic_period_name'] }}</strong>
+                                    <strong>{{ $academicData['academic_period_code'] . ' - ' . $academicData['academic_period_name'] }}</strong>
                                 </h5>
                                 <h5 class="p-2"><strong>{{ $student->id }}</strong></h5>
                                 <table class="table table-hover table-striped-columns mb-3">
                                     <thead>
-                                    <tr>
-                                        <th>S/N</th>
-                                        <th>Course Code</th>
-                                        <th>Course Name</th>
-                                        <th>Mark</th>
-                                        <th>Grade</th>
-                                    </tr>
+                                        <tr>
+                                            <th>S/N</th>
+                                            <th>Course Code</th>
+                                            <th>Course Name</th>
+                                            <th>Mark</th>
+                                            <th>Grade</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach ($academicData['grades'] as $course)
-                                        <tr>
-                                            <th>{{ $loop->iteration }}</th>
-                                            <td>{{ $course['course_code'] }}</td>
-                                            <td>{{ $course['course_title'] }}</td>
-                                            <td> {{ $course['total']  }}</td>
-                                            <td>{{ $course['grade']  }}</td>
-                                        </tr>
-
-                                    @endforeach
+                                        @foreach ($academicData['grades'] as $course)
+                                            <tr>
+                                                <th>{{ $loop->iteration }}</th>
+                                                <td>{{ $course['course_code'] }}</td>
+                                                <td>{{ $course['course_title'] }}</td>
+                                                <td> {{ $course['total'] }}</td>
+                                                <td>{{ $course['grade'] }}</td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
 
                                 </table>
@@ -1359,38 +1406,38 @@
                         <div class="tab-pane fade show" id="profile-info">
                             <table class="table table-bordered">
                                 <tbody>
-                                <tr>
-                                    <td class="font-weight-bold">Gender</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Email</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">NRC</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Date of Birth</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Marital Status</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Mobile</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Street</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Province</td>
-                                    <td></td>
-                                </tr>
+                                    <tr>
+                                        <td class="font-weight-bold">Gender</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Email</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">NRC</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Date of Birth</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Marital Status</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Mobile</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Street</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Province</td>
+                                        <td></td>
+                                    </tr>
 
                                 </tbody>
                             </table>
@@ -1412,7 +1459,8 @@
 
                         <form action="{{ route('registration.summary') }}" method="get">
                             @csrf
-                            <input name="academic_period_id" type="hidden" value="{{ $student->academic_info->academic_period_id }}" />
+                            <input name="academic_period_id" type="hidden"
+                                value="{{ $student->academic_info->academic_period_id }}" />
                             <input name="student_number" type="hidden" value="{{ $student->id }}" />
                             <button type="submit" class="btn btn-primary mt-2">Download summary</button>
                         </form>

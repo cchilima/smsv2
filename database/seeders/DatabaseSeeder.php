@@ -69,6 +69,7 @@ class DatabaseSeeder extends Seeder
             'nationality' => 'Zambian',
             'alpha_2_code' => 'ZM',
             'alpha_3_code' => 'ZMB',
+            'dialing_code' => '+260',
 
         ]);
 

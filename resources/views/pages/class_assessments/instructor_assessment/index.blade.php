@@ -45,14 +45,14 @@
 
                         @foreach($class_ass->enrollments as $enroll)
                             <tr>
-{{--                                @dd($enroll)--}}
+{{--                                @dd($enroll->student->grades[0])--}}
                                 @if($enroll->student)
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $enroll->student->user->first_name.' '.$enroll->student->user->last_name }}</td>
                                 <td>{{ $enroll->student->id }}</td>
                                 <td>{{ $class_ass->class_assessments[0]->assessment_type->name }}</td>
                                 <td class="edit-total-link">
-                                    @if(!empty($enroll->student->grades[0]))
+                                    @if(!empty($enroll->student->grades[0])s)
 {{--                                    <input type="hidden" id="course{{ Qs::hash($classAssessment['student_id']) }}"--}}
 {{--                                           value="{{ $class[0]['courseCode'] }}">--}}
 {{--                                    <input type="hidden" id="title{{ Qs::hash($classAssessment['student_id']) }}"--}}

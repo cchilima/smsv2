@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
 use App\Repositories\Academics\StudentRegistrationRepository;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class StudentRegistrationController extends Controller
 {
@@ -19,11 +19,11 @@ class StudentRegistrationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    
+
     public function __construct(StudentRegistrationRepository $registrationRepo)
     {
-       // $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-       // $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        // $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
+        // $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
 
         $this->registrationRepo = $registrationRepo;
     }
@@ -34,12 +34,11 @@ class StudentRegistrationController extends Controller
      */
     public function index()
     {
-        $isRegistered = $this->registrationRepo->getRegisterationStatus();
+        $isRegistered = $this->registrationRepo->getRegistrationStatus();
         $courses = $this->registrationRepo->getAll();
         $academicInfo = $this->registrationRepo->getAcademicInfo();
 
         return view('pages.studentRegistration.index', compact('courses', 'academicInfo', 'isRegistered'));
-
     }
 
     /**
@@ -100,51 +99,37 @@ class StudentRegistrationController extends Controller
         $studentNumber = $request->input('student_number');
         $academicPeriodId = $request->input('academic_period_id');
 
-       $courses = $this->registrationRepo->getSummaryCourses($studentNumber, $academicPeriodId);
-       $student = $this->registrationRepo->getStudent($studentNumber);
-       $academicInfo = $this->registrationRepo->getSummaryAcademicInfo($academicPeriodId);
+        $courses = $this->registrationRepo->getSummaryCourses($studentNumber, $academicPeriodId);
+        $student = $this->registrationRepo->getStudent($studentNumber);
+        $studentUser = $student->user;
+        $studentUserPersonalInfo = $student->user->userPersonalInfo;
+        $nextOfKin = $student->user->userNextOfKin;
+        $academicInfo = $this->registrationRepo->getSummaryAcademicInfo($academicPeriodId);
+        $latestEnrollment = $student->enrollments->sortBy('created_at')->last();
 
+        $fileName = $student->id . '-registration-summary-' . now()->format('d-m-Y-His') . '.pdf';
 
-       $filename = 'registration_summary.pdf';
+        $studentInfo = [
+            'Student Name' => $studentUser->first_name . ' ' . $studentUser->last_name,
+            'Student ID' => $student->id,
+            'Gender' => $studentUser->gender,
+            'NRC Number' => $studentUserPersonalInfo->nrc,
+            'Next of Kin' => $nextOfKin->full_name,
+            'Next of Kin' => $nextOfKin->full_name,
+            'Next of Kin Relationship' => $nextOfKin->relationship->relationship,
+            'Next of Kin Contact' => $nextOfKin->mobile,
+        ];
 
-       // Gather data
-       $studentData = [
-        'university' => 'Zambia University College of Technology',
-        'student_name' => $student->user->first_name . ' ' . $student->user->last_name,
-        'student_id' => $student->id,
-        'year_of_study' => $student->level->name,
-        'programme' => $student->program->name,
-        'programme_code' => $student->program->code,
-        'academic_period' => $academicInfo->academic_period->name,
-        'registered_courses' => $courses,
-    ];
-    
+        $admissionInfo = [
+            'Program of Study' => $student->program->name . ' (' . $student->program->code . ')',
+            'Mode of Study' => $student->study_mode->name,
+            'Registration Date' => $latestEnrollment->created_at->format('d F Y H:i'),
+            'Academic Period' => $academicInfo->academic_period->name,
+            'Year of Study' => $student->level->name
+        ];
 
-       // HTML content
-       $html  = '<p style="text-align:center"><img width="80px" height="80px" src="https://www.zictcollege.ac.zm/images/logo-white.png" /></p>';
-       $html .= '<p style="text-align:center"><b>' . $studentData['university'] . ' </b></p>';
-       $html .= '<p style="text-align:center"><b>' . $studentData['student_name'] . '</b></p>';
-       $html .= '<hr>';
-       $html .= '<p>Student ID: ' . $studentData['student_id'] . '</p>';
-       $html .= '<p>Year of study: ' . $studentData['year_of_study'] . '</p>';
-       $html .= '<p>Programme: ' . $studentData['programme'] . '</p>';
-       $html .= '<p>Programme Code: ' . $studentData['programme_code'] . '</p>';
-       $html .= '<p>Academic Period: ' . $studentData['academic_period'] . '</p>';
-       $html .= '<hr>';
-       $html .= '<p style="font-weight: bold; text-align:center; margin-bottom: 10px;">Registered Courses</p>';
+        $pdf = Pdf::loadView('templates.pdf.registration-summary', compact('studentInfo', 'admissionInfo', 'courses'));
 
-       foreach ($studentData['registered_courses'] as $key => $course) {
-           $html .= '<p>' . ++$key . '. ' . $course->code . ' ' . $course->name . '</p>';
-       }
-
-       // Create a new TCPDF object
-       $pdf = new TCPDF();
-         
-       $pdf::SetTitle('Registration Summary');
-       $pdf::AddPage();
-       $pdf::writeHTML($html, true, false, true, false, '');
-
-       // Output the PDF to the browser or save it to a file
-       return $pdf::Output($filename, 'D');
+        return $pdf->download($fileName);
     }
 }

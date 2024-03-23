@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -24,6 +25,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('pages.home.home');
+        $user = Auth::user();
+
+        if ($user->userType->title == 'student') {
+            return view('pages.home.student_home');
+        }else {
+            return view('pages.home.home');
+        }
     }
 }

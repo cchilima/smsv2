@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Reports\Accounts\AccountReportsController;
+use App\Http\Controllers\Reports\Enrollments\EnrollmentReportsController;
 use App\Http\Controllers\Users\MyAccountController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,7 @@ use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Enrollments\EnrollmentController;
 use App\Http\Controllers\Residency\{CountryController, ProvinceController, TownController};
 use App\Http\Controllers\Settings\SettingsController;
+use App\Http\Controllers\Users\StudentController as UsersStudentController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -81,8 +83,9 @@ Route::group(['prefix' => 'assess'], function () {
     });
 });
 
-Route::group(['prefix' => 'accounts'], function () {
+
     Route::group(['prefix' => 'reports'], function () {
+        Route::group(['prefix' => 'accounts'], function () {
         Route::get('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue.analysis');
         Route::post('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue-revenue-result');
 
@@ -90,12 +93,24 @@ Route::group(['prefix' => 'accounts'], function () {
         Route::post('/invoices', [AccountReportsController::class, 'invoices'])->name('invoices-results');
 
         Route::get('/transactions', [AccountReportsController::class, 'Transactions'])->name('transactions');
+        Route::post('/transactions', [AccountReportsController::class, 'Transactions'])->name('transaction-results');
 
         Route::get('/aged-receivables', [AccountReportsController::class, 'AgedReceivables'])->name('aged.receivables');
+        Route::post('/aged-receivables', [AccountReportsController::class, 'AgedReceivables'])->name('aged.receivables.post');
+
         Route::get('/failed-transactions', [AccountReportsController::class, 'FailedPayments'])->name('failed.transaction');
+
         Route::get('/student-list', [AccountReportsController::class, 'StudentList'])->name('student.list');
+        Route::post('/student-list', [AccountReportsController::class, 'StudentList'])->name('student.list.post');
+
         Route::get('/credit-notes', [AccountReportsController::class, 'CreditNotes'])->name('credit.notes');
     });
+        Route::group(['prefix' => 'enrollments'], function () {
+            Route::get('/enrollments', [EnrollmentReportsController::class, 'index'])->name('enrollments.reports');
+            Route::get('/exam-registers', [EnrollmentReportsController::class, 'ExamRegisters'])->name('registers.reports');
+            Route::get('/student-list-reports', [EnrollmentReportsController::class, 'StudentList'])->name('student.list.reports');
+            Route::get('/audit-trail', [EnrollmentReportsController::class, 'AuditTrailReports'])->name('audit.trail.reports');
+        });
 });
 
 Route::group(['prefix' => 'accounts'], function () {
@@ -162,10 +177,20 @@ Route::resource('payment-methods', PaymentMethodController::class);
 //my account
 Route::group(['prefix' => 'my_account'], function () {
     Route::get('/', [MyAccountController::class, 'index'])->name('my_account');
-    //        Route::put('/', 'MyAccountController@update_profile')->name('my_account.update');
+    // Route::put('/', 'MyAccountController@update_profile')->name('my_account.update');
     Route::put('/change_password', [MyAccountController::class, 'change_pass'])->name('my_account.change_pass');
 });
 
 Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])->name('students.resetAccountPassword');
-//student controller enrolments
-Route::get('/student-enrollments', [\App\Http\Controllers\Users\StudentController::class, 'Enrollments'])->name('student.enrollments');
+
+// Student-specific Routes
+Route::group(['prefix' => 'student'], function () {
+    Route::get('/enrollments', [UsersStudentController::class, 'enrollments'])->name('student.enrollments');
+    Route::get('/finances', [UsersStudentController::class, 'finances'])->name('student.finances');
+
+    // Financial statements generator/download routes
+    Route::get('/invoices/{invoice}/download/', [InvoiceController::class, 'downloadInvoice'])->name('student.download-invoice');
+    Route::get('/invoices/{student}/export/', [InvoiceController::class, 'exportInvoices'])->name('student.export-invoices');
+    Route::get('/statements/{invoice}/download/', [StatementController::class, 'downloadStatement'])->name('student.download-statement');
+    Route::get('/statements/{student}/export/', [StatementController::class, 'exportStatements'])->name('student.export-statements');
+});

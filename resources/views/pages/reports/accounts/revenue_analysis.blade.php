@@ -63,7 +63,7 @@
                                         @foreach($u->details as $d)
 {{--                                        @foreach ($u->details->where('fee_id', $u->id) as $d)--}}
                                             <tr>
-                                                <td>{{ $d->fee->name }}</td>
+                                                <td>{{ ($d->fee) ? $d->fee->name : '' }}</td>
                                                 <td>{{ $d->amount }}</td>
                                                 <td>{{ $d->type }}</td>
                                             </tr>

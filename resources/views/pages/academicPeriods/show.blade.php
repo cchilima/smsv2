@@ -11,6 +11,13 @@
                     <img style="width: 90%; height:90%" src="{{ '' }}" alt="photo" class="rounded-circle">
                     <br>
                     <h3 class="mt-3">{{ $academicPeriod->code.' - '.$academicPeriod->name }}</h3>
+                    <p>Registered Students : {{ $students }}</p>
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex">
+                            <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
+                               class="dropdown-item"><i class="icon-file-download"></i> Download Enrollment report</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -42,20 +49,20 @@
                                     <td>{{ $academicPeriod->code }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-weight-bold text-justify">Description</td>
-                                    <td>{{ $academicPeriod->description }}</td>
+                                    <td class="font-weight-bold text-justify">Period Type</td>
+                                    <td>{{ $academicPeriod->period_types->name }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-weight-bold text-justify">Description</td>
-                                    <td>{{ $academicPeriod->ec_start_date }}</td>
+                                    <td class="font-weight-bold text-justify">Registered Students</td>
+                                    <td>{{ $students }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-weight-bold text-justify">Description</td>
-                                    <td>{{ $academicPeriod->ac_end_ate }}</td>
+                                    <td class="font-weight-bold text-justify">Total classes</td>
+                                    <td>{{ count($periodClasses) }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-weight-bold text-justify">Description</td>
-                                    <td>{{ $academicPeriod->description }}</td>
+                                    <td class="font-weight-bold text-justify">Total Programs</td>
+                                    <td>{{ count($programs) }}</td>
                                 </tr>
 
                                 </tbody>
@@ -123,8 +130,17 @@
                             @endif
                         </div>
                         <div class="tab-pane fade" id="all-fees">
-                            <table class="table table-bordered table-hover table-striped">
-                                <tbody>
+{{--                            <table class="table table-bordered table-hover table-striped datatable-button-html5-columns">--}}
+                            <table class="table datatable-button-html5-columns table-bordered table-hover ">
+                                    <thead>
+                                    <tr>
+                                        <th>Fee Name</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
                                 @foreach($feeInformation as $fee)
                                     <tr>
                                         <td>{{ $fee->fee->name }}</td>
@@ -135,7 +151,7 @@
                                                class="dropdown-item"><i class="icon-pencil"></i></a>
                                             @if($fee->status == 0)
                                                 <a href="{{ route('academic-period-fees.edit', Qs::hash($fee->id)) }}"
-                                                   class="dropdown-item"><i class="icon-eye"></i> publish</a>
+                                                   class="dropdown-item"><i class="icon-eye"></i></a>
                                             @endif
 
                                         </td>
@@ -167,14 +183,8 @@
                                 All classes
                             </a>
                         </li>
-
                         <li class="nav-item">
-                            <a href="#all-add-courses" class="nav-link" data-toggle="tab">
-                                Available Classes
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#all-add-prerequisite-courses" class="nav-link" data-toggle="tab">
+                            <a href="#all-ac-programs" class="nav-link" data-toggle="tab">
                                 Running programs
                             </a>
                         </li>
@@ -182,12 +192,23 @@
 
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="all-classes">
+
                             <table class="table datatable-button-html5-columns">
+                                <div class="d-flex justify-content-between">
+                                    <div class="d-flex">
+                                        <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
+                                           class="dropdown-item"><i class="icon-file-download"></i> Download</a>
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
+                                           class="dropdown-item"><i class="icon-add-to-list"></i> Add Class</a>
+                                    </div>
+                                </div>
                                 <thead>
                                 <tr>
                                     <th>S/N</th>
-                                    <th>Academic Period</th>
                                     <th>Course</th>
+                                    <th>Students</th>
                                     <th>Instructor</th>
                                     <th>Action</th>
                                 </tr>
@@ -196,8 +217,8 @@
                                 @foreach($periodClasses as $period)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $period->academicPeriod->code }}</td>
                                         <td>{{ $period->course->code}}</td>
+                                        <td>{{ count($period->enrollments) }}</td>
                                         <td>{{ $period->instructor->first_name}}</td>
 
                                         <td class="text-center">
@@ -213,6 +234,9 @@
                                                                class="dropdown-item"><i class="icon-pencil"></i>
                                                                 Edit</a>
                                                         @endif
+                                                            <a href="{{ route('academic-period-classes.edit', $period->id) }}"
+                                                               class="dropdown-item"><i class="icon-paperplane"></i>
+                                                                Download List</a>
                                                         @if(Qs::userIsSuperAdmin())
                                                             <a id="{{ $period->id }}" onclick="confirmDelete(this.id)"
                                                                href="#" class="dropdown-item"><i class="icon-trash"></i>
@@ -230,88 +254,60 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pane fade" id="all-add-courses">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <form class="ajax-store" method="post"
-                                          action="{{ route('program-courses.store') }}">
-                                        @csrf
-                                        <div class="form-group row">
-                                            <label for="courses" class="col-lg-3 col-form-label font-weight-semibold">Courses
-                                                <span class="text-danger">*</span></label>
-                                            <div class="col-lg-9">
-                                                <select required data-placeholder="Select Course" multiple
-                                                        class="form-control select-search" name="course_id[]"
-                                                        id="courses">
-                                                    <option value=""></option>
-                                                    {{--                                                        @foreach($newcourses as $c)--}}
-                                                    {{--                                                            <option value="{{ $c->id }}">{{ $c->code.' - '.$c->name }}</option>--}}
-                                                    {{--                                                        @endforeach--}}
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <input type="hidden" name="program_id" value="">
+                        <div class="tab-pane fade" id="all-ac-programs">
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex">
+                                    <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
+                                       class="dropdown-item"><i class="icon-file-download"></i> Download</a>
+                                </div>
+                                <div>
+                                    <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
+                                       class="dropdown-item"><i class="icon-add-to-list"></i> Add Class</a>
+                                </div>
+                            </div>
+                            <table class="table datatable-button-html5-columns">
+                                <thead>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Program Code</th>
+                                    <th>Program Name</th>
+                                    <th>Qualification</th>
+                                    <th>Department</th>
+                                    <th>Students</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($programs as $p)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $p->code }}</td>
+                                        <td>{{ $p->name}}</td>
+                                        <td>{{ $p->qualification->name }}</td>
+                                        <td>{{ $p->department->name }}</td>
+                                        <td>{{ $p->students_count }}</td>
 
-                                        <div class="form-group row">
-                                            <label for="course-level"
-                                                   class="col-lg-3 col-form-label font-weight-semibold">Level <span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-lg-9">
-                                                <select required data-placeholder="Select Class Type"
-                                                        class="form-control select" name="level_id" id="course-level">
-                                                    {{--                                                        @foreach($levels as $l)--}}
-                                                    {{--                                                            <option value="{{ $l->id }}">{{ $l->name }}</option>--}}
-                                                    {{--                                                        @endforeach--}}
-                                                </select>
+                                        <td class="text-center">
+                                            <div class="list-icons">
+                                                <div class="dropdown">
+                                                    <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                                        <i class="icon-menu9"></i>
+                                                    </a>
+
+                                                    <div class="dropdown-menu dropdown-menu-left">
+                                                        @if(Qs::userIsTeamSA())
+                                                            <a href="{{ route('academic-period-classes.edit', $period->id) }}"
+                                                               class="dropdown-item"><i class="icon-paperplane"></i>
+                                                                Download List</a>
+                                                        @endif
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <button id="ajax-btn" type="submit" class="btn btn-primary">Submit form <i
-                                                    class="icon-paperplane ml-2"></i></button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="all-add-prerequisite-courses">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <form class="ajax-store" method="post" action="{{ route('prerequisites.store') }}">
-                                        @csrf
-                                        <div class="form-group row">
-                                            <label for="courses" class="col-lg-3 col-form-label font-weight-semibold">Courses
-                                                <span class="text-danger">*</span></label>
-                                            <div class="col-lg-9">
-                                                <select required data-placeholder="Select Course"
-                                                        class="form-control select-search" name="courseID" id="courses">
-                                                    <option value=""></option>
-                                                    {{--                                                        @foreach($pcourses as $c)--}}
-                                                    {{--                                                            <option value="{{ $c->id }}">{{ $c->code.' - '.$c->name }}</option>--}}
-                                                    {{--                                                        @endforeach--}}
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="course-level"
-                                                   class="col-lg-3 col-form-label font-weight-semibold">Prerequisite
-                                                Courses <span class="text-danger">*</span></label>
-                                            <div class="col-lg-9">
-                                                <select required data-placeholder="Select Prerequisite" multiple
-                                                        class="form-control select" name="prerequisiteID[]"
-                                                        id="course-level">
-                                                    {{--                                                        @foreach($pcourses as $c)--}}
-                                                    {{--                                                            <option value="{{ $c->id }}">{{ $c->code.' - '.$c->name }}</option>--}}
-                                                    {{--                                                        @endforeach--}}
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <button id="ajax-btn" type="submit" class="btn btn-primary">Submit form <i
-                                                    class="icon-paperplane ml-2"></i></button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
