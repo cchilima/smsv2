@@ -774,7 +774,7 @@
                                         @foreach ($invoice->details as $key => $detail)
                                             <tr>
                                                 <td>{{ ++$key }}</td>
-                                                <td>{{ $detail->fee->name }}</td>
+                                                <td>{{ ($detail->fee->name ?? '') }}</td>
                                                 <td>K {{ $detail->amount }}</td>
                                             </tr>
                                         @endforeach

@@ -14,7 +14,7 @@
                 <div class="tab-pane fade show active" id="all-classes">
                     <div class="row mt-0 mb-1">
                         <div class="col-md-12">
-                            <form class="ajax-store-test" method="post" action="{{ route('transaction-results')  }}">
+                            <form class="ajax-store-test" method="post" action="{{ route('student.csv.list')  }}">
                                 @csrf
                                 <div class="form-group row">
                                     <div class="col-md-4">
@@ -22,13 +22,13 @@
                                             <label class="col-lg-3 col-form-label font-weight-semibold">Academic Period <span
                                                     class="text-danger">*</span></label>
                                             <div class="col-lg-9">
-                                                <select name="instructor_id" class="form-control select-search" required>
+                                                <select name="ac[]" multiple class="form-control select-search" required>
                                                     <option
                                                         value="">select option</option>
-{{--                                                    @foreach ($instructors as $instructor)--}}
-{{--                                                        <option--}}
-{{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option>--}}
-{{--                                                    @endforeach--}}
+                                                    @foreach ($ac as $c)
+                                                        <option
+                                                            value="{{ $c->id }}">{{ $c->name }} </option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -38,13 +38,13 @@
                                             <label class="col-lg-3 col-form-label font-weight-semibold">Programs <span
                                                     class="text-danger">*</span></label>
                                             <div class="col-lg-9">
-                                                <select name="instructor_id" class="form-control select-search" required>
+                                                <select name="program[]" multiple class="form-control select-search" required>
                                                     <option
                                                         value="">select option</option>
-{{--                                                    @foreach ($instructors as $instructor)--}}
-{{--                                                        <option--}}
-{{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option>--}}
-{{--                                                    @endforeach--}}
+                                                    @foreach ($program as $p)
+                                                        <option
+                                                            value="{{ $p->id }}">{{ $p->name }} </option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -61,7 +61,7 @@
                                 </div>
                                 <div class="col-md">
                                     <div class="text-right">
-                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Search <i class="icon-paperplane"></i></button>
+                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Download CSV <i class="icon-paperplane"></i></button>
                                     </div>
                                 </div>
                             </form>

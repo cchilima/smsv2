@@ -12,10 +12,12 @@
                     <br>
                     <h3 class="mt-3">{{ $academicPeriod->code.' - '.$academicPeriod->name }}</h3>
                     <p>Registered Students : {{ $students }}</p>
-                    <div class="d-flex justify-content-between">
-                        <div class="d-flex">
-                            <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
-                               class="dropdown-item"><i class="icon-file-download"></i> Download Enrollment report</a>
+                    <div class="row">
+                        <div class="col">
+                            <a href="{{ route('student.program.list', ['ac'=>$academicPeriod->id]) }}"
+                               class="dropdown-item"><i class="icon-file-download"></i> Download Enrollment report PDF</a>
+                            <a href="{{ route('student.program.list.csv', ['ac'=>$academicPeriod->id]) }}"
+                               class="dropdown-item"><i class="icon-file-download"></i> Download Enrollment report Excel</a>
                         </div>
                     </div>
                 </div>
@@ -196,11 +198,13 @@
                             <table class="table datatable-button-html5-columns">
                                 <div class="d-flex justify-content-between">
                                     <div class="d-flex">
-                                        <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
-                                           class="dropdown-item"><i class="icon-file-download"></i> Download</a>
+                                        <a href="{{ route('student.class.list', ['ac'=>$academicPeriod->id]) }}"
+                                           class="dropdown-item"><i class="icon-file-download"></i> Download PDF </a>
+                                        <a href="{{ route('student.csv.class.list', ['ac'=>$academicPeriod->id]) }}"
+                                           class="dropdown-item"><i class="icon-file-download"></i> Download Excel </a>
                                     </div>
                                     <div>
-                                        <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
+                                        <a href="{{ route('student.class.list', ['ac'=>$academicPeriod->id]) }}"
                                            class="dropdown-item"><i class="icon-add-to-list"></i> Add Class</a>
                                     </div>
                                 </div>
@@ -234,9 +238,13 @@
                                                                class="dropdown-item"><i class="icon-pencil"></i>
                                                                 Edit</a>
                                                         @endif
-                                                            <a href="{{ route('academic-period-classes.edit', $period->id) }}"
+
+                                                            <a href="{{ route('student.one.class.list', ['classid'=>$period->id,'ac'=>$academicPeriod->id]) }}"
                                                                class="dropdown-item"><i class="icon-paperplane"></i>
-                                                                Download List</a>
+                                                                Download PDF List</a>
+                                                            <a href="{{ route('student.csv.one.class.list', ['classid'=>$period->id,'ac'=>$academicPeriod->id]) }}"
+                                                               class="dropdown-item"><i class="icon-paperplane"></i>
+                                                                Download CSV List</a>
                                                         @if(Qs::userIsSuperAdmin())
                                                             <a id="{{ $period->id }}" onclick="confirmDelete(this.id)"
                                                                href="#" class="dropdown-item"><i class="icon-trash"></i>
@@ -257,12 +265,13 @@
                         <div class="tab-pane fade" id="all-ac-programs">
                             <div class="d-flex justify-content-between">
                                 <div class="d-flex">
-                                    <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
-                                       class="dropdown-item"><i class="icon-file-download"></i> Download</a>
+                                    <a href="{{ route('student.program.list', ['ac'=>$academicPeriod->id]) }}"
+                                       class="dropdown-item"><i class="icon-file-download"></i> Download PDF</a>
+                                    <a href="{{ route('student.program.list.csv', ['ac'=>$academicPeriod->id]) }}"
+                                       class="dropdown-item"><i class="icon-file-download"></i> Download Excel</a>
                                 </div>
                                 <div>
-                                    <a href="{{ route('academic-period-management.index', ['ac'=>$academicPeriod->id]) }}"
-                                       class="dropdown-item"><i class="icon-add-to-list"></i> Add Class</a>
+
                                 </div>
                             </div>
                             <table class="table datatable-button-html5-columns">
@@ -296,9 +305,12 @@
 
                                                     <div class="dropdown-menu dropdown-menu-left">
                                                         @if(Qs::userIsTeamSA())
-                                                            <a href="{{ route('academic-period-classes.edit', $period->id) }}"
+                                                            <a href="{{ route('student.one.program.list', ['ac'=>$academicPeriod->id,'pid'=>$p->id]) }}"
                                                                class="dropdown-item"><i class="icon-paperplane"></i>
-                                                                Download List</a>
+                                                                Download PDF List</a>
+                                                            <a href="{{ route('student.csv.one.program.list', ['ac'=>$academicPeriod->id,'pid'=>$p->id]) }}"
+                                                               class="dropdown-item"><i class="icon-paperplane"></i>
+                                                                Download CSV List</a>
                                                         @endif
                                                     </div>
                                                 </div>
