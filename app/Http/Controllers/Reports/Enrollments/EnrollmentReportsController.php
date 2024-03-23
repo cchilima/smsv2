@@ -85,12 +85,15 @@ class EnrollmentReportsController extends Controller
 
     public function ExamRegisters()
     {
-        return view('pages.reports.enrollments.exam_registers');
+        $data['ac'] = $this->academicPeriodRepository->getAllopen();
+        return view('pages.reports.enrollments.exam_registers',$data);
     }
 
     public function StudentList()
     {
-        return view('pages.reports.enrollments.student_list');
+        $data['ac'] = $this->academicPeriodRepository->getAllopen();
+        $data['program'] = $this->programsRepository->getAll();
+        return view('pages.reports.enrollments.student_list',$data);
     }
 
     public function AuditTrailReports()
@@ -138,6 +141,17 @@ class EnrollmentReportsController extends Controller
         $fileName = $ac . '-class-student-list-' . now()->format('d-m-Y-His') . '.pdf';
         $pdf = Pdf::loadView('templates.pdf.class-one-student-list', compact('academic'));
         return $pdf->download($fileName);
+    }
+    public function ExamRegistersDownload(Request $request){
+         $ac_id = $request->input('ac_id');
+        $class_id = $request->input('class_id');
+
+        $academics = $this->enrollmentRepository->getStudentsWithProgramsForClassesAndAcademicPeriods($ac_id, $class_id);
+       // dd($academics);
+        $fileName =  'E-exam-register-' . now()->format('d-m-Y-His') . '.pdf';
+        $pdf = Pdf::loadView('templates.pdf.exam_register', compact('academics'));
+        return $pdf->download($fileName);
+       // dd($academic);
     }
 
     public function DownloadstudentProgramListCsv($ac)

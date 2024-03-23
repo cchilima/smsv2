@@ -116,6 +116,9 @@ Route::group(['prefix' => 'assess'], function () {
             Route::get('/class-student-list/{ac}', [EnrollmentReportsController::class, 'DownloadAcClassLists'])->name('student.class.list');
             Route::get('/class-student-list/{ac}/{classid}', [EnrollmentReportsController::class, 'DownloadAcOneClassLists'])->name('student.one.class.list');
 
+            //regidters
+            Route::post('/exam-registers', [EnrollmentReportsController::class, 'ExamRegistersDownload'])->name('ac.exam.registers');
+
             //csv
             Route::get('/programs-csv-student-list/{ac}', [EnrollmentReportsController::class, 'DownloadstudentProgramListCsv'])->name('student.program.list.csv');
             Route::get('/program-csv-student-list/{ac}/{pid}', [EnrollmentReportsController::class, 'DownloadStudentProgramListOneCSV'])->name('student.csv.one.program.list');

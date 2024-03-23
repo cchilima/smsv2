@@ -293,6 +293,77 @@
         var url = '<?php echo e(route('class-names', [':id'])); ?>';
         url = url.replace(':id', ac_id);
         var classId = $('#classID');
+        var classIds = $('.classID');
+
+        $.ajax({
+            dataType: 'json',
+            url: url,
+            success: function (resp) {
+                classId.empty();
+                classId.append($('<option>', {
+                    value: '',
+                    text: 'Choose ...'
+                }));
+                classIds.empty();
+                classIds.append($('<option>', {
+                    value: '',
+                    text: 'Choose ...'
+                }));
+                $.each(resp, function (i, data) {
+                    classId.append($('<option>', {
+                        value: data.id,
+                        text: data.course.code + ' - ' + data.course.name
+                    }));
+                    classIds.append($('<option>', {
+                        value: data.id,
+                        text: data.course.code + ' - ' + data.course.name
+                    }));
+                });
+            }
+        })
+    }
+
+    // Bind the function to the change event of the #ac_id input
+    $('#ac_id').on('change', function () {
+        getAcClassesPDER();
+    });
+
+    function getAcClassesPDER() {
+        var ac_ids = $('#ac_id').val(); // Assuming ac_id is a multiple select input
+        var classId = $('#class_id');
+        classId.empty();
+        classId.append($('<option>', {
+            value: '',
+            text: 'Choose ...'
+        }));
+
+        // Iterate over each academic period ID
+        $.each(ac_ids, function (index, ac_id) {
+            var url = '<?php echo e(route('class-names', [':id'])); ?>';
+            url = url.replace(':id', ac_id);
+
+            $.ajax({
+                dataType: 'json',
+                url: url,
+                async: false, // Ensures synchronous processing
+                success: function (resp) {
+                    $.each(resp, function (i, data) {
+                        classId.append($('<option>', {
+                            value: data.id,
+                            text: data.course.code + ' - ' + data.course.name
+                        }));
+                    });
+                }
+            });
+        });
+    }
+
+
+    function getAcClassesPDERs() {
+        var ac_id = $('#ac_id').val();
+        var url = '<?php echo e(route('class-names', [':id'])); ?>';
+        url = url.replace(':id', ac_id);
+        var classId = $('#class_id');
 
         $.ajax({
             dataType: 'json',

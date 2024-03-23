@@ -421,6 +421,174 @@ class EnrollmentRepository
         return $result;
     }
 
+    public function getStudentsWithProgramsForClassesAndAcademicPeriods($academic_period_ids, $class_ids)
+    {
+        // Initialize result array
+        $results = [];
+
+        // Loop through each academic period
+        foreach ($academic_period_ids as $academic_period_id) {
+            // Retrieve the academic period details
+            $academic_period = AcademicPeriod::findOrFail($academic_period_id);
+
+            // Initialize academic period array
+            $academic_period_array = [
+                'academic_period_id' => $academic_period_id,
+                'name' => $academic_period->name,
+                'code' => $academic_period->code,
+                'total_students' => 0,
+                'classes' => []
+            ];
+
+            // Loop through each class
+            foreach ($class_ids as $class_id) {
+                // Retrieve the class details
+                $class = AcademicPeriodClass::with('course')->findOrFail($class_id);
+
+                // Retrieve students enrolled in the specified class and academic period
+                $enrollments = Enrollment::where('academic_period_class_id', $class_id)
+                    ->whereHas('class', function ($query) use ($academic_period_id) {
+                        $query->where('academic_period_id', $academic_period_id);
+                    })
+                    ->with('student.user', 'student.program')
+                    ->get();
+
+                // Increment total number of students for the academic period
+                $academic_period_array['total_students'] += $enrollments->count();
+
+                // Initialize class array
+                $class_array = [
+                    'class_id' => $class_id,
+                    'class_name' => $class->course->name,
+                    'class_code' => $class->course->code,
+                    'students' => []
+                ];
+
+                // Loop through each enrollment
+                foreach ($enrollments as $enrollment) {
+                    $student = $enrollment->student;
+
+                    // Calculate total invoice amount
+                    $totalInvoiceAmount = $student->invoices->flatMap(function ($invoice) {
+                        return $invoice->details->pluck('amount');
+                    })->sum();
+
+                    // Calculate total receipt amount
+                    $totalReceiptAmount = $student->receipts->sum('amount');
+
+                    // Calculate balance
+                    $balance = $totalInvoiceAmount - $totalReceiptAmount;
+
+                    // Calculate payment percentage
+                    $paymentPercentage = $totalInvoiceAmount > 0 ? ($totalReceiptAmount / $totalInvoiceAmount) * 100 : 0;
+
+                    // Get data of the student
+                    $gender = $student->user->gender ?? '';
+                    $email = $student->user->email ?? '';
+                    $level = $student->user->level ?? '';
+
+                    // Add student information to class array
+                    $class_array['students'][] = [
+                        'student_id' => $student->id,
+                        'name' => $student->user->first_name . ' ' . $student->user->last_name,
+                        'student_number' => $student->user->student_number,
+                        'gender' => $gender,
+                        'program' => $student->program->name,
+                        'email' => $email,
+                        'level' => $level,
+                        'payment_percentage' => $paymentPercentage,
+                        'balance' => $balance
+                    ];
+                }
+
+                // Add class array to academic period array
+                $academic_period_array['classes'][] = $class_array;
+            }
+
+            // Add academic period array to results
+            $results[] = $academic_period_array;
+        }
+
+        return $results;
+    }
+    public function getStudentsWithProgramsForClassesAndAcademicPeriodsss($academic_period_ids, $class_ids)
+    {
+        // Initialize result array
+        $programs = [];
+
+        // Loop through each academic period
+        foreach ($academic_period_ids as $academic_period_id) {
+            // Initialize academic period array
+            $programs[$academic_period_id] = [
+                'total_students' => 0,
+                'classes' => []
+            ];
+
+            // Loop through each class
+            foreach ($class_ids as $class_id) {
+                // Retrieve the class details
+                $class = AcademicPeriodClass::with('course')->findOrFail($class_id);
+
+                // Retrieve students enrolled in the specified class and academic period
+                $students = Student::with(['user', 'invoices.details', 'receipts'])
+                    ->whereHas('enrollments.class', function ($query) use ($academic_period_id, $class_id) {
+                        $query->where('academic_period_id', $academic_period_id)
+                            ->where('class_id', $class_id);
+                    })
+                    ->get();
+
+                // Increment total number of students for the academic period
+                $programs[$academic_period_id]['total_students'] += $students->count();
+
+                // Initialize class array
+                $classArray = [
+                    'class_id' => $class_id,
+                    'class_name' => $class->course->name,
+                    'class_code' => $class->course->code,
+                    'students' => []
+                ];
+
+                // Loop through each student
+                foreach ($students as $student) {
+                    // Calculate total invoice amount
+                    $totalInvoiceAmount = $student->invoices->flatMap(function ($invoice) {
+                        return $invoice->details->pluck('amount');
+                    })->sum();
+
+                    // Calculate total receipt amount
+                    $totalReceiptAmount = $student->receipts->sum('amount');
+
+                    // Calculate balance
+                    $balance = $totalInvoiceAmount - $totalReceiptAmount;
+
+                    // Calculate payment percentage
+                    $paymentPercentage = $totalInvoiceAmount > 0 ? ($totalReceiptAmount / $totalInvoiceAmount) * 100 : 0;
+
+                    // Get data of the student
+                    $gender = $student->user->gender ?? '';
+                    $email = $student->user->email ?? '';
+                    $level = $student->user->level ?? '';
+
+                    // Add student information to class array
+                    $classArray['students'][] = [
+                        'student_id' => $student->id,
+                        'name' => $student->user->first_name . ' ' . $student->user->last_name,
+                        'gender' => $gender,
+                        'email' => $email,
+                        'level' => $level,
+                        'payment_percentage' => $paymentPercentage,
+                        'balance' => $balance
+                    ];
+                }
+
+                // Add class array to academic period array
+                $programs[$academic_period_id]['classes'][] = $classArray;
+            }
+        }
+
+        return $programs;
+    }
+
     /**
      * @param $academic_period_id
      * @param mixed $program
