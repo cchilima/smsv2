@@ -14,6 +14,7 @@ use App\Repositories\Academics\AcademicPeriodRepository;
 class EnrollmentRepository
 {
     protected $repo;
+
     public function __construct(AcademicPeriodClassRepository $repo)
     {
         // $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
@@ -21,6 +22,7 @@ class EnrollmentRepository
 
         $this->repo = $repo;
     }
+
     public function getStudentsWithProgramAndAcademicPeriod($academic_period_id)
     {
         // Retrieve academic period details
@@ -55,13 +57,14 @@ class EnrollmentRepository
 
         return $results;
     }
+
     public function getStudentsWithProgramAndAcademicPeriods($academic_period_id)
     {
         // Retrieve academic period details
         $academicPeriod = AcademicPeriod::findOrFail($academic_period_id);
 
         // Retrieve program details associated with the academic period
-        $programs =  $this->repo->academicProgramStudents($academic_period_id);
+        $programs = $this->repo->academicProgramStudents($academic_period_id);
 
         // Initialize result array
         $result = [];
@@ -84,6 +87,7 @@ class EnrollmentRepository
 
         return $finalResult;
     }
+
     public function getStudentsForProgramAndAcademicPeriod($program_id, $academic_period_id)
     {
         // Retrieve academic period details
@@ -145,6 +149,7 @@ class EnrollmentRepository
 
         return $result;
     }
+
     public function getStudentsForProgramsAndAcademicPeriod($program_ids, $academic_period_id)
     {
         // Retrieve academic period details
@@ -171,6 +176,7 @@ class EnrollmentRepository
 
         return $result;
     }
+
     public function getStudentsForPeriodsAndPrograms($academic_period_ids, $program_ids)
     {
         // Retrieve academic periods
@@ -249,6 +255,7 @@ class EnrollmentRepository
 
         return $results;
     }
+
     public function getStudentsWithPrograms($academic_period_id, $student_ids)
     {
         // Retrieve program IDs associated with the courses offered in the academic period
@@ -389,7 +396,7 @@ class EnrollmentRepository
         return $result;
     }
 
-    public function getStudentsWithProgramsForClassAndAcademicPeriod($academic_period_id,$class_id)
+    public function getStudentsWithProgramsForClassAndAcademicPeriod($academic_period_id, $class_id)
     {
         // Retrieve the class details
         $class = AcademicPeriodClass::with('course')->findOrFail($class_id);
@@ -511,6 +518,7 @@ class EnrollmentRepository
 
         return $results;
     }
+
     public function getStudentsWithProgramsForClassesAndAcademicPeriodsss($academic_period_ids, $class_ids)
     {
         // Initialize result array
@@ -691,6 +699,58 @@ class EnrollmentRepository
                 'balance' => $balance
             ];
         }
+        return $result;
+    }
+
+    public function getCurrentcourse($student_id)
+    {
+        // Retrieve the student
+        $student = Student::findOrFail($student_id);
+
+        // Retrieve the most recent academic period from the student's enrollments
+        $recentAcademicPeriod = Enrollment::where('student_id', $student_id)
+            ->with('class.academicPeriod')
+            ->latest()
+            ->firstOrFail()
+            ->class
+            ->academicPeriod;
+
+        // Retrieve all enrollments for the student within the classes of the recent academic period
+        $enrollments = Enrollment::whereHas('class', function ($query) use ($recentAcademicPeriod) {
+            $query->where('academic_period_id', $recentAcademicPeriod->id);
+        })
+            ->where('student_id', $student_id)
+            ->with('class.course')
+            ->get();
+
+        // Initialize array to store unique course IDs
+        $uniqueCourses = [];
+
+        // Construct result array
+        $result = [
+            'academic_period_id' => $recentAcademicPeriod->id,
+            'academic_period_name' => $recentAcademicPeriod->name,
+            'courses' => []
+        ];
+
+        // Loop through each enrollment and add associated course to result array
+        foreach ($enrollments as $enrollment) {
+            $courseId = $enrollment->class->course->id;
+
+            // Check if course ID is already added to uniqueCourses array
+            if (!in_array($courseId, $uniqueCourses)) {
+                // If not, add course details to result array and mark course ID as seen
+                $course = $enrollment->class->course;
+                $result['courses'][] = [
+                    'course_id' => $course->id,
+                    'course_name' => $course->name,
+                    'course_code' => $course->code,
+                    // Add any other course information you may need
+                ];
+                $uniqueCourses[] = $courseId;
+            }
+        }
+
         return $result;
     }
 

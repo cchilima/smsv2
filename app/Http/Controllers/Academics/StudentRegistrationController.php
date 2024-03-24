@@ -115,7 +115,6 @@ class StudentRegistrationController extends Controller
             'Gender' => $studentUser->gender,
             'NRC Number' => $studentUserPersonalInfo->nrc,
             'Next of Kin' => $nextOfKin->full_name,
-            'Next of Kin' => $nextOfKin->full_name,
             'Next of Kin Relationship' => $nextOfKin->relationship->relationship,
             'Next of Kin Contact' => $nextOfKin->mobile,
         ];

@@ -52,7 +52,7 @@
                                 </div>
                                 <div class="col-md">
                                     <div class="text-right">
-                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Search <i class="icon-paperplane"></i></button>
+                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Download <i class="icon-paperplane"></i></button>
                                     </div>
                                 </div>
                             </form>

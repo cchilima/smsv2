@@ -94,7 +94,7 @@ use App\Helpers\Qs;
 
 <body>
 <div class="header" style="text-align:center;">
-    <img class="logo" src="{{ storage_path('images/logo-v2.png') }}" alt="" style="
+    <img class="logo" src="data:image/gif;base64,{{$logo}}" alt="" style="
       background-repeat: no-repeat;
       background-position: center;
       background-size: cover;
