@@ -14,61 +14,64 @@
                 <div class="tab-pane fade show active" id="all-classes">
                     <div class="row mt-0 mb-1">
                         <div class="col-md-12">
-                            <form class="ajax-store-test" method="post" action="{{ route('transaction-results') }}">
-                                <form class="ajax-store-test" method="post" action="{{ route('student.csv.list') }}">
-                                    @csrf
-                                    <div class="form-group row">
-                                        <div class="col-md-4">
-                                            <div class="form-group row">
-                                                <label class="col-lg-3 col-form-label font-weight-semibold">Academic Period
-                                                    <span class="text-danger">*</span></label>
-                                                <div class="col-lg-9">
-                                                    <select name="instructor_id" class="form-control select-search"
-                                                        required>
-                                                        <option value="">select option</option>
-                                                        {{--                                                    @foreach ($instructors as $instructor) --}}
-                                                        {{--                                                        <option --}}
-                                                        {{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option> --}}
-                                                        {{--                                                    @endforeach --}}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group row">
-                                                <label class="col-lg-3 col-form-label font-weight-semibold">Programs <span
-                                                        class="text-danger">*</span></label>
-                                                <div class="col-lg-9">
-                                                    <select name="instructor_id" class="form-control select-search"
-                                                        required>
-                                                        <option value="">select option</option>
-                                                        {{--                                                    @foreach ($instructors as $instructor) --}}
-                                                        {{--                                                        <option --}}
-                                                        {{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option> --}}
-                                                        {{--                                                    @endforeach --}}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group row">
-                                                <label class="col-lg-3 col-form-label font-weight-semibold">Payment
-                                                    Threshold
-                                                    <span class="text-danger">*</span></label>
-                                                <div class="col-lg-9">
-                                                    <input name="to_date" type="text" class="form-control date-pick"
-                                                        placeholder="Date">
-                                                </div>
+                            <form class="ajax-store-test" method="post"
+                                action="{{ route('reports.enrollments.download') }}">
+                                @csrf
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 col-form-label font-weight-semibold">Academic Period
+                                                <span class="text-danger">*</span></label>
+                                            <div class="col-lg-9">
+                                                <select id="academic-period-ids" name="ac[]" multiple
+                                                    class="form-control select-search" required>
+                                                    <option value="" disabled>Select academic periods
+                                                    </option>
+                                                    @foreach ($academicPeriods as $academicPeriod)
+                                                        <option value="{{ $academicPeriod->id }}">
+                                                            {{ $academicPeriod->name }} </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md">
-                                        <div class="text-right">
-                                            <button id="ajax-btn" type="submit" class="btn btn-primary">Search <i
-                                                    class="icon-paperplane"></i></button>
+                                    <div class="col-md-4">
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 col-form-label font-weight-semibold">Programs <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="col-lg-9">
+                                                <select id="program-ids" name="program[]" multiple
+                                                    class="form-control select-search" required>
+                                                    <option value="" disabled>Select academic period first</option>
+                                                    {{-- Options populated dynamically --}}
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
-                                </form>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group row">
+                                            <label for="file-type" class="col-lg-3 col-form-label font-weight-semibold">File
+                                                Type<span class="text-danger">*</span></label>
+                                            <div class="col-lg-9">
+                                                <select id="file-type" name="fileType" class="form-control select-search"
+                                                    required>
+                                                    <option value="" disabled>Select report type</option>
+                                                    <option value="csv" selected>CSV</option>
+                                                    <option value="pdf">PDF</option>
+                                                    {{-- Options populated dynamically --}}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="text-right">
+                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Download Report<i
+                                                class="icon-paperplane"></i></button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     @if (isset($transactions))
@@ -104,4 +107,36 @@
         </div>
     </div>
 
+    {{-- Handle User Input --}}
+    {{-- <script>
+        const getProgramsByAcademicPeriod = (academicPeriodIds, programsSelector) => {
+            $.ajax({
+                url: `/academic-periods/${academicPeriodIds}/programs`,
+                type: "GET",
+                dataType: "json",
+                success: (data) => {
+                    $(programsSelector).empty();
+                    $(programsSelector).append(`<option disabled>Choose programs</option>`)
+
+                    $.each(data, (_, value) => {
+                        $(programsSelector).append(
+                            `<option value="${value.id}">${value.name}</option>`);
+                    });
+                }
+            });
+        }
+
+        $(document).ready(() => {
+
+            $('#academic-period-ids').change(function() {
+                const academicPeriodIds = $(this).val();
+
+                if (academicPeriodIds.length > 0) {
+                    getProgramsByAcademicPeriod(academicPeriodIds, '#program-ids');
+                } else {
+                    $('#program-ids').empty();
+                }
+            });
+        });
+    </script> --}}
 @endsection

@@ -110,6 +110,9 @@ Route::group(['prefix' => 'reports'], function () {
         Route::get('/exam-registers', [EnrollmentReportsController::class, 'ExamRegisters'])->name('registers.reports');
         Route::get('/student-list-reports', [EnrollmentReportsController::class, 'StudentList'])->name('student.list.reports');
         Route::get('/audit-trail', [EnrollmentReportsController::class, 'AuditTrailReports'])->name('audit.trail.reports');
+
+
+
         //student list pdf
         Route::get('/programs-student-list/{ac}', [EnrollmentReportsController::class, 'DownloadStudentProgramList'])->name('student.program.list');
         Route::get('/program-student-list/{ac}/{pid}', [EnrollmentReportsController::class, 'DownloadStudentProgramListOne'])->name('student.one.program.list');
@@ -128,9 +131,11 @@ Route::group(['prefix' => 'reports'], function () {
         Route::get('/program-csv-student-list/{ac}/{pid}', [EnrollmentReportsController::class, 'DownloadStudentProgramListOneCSV'])->name('student.csv.one.program.list');
 
         Route::get('/class-csv-student-list/{ac}', [EnrollmentReportsController::class, 'DownloadAcClassListsCSV'])->name('student.csv.class.list');
+
         Route::get('/class-csv-student-list/{ac}/{classid}', [EnrollmentReportsController::class, 'DownloadAcOneClassListsCSV'])->name('student.csv.one.class.list');
+
         //normal reports
-        Route::post('/all-results', [EnrollmentReportsController::class, 'acsPrograms'])->name('student.csv.list');
+        Route::post('/all-enrollments', [EnrollmentReportsController::class, 'downloadAcademicPeriodEnrollmentsReport'])->name('reports.enrollments.download');
     });
 });
 
@@ -165,12 +170,18 @@ Route::resource('registration', StudentRegistrationController::class);
 
 Route::resource('fees', FeeController::class);
 Route::resource('marital-statuses', MaritalStatusController::class);
+Route::resource('students', StudentController::class);
+Route::resource('users', UserController::class);
+
+// Academic Period Routes
 Route::resource('academic-periods', AcademicPeriodController::class);
 Route::resource('academic-period-classes', AcademicPeriodClassController::class);
 Route::resource('academic-period-management', APManagementController::class);
 Route::resource('academic-period-fees', APFeesController::class);
-Route::resource('students', StudentController::class);
-Route::resource('users', UserController::class);
+
+Route::get('/academic-period/{academicPeriodId}/programs', [AcademicPeriodController::class, 'getProgramsByAcademicPeriod'])->name('academic-periods.getProgramsByAcademicPeriod');
+
+Route::get('/academic-periods/{academicPeriodIds}/programs', [AcademicPeriodController::class, 'getProgramsByAcademicPeriods'])->name('academic-periods.getProgramsByAcademicPeriods');
 
 Route::resource('statements', StatementController::class);
 

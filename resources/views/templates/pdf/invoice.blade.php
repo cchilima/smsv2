@@ -146,7 +146,7 @@ use App\Helpers\Qs;
                 @foreach ($invoice->details as $key => $detail)
                     <tr class="items">
                         <td>{{ ++$key }}</td>
-                        <td>{{ $detail->fee->name }}</td>
+                        <td>{{ $detail->fee->name ?? 'N/A' }}</td>
                         <td>K {{ $detail->amount }}</td>
                     </tr>
                 @endforeach

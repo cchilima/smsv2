@@ -18,9 +18,9 @@ class AcademicPeriodClassRepository
     {
         return AcademicPeriodClass::orderBy($order, 'desc')->get();
     }
-    public function getAllAcClasses($id,$order = 'academic_period_id')
+    public function getAllAcClasses($id, $order = 'academic_period_id')
     {
-        return AcademicPeriodClass::where('academic_period_id',$id)->with('enrollments')->orderBy($order)->get();
+        return AcademicPeriodClass::where('academic_period_id', $id)->with('enrollments')->orderBy($order)->get();
     }
 
 
@@ -31,7 +31,7 @@ class AcademicPeriodClassRepository
 
     public function find($id)
     {
-        return AcademicPeriodClass::with('instructor','course','academicPeriod')->find($id);
+        return AcademicPeriodClass::with('instructor', 'course', 'academicPeriod')->find($id);
     }
 
     public function getCourses()
@@ -47,7 +47,7 @@ class AcademicPeriodClassRepository
     public function getInstructors()
     {
         return User::join('user_types', 'user_types.id', 'users.user_type_id')
-                    ->where('user_types.title', 'instructor')->get();
+            ->where('user_types.title', 'instructor')->get();
     }
     public function academicPrograms($id)
     {
@@ -56,8 +56,8 @@ class AcademicPeriodClassRepository
             ->with('course')
             ->distinct('course_id')
             ->pluck('course_id');
-        $ids = ProgramCourses::whereIn('course_id',$courseIds)->distinct('program_id')->pluck('program_id');
-        return program::whereIn('id',$ids)->with('qualification','department')->get();
+        $ids = ProgramCourses::whereIn('course_id', $courseIds)->distinct('program_id')->pluck('program_id');
+        return program::whereIn('id', $ids)->with('qualification', 'department')->get();
     }
     public function academicProgramStudents($id)
     {
@@ -83,7 +83,7 @@ class AcademicPeriodClassRepository
     }
     public function academicPeriodStudents($id)
     {
-       return Student::whereHas('enrollments.class', function ($query) use ($id) {
+        return Student::whereHas('enrollments.class', function ($query) use ($id) {
             $query->where('academic_period_id', $id);
         })
             ->withCount('enrollments') // Count the number of enrollments
@@ -96,7 +96,7 @@ class AcademicPeriodClassRepository
             ->with('course')
             ->distinct('course_id')
             ->pluck('course_id');
-        $ids = ProgramCourses::whereIn('course_id',$courseIds)->distinct('program_id')->pluck('program_id');
-        return program::whereIn('id',$ids)->get();
+        $ids = ProgramCourses::whereIn('course_id', $courseIds)->distinct('program_id')->pluck('program_id');
+        return program::whereIn('id', $ids)->get();
     }
 }

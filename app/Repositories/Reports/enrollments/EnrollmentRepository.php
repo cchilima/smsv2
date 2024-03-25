@@ -203,7 +203,6 @@ class EnrollmentRepository
                 $students = Student::with(['user', 'invoices.details', 'receipts'])
                     ->whereHas('enrollments.class', function ($query) use ($academicPeriod, $program) {
                         $query->where('academic_period_id', $academicPeriod->id);
-
                     })->where('program_id', $program->id)
                     ->get();
 
@@ -211,6 +210,7 @@ class EnrollmentRepository
                 $programArray = [
                     'program_id' => $program->id,
                     'program_name' => $program->name,
+                    'program_code' => $program->code,
                     'students' => []
                 ];
 
@@ -809,7 +809,4 @@ class EnrollmentRepository
     {
         return Student::count();
     }
-
-
-
 }

@@ -16,12 +16,12 @@ use Illuminate\Http\Request;
 class AcademicPeriodController extends Controller
 {
 
-    protected $periods,$periodClasses;
+    protected $periods, $periodClasses;
 
-    public function __construct(AcademicPeriodRepository $periods,AcademicPeriodClassRepository $periodClasses)
+    public function __construct(AcademicPeriodRepository $periods, AcademicPeriodClassRepository $periodClasses)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->periods = $periods;
         $this->periodClasses = $periodClasses;
@@ -52,7 +52,7 @@ class AcademicPeriodController extends Controller
         $studyModes = $this->periods->getStudyModes();
         $intakes = $this->periods->getIntakes();
 
-        return view('pages.academicPeriods.create', compact('periodTypes','studyModes','intakes'));
+        return view('pages.academicPeriods.create', compact('periodTypes', 'studyModes', 'intakes'));
     }
 
     /**
@@ -68,7 +68,7 @@ class AcademicPeriodController extends Controller
         if ($period) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::json(false,'failed to create message');
+            return Qs::json(false, 'failed to create message');
         }
     }
 
@@ -82,14 +82,14 @@ class AcademicPeriodController extends Controller
         $periodClasses = $this->periodClasses->getAllAcClasses($id);
 
         $periods = $this->periods->getAPInformation($id);
-        $academic= $this->periods->findOne($id);
+        $academic = $this->periods->findOne($id);
         $studyModes = $this->periods->getStudyModes();
         $students = $this->periodClasses->academicPeriodStudents($id);
-        $programs = $this->periodClasses->academicProgramStudents($id);//academicPrograms($id);
+        $programs = $this->periodClasses->academicProgramStudents($id); //academicPrograms($id);
         //dd($programs);
         $feeInformation = $this->periods->getAPFeeInformation($id);
 
-        return  view('pages.academicPeriods.show', compact('academicPeriod','feeInformation','periods','periodClasses','programs','students'));
+        return  view('pages.academicPeriods.show', compact('academicPeriod', 'feeInformation', 'periods', 'periodClasses', 'programs', 'students'));
     }
 
     /**
@@ -102,7 +102,7 @@ class AcademicPeriodController extends Controller
         $studyModes = $this->periods->getStudyModes();
         $intakes = $this->periods->getIntakes();
 
-        return !is_null($academicPeriod) ? view('pages.academicPeriods.edit', compact('academicPeriod','periodTypes','studyModes','intakes'))
+        return !is_null($academicPeriod) ? view('pages.academicPeriods.edit', compact('academicPeriod', 'periodTypes', 'studyModes', 'intakes'))
             : Qs::goWithDanger('pages.academicPeriods.index');
     }
 
@@ -125,5 +125,36 @@ class AcademicPeriodController extends Controller
     {
         $this->periods->find($id)->delete();
         return back()->with('flash_success', __('msg.delete_ok'));
+    }
+
+    public function getProgramsByAcademicPeriod(string $academicPeriodId)
+    {
+        // Get running programs in academic period
+        $programs = $this->periodClasses->academicProgramStudents($academicPeriodId);
+
+        return $programs;
+    }
+
+    public function getProgramsByAcademicPeriods(string $academicPeriodIds)
+    {
+        // Get array of academic periods from string input
+        $academicPeriodIds = explode(',',  $academicPeriodIds);
+
+        $programs = [];
+
+        // Get running programs in each academic periods
+        foreach ($academicPeriodIds as $id) {
+            foreach ($this->periodClasses->academicProgramStudents($id) as $program) {
+                $programs[$program->id] = [
+                    'id' => $program->id,
+                    'name' => $program->name . ' (' . $program->code . ')',
+                ];
+            }
+        }
+
+        // Remove duplicate program entries
+        $programs = array_unique($programs, SORT_DESC);
+
+        return $programs;
     }
 }
