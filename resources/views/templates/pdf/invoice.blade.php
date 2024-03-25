@@ -95,7 +95,7 @@ use App\Helpers\Qs;
     <table class="w-full">
         <tr>
             <td class="w-half">
-                <img class="logo" src="{{ asset('images/logo-v2.png') }}" alt="Logo" height="150">
+                <img class="logo" src="{{ storage_path('images/logo-v2.png') }}" alt="Logo" height="150">
             </td>
             <td class="w-half">
                 <h2>INVOICE</h2>

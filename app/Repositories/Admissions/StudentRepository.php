@@ -280,6 +280,23 @@ class StudentRepository
             'user.userPersonalInfo.town'
         )->where('user_id', $id)->get()->first();
     }
+    public function getStudentInforByID($id)
+    {
+
+        return Student::with(
+            'period_type',
+            'level',
+            'intake',
+            'study_mode',
+            'program',
+            'user.userPersonalInfo',
+            'user.userNextOfKin.relationship',
+            'user.userPersonalInfo.userMaritalStatus',
+            'user.userPersonalInfo.province',
+            'user.userPersonalInfo.country',
+            'user.userPersonalInfo.town'
+        )->find( $id);
+    }
 
     public function resetPassword($resetPasswordData)
     {

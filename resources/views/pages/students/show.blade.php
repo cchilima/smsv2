@@ -45,6 +45,9 @@
                         <li class="nav-item">
                             <a href="#next-kin" class="nav-link" data-toggle="tab">Sponsor Information</a>
                         </li>
+                        <li class="nav-item">
+                            <a href="#downloads-info" class="nav-link" data-toggle="tab">Student Downloads</a>
+                        </li>
                     </ul>
 
                     <div class="tab-content">
@@ -418,6 +421,23 @@
                                     class="btn btn-primary">Update Information <i class="icon-pencil ml-2"></i></button>
                             </div>
                         </div>
+                        <div class="tab-pane fade show" id="downloads-info">
+{{--                            <form class="ajax-store" method="post" action="{{ route('student.id.download') }}">--}}
+{{--                                @csrf--}}
+{{--                                <input name="student_id" hidden value="{{ $student->id }}" type="text">--}}
+{{--                                <div class="text-left">--}}
+{{--                                    <button id="ajax-btn" type="submit" class="btn btn-primary">Download Student ID<i--}}
+{{--                                            class="icon-paperplane ml-2"></i></button>--}}
+{{--                                </div>--}}
+{{--                            </form>--}}
+                            <a href="{{ route('student.id.download',$student->id) }}" class="btn btn-primary" type="button"
+                               >Download ID</a>
+                            <a href="{{ route('student.transcript.download',$student->id) }}" class="btn btn-primary" type="button"
+                            >Download Transcript</a>
+                            <a href="{{ route('student.exam.slip.download',$student->id) }}" class="btn btn-primary" type="button"
+                            >Download Exam slip</a>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -774,7 +794,7 @@
                                         @foreach ($invoice->details as $key => $detail)
                                             <tr>
                                                 <td>{{ ++$key }}</td>
-                                                <td>{{ $detail->fee->name }}</td>
+                                                <td>{{ ($detail->fee->name ?? '') }}</td>
                                                 <td>K {{ $detail->amount }}</td>
                                             </tr>
                                         @endforeach

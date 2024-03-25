@@ -105,12 +105,32 @@ Route::group(['prefix' => 'reports'], function () {
 
         Route::get('/credit-notes', [AccountReportsController::class, 'CreditNotes'])->name('credit.notes');
     });
-
     Route::group(['prefix' => 'enrollments'], function () {
         Route::get('/enrollments', [EnrollmentReportsController::class, 'index'])->name('enrollments.reports');
         Route::get('/exam-registers', [EnrollmentReportsController::class, 'ExamRegisters'])->name('registers.reports');
         Route::get('/student-list-reports', [EnrollmentReportsController::class, 'StudentList'])->name('student.list.reports');
         Route::get('/audit-trail', [EnrollmentReportsController::class, 'AuditTrailReports'])->name('audit.trail.reports');
+        //student list pdf
+        Route::get('/programs-student-list/{ac}', [EnrollmentReportsController::class, 'DownloadStudentProgramList'])->name('student.program.list');
+        Route::get('/program-student-list/{ac}/{pid}', [EnrollmentReportsController::class, 'DownloadStudentProgramListOne'])->name('student.one.program.list');
+        Route::get('/class-student-list/{ac}', [EnrollmentReportsController::class, 'DownloadAcClassLists'])->name('student.class.list');
+        Route::get('/class-student-list/{ac}/{classid}', [EnrollmentReportsController::class, 'DownloadAcOneClassLists'])->name('student.one.class.list');
+
+        //regidters
+        Route::post('/exam-registers', [EnrollmentReportsController::class, 'ExamRegistersDownload'])->name('ac.exam.registers');
+        //student id
+        Route::get('/student-id/{student_id}', [EnrollmentReportsController::class, 'DownloadStudentIDs'])->name('student.id.download');
+        Route::get('/student-slip-id/{student_id}', [EnrollmentReportsController::class, 'DownloadStudentExamSlip'])->name('student.exam.slip.download');
+        Route::get('/student-transcript-id/{student_id}', [EnrollmentReportsController::class, 'DownloadStudentTranscript'])->name('student.transcript.download');
+
+        //csv
+        Route::get('/programs-csv-student-list/{ac}', [EnrollmentReportsController::class, 'DownloadstudentProgramListCsv'])->name('student.program.list.csv');
+        Route::get('/program-csv-student-list/{ac}/{pid}', [EnrollmentReportsController::class, 'DownloadStudentProgramListOneCSV'])->name('student.csv.one.program.list');
+
+        Route::get('/class-csv-student-list/{ac}', [EnrollmentReportsController::class, 'DownloadAcClassListsCSV'])->name('student.csv.class.list');
+        Route::get('/class-csv-student-list/{ac}/{classid}', [EnrollmentReportsController::class, 'DownloadAcOneClassListsCSV'])->name('student.csv.one.class.list');
+        //normal reports
+        Route::post('/all-results', [EnrollmentReportsController::class, 'acsPrograms'])->name('student.csv.list');
     });
 });
 

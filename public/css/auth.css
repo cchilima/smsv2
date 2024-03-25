@@ -1,0 +1,140 @@
+* {
+	font-family: 'Ubuntu', sans-serif;
+}
+body {
+	margin: 0px;
+}
+.auth-jumbotron {
+	background-color: #333;
+	height: 20vh;
+	border-radius:  0px;
+	box-shadow: none;
+
+}
+#nested-list {
+	margin-left: 20px;
+}
+// Google Identity and Google+ Sign in buttons
+// https://developers.google.com/+/branding-guidelines
+.btn {
+	background-color: #FFF:
+
+}
+#google-button {
+  height: auto;
+  border-width: 0;
+  background: white;
+  color: #737373;
+	background-color: #FFF;
+  border-radius: 5px;
+  white-space: nowrap;
+  box-shadow: 1px 1px 0px 1px rgba(0,0,0,0.05);
+  transition-property: background-color, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+  padding: 0;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	width: 300px;
+	margin-bottom: 50px;
+
+  &:focus,
+  &:hover {
+    box-shadow: 1px 4px 5px 1px rgba(0,0,0,0.1);
+  }
+
+  &:active {
+    background-color: #FFF;
+    box-shadow: none;
+    transition-duration: 10ms;
+  }
+}
+
+.google-button__icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 8px 0 8px 8px;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+}
+
+.google-button__icon--plus {
+  width: 27px;
+}
+
+.google-button__text {
+  display: inline-block;
+  vertical-align: middle;
+  padding: 0 24px;
+  font-size: 14px;
+  font-weight: bold;
+	color: #333;
+  font-family: 'Roboto',arial,sans-serif;
+}
+.intro {
+	text-align: center;
+	padding-bottom: 50px;
+}
+.intro h4 {
+	font-weight: bolder;
+	font-size: 24px;
+}
+.intro h5 {
+	color: #333;
+
+}
+h4 {
+	text-align: center;
+	margin-bottom: 20px;
+}
+.facebook {
+	background-color: #3c5a95;
+	color: white;
+	border-radius: 0px;
+	padding-left: 200px;
+	width: 320px;
+	margin-bottom:  30px;
+}
+.google {
+	background-color: #d94e46;
+	color: white;
+	border-radius: 0px;
+	padding-left: 200px;
+	padding-right: 30px;
+	width: 320px;
+}
+#input-container {
+	background-color: transparent;
+	padding: 10px;
+	font-family: 'Ubuntu', sans-serif;
+	border: 1px solid #b7b7b7;
+}
+#select {
+	padding: 0px;
+	background-color: transparent;
+	height: 50px;
+	border-radius: 0px;
+	border: 1px solid #b7b7b7;
+	width: 100%;
+	margin: 0px;
+}
+.social-media-auth {
+	padding-top: 75px;
+}
+.social-media-auth a {
+	text-align: center;
+	margin-left: 24%;
+}
+.social-media-auth p{
+	color: #b7b7b7;
+	padding-left: 25%;
+	padding-right: 25%;
+	text-align: center;
+	padding-top: 40px;
+}
+.verticalline {
+	margin-left: 50%;
+	border-left: 1px solid #b7b7b7;
+	height: 70px;
+}

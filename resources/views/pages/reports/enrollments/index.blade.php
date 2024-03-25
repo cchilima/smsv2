@@ -15,56 +15,60 @@
                     <div class="row mt-0 mb-1">
                         <div class="col-md-12">
                             <form class="ajax-store-test" method="post" action="{{ route('transaction-results') }}">
-                                @csrf
-                                <div class="form-group row">
-                                    <div class="col-md-4">
-                                        <div class="form-group row">
-                                            <label class="col-lg-3 col-form-label font-weight-semibold">Academic Period
-                                                <span class="text-danger">*</span></label>
-                                            <div class="col-lg-9">
-                                                <select name="instructor_id" class="form-control select-search" required>
-                                                    <option value="">select option</option>
-                                                    {{--                                                    @foreach ($instructors as $instructor) --}}
-                                                    {{--                                                        <option --}}
-                                                    {{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option> --}}
-                                                    {{--                                                    @endforeach --}}
-                                                </select>
+                                <form class="ajax-store-test" method="post" action="{{ route('student.csv.list') }}">
+                                    @csrf
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label font-weight-semibold">Academic Period
+                                                    <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <select name="instructor_id" class="form-control select-search"
+                                                        required>
+                                                        <option value="">select option</option>
+                                                        {{--                                                    @foreach ($instructors as $instructor) --}}
+                                                        {{--                                                        <option --}}
+                                                        {{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option> --}}
+                                                        {{--                                                    @endforeach --}}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label font-weight-semibold">Programs <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <select name="instructor_id" class="form-control select-search"
+                                                        required>
+                                                        <option value="">select option</option>
+                                                        {{--                                                    @foreach ($instructors as $instructor) --}}
+                                                        {{--                                                        <option --}}
+                                                        {{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option> --}}
+                                                        {{--                                                    @endforeach --}}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label font-weight-semibold">Payment
+                                                    Threshold
+                                                    <span class="text-danger">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input name="to_date" type="text" class="form-control date-pick"
+                                                        placeholder="Date">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group row">
-                                            <label class="col-lg-3 col-form-label font-weight-semibold">Programs <span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-lg-9">
-                                                <select name="instructor_id" class="form-control select-search" required>
-                                                    <option value="">select option</option>
-                                                    {{--                                                    @foreach ($instructors as $instructor) --}}
-                                                    {{--                                                        <option --}}
-                                                    {{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option> --}}
-                                                    {{--                                                    @endforeach --}}
-                                                </select>
-                                            </div>
+                                    <div class="col-md">
+                                        <div class="text-right">
+                                            <button id="ajax-btn" type="submit" class="btn btn-primary">Search <i
+                                                    class="icon-paperplane"></i></button>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group row">
-                                            <label class="col-lg-3 col-form-label font-weight-semibold">Payment Threshold
-                                                <span class="text-danger">*</span></label>
-                                            <div class="col-lg-9">
-                                                <input name="to_date" type="text" class="form-control date-pick"
-                                                    placeholder="Date">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md">
-                                    <div class="text-right">
-                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Search <i
-                                                class="icon-paperplane"></i></button>
-                                    </div>
-                                </div>
-                            </form>
+                                </form>
                         </div>
                     </div>
                     @if (isset($transactions))
