@@ -84,8 +84,8 @@ Route::group(['prefix' => 'assess'], function () {
 });
 
 
-    Route::group(['prefix' => 'reports'], function () {
-        Route::group(['prefix' => 'accounts'], function () {
+Route::group(['prefix' => 'reports'], function () {
+    Route::group(['prefix' => 'accounts'], function () {
         Route::get('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue.analysis');
         Route::post('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue-revenue-result');
 
@@ -105,12 +105,13 @@ Route::group(['prefix' => 'assess'], function () {
 
         Route::get('/credit-notes', [AccountReportsController::class, 'CreditNotes'])->name('credit.notes');
     });
-        Route::group(['prefix' => 'enrollments'], function () {
-            Route::get('/enrollments', [EnrollmentReportsController::class, 'index'])->name('enrollments.reports');
-            Route::get('/exam-registers', [EnrollmentReportsController::class, 'ExamRegisters'])->name('registers.reports');
-            Route::get('/student-list-reports', [EnrollmentReportsController::class, 'StudentList'])->name('student.list.reports');
-            Route::get('/audit-trail', [EnrollmentReportsController::class, 'AuditTrailReports'])->name('audit.trail.reports');
-        });
+
+    Route::group(['prefix' => 'enrollments'], function () {
+        Route::get('/enrollments', [EnrollmentReportsController::class, 'index'])->name('enrollments.reports');
+        Route::get('/exam-registers', [EnrollmentReportsController::class, 'ExamRegisters'])->name('registers.reports');
+        Route::get('/student-list-reports', [EnrollmentReportsController::class, 'StudentList'])->name('student.list.reports');
+        Route::get('/audit-trail', [EnrollmentReportsController::class, 'AuditTrailReports'])->name('audit.trail.reports');
+    });
 });
 
 Route::group(['prefix' => 'accounts'], function () {

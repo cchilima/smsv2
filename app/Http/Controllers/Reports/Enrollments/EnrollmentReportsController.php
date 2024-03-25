@@ -62,14 +62,17 @@ class EnrollmentReportsController extends Controller
     {
         //
     }
+
     public function ExamRegisters()
     {
         return view('pages.reports.enrollments.exam_registers');
     }
+
     public function StudentList()
     {
         return view('pages.reports.enrollments.student_list');
     }
+
     public function AuditTrailReports()
     {
         return view('pages.reports.enrollments.audit_trail');
