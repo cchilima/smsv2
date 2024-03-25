@@ -37,6 +37,12 @@ class HomeController extends Controller
             return view('pages.instructor_home.home');
         }else {
             $data['students'] = $this->enrollmentRepository->totalStudents();
+            $data['users'] = $this->enrollmentRepository->totalUsers();
+            $data['staff'] = $this->enrollmentRepository->totalStaff();
+            $data['admin'] = $this->enrollmentRepository->totalAdmin();
+            $data['registered'] = $this->enrollmentRepository->getStudentsSumForAllOpenPeriods();
+            $data['todaysPayments'] = $this->enrollmentRepository->todaysPayments();
+            $data['todaysInvoices'] = $this->enrollmentRepository->todaysInvoices();
             return view('pages.home.home',$data);
         }
     }

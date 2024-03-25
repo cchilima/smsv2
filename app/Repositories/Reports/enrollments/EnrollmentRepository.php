@@ -6,10 +6,14 @@ use App\Models\Academics\AcademicPeriod;
 use App\Models\Academics\AcademicPeriodClass;
 use App\Models\Academics\Program;
 use App\Models\Academics\ProgramCourses;
+use App\Models\Accounting\Invoice;
+use App\Models\Accounting\Receipt;
 use App\Models\Admissions\Student;
 use App\Models\Enrollments\Enrollment;
+use App\Models\Users\User;
 use App\Repositories\Academics\AcademicPeriodClassRepository;
 use App\Repositories\Academics\AcademicPeriodRepository;
+use Illuminate\Support\Carbon;
 
 class EnrollmentRepository
 {
@@ -786,7 +790,7 @@ class EnrollmentRepository
     public function getStudentsSumForAllOpenPeriods()
     {
         // Retrieve all open academic periods
-        $openAcademicPeriods = AcademicPeriod::where('end_date', '>=', date('Y-m-d'))->get();
+        $openAcademicPeriods = AcademicPeriod::whereDate('ac_end_date', '>=', now())->get();
 
         // Initialize total students count
         $totalStudentsCount = 0;
@@ -808,5 +812,47 @@ class EnrollmentRepository
     public function totalStudents()
     {
         return Student::count();
+    }
+    public function totalUsers()
+    {
+        return User::count();
+    }
+    public function totalStaff()
+    {
+        return User::where('user_type_id', '!=', 3)->count();
+    }
+    public function totalAdmin()
+    {
+        return User::where('user_type_id', '=', 1)->count();
+    }
+    public static function todaysPayments()
+    {
+        // figure out what day it is
+        $today    = Carbon::today()->toDateString();
+
+        // find todays invoices
+        $receipts = Receipt::whereDate('created_at', '>=', now())->get();
+        //where('created_at', '>=', $today)
+
+        //foreach invoice find the invoice details and totalout the ammount
+        return $receipts->sum('amount');
+    }
+    public static function todaysInvoices()
+    {
+        // figure out what day it is
+        $today    = Carbon::today()->toDateString();
+
+        // find todays invoices
+        $invoices = Invoice::with('details')->where('created_at', '>=', $today)->get();
+
+        $totalAmount = 0;
+
+        // Iterate through each invoice
+        foreach ($invoices as $invoice) {
+            // Sum the amount in the details of each invoice
+            $totalAmount += $invoice->details->sum('amount');
+        }
+
+        return $totalAmount;
     }
 }

@@ -12,7 +12,7 @@
                 <div class="card card-body bg-blue-400 has-bg-image">
                     <div class="media">
                         <div class="media-body">
-                            <h3 class="mb-0">{{ 00 }}</h3>
+                            <h3 class="mb-0">K {{ $todaysPayments }}</h3>
                             <span class="text-uppercase font-size-xs font-weight-bold">Today's Payments</span>
                         </div>
 
@@ -27,7 +27,7 @@
                 <div class="card card-body bg-danger-400 has-bg-image">
                     <div class="media">
                         <div class="media-body">
-                            <h3 class="mb-0">{{ 00 }}</h3>
+                            <h3 class="mb-0">K {{ $todaysInvoices }}</h3>
                             <span class="text-uppercase font-size-xs">Today's invoices</span>
                         </div>
 
@@ -61,7 +61,7 @@
                         </div>
 
                         <div class="media-body text-right">
-                            <h3 class="mb-0">{{ 1 }}</h3>
+                            <h3 class="mb-0">{{ $registered }}</h3>
                             <span class="text-uppercase font-size-xs">Registered Students</span>
                         </div>
                     </div>
@@ -151,7 +151,7 @@
                 <div class="card card-body bg-violet has-bg-image">
                     <div class="media">
                         <div class="media-body">
-                            <h3 class="mb-0">{{ 00 }}</h3>
+                            <h3 class="mb-0">{{ $staff }}</h3>
                             <span class="text-uppercase font-size-xs">Total Staff</span>
                         </div>
 
@@ -170,7 +170,7 @@
                         </div>
 
                         <div class="media-body text-right">
-                            <h3 class="mb-0">{{ 00 }}</h3>
+                            <h3 class="mb-0">{{ $admin }}</h3>
                             <span class="text-uppercase font-size-xs">Total Administrators</span>
                         </div>
                     </div>
@@ -185,7 +185,7 @@
                         </div>
 
                         <div class="media-body text-right">
-                            <h3 class="mb-0">{{ 1 }}</h3>
+                            <h3 class="mb-0">{{ $users }}</h3>
                             <span class="text-uppercase font-size-xs">Total Users</span>
                         </div>
                     </div>
