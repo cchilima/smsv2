@@ -754,5 +754,62 @@ class EnrollmentRepository
         return $result;
     }
 
+    public function getStudentsForAllOpenPeriods()
+    {
+        // Retrieve all open academic periods
+        $openAcademicPeriods = AcademicPeriod::whereDate('ac_end_date', '>=', now())->get();
+
+        // Initialize result array
+        $results = [];
+
+        // Loop through each open academic period
+        foreach ($openAcademicPeriods as $academicPeriod) {
+            // Retrieve students enrolled in the academic period
+            $studentsCount = Student::whereHas('enrollments.class', function ($query) use ($academicPeriod) {
+                $query->where('academic_period_id', $academicPeriod->id);
+            })
+                ->count();
+
+            // Build academic period information
+            $academicPeriodInfo = [
+                'academic_period_id' => $academicPeriod->id,
+                'academic_period_name' => $academicPeriod->name,
+                'students_count' => $studentsCount
+            ];
+
+            // Add academic period info to results array
+            $results[] = $academicPeriodInfo;
+        }
+
+        return $results;
+    }
+    public function getStudentsSumForAllOpenPeriods()
+    {
+        // Retrieve all open academic periods
+        $openAcademicPeriods = AcademicPeriod::where('end_date', '>=', date('Y-m-d'))->get();
+
+        // Initialize total students count
+        $totalStudentsCount = 0;
+
+        // Loop through each open academic period
+        foreach ($openAcademicPeriods as $academicPeriod) {
+            // Retrieve students enrolled in the academic period and add to total count
+            $studentsCount = Student::whereHas('enrollments.class', function ($query) use ($academicPeriod) {
+                $query->where('academic_period_id', $academicPeriod->id);
+            })
+                ->count();
+
+            // Increment the total students count
+            $totalStudentsCount += $studentsCount;
+        }
+
+        return $totalStudentsCount;
+    }
+    public function totalStudents()
+    {
+        return Student::count();
+    }
+
+
 
 }
