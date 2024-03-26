@@ -34,6 +34,8 @@ use App\Http\Controllers\Profile\MaritalStatusController;
 
 use App\Http\Controllers\Accounting\FeeController;
 
+use App\Http\Controllers\Notices\AnnouncementController;
+
 use App\Http\Controllers\Users\UserController;
 
 use App\Http\Controllers\Enrollments\EnrollmentController;
@@ -44,6 +46,8 @@ use App\Http\Controllers\Users\StudentController as UsersStudentController;
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+Route::get('announcement/{announcement_id}',[ AnnouncementController::class, 'ShowAnnouncement'])->name('announcement.fullview');
 
 Route::get('/staff-login', function () {
     return view('auth.staff_login');
@@ -149,11 +153,13 @@ Route::post('/application/step-3', [ApplicantController::class, 'saveApplication
 /*}); */
 
 
+
 Route::resource('courses', CourseController::class);
 Route::resource('programs', ProgramController::class);
 Route::resource('study-modes', StudyModeController::class);
 Route::resource('period-types', PeriodTypeController::class);
 Route::resource('departments', DepartmentController::class);
+Route::resource('announcements', AnnouncementController::class);
 Route::resource('qualifications', QualificationController::class);
 Route::resource('levels', CourseLevelController::class);
 Route::resource('intakes', IntakeController::class);
