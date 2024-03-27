@@ -358,6 +358,12 @@
                                     Other</span></a>
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Profile">
+                            <li class="nav-item">
+                                    <a href="{{ route('announcements.index') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['announcements.create', 'announcements.edit', 'announcements.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Announcements</span></a>
+                                </li>
+
                                 <li class="nav-item">
                                     <a href="{{ route('countries.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['countries.create', 'countries.edit', 'countries.index']) ? 'active' : '' }}"><i

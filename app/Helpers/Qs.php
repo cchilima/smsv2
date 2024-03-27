@@ -266,6 +266,12 @@ class Qs
     {
         return 'public/depart';
     }
+
+    public static function getPublicUploadPathAnnouncements()
+    {
+        return 'public/announcements';
+    }
+
     public static function getUserUploadPath()
     {
         return 'uploads/'.date('Y').'/'.date('m').'/'.date('d').'/';

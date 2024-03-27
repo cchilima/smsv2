@@ -9,5 +9,5 @@ class Announcement extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'attachment', 'addressed_to'];
+    protected $fillable = ['title', 'description', 'attachment', 'addressed_to', 'archived'];
 }
