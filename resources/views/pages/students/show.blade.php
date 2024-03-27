@@ -422,20 +422,20 @@
                             </div>
                         </div>
                         <div class="tab-pane fade show" id="downloads-info">
-{{--                            <form class="ajax-store" method="post" action="{{ route('student.id.download') }}">--}}
-{{--                                @csrf--}}
-{{--                                <input name="student_id" hidden value="{{ $student->id }}" type="text">--}}
-{{--                                <div class="text-left">--}}
-{{--                                    <button id="ajax-btn" type="submit" class="btn btn-primary">Download Student ID<i--}}
-{{--                                            class="icon-paperplane ml-2"></i></button>--}}
-{{--                                </div>--}}
-{{--                            </form>--}}
-                            <a href="{{ route('student.id.download',$student->id) }}" class="btn btn-primary" type="button"
-                               >Download ID</a>
-                            <a href="{{ route('student.transcript.download',$student->id) }}" class="btn btn-primary" type="button"
-                            >Download Transcript</a>
-                            <a href="{{ route('student.exam.slip.download',$student->id) }}" class="btn btn-primary" type="button"
-                            >Download Exam slip</a>
+                            {{--                            <form class="ajax-store" method="post" action="{{ route('student.id.download') }}"> --}}
+                            {{--                                @csrf --}}
+                            {{--                                <input name="student_id" hidden value="{{ $student->id }}" type="text"> --}}
+                            {{--                                <div class="text-left"> --}}
+                            {{--                                    <button id="ajax-btn" type="submit" class="btn btn-primary">Download Student ID<i --}}
+                            {{--                                            class="icon-paperplane ml-2"></i></button> --}}
+                            {{--                                </div> --}}
+                            {{--                            </form> --}}
+                            <a href="{{ route('student.id.download', $student->id) }}" class="btn btn-primary"
+                                type="button">Download ID</a>
+                            <a href="{{ route('student.transcript.download', $student->id) }}" class="btn btn-primary"
+                                type="button">Download Transcript</a>
+                            <a href="{{ route('student.exam.slip.download', $student->id) }}" class="btn btn-primary"
+                                type="button">Download Exam slip</a>
                         </div>
 
                     </div>
@@ -579,17 +579,23 @@
                         </div>
 
                         <div class="tab-pane fade show" id="invoice">
-                            @if (!$isInvoiced)
+                            @if (!$isInvoiced && $student->academic_info)
                                 <form class="ajax-store" method="post" action="{{ route('invoices.invoice') }}">
                                     @csrf
                                     <input name="academic_period" hidden
-                                        value="{{ $student->academic_info->academic_period_id }}" type="text">
+                                        value="{{ $student->academic_info ? $student->academic_info->academic_period_id : '' }}"
+                                        type="text">
                                     <input name="student_id" hidden value="{{ $student->id }}" type="text">
                                     <div class="text-left">
                                         <button id="ajax-btn" type="submit" class="btn btn-primary">invoice student<i
                                                 class="icon-paperplane ml-2"></i></button>
                                     </div>
                                 </form>
+                            @elseif(!$isInvoiced && !$student->academic_info)
+                                <div class="container">
+                                    <p>{{ $student->user->first_name . ' ' . $student->user->last_name }}, has no attached
+                                        academic information.</p>
+                                </div>
                             @else
                                 <div class="container">
                                     <p>{{ $student->user->first_name . ' ' . $student->user->last_name }}, has already
@@ -600,40 +606,42 @@
                         </div>
 
                         <div class="tab-pane fade show" id="collect-payment">
+                            @if ($student->academic_info)
+                                <form class="ajax-store" method="post" action="{{ route('statements.store') }}">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label for="amount">Enter Amount</label>
+                                        <input type="number" class="form-control" id="amount" name="amount"
+                                            placeholder="ZMW" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="method">Method <span class="text-danger">*</span></label>
+                                        <select data-placeholder="Payment method" required
+                                            class="select-search form-control" name="payment_method_id" id="method">
+                                            <option value=""></option>
+                                            @foreach ($paymentMethods as $method)
+                                                <option value="{{ $method->id }}">{{ $method->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                            <form class="ajax-store" method="post" action="{{ route('statements.store') }}">
-                                @csrf
-                                <div class="form-group">
-                                    <label for="amount">Enter Amount</label>
-                                    <input type="number" class="form-control" id="amount" name="amount"
-                                        placeholder="ZMW" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="method">Method <span class="text-danger">*</span></label>
-                                    <select data-placeholder="Payment method" required class="select-search form-control"
-                                        name="payment_method_id" id="method">
-                                        <option value=""></option>
-                                        @foreach ($paymentMethods as $method)
-                                            <option value="{{ $method->id }}">{{ $method->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                                    <div class="form-group">
+                                        <input hidden type="number" class="form-control" name="academic_period"
+                                            value="{{ $student->academic_info ? $student->academic_info->academic_period_id : '' }}"
+                                            required>
+                                    </div>
 
-                                <div class="form-group">
-                                    <input hidden type="number" class="form-control" name="academic_period"
-                                        value="{{ $student->academic_info->academic_period_id }}" required>
-                                </div>
+                                    <div class="form-group">
+                                        <input hidden type="text" class="form-control" name="student_id"
+                                            value="{{ $student->id }}" required>
+                                    </div>
 
-                                <div class="form-group">
-                                    <input hidden type="text" class="form-control" name="student_id"
-                                        value="{{ $student->id }}" required>
-                                </div>
-
-                                <div class="text-left">
-                                    <button id="ajax-btn" type="submit" class="btn btn-primary">Submit <i
-                                            class="icon-paperplane ml-2"></i></button>
-                                </div>
-                            </form>
+                                    <div class="text-left">
+                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Submit <i
+                                                class="icon-paperplane ml-2"></i></button>
+                                    </div>
+                                </form>
+                            @endif
 
                         </div>
 
@@ -794,7 +802,7 @@
                                         @foreach ($invoice->details as $key => $detail)
                                             <tr>
                                                 <td>{{ ++$key }}</td>
-                                                <td>{{ ($detail->fee->name ?? '') }}</td>
+                                                <td>{{ $detail->fee->name ?? '' }}</td>
                                                 <td>K {{ $detail->amount }}</td>
                                             </tr>
                                         @endforeach
@@ -1068,14 +1076,6 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Email Address: <span class="text-danger">*</span></label>
-                                                    <input value="{{ $student->user->email }}" required
-                                                        class="form-control" placeholder="Email Address" name="email"
-                                                        type="text">
-                                                </div>
-                                            </div>
 
                                             <!-- Add more rows as needed -->
                                             <div class="col-md-6">

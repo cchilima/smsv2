@@ -47,29 +47,35 @@ class StudentRegistrationRepository
         $academicInfo = AcademicPeriodInformation::where('study_mode_id', $student->study_mode_id)->where('academic_period_intake_id', $student->academic_period_intake_id)->first();
 
         // get the academic period id
-        $currentAcademicPeriodId = $academicInfo->academic_period_id;
+        $currentAcademicPeriodId = false;
 
-        // match courses for a specific academic period
-        $currentCourses = $courses->filter(function ($course) use ($currentAcademicPeriodId) {
-            return AcademicPeriodClass::where('course_id', $course->id)
+        if ($academicInfo !== null) {
+            $currentAcademicPeriodId = $academicInfo->academic_period_id;
+        }
+
+        if ($currentAcademicPeriodId) {
+            // match courses for a specific academic period
+            $currentCourses = $courses->filter(function ($course) use ($currentAcademicPeriodId) {
+                return AcademicPeriodClass::where('course_id', $course->id)
+                    ->where('academic_period_id', $currentAcademicPeriodId)
+                    ->exists();
+            });
+
+            // get academic class info
+            $courseIds = $currentCourses->pluck('course_id')->toArray();
+
+            $currentCourses = AcademicPeriodClass::join('courses', 'courses.id', 'academic_period_classes.course_id')
+                ->whereIn('course_id', $courseIds)
                 ->where('academic_period_id', $currentAcademicPeriodId)
-                ->exists();
-        });
+                ->get(['code', 'name', 'course_id', 'academic_period_classes.id']);
 
-        // get academic class info
-        $courseIds = $currentCourses->pluck('course_id')->toArray();
+            // check if student has invoice for that academic period
+            $invoice = $this->getInvoice($student_id, $currentAcademicPeriodId);
 
-        $currentCourses = AcademicPeriodClass::join('courses', 'courses.id', 'academic_period_classes.course_id')
-            ->whereIn('course_id', $courseIds)
-            ->where('academic_period_id', $currentAcademicPeriodId)
-            ->get(['code', 'name', 'course_id', 'academic_period_classes.id']);
-
-        // check if student has invoice for that academic period
-        $invoice = $this->getInvoice($student_id, $currentAcademicPeriodId);
-
-        // if student has invoice present them the courses
-        if ($invoice) {
-            return $currentCourses;
+            // if student has invoice present them the courses
+            if ($invoice) {
+                return $currentCourses;
+            }
         }
     }
 
@@ -108,6 +114,8 @@ class StudentRegistrationRepository
         // Get academic information
         $academicInfo = $this->getAcademicInfo($student_id);
 
+        if( $academicInfo ) {
+
         // Parse registration dates into Carbon instances
         $registrationDate = Carbon::createFromFormat('Y-m-d', $academicInfo->registration_date);
         $lateRegistrationDate = Carbon::createFromFormat('Y-m-d', $academicInfo->late_registration_date);
@@ -131,18 +139,26 @@ class StudentRegistrationRepository
             return false;
         }
     }
+    }
 
     public function checkIfInvoiced($student_id)
     {
         $academicInfo = $this->getAcademicInfo($student_id);
 
-        $invoice = $this->getInvoice($student_id, $academicInfo->academic_period_id);
+        if($academicInfo){
 
-        if ($invoice) {
-            return true;
+            $invoice = $this->getInvoice($student_id, $academicInfo->academic_period_id);
+
+            if ($invoice) {
+                return true;
+            } else {
+                return false;
+            }
+
         } else {
             return false;
         }
+
     }
 
     private function paymentStanding($invoice_id)
@@ -172,7 +188,6 @@ class StudentRegistrationRepository
         $courses = [];
 
         foreach ($student->enrollments as $enrollment) {
-
             if ($academic_period_id == $enrollment->class->academic_period_id) {
                 array_push($courses, $enrollment->class->course);
             }
