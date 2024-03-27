@@ -21,6 +21,7 @@
 
         <form method="post" enctype="multipart/form-data" class="wizard-form steps-validation ajax-update" action="{{ route('application.save_application', $application_id) }}" data-fouc>
 
+
             @csrf @method('PUT')
 
             <h6>Personal data</h6>
