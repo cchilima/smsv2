@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('phone_number')->nullable();
             $table->date('application_date')->nullable();
-            $table->enum('status', ['incomplete', 'pending', 'accepted', 'rejected'])->default('incomplete');
+            $table->enum('status', ['incomplete', 'pending', 'complete' , 'accepted', 'rejected'])->default('incomplete');
             $table->foreignId('town_id')->nullable()->constrained('towns')->onDelete('restrict');
             $table->foreignId('province_id')->nullable()->constrained('provinces')->onDelete('restrict');
             $table->foreignId('country_id')->nullable()->constrained('countries')->onDelete('restrict');

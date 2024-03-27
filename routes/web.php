@@ -153,7 +153,7 @@ Route::group(['prefix' => 'accounts'], function () {
 Route::get('/initiate-application', [ApplicantController::class, 'index'])->name('application.index');
 Route::post('/application/step-1', [ApplicantController::class, 'startApplication'])->name('application.start_application');
 Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
-Route::post('/application/step-3', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
+Route::put('/application/step-3/{id}', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
 /*}); */
 
 
