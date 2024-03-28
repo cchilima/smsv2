@@ -33,6 +33,7 @@ class ApplicantController extends Controller
     public function index()
     {
         // ! Route should only be accessible to admins
+
         $applications = $this->applicantRepo->getAll();
 
         // Application step 1
