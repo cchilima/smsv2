@@ -32,12 +32,14 @@ class ApplicantController extends Controller
      */
     public function index()
     {
-        // ! Route should only be accessible to admins
+        if (Qs::userIsTeamSAT() || Qs::userIsSuperAdmin()) {
+            $applications = $this->applicantRepo->getAll();
 
-        $applications = $this->applicantRepo->getAll();
+            // Application step 1
+            return view('pages.applications.index', compact('applications'));
+        }
 
-        // Application step 1
-        return view('pages.applications.index', compact('applications'));
+        return redirect(route('home'));
     }
 
     public function initiate()
