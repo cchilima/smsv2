@@ -1417,6 +1417,23 @@
         });
     }
 
+    // Mask NRC input
+    const maskNRC = () => {
+        $('#nrc').on('input', function() {
+            var nrc = $(this).val().replace(/\D/g, '');
+
+            if (nrc.length > 6) {
+                nrc = nrc.substring(0, 6) + '/' + nrc.substring(6);
+            }
+
+            if (nrc.length > 9) {
+                nrc = nrc.substring(0, 9) + '/' + nrc.substring(9);
+            }
+
+            $(this).val(nrc);
+        });
+    }
+
     $(document).ready(() => {
         $('#academic-period-ids').change(function() {
             const academicPeriodIds = $(this).val();
@@ -1427,6 +1444,8 @@
                 $('#program-ids').empty();
             }
         });
+
+        maskNRC();
     });
 </script>
 

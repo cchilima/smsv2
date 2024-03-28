@@ -34,6 +34,7 @@ class Student extends FormRequest
                 'before_or_equal:' . (now()->subYears(16)->format('Y-m-d')), // Ensure applicant is at least 16 years old
                 'after:' . (now()->subYears(99)->format('Y-m-d')), // Ensure applicant is not older than 99 yeard old
             ],
+
             'street_main' => 'required|string|max:255',
             'post_code' => 'nullable|string|max:20',
             'telephone' => 'nullable|string|max:20',

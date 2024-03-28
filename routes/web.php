@@ -47,7 +47,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('announcement/{announcement_id}',[ AnnouncementController::class, 'ShowAnnouncement'])->name('announcement.fullview');
+Route::get('announcement/{announcement_id}', [AnnouncementController::class, 'ShowAnnouncement'])->name('announcement.fullview');
 
 Route::get('/staff-login', function () {
     return view('auth.staff_login');
@@ -149,13 +149,16 @@ Route::group(['prefix' => 'accounts'], function () {
     Route::get('/exam-registration', [ClassAssessmentsController::class, 'ExamRegistration'])->name('student-exam_registration');
 });
 
+// Student application routes
 /*Route::group(['prefix' => 'application'], function () { */
-Route::get('/initiate-application', [ApplicantController::class, 'index'])->name('application.index');
+Route::get('/applications', [ApplicantController::class, 'index'])->name('application.index');
+Route::get('/applications/initiate', [ApplicantController::class, 'initiate'])->name('application.initiate');
 Route::post('/application/step-1', [ApplicantController::class, 'startApplication'])->name('application.start_application');
 Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
 Route::put('/application/step-3/{id}', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
+Route::get('/application/{application_id}', [ApplicantController::class, 'show'])->name('application.show');
+Route::get('/application/attachment/{attachment_id}/download', [ApplicantController::class, 'downloadAttachment'])->name('application.download_attachment');
 /*}); */
-
 
 
 Route::resource('courses', CourseController::class);

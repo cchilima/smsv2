@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Applications;
 
 use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Applications\{ApplicationStep1};
+use App\Http\Requests\Applications\{Application as ApplicationRequest, ApplicationStep1};
 use App\Repositories\Admissions\StudentRepository;
+use App\Repositories\Applications\ApplicantAttachmentRepository;
 use App\Repositories\Applications\ApplicantRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -14,11 +15,16 @@ class ApplicantController extends Controller
 {
     protected $applicantRepo;
     protected $studentRepo;
+    protected $attachmentRepo;
 
-    public function __construct(ApplicantRepository $applicantRepo, StudentRepository $studentRepo)
-    {
+    public function __construct(
+        ApplicantRepository $applicantRepo,
+        StudentRepository $studentRepo,
+        ApplicantAttachmentRepository $attachmentRepo
+    ) {
         $this->applicantRepo = $applicantRepo;
         $this->studentRepo = $studentRepo;
+        $this->attachmentRepo = $attachmentRepo;
     }
 
     /**
@@ -26,7 +32,15 @@ class ApplicantController extends Controller
      */
     public function index()
     {
+        // ! Route should only be accessible to admins
+        $applications = $this->applicantRepo->getAll();
+
         // Application step 1
+        return view('pages.applications.index', compact('applications'));
+    }
+
+    public function initiate()
+    {
         return view('pages.applications.initiate_application');
     }
 
@@ -43,15 +57,16 @@ class ApplicantController extends Controller
      */
     public function store(Request $request)
     {
-        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $application_id)
     {
-        //
+        $application = $this->applicantRepo->getApplication($application_id);
+
+        return view('pages.applications.show', compact('application'));
     }
 
     /**
@@ -89,24 +104,20 @@ class ApplicantController extends Controller
         $applications = $this->applicantRepo->checkApplications($data);
 
 
-        if(count($applications) == 0){
+        if (count($applications) == 0) {
 
             $application = $this->applicantRepo->initiateApplication($data);
 
             if ($application) {
 
-                  return redirect()->route('application.complete_application', $application->id);
-
-              } else {
-                  return Qs::json(false, 'msg.create_failed');
-              }
-
+                return redirect()->route('application.complete_application', $application->id);
+            } else {
+                return Qs::json(false, 'msg.create_failed');
+            }
         } else {
 
             return view('pages.applications.my_applications', compact('applications'));
         }
-    
-
     }
 
     /**
@@ -119,6 +130,11 @@ class ApplicantController extends Controller
 
         // Application
         $application = $this->applicantRepo->getApplication($application_id);
+
+        // Redirect if application was already completed
+        if ($application->status !== 'incomplete') {
+            return redirect(route('application.initiate'))->with('flash_info', 'Application already completed');
+        }
 
         // Application step 2
         return view('pages.applications.complete_application', array_merge($dropdownData, ['application_id' => $application_id, 'application' => $application]));
@@ -154,12 +170,12 @@ class ApplicantController extends Controller
     /**
      * Initiate application process.
      */
-    public function saveApplication(Request $request, $id)
+    public function saveApplication(ApplicationRequest $request, $id)
     {
 
         $data = $request;
-        
-     /*   $data = $request->only([ 
+
+        /*   $data = $request->only([ 
 
             'nrc',
             'passport',
@@ -185,21 +201,36 @@ class ApplicantController extends Controller
 
         ]); */
 
-
-
         $data = $this->applicantRepo->changeDBOFromat($data);
 
-        $application = $this->applicantRepo->saveApplication($data , $id);
+        $application = $this->applicantRepo->saveApplication($data, $id);
 
-        if ($application) {
+        $isComplete = $this->applicantRepo->checkApplicationCompletion($id);
 
-         return Qs::jsonApplicationUpdateOk('Application details saved successfully, but come back to complete your application.');
-
-       //  return redirect()->route('application.complete_application', $application);
-
-
+        if ($isComplete) {
+            // return Qs::jsonApplicationUpdateOk('Application completed successfully.');
+            return redirect(route('application.start_application', $id))->with('flash_success', 'Application completed successfully.');
         } else {
-            return Qs::json(false, 'msg.create_failed');
+            return Qs::jsonApplicationUpdateOk('Application progress saved. Fill out the rest of the form to complete your application.');
+        }
+
+        return Qs::json(false, 'msg.create_failed');
+    }
+
+    public function downloadAttachment($attachment_id)
+    {
+        try {
+            // Retrieve attachment details
+            $attachment = $this->attachmentRepo->find($attachment_id);
+
+            // Full path to the file
+            $filePath = storage_path('app/public/uploads/attachments/applications/' . $attachment->attachment);
+
+            // Return download response
+            return response()->download($filePath, $attachment->attachment);
+        } catch (\Throwable $th) {
+            return Qs::json(false, 'msg.download_failed');
+            // throw $th;
         }
     }
 }
