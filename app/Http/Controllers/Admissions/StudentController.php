@@ -182,6 +182,7 @@ class StudentController extends Controller
     {
 
         try {
+
             DB::beginTransaction();
 
             $userData = null;
@@ -189,21 +190,23 @@ class StudentController extends Controller
             $nextOfKinDataWithPrefix = null;
             $studentData = null;
 
+            // Instantiate request objects
+            $userInfoRequest = new UserInfo();
+            $personalInfoRequest = new PersonalInfo();
+            $nextOfKinInfoRequest = new NextOfKinInfo();
+            $academicInfoRequest = new AcademicInfo();
+
+
             // Determine the type of request and validate accordingly
-            if ($request instanceof UserInfo) {
-
-                $userData = $request->validated();
-            } elseif ($request instanceof PersonalInfo) {
-
-                $personalData = $request->validated();
-            } elseif ($request instanceof NextOfKinInfo) {
-
-                $nextOfKinDataWithPrefix = $request->validated();
-            } elseif ($request instanceof AcademicInfo) {
-
-                $studentData = $request->validated();
+            if ($request->email && $request->gender) {
+                $userData = $request->validate($userInfoRequest->rules());
+            } elseif ($request->nrc) {
+                $personalData = $request->validate($personalInfoRequest->rules());
+            } elseif ($request->kin_relationship_id) {
+                $nextOfKinDataWithPrefix = $request->validate($nextOfKinInfoRequest->rules());
+            } elseif ($request->program_id) {
+                $studentData = $request->validate($academicInfoRequest->rules());
             }
-
 
 
             if ($nextOfKinDataWithPrefix) {

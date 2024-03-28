@@ -2,26 +2,23 @@
 
 namespace App\Repositories\Admissions;
 
-
-use Ramsey\Uuid\Type\Integer;
-use Illuminate\Support\Facades\Hash;
-use App\Models\Accounting\{Fee, PaymentMethod};
-use App\Models\Users\{User, UserType};
-use App\Models\Residency\{Town, Province, Country};
-use App\Models\Profile\{MaritalStatus, Relationship};
-use App\Models\Admissions\{Student, AcademicPeriodIntake};
 use App\Models\Academics\{AcademicPeriod, Program, CourseLevel, StudyMode, PeriodType};
+use App\Models\Accounting\{Fee, PaymentMethod};
+use App\Models\Admissions\{Student, AcademicPeriodIntake};
+use App\Models\Profile\{MaritalStatus, Relationship};
+use App\Models\Residency\{Town, Province, Country};
+use App\Models\Users\{User, UserType};
 use App\Repositories\Users\UserPersonalInfoRepository;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Ramsey\Uuid\Type\Integer;
 
 class StudentRepository
 {
-
     const DEFAULT_STUDENT_PASSWORD = 'secret';
 
     public function createUser($data)
     {
-
         $data['password'] = $this->encryptPassword(self::DEFAULT_STUDENT_PASSWORD);
         $data['user_type_id'] = $this->getStudentUserType();
 
@@ -102,6 +99,7 @@ class StudentRepository
     {
         return CourseLevel::all(['id', 'name']);
     }
+
     public function getIntakes()
     {
         return AcademicPeriodIntake::all(['id', 'name']);
@@ -109,7 +107,6 @@ class StudentRepository
 
     public function addStudentId($studentData)
     {
-
         //        $year = date("y");
         //        $semester = (date("m") <= 6) ? 1 : 2;
         //
@@ -148,8 +145,8 @@ class StudentRepository
         //
         //        $semester = (date("m") <= 6) ? 1 : 2;
 
-        $year = date("y");
-        $semester = (date("m") <= 6) ? 1 : 2;
+        $year = date('y');
+        $semester = (date('m') <= 6) ? 1 : 2;
 
         // Get the latest student ID from the database
         $lastID = Student::latest('id')->first();
@@ -160,7 +157,7 @@ class StudentRepository
             if (intval($firstTwoValues) === intval($year)) {
                 $addonw = $afterRemovingFirstThree + 1;
             } else {
-                $addonw = 000 + 1;
+                $addonw = 0 + 1;
             }
             $studentNumber = str_pad($addonw, 3, '0', STR_PAD_LEFT);
         } else {
@@ -180,16 +177,16 @@ class StudentRepository
             $concatStudentNumber = "$studentNumber";
         }
 
-        $semester = (date("m") <= 6) ? 1 : 2;
+        $semester = (date('m') <= 6) ? 1 : 2;
 
-        //$studentData =  $year . $semester . $concatStudentNumber;
+        // $studentData =  $year . $semester . $concatStudentNumber;
 
-        //echo $finalID;
-        //echo $studentData['id'];
+        // echo $finalID;
+        // echo $studentData['id'];
 
-        //return $studentData;
+        // return $studentData;
 
-        $studentData['id'] =  $year . $semester . $concatStudentNumber;
+        $studentData['id'] = $year . $semester . $concatStudentNumber;
 
         return $studentData;
     }
@@ -198,11 +195,9 @@ class StudentRepository
     {
         // Remove the "kin_" prefix from keys
         $nextOfKinData = array_combine(
-
             array_map(function ($key) {
                 return preg_replace('/^kin_/', '', $key);
             }, array_keys($nextOfKinDataWithPrefix)),
-
             $nextOfKinDataWithPrefix
         );
 
@@ -218,10 +213,10 @@ class StudentRepository
 
     public function studentSearch($searchText)
     {
-
         return User::where('first_name', 'LIKE', '%' . $searchText . '%')
             ->orWhere('last_name', 'LIKE', '%' . $searchText . '%')
-            ->orWhere('id', 'LIKE', '%' . $searchText . '%')->get();
+            ->orWhere('id', 'LIKE', '%' . $searchText . '%')
+            ->get();
     }
 
     public function getFees($student_id)
@@ -230,11 +225,10 @@ class StudentRepository
         $student = $this->getStudentInfor($student_id);
 
         // get current academic period fees
-        $academic_period_fees = $student->academic_info->academic_period->academic_period_fees;
-
+        $academic_period_fees = $student->academic_info ? $student->academic_info->academic_period->academic_period_fees : [];
 
         // extract only the fee ids
-        $academic_period_fee_ids = $academic_period_fees->pluck('fee_id');
+        $academic_period_fee_ids = $academic_period_fees ? $academic_period_fees->pluck('fee_id') : [];
 
         // get all fees minus the fees in current academic period
         $fees = Fee::whereNotIn('id', $academic_period_fee_ids)->get();
@@ -242,12 +236,10 @@ class StudentRepository
         return $fees;
     }
 
-
     public function getPaymentMethods()
     {
         return PaymentMethod::all(['id', 'name']);
     }
-
 
     private function getStudentUserType()
     {
@@ -265,7 +257,6 @@ class StudentRepository
 
     public function getStudentInfor($id)
     {
-
         return Student::with(
             'period_type',
             'level',
@@ -280,9 +271,9 @@ class StudentRepository
             'user.userPersonalInfo.town'
         )->where('user_id', $id)->get()->first();
     }
+
     public function getStudentInforByID($id)
     {
-
         return Student::with(
             'period_type',
             'level',
@@ -295,7 +286,7 @@ class StudentRepository
             'user.userPersonalInfo.province',
             'user.userPersonalInfo.country',
             'user.userPersonalInfo.town'
-        )->find( $id);
+        )->find($id);
     }
 
     public function resetPassword($resetPasswordData)
@@ -320,6 +311,11 @@ class StudentRepository
         if ($passwordResetted) {
             return true;
         }
+    }
+
+    public function updatePersonalInfo()
+    {
+        
     }
 
     public function destroy($id)
