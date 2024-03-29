@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Home;
 use App\Http\Controllers\Controller;
 use App\Repositories\Reports\enrollments\EnrollmentRepository;
 use App\Repositories\Announcements\AnnouncementRepository;
+use App\Repositories\Applications\ApplicantRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,12 +19,17 @@ class HomeController extends Controller
      */
     protected $enrollmentRepository;
     protected $announcementRepo;
+    protected $applicantRepo;
 
-    public function __construct( EnrollmentRepository $enrollmentRepository, AnnouncementRepository $announcementRepo)
-    {
+    public function __construct(
+        EnrollmentRepository $enrollmentRepository,
+        AnnouncementRepository $announcementRepo,
+        ApplicantRepository $applicantRepo
+    ) {
         $this->middleware('auth');
         $this->enrollmentRepository = $enrollmentRepository;
         $this->announcementRepo = $announcementRepo;
+        $this->applicantRepo = $applicantRepo;
     }
 
     /**
@@ -40,14 +46,12 @@ class HomeController extends Controller
             $data['announcements'] = $this->announcementRepo->getAllStudentAnnouncements();
 
             return view('pages.home.student_home', $data);
-
-        }else if ($user->userType->title == 'instructor'){
+        } else if ($user->userType->title == 'instructor') {
 
             $data['announcements'] = $this->announcementRepo->getAllInstructorAnnouncements();
 
             return view('pages.home.instructor_home',  $data);
-
-        }else {
+        } else {
             $data['students'] = $this->enrollmentRepository->totalStudents();
             $data['users'] = $this->enrollmentRepository->totalUsers();
             $data['staff'] = $this->enrollmentRepository->totalStaff();
@@ -55,7 +59,9 @@ class HomeController extends Controller
             $data['registered'] = $this->enrollmentRepository->getStudentsSumForAllOpenPeriods();
             $data['todaysPayments'] = $this->enrollmentRepository->todaysPayments();
             $data['todaysInvoices'] = $this->enrollmentRepository->todaysInvoices();
-            return view('pages.home.home',$data);
+            $data['todaysApplicants'] = $this->applicantRepo->getByDate(now()->toDateString())->count();
+            $data['applicants'] = $this->applicantRepo->getAll()->count();
+            return view('pages.home.home', $data);
         }
     }
 }

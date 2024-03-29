@@ -6,7 +6,7 @@
         use App\Helpers\Qs;
     @endphp
 
-    @if(true)
+    @if (true)
         <div class="row">
             <div class="col-sm-6 col-xl-3">
                 <div class="card card-body bg-blue-400 has-bg-image">
@@ -74,7 +74,7 @@
                 <div class="card card-body bg-dark has-bg-image">
                     <div class="media">
                         <div class="media-body">
-                            <h3 class="mb-0">{{ 00 }}</h3>
+                            <h3 class="mb-0">{{ $todaysApplicants }}</h3>
                             <span class="text-uppercase font-size-xs font-weight-bold">Today's Applicants</span>
                         </div>
 
@@ -89,7 +89,7 @@
                 <div class="card card-body bg-orange has-bg-image">
                     <div class="media">
                         <div class="media-body">
-                            <h3 class="mb-0">{{ 00 }}</h3>
+                            <h3 class="mb-0">{{ $applicants }}</h3>
                             <span class="text-uppercase font-size-xs">All Applicants</span>
                         </div>
 
@@ -108,7 +108,7 @@
                         </div>
 
                         <div class="media-body text-right">
-                            <h3 class="mb-0">{{ 00 }}</h3>
+                            <h3 class="mb-0">{{ $admin }}</h3>
                             <span class="text-uppercase font-size-xs">Total Administrators</span>
                         </div>
                     </div>
@@ -123,7 +123,7 @@
                         </div>
 
                         <div class="media-body text-right">
-                            <h3 class="mb-0">{{ 1 }}</h3>
+                            <h3 class="mb-0">{{ $users }}</h3>
                             <span class="text-uppercase font-size-xs">Total Users</span>
                         </div>
                     </div>
@@ -177,7 +177,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 col-xl-3">
+            {{-- <div class="col-sm-6 col-xl-3">
                 <div class="card card-body bg-brown has-bg-image">
                     <div class="media">
                         <div class="mr-3 align-self-center">
@@ -190,7 +190,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     @endif
 

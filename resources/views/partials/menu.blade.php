@@ -301,31 +301,24 @@
                             </ul>
                         </li>
 
-                    @if(true)
-                            <li
-                                class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['search', 'students.create', 'students.edit']) ? 'nav-item-expanded nav-item-open' : '' }} ">
-                                <a href="#" class="nav-link"><i class="icon-users"></i> <span>
-                                    Students</span></a>
-
-                                <ul class="nav nav-group-sub" data-submenu-title="Manage Students">
-
-                                    <li class="nav-item">
-                                        <a href="{{ route('students.index') }}"
-                                           class="nav-link {{ in_array(Route::currentRouteName(), ['students.create', 'students.edit']) ? 'active' : '' }}"><i
-                                                class="icon-fence"></i> <span>Admit student</span></a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ route('search') }}"
-                                           class="nav-link {{ in_array(Route::currentRouteName(), ['search', 'students.edit']) ? 'active' : '' }}"><i
-                                                class="icon-fence"></i> <span>Student Information</span></a>
-                                    </li>
-
-                                </ul>
-                            </li>
-                    @endif
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['audit.trail.reports','student.list.reports','registers.reports','enrollments.reports']) ? 'nav-item-expanded nav-item-open' : '' }} ">
-                            <a href="#" class="nav-link"><i class="icon-users4"></i> <span> Reports</span></a>
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['application.index', 'application.show', 'application.initiate', 'application.start_application', 'application.complete_application', 'application.save_application']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            <a href="#" class="nav-link"><i class="icon-user-plus"></i> <span>
+                                    Admissions</span></a>
+
+                            <ul class="nav nav-group-sub" data-submenu-title="Manage Admissions">
+                                <li class="nav-item">
+                                    <a href="{{ route('application.index') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['applications.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Applications</span></a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['audit.trail.reports', 'student.list.reports', 'registers.reports', 'enrollments.reports']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            <a href="#" class="nav-link"><i class="icon-file-stats"></i> <span>
+                                    Reports</span></a>
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Users">
                                 <li class="nav-item">
@@ -335,17 +328,17 @@
 
                                 <li class="nav-item">
                                     <a href="{{ route('registers.reports') }}"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['registers.reports']) ? 'active' : '' }}"><i
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['registers.reports']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Exam Registers</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('student.list.reports') }}"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['student.list.reports']) ? 'active' : '' }}"><i
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['student.list.reports']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Student List</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('audit.trail.reports') }}"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['audit.trail.reports']) ? 'active' : '' }}"><i
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['audit.trail.reports']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Audit Trail</span></a>
                                 </li>
 
@@ -358,7 +351,7 @@
                                     Other</span></a>
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Profile">
-                            <li class="nav-item">
+                                <li class="nav-item">
                                     <a href="{{ route('announcements.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['announcements.create', 'announcements.edit', 'announcements.index']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Announcements</span></a>

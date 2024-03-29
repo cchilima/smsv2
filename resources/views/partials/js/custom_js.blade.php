@@ -1,35 +1,57 @@
 <script>
-    {{--Notifications--}}
+    {{-- Notifications --}}
 
     @if (session('pop_error'))
-    pop({msg: '{{ session('pop_error') }}', type: 'error'});
+        pop({
+            msg: '{{ session('pop_error') }}',
+            type: 'error'
+        });
     @endif
 
     @if (session('pop_warning'))
-    pop({msg: '{{ session('pop_warning') }}', type: 'warning'});
+        pop({
+            msg: '{{ session('pop_warning') }}',
+            type: 'warning'
+        });
     @endif
 
     @if (session('pop_success'))
-    pop({msg: '{{ session('pop_success') }}', type: 'success', title: 'GREAT!!'});
+        pop({
+            msg: '{{ session('pop_success') }}',
+            type: 'success',
+            title: 'GREAT!!'
+        });
     @endif
 
     @if (session('flash_info'))
-    flash({msg: '{{ session('flash_info') }}', type: 'info'});
+        flash({
+            msg: '{{ session('flash_info') }}',
+            type: 'info'
+        });
     @endif
 
     @if (session('flash_success'))
-    flash({msg: '{{ session('flash_success') }}', type: 'success'});
+        flash({
+            msg: '{{ session('flash_success') }}',
+            type: 'success'
+        });
     @endif
 
     @if (session('flash_warning'))
-    flash({msg: '{{ session('flash_warning') }}', type: 'warning'});
+        flash({
+            msg: '{{ session('flash_warning') }}',
+            type: 'warning'
+        });
     @endif
 
     @if (session('flash_error') || session('flash_danger'))
-    flash({msg: '{{ session('flash_error') ?: session('flash_danger') }}', type: 'danger'});
+        flash({
+            msg: '{{ session('flash_error') ?: session('flash_danger') }}',
+            type: 'danger'
+        });
     @endif
 
-    {{--End Notifications--}}
+    {{-- End Notifications --}}
 
     function pop(data) {
         swal({
@@ -55,7 +77,7 @@
             icon: "warning",
             buttons: true,
             dangerMode: true
-        }).then(function (willDelete) {
+        }).then(function(willDelete) {
             if (willDelete) {
                 $('form#item-delete-' + id).submit();
             }
@@ -69,24 +91,24 @@
             icon: "warning",
             buttons: true,
             dangerMode: true
-        }).then(function (willDelete) {
+        }).then(function(willDelete) {
             if (willDelete) {
                 $('form#item-reset-' + id).submit();
             }
         });
     }
 
-    $('form#ajax-reg').on('submit', function (ev) {
+    $('form#ajax-reg').on('submit', function(ev) {
         ev.preventDefault();
         submitForm($(this), 'store');
         $('#ajax-reg-t-0').get(0).click();
     });
 
-    $('form.ajax-pay').on('submit', function (ev) {
+    $('form.ajax-pay').on('submit', function(ev) {
         ev.preventDefault();
         submitForm($(this), 'store');
 
-//        Retrieve IDS
+        //        Retrieve IDS
         var form_id = $(this).attr('id');
         var td_amt = $('td#amt-' + form_id);
         var td_amt_paid = $('td#amt_paid-' + form_id);
@@ -98,7 +120,7 @@
         var amt_paid = parseInt(td_amt_paid.data('amount'));
         var amt_input = parseInt(input.val());
 
-//        Update Values
+        //        Update Values
         amt_paid = amt_paid + amt_input;
         var bal = amt - amt_paid;
 
@@ -108,24 +130,27 @@
         bal < 1 ? $('#' + form_id).fadeOut('slow').remove() : '';
     });
     //start
-    $('form.ajax-store').on('submit', function (ev) {
+    $('form.ajax-store').on('submit', function(ev) {
         ev.preventDefault();
         submitForm($(this), 'store');
         var div = $(this).data('reload');
         div ? reloadDiv(div) : '';
     });
 
-    $('form.ajax-update').on('submit', function (ev) {
+    $('form.ajax-update').on('submit', function(ev) {
         ev.preventDefault();
         submitForm($(this));
         var div = $(this).data('reload');
         div ? reloadDiv(div) : '';
     });
 
-    $('.download-receipt').on('click', function (ev) {
+    $('.download-receipt').on('click', function(ev) {
         ev.preventDefault();
         $.get($(this).attr('href'));
-        flash({msg: '{{ 'Download in Progress' }}', type: 'info'});
+        flash({
+            msg: '{{ 'Download in Progress' }}',
+            type: 'info'
+        });
     });
 
     function reloadDiv(div) {
@@ -147,23 +172,31 @@
             data: new FormData(form[0])
         };
         var req = $.ajax(ajaxOptions);
-        req.done(function (resp) {
-            resp.ok && resp.msg
-                ? flash({msg: resp.msg, type: 'success'})
-                : flash({msg: resp.msg, type: 'danger'});
+        req.done(function(resp) {
+            resp.ok && resp.msg ?
+                flash({
+                    msg: resp.msg,
+                    type: 'success'
+                }) :
+                flash({
+                    msg: resp.msg,
+                    type: 'danger'
+                });
             hideAjaxAlert();
             enableBtn(btn);
             formType == 'store' ? clearForm(form) : '';
             scrollTo('body');
             return resp;
         });
-        req.fail(function (e) {
+        req.fail(function(e) {
             if (e.status == 422) {
                 var errors = e.responseJSON.errors;
                 displayAjaxErr(errors);
             }
             if (e.status == 500) {
-                displayAjaxErr([e.status + ' ' + e.statusText + ' Please Check for Duplicate entry or Contact School Administrator/IT Personnel'])
+                displayAjaxErr([e.status + ' ' + e.statusText +
+                    ' Please Check for Duplicate entry or Contact School Administrator/IT Personnel'
+                ])
             }
             if (e.status == 404) {
                 displayAjaxErr([e.status + ' ' + e.statusText + ' - Requested Resource or Record Not Found'])
@@ -184,8 +217,10 @@
     }
 
     function displayAjaxErr(errors) {
-        $('#ajax-alert').show().html(' <div class="alert alert-danger border-0 alert-dismissible" id="ajax-msg"><button type="button" class="close" data-dismiss="alert"><span>&times;</span></button></div>');
-        $.each(errors, function (k, v) {
+        $('#ajax-alert').show().html(
+            ' <div class="alert alert-danger border-0 alert-dismissible" id="ajax-msg"><button type="button" class="close" data-dismiss="alert"><span>&times;</span></button></div>'
+        );
+        $.each(errors, function(k, v) {
             $('#ajax-msg').append('<span><i class="icon-arrow-right5"></i> ' + v + '</span><br/>');
         });
         scrollTo('body');
@@ -202,7 +237,9 @@
     }
 
     function clearForm(form) {
-        form.find('.select, .select-search').val([]).select2({placeholder: 'Select...'});
+        form.find('.select, .select-search').val([]).select2({
+            placeholder: 'Select...'
+        });
         form[0].reset();
     }
 
@@ -210,12 +247,19 @@
         $('.personal-infor span').hide();
         //console.log(userid);
         // $('.personal-infor span').hide();
-        var firsname = $('#fname' + userid), midname = $('#mname' + userid), lastname = $('#lname' + userid),
-            gender = $('#gender' + userid), email = $('#email' + userid), nrc = $('#nrc' + userid),
+        var firsname = $('#fname' + userid),
+            midname = $('#mname' + userid),
+            lastname = $('#lname' + userid),
+            gender = $('#gender' + userid),
+            email = $('#email' + userid),
+            nrc = $('#nrc' + userid),
             passport = $('#passport' + userid),
-            dob = $('#dob' + userid), marital_status = $('#marital_status' + userid), mobile = $('#mobile' + userid),
+            dob = $('#dob' + userid),
+            marital_status = $('#marital_status' + userid),
+            mobile = $('#mobile' + userid),
             street = $('#street' + userid),
-            town = $('#town' + userid), province_id = $('#province_id' + userid),
+            town = $('#town' + userid),
+            province_id = $('#province_id' + userid),
             country_id = $('#country_id' + userid);
         firsname.removeClass('d-none');
         firsname.show();
@@ -244,16 +288,20 @@
         // }
     }
 
-    function UpdateGeneralinformation(data, countries, programs, towns, provinces, course_levels, intake, inforType, username) {
+    function UpdateGeneralinformation(data, countries, programs, towns, provinces, course_levels, intake, inforType,
+        username) {
 
 
     }
 
     function UpdateNkininformation(id) {
-        var kin_country_id = $('#kin_country_id' + id), kin_province_id = $('#kin_province_id' + id),
+        var kin_country_id = $('#kin_country_id' + id),
+            kin_province_id = $('#kin_province_id' + id),
             kin_town_id = $('#kin_town_id' + id),
-            kin_relationship_id = $('#kin_relationship_id' + id), telephone = $('#telephone' + id),
-            mobile = $('#mobile' + id), name = $('#name' + id);
+            kin_relationship_id = $('#kin_relationship_id' + id),
+            telephone = $('#telephone' + id),
+            mobile = $('#mobile' + id),
+            name = $('#name' + id);
         $('.next-of-kin-infor span').hide();
 
         kin_country_id.removeClass('d-none');
@@ -267,7 +315,8 @@
 
     function manageAcademicInfor(key) {
         $('.academic-infor span').hide();
-        var study_mode_id = $('#study_mode_id-' + key), course_level_id = $('#course_level_id-' + key),
+        var study_mode_id = $('#study_mode_id-' + key),
+            course_level_id = $('#course_level_id-' + key),
             program_id = $('#program_id-' + key),
             academic_period_intake_id = $('#academic_period_intake_id-' + key),
             period_type_id = $('#period_type_id-' + key);
@@ -298,7 +347,7 @@
         $.ajax({
             dataType: 'json',
             url: url,
-            success: function (resp) {
+            success: function(resp) {
                 classId.empty();
                 classId.append($('<option>', {
                     value: '',
@@ -309,7 +358,7 @@
                     value: '',
                     text: 'Choose ...'
                 }));
-                $.each(resp, function (i, data) {
+                $.each(resp, function(i, data) {
                     classId.append($('<option>', {
                         value: data.id,
                         text: data.course.code + ' - ' + data.course.name
@@ -324,7 +373,7 @@
     }
 
     // Bind the function to the change event of the #ac_id input
-    $('#ac_id').on('change', function () {
+    $('#ac_id').on('change', function() {
         getAcClassesPDER();
     });
 
@@ -338,7 +387,7 @@
         }));
 
         // Iterate over each academic period ID
-        $.each(ac_ids, function (index, ac_id) {
+        $.each(ac_ids, function(index, ac_id) {
             var url = '<?php echo e(route('class-names', [':id'])); ?>';
             url = url.replace(':id', ac_id);
 
@@ -346,8 +395,8 @@
                 dataType: 'json',
                 url: url,
                 async: false, // Ensures synchronous processing
-                success: function (resp) {
-                    $.each(resp, function (i, data) {
+                success: function(resp) {
+                    $.each(resp, function(i, data) {
                         classId.append($('<option>', {
                             value: data.id,
                             text: data.course.code + ' - ' + data.course.name
@@ -368,13 +417,13 @@
         $.ajax({
             dataType: 'json',
             url: url,
-            success: function (resp) {
+            success: function(resp) {
                 classId.empty();
                 classId.append($('<option>', {
                     value: '',
                     text: 'Choose ...'
                 }));
-                $.each(resp, function (i, data) {
+                $.each(resp, function(i, data) {
                     classId.append($('<option>', {
                         value: data.id,
                         text: data.course.code + ' - ' + data.course.name
@@ -384,14 +433,14 @@
         })
     }
 
-    $('.edit-total-link').on('click', function () {
+    $('.edit-total-link').on('click', function() {
 
         var row = $(this).closest('tr');
         row.find('.display-mode').hide();
         row.find('.edit-mode').show();
     });
     //});
-    function EnterResults(classID,total) {
+    function EnterResults(classID, total) {
         let actual = $('#class' + classID).val();
 
         var displaymode = $('#display-mode' + classID);
@@ -408,7 +457,7 @@
 
         let id = $('#gradeid' + classID).val();
 
-        let url = '{{ route('postedResults.process')}}';
+        let url = '{{ route('postedResults.process') }}';
         $.ajax({
             url: url, // Replace with the actual route
             method: 'POST',
@@ -417,7 +466,7 @@
                 total: newValues,
                 id: id,
             },
-            success: function (resp) {
+            success: function(resp) {
                 // Update the display mode with the new value
                 console.log(resp)
                 if (resp.ok === true) {
@@ -429,9 +478,19 @@
                     displaymode.show();
                     input.hide();
                 }
-                resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({msg: resp.msg, type: 'danger'});
-            }, error: function (xhr, status, error) {
-                flash({msg: error, type: 'danger'})
+                resp.ok && resp.msg ? flash({
+                    msg: resp.msg,
+                    type: 'success'
+                }) : flash({
+                    msg: resp.msg,
+                    type: 'danger'
+                });
+            },
+            error: function(xhr, status, error) {
+                flash({
+                    msg: error,
+                    type: 'danger'
+                })
             }
         });
     }
@@ -465,7 +524,7 @@
                 total: newValues,
                 end_date: newValuesendDate,
             },
-            success: function (resp) {
+            success: function(resp) {
                 // Update the display mode with the new value
                 displaymode.text(newValues);
                 displaymode.show();
@@ -475,15 +534,25 @@
                 displaymodedate.show();
                 inputdate.hide();
 
-                resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({msg: resp.msg, type: 'danger'});
-            }, error: function (xhr, status, error) {
-                flash({msg: error, type: 'danger'})
+                resp.ok && resp.msg ? flash({
+                    msg: resp.msg,
+                    type: 'success'
+                }) : flash({
+                    msg: resp.msg,
+                    type: 'danger'
+                });
+            },
+            error: function(xhr, status, error) {
+                flash({
+                    msg: error,
+                    type: 'danger'
+                })
             }
         });
     }
 
     function downloadCSVtemplate() {
-        let url = '{{ route('template.download')}}';
+        let url = '{{ route('template.download') }}';
         var classID = $('input[name="classIDTemplate"]').val();
         var AssessID = $('input[name="AssessIDTemplate"]').val();
         $.ajax({
@@ -494,7 +563,7 @@
                 classId: classID,
                 assessID: AssessID
             },
-            success: function (resp) {
+            success: function(resp) {
                 // resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({
                 //     msg: resp.msg,
                 //     type: 'danger'
@@ -507,19 +576,29 @@
                     link.download = 'results_upload_template.csv'; // Set the default file name
                     link.click();
                 } else if (resp.ok && resp.msg) {
-                    flash({msg: resp.msg, type: 'success'});
+                    flash({
+                        msg: resp.msg,
+                        type: 'success'
+                    });
                 } else {
-                    flash({msg: resp.msg, type: 'danger'});
+                    flash({
+                        msg: resp.msg,
+                        type: 'danger'
+                    });
                 }
 
-            }, error: function (xhr, status, error) {
-                flash({msg: error, type: 'danger'})
+            },
+            error: function(xhr, status, error) {
+                flash({
+                    msg: error,
+                    type: 'danger'
+                })
             }
         });
     }
 
     function modifyMarks(id, student, code, name, grades) {
-        console.log(student );
+        console.log(student);
 
         const user = JSON.parse(student);
         //console.log(user);
@@ -546,16 +625,19 @@
             assessmentHtml += '</div>';
 
             modalBody.append(assessmentHtml);
-            data.forEach(function (assessment) {
+            data.forEach(function(assessment) {
                 if (parseInt(assessment.student_id) === parseInt(id)) {
                     //var assessmentHtml = '<div>';
-                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.assessment_type.class_assessment.total + '" data-id="' +
+                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.assessment_type
+                        .class_assessment.total + '" data-id="' +
                         assessment.id + '" data-code="' + code + '">';
                     assessmentHtml += '<p>Assessment: ' + assessment.assessment_type.name + '</p>';
-                    assessmentHtml += '<p>' + assessment.total + ' Out of: ' + assessment.assessment_type.class_assessment.total + '</p>';
+                    assessmentHtml += '<p>' + assessment.total + ' Out of: ' + assessment.assessment_type
+                        .class_assessment.total + '</p>';
                     // assessmentHtml += '<label for="total">Total:</label>';
                     //assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="' + assessment.marks + '">';
-                    assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
+                    assessmentHtml +=
+                        '<input class="form-control total-input" type="number" name="total" value="0">';
                     assessmentHtml += '<hr>';
                     // Add more fields as needed
 
@@ -566,11 +648,13 @@
             });
             var assessmentHtml = '<br/>';
             assessmentHtml += ' <div class="form-check">';
-            assessmentHtml += '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
+            assessmentHtml +=
+                '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
             assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault1">Subtract</label>';
             assessmentHtml += '</div>';
             assessmentHtml += '<div class="form-check">';
-            assessmentHtml += '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
+            assessmentHtml +=
+                '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
             assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault2">Add</label>';
             assessmentHtml += '</div>';
             modalBody.append(assessmentHtml);
@@ -579,19 +663,23 @@
             $('#staticBackdrop').modal('show');
         } else {
             // Handle the case where there is no data or an error occurred
-            flash({msg: 'No Assessments found for the course', type: 'danger'})
+            flash({
+                msg: 'No Assessments found for the course',
+                type: 'danger'
+            })
         }
     }
-    function modifyMarksCAsL(id, student, code, name, grades) {
-        console.log(student );
 
-       // const user = JSON.parse(student);
+    function modifyMarksCAsL(id, student, code, name, grades) {
+        console.log(student);
+
+        // const user = JSON.parse(student);
         //console.log(user);
         //console.log(typeof user );
         //$('#staticBackdrop').modal('show');
         var modalBody = $('#staticBackdrop .modal-body');
         modalBody.empty();
-      //  const data = JSON.parse(grades);
+        //  const data = JSON.parse(grades);
 
 
         const user = JSON.parse(decodeURIComponent(student));
@@ -614,16 +702,19 @@
             assessmentHtml += '</div>';
 
             modalBody.append(assessmentHtml);
-            data.forEach(function (assessment) {
+            data.forEach(function(assessment) {
                 if (parseInt(assessment.student_id) === parseInt(id)) {
                     //var assessmentHtml = '<div>';
-                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.assessment_type.class_assessment.total + '" data-id="' +
+                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.assessment_type
+                        .class_assessment.total + '" data-id="' +
                         assessment.id + '" data-code="' + code + '">';
                     assessmentHtml += '<p>Assessment: ' + assessment.assessment_type.name + '</p>';
-                    assessmentHtml += '<p>' + assessment.total + ' Out of: ' + assessment.assessment_type.class_assessment.total + '</p>';
+                    assessmentHtml += '<p>' + assessment.total + ' Out of: ' + assessment.assessment_type
+                        .class_assessment.total + '</p>';
                     // assessmentHtml += '<label for="total">Total:</label>';
                     //assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="' + assessment.marks + '">';
-                    assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
+                    assessmentHtml +=
+                        '<input class="form-control total-input" type="number" name="total" value="0">';
                     assessmentHtml += '<hr>';
                     // Add more fields as needed
 
@@ -634,11 +725,13 @@
             });
             var assessmentHtml = '<br/>';
             assessmentHtml += ' <div class="form-check">';
-            assessmentHtml += '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
+            assessmentHtml +=
+                '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
             assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault1">Subtract</label>';
             assessmentHtml += '</div>';
             assessmentHtml += '<div class="form-check">';
-            assessmentHtml += '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
+            assessmentHtml +=
+                '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
             assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault2">Add</label>';
             assessmentHtml += '</div>';
             modalBody.append(assessmentHtml);
@@ -647,7 +740,10 @@
             $('#staticBackdrop').modal('show');
         } else {
             // Handle the case where there is no data or an error occurred
-            flash({msg: 'No Assessments found for the course', type: 'danger'})
+            flash({
+                msg: 'No Assessments found for the course',
+                type: 'danger'
+            })
         }
     }
 
@@ -675,16 +771,18 @@
             assessmentHtml += '</div>';
 
             modalBody.append(assessmentHtml);
-            data.forEach(function (assessment) {
+            data.forEach(function(assessment) {
                 if (assessment.student_id === parseInt(id)) {
                     //var assessmentHtml = '<div>';
-                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.outof + '" data-id="' +
+                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.outof +
+                        '" data-id="' +
                         assessment.id + '" data-code="' + code + '">';
                     assessmentHtml += '<p>Assessment: Exam</p>';
                     assessmentHtml += '<p>' + assessment.exam + ' Out of: ' + assessment.outof + '</p>';
                     // assessmentHtml += '<label for="total">Total:</label>';
                     //assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="' + assessment.marks + '">';
-                    assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
+                    assessmentHtml +=
+                        '<input class="form-control total-input" type="number" name="total" value="0">';
                     assessmentHtml += '<hr>';
                     // Add more fields as needed
 
@@ -695,11 +793,13 @@
             });
             var assessmentHtml = '<br/>';
             assessmentHtml += ' <div class="form-check">';
-            assessmentHtml += '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
+            assessmentHtml +=
+                '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
             assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault1">Subtract</label>';
             assessmentHtml += '</div>';
             assessmentHtml += '<div class="form-check">';
-            assessmentHtml += '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
+            assessmentHtml +=
+                '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
             assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault2">Add</label>';
             assessmentHtml += '</div>';
             modalBody.append(assessmentHtml);
@@ -708,7 +808,10 @@
             $('#staticBackdrop').modal('show');
         } else {
             // Handle the case where there is no data or an error occurred
-            flash({msg: 'No Assessments found for the course', type: 'danger'})
+            flash({
+                msg: 'No Assessments found for the course',
+                type: 'danger'
+            })
         }
     }
 
@@ -737,16 +840,18 @@
 
             modalBody.append(assessmentHtml);
             //data.each(function (index, assessment) {
-                data.forEach(function (assessment) {
+            data.forEach(function(assessment) {
                 if (assessment.student_id === parseInt(id)) {
                     //var assessmentHtml = '<div>';
-                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.outof + '" data-id="' +
+                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.outof +
+                        '" data-id="' +
                         assessment.id + '" data-code="' + code + '">';
                     assessmentHtml += '<p>Assessment: Exam</p>';
                     assessmentHtml += '<p>' + assessment.exam + ' Out of: ' + assessment.outof + '</p>';
                     // assessmentHtml += '<label for="total">Total:</label>';
                     //assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="' + assessment.marks + '">';
-                    assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
+                    assessmentHtml +=
+                        '<input class="form-control total-input" type="number" name="total" value="0">';
                     assessmentHtml += '<hr>';
                     // Add more fields as needed
 
@@ -757,11 +862,13 @@
             });
             var assessmentHtml = '<br/>';
             assessmentHtml += ' <div class="form-check">';
-            assessmentHtml += '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
+            assessmentHtml +=
+                '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
             assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault1">Subtract</label>';
             assessmentHtml += '</div>';
             assessmentHtml += '<div class="form-check">';
-            assessmentHtml += '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
+            assessmentHtml +=
+                '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
             assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault2">Add</label>';
             assessmentHtml += '</div>';
             modalBody.append(assessmentHtml);
@@ -770,7 +877,10 @@
             $('#staticBackdrop').modal('show');
         } else {
             // Handle the case where there is no data or an error occurred
-            flash({msg: 'No Assessments found for the course', type: 'danger'})
+            flash({
+                msg: 'No Assessments found for the course',
+                type: 'danger'
+            })
         }
     }
 
@@ -788,7 +898,7 @@
                 classID: classID,
                 exam: exam
             },
-            success: function (resp) {
+            success: function(resp) {
                 // Update the display mode with the new value
                 console.log(resp)
                 // Check if the response is valid and contains data
@@ -805,14 +915,18 @@
                     assessmentHtml += '</div>';
 
                     modalBody.append(assessmentHtml);
-                    resp.class_assessments.forEach(function (assessment) {
+                    resp.class_assessments.forEach(function(assessment) {
                         //var assessmentHtml = '<div>';
-                        var assessmentHtml = '<div class="assessment" data-apid="' + resp.academic_period_id + '" data-code="' +
-                            resp.course.code + '" data-id="' + assessment.assessment_type.id + '"data-outof="' + assessment.total + '">';
-                        assessmentHtml += '<p>Assessment: ' + assessment.assessment_type.name + '</p>';
+                        var assessmentHtml = '<div class="assessment" data-apid="' + resp
+                            .academic_period_id + '" data-code="' +
+                            resp.course.code + '" data-id="' + assessment.assessment_type.id +
+                            '"data-outof="' + assessment.total + '">';
+                        assessmentHtml += '<p>Assessment: ' + assessment.assessment_type.name +
+                            '</p>';
                         assessmentHtml += '<p>Out of: ' + assessment.total + '</p>';
                         // assessmentHtml += '<label for="total">Total:</label>';
-                        assessmentHtml += '<input class="form-control total-input" type="number" name="total" value="0">';
+                        assessmentHtml +=
+                            '<input class="form-control total-input" type="number" name="total" value="0">';
                         assessmentHtml += '<hr>';
                         // Add more fields as needed
 
@@ -822,12 +936,16 @@
                     });
                     var assessmentHtml = '<br/>';
                     assessmentHtml += ' <div class="form-check">';
-                    assessmentHtml += '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
-                    assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault1">Subtract</label>';
+                    assessmentHtml +=
+                        '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
+                    assessmentHtml +=
+                        '        <label class="form-check-label" for="flexRadioDefault1">Subtract</label>';
                     assessmentHtml += '</div>';
                     assessmentHtml += '<div class="form-check">';
-                    assessmentHtml += '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
-                    assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault2">Add</label>';
+                    assessmentHtml +=
+                        '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
+                    assessmentHtml +=
+                        '        <label class="form-check-label" for="flexRadioDefault2">Add</label>';
                     assessmentHtml += '</div>';
                     modalBody.append(assessmentHtml);
 
@@ -837,18 +955,24 @@
                 } else {
                     // Handle the case where there is no data or an error occurred
                     console.log('No data found in the response or an error occurred.');
-                    flash({msg: 'No Assessments found for the course', type: 'danger'})
+                    flash({
+                        msg: 'No Assessments found for the course',
+                        type: 'danger'
+                    })
                     $('#assesmentID').val('');
                 }
                 //resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({msg: resp.msg, type: 'danger'});
-            }, error: function (xhr, status, error) {
-                flash({msg: error, type: 'danger'})
+            },
+            error: function(xhr, status, error) {
+                flash({
+                    msg: error,
+                    type: 'danger'
+                })
                 $('#assesmentID').val('');
             }
 
         });
-        $('#assesmentID').val('');
-        ;
+        $('#assesmentID').val('');;
 
     }
 
@@ -858,7 +982,7 @@
         var updatedAssessments = [];
         var modalBody = $('#staticBackdrop .modal-body');
         var assessmentContainers = modalBody.find('.assessment');
-        assessmentContainers.each(function () {
+        assessmentContainers.each(function() {
             var assessment = {};
             assessment.total = $(this).find('.total-input').val();
             //assessment.total = $(this).find('.total-input').val();
@@ -869,7 +993,7 @@
             updatedAssessments.push(assessment);
         });
 
-        let url = '{{ route('BoardofExaminersUpdateResults')}}';
+        let url = '{{ route('BoardofExaminersUpdateResults') }}';
         var radioButtons = $('input[type="radio"]');
         var lastClickedRadioButton = radioButtons.filter(':checked');
         var operation = lastClickedRadioButton.val();
@@ -888,7 +1012,7 @@
                     operation: operation
 
                 },
-                success: function (resp) {
+                success: function(resp) {
                     console.log(resp)
                     if (resp.ok === true) {
                         $('#staticBackdrop').modal('hide');
@@ -896,12 +1020,19 @@
                     } else {
                         $('#staticBackdrop').modal('hide');
                     }
-                    resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({
+                    resp.ok && resp.msg ? flash({
+                        msg: resp.msg,
+                        type: 'success'
+                    }) : flash({
                         msg: resp.msg,
                         type: 'danger'
                     });
-                }, error: function (xhr, status, error) {
-                    flash({msg: error, type: 'danger'})
+                },
+                error: function(xhr, status, error) {
+                    flash({
+                        msg: error,
+                        type: 'danger'
+                    })
                 }
             });
             $('#staticBackdrop').modal('hide');
@@ -914,7 +1045,7 @@
     }
 
 
-    $('.user-all').change(function (e) {
+    $('.user-all').change(function(e) {
         var value = $('.user-all:checked').val();
         if (value == 1) {
             $('input[name="ckeck_user"]').prop('checked', true);
@@ -926,7 +1057,7 @@
     });
 
 
-    $("input[name='ckeck_user']").change(function () {
+    $("input[name='ckeck_user']").change(function() {
         if ($("input[name='ckeck_user']:checked").length > 0) {
             $('.publish-results-board').removeAttr('disabled');
         } else {
@@ -934,11 +1065,11 @@
         }
     });
 
-    $('.publish-results-board').click(function (e) {
+    $('.publish-results-board').click(function(e) {
         e.preventDefault();
         var ids = [];
 
-        $.each($('input[name="ckeck_user"]:checked'), function () {
+        $.each($('input[name="ckeck_user"]:checked'), function() {
             ids.push($(this).data('id'));
         });
         var academic = $('input[name="academic"]').val();
@@ -956,19 +1087,26 @@
                     academicPeriodID: academic,
                     type: type
                 },
-                success: function (resp) {
+                success: function(resp) {
                     console.log(resp)
                     $('.success-mail').css('display', 'block');
                     $('.publish-results-board').attr("disabled", false);
                     $('.publish-results-board').html('<i class="fa fa-share"></i> Publish Results');
 
-                    resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({
+                    resp.ok && resp.msg ? flash({
+                        msg: resp.msg,
+                        type: 'success'
+                    }) : flash({
                         msg: resp.msg,
                         type: 'danger'
                     });
 
-                }, error: function (xhr, status, error) {
-                    flash({msg: error, type: 'danger'})
+                },
+                error: function(xhr, status, error) {
+                    flash({
+                        msg: error,
+                        type: 'danger'
+                    })
                     $('.success-mail').css('display', 'block');
                     $('.publish-results-board').attr("disabled", false);
                     $('.publish-results-board').html('<i class="fa fa-share"></i> Publish Results');
@@ -995,14 +1133,14 @@
                 academic: academic,
                 level: level
             },
-            success: function (response) {
+            success: function(response) {
                 console.log(response)
                 if (response && Object.keys(response.data).length > 0) {
-                    $.each(response.data, function (index, student) {
+                    $.each(response.data, function(index, student) {
                         // Loop through the students in each academic data
                         var coursesHtml = '';
-                        $.each(student.enrollments, function (index, infor) {
-                                coursesHtml += `
+                        $.each(student.enrollments, function(index, infor) {
+                            coursesHtml += `
                                 <tr>
                                     <td>${(index+1)}</td>
                                     <td>${infor.class.course.code }</td>
@@ -1010,32 +1148,33 @@
                                     <td>
                                     <table class="table table-bordered table-hover table-striped">
                                                             <tbody>`
-                                $.each(infor.class.course.grades, function (index, grade) {
-                                    if(parseInt(grade.student_id) === parseInt(student.id)){
+                            $.each(infor.class.course.grades, function(index, grade) {
+                                if (parseInt(grade.student_id) === parseInt(student
+                                        .id)) {
                                     coursesHtml += ` <tr>
                                 <td>${grade.assessment_type.name}</td>
                                 <td>${grade.total}</td>
                                                                 </tr>`
                                 }
-                                                           });
-                                    coursesHtml += `
+                            });
+                            coursesHtml += `
                                                                 </tbody>
                                                             </table>
                                 </td>
                                         <td>`;
 
-                                if (true) {
-                                    var useri = JSON.stringify(student.user);
-                                    coursesHtml += `<td>
+                            if (true) {
+                                var useri = JSON.stringify(student.user);
+                                coursesHtml += `<td>
                                   <a onclick="modifyMarksCAsL('${ student.id }','${ encodeURIComponent(JSON.stringify(student.user)) }','${infor.class.course.code }','${ infor.class.course.name }','${ encodeURIComponent(JSON.stringify(infor.class.course.grades)) }')" class="nav-link"><i class="icon-pencil"></i></a>
                                 </td>`;
-                                }
-                                coursesHtml += `</td>
+                            }
+                            coursesHtml += `</td>
                                 </tr>`;
-                            });
+                        });
 
-                            // Append the student data to your table
-                            var studentHtml = `
+                        // Append the student data to your table
+                        var studentHtml = `
                             <table class="table table-hover table-striped-columns mb-3">
                                 <div class="justify-content-between">
                                                     <h5><strong>${student.user.first_name +' '+ student.user.first_name}</strong></h5>
@@ -1059,24 +1198,34 @@
                             <hr>
                         `;
                         updateLoadMoreButtonCAs(response, program, academic, level);
-                            if (response.last_page === response.current_page) {
-                                $('.load-more-results').hide();
-                            }
+                        if (response.last_page === response.current_page) {
+                            $('.load-more-results').hide();
+                        }
 
-                            // Append the studentHtml to a container div
-                            $('.loading-more-results').append(studentHtml);
-                        });
-                        $('#pagenumbers').text('Page ' + response.current_page + ' of ' + response.last_page)
+                        // Append the studentHtml to a container div
+                        $('.loading-more-results').append(studentHtml);
+                    });
+                    $('#pagenumbers').text('Page ' + response.current_page + ' of ' + response.last_page)
 
                     // Append studentHtml to the resultsContainer
-                    flash({msg: 'success', type: 'success'});
+                    flash({
+                        msg: 'success',
+                        type: 'success'
+                    });
                 } else {
                     $('.load-more-results').hide();
-                    flash({msg: 'No data to display', type: 'warning'});
+                    flash({
+                        msg: 'No data to display',
+                        type: 'warning'
+                    });
                 }
                 // $('.load-more-results-first').hide();
-            }, error: function (xhr, status, error) {
-                flash({msg: error, type: 'danger'})
+            },
+            error: function(xhr, status, error) {
+                flash({
+                    msg: error,
+                    type: 'danger'
+                })
 
                 // $('.loading-more-results').attr("disabled", false);
                 // $('.loading-more-results').html('<i class="fa fa-share"></i> Load More');
@@ -1103,13 +1252,13 @@
                 academic: academic,
                 level: level
             },
-            success: function (response) {
+            success: function(response) {
                 console.log(response.data)
                 if (response && Object.keys(response.data).length > 0) {
                     var coursesHtml = '';
-                    $.each(response.data, function (index, student) {
+                    $.each(response.data, function(index, student) {
                         // console.log(student.id)
-                        $.each(student.enrollments, function (index, infor) {
+                        $.each(student.enrollments, function(index, infor) {
                             // Create a table row for each course
                             coursesHtml += `
                                 <tr>
@@ -1127,7 +1276,7 @@
                                                             <td>Grade</td>
                                                             </tr>`;
                             // Loop through assessments for the "Exam" value
-                            $.each(infor.class.course.grades, function (index, grade) {
+                            $.each(infor.class.course.grades, function(index, grade) {
                                 if (grade.student_id === student.id) {
                                     coursesHtml += `<tr>
                                                             <td>${grade.ca}</td>
@@ -1195,18 +1344,29 @@
                         $('.loading-more-results').append(studentHtml);
 
 
-                        $('#pagenumbers').text('Page ' + response.current_page + ' of ' + response.last_page)
+                        $('#pagenumbers').text('Page ' + response.current_page + ' of ' + response
+                            .last_page)
                         //  }
                     });
 
-                    flash({msg: 'success', type: 'success'});
+                    flash({
+                        msg: 'success',
+                        type: 'success'
+                    });
                 } else {
                     $('.load-more-results').hide();
-                    flash({msg: 'No data to display', type: 'warning'});
+                    flash({
+                        msg: 'No data to display',
+                        type: 'warning'
+                    });
                 }
                 // $('.load-more-results-first').hide();
-            }, error: function (xhr, status, error) {
-                flash({msg: error, type: 'danger'})
+            },
+            error: function(xhr, status, error) {
+                flash({
+                    msg: error,
+                    type: 'danger'
+                })
             }
         });
     }
@@ -1214,12 +1374,17 @@
     function updateLoadMoreButton(academicData, program, academic, level) {
         // Dynamically set the onclick function with the new academicData
         var button = $('.load-more-results-first');
-        button.attr('onclick', `LoadMoreResults('${academicData.current_page}', '${academicData.last_page}', '${academicData.per_page}', '${program}', '${academic}', '${level}')`);
+        button.attr('onclick',
+            `LoadMoreResults('${academicData.current_page}', '${academicData.last_page}', '${academicData.per_page}', '${program}', '${academic}', '${level}')`
+        );
     }
+
     function updateLoadMoreButtonCAs(academicData, program, academic, level) {
         // Dynamically set the onclick function with the new academicData
         var button = $('.load-more-results-first-cas');
-        button.attr('onclick', `LoadMoreResultsCas('${academicData.current_page}', '${academicData.last_page}', '${academicData.per_page}', '${program}', '${academic}', '${level}')`);
+        button.attr('onclick',
+            `LoadMoreResultsCas('${academicData.current_page}', '${academicData.last_page}', '${academicData.per_page}', '${program}', '${academic}', '${level}')`
+        );
     }
 
     function checkdata() {
@@ -1233,12 +1398,60 @@
     function CloseModal() {
         $('#staticBackdrop').modal('hide');
     }
-</script>
 
+    // Handle select input on enrolments report pages
+    const getProgramsByAcademicPeriod = (academicPeriodIds, programsSelector) => {
+        $.ajax({
+            url: `/academic-periods/${academicPeriodIds}/programs`,
+            type: "GET",
+            dataType: "json",
+            success: (data) => {
+                $(programsSelector).empty();
+                $(programsSelector).append(`<option disabled>Choose programs</option>`)
+
+                $.each(data, (_, value) => {
+                    $(programsSelector).append(
+                        `<option value="${value.id}">${value.name}</option>`);
+                });
+            }
+        });
+    }
+
+    // Mask NRC input
+    const maskNRC = () => {
+        $('#nrc').on('input', function() {
+            var nrc = $(this).val().replace(/\D/g, '');
+
+            if (nrc.length > 6) {
+                nrc = nrc.substring(0, 6) + '/' + nrc.substring(6);
+            }
+
+            if (nrc.length > 9) {
+                nrc = nrc.substring(0, 9) + '/' + nrc.substring(9);
+            }
+
+            $(this).val(nrc);
+        });
+    }
+
+    $(document).ready(() => {
+        $('#academic-period-ids').change(function() {
+            const academicPeriodIds = $(this).val();
+
+            if (academicPeriodIds.length > 0) {
+                getProgramsByAcademicPeriod(academicPeriodIds, '#program-ids');
+            } else {
+                $('#program-ids').empty();
+            }
+        });
+
+        maskNRC();
+    });
+</script>
 
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-     aria-labelledby="staticBackdropLabel" aria-hidden="false">
+    aria-labelledby="staticBackdropLabel" aria-hidden="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content row col card card-body">
             <div class="modal-header">
@@ -1252,9 +1465,8 @@
                 ...
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary closeModalButton"
-                        onclick="CloseModal()"
-                        id="closeModalButton" data-bs-dismiss="modal">
+                <button type="button" class="btn btn-secondary closeModalButton" onclick="CloseModal()"
+                    id="closeModalButton" data-bs-dismiss="modal">
                     Close
                 </button>
                 <button type="button" onclick="SubmitData()" class="btn btn-primary">Submit</button>

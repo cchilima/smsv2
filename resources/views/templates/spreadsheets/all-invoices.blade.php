@@ -19,7 +19,7 @@
             @foreach ($invoice->details as $innerKey => $detail)
                 <tr>
                     <td>{{ ++$innerKey }}</td>
-                    <td>{{ $detail->fee->name }}</td>
+                    <td>{{ $detail->fee->name ?? 'N/A' }}</td>
                     <td>K {{ $detail->amount }}</td>
                 </tr>
             @endforeach
