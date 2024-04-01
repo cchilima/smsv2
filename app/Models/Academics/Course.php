@@ -21,8 +21,7 @@ class Course extends Model
 //    }
     public function programs()
     {
-        return $this->belongsToMany(Program::class, 'program_courses')
-            ->withPivot('level_id');
+        return $this->belongsToMany(Program::class, 'program_courses','course_id','program_id');
     }
     public function levels()
     {

@@ -177,6 +177,7 @@ class ClassAssessmentsController extends Controller
         //dd($class_ass);
 
         $open = $this->academic->getAllopen();
+        //dd($class_ass);
         return view('pages.class_assessments.instructor_assessment.index', compact('class_ass', 'open'));
     }
 
@@ -266,7 +267,7 @@ class ClassAssessmentsController extends Controller
                     // check if user has registered for this academic period.
 
                     if ($user) {
-                        $lastEnrollment = Enrollment::where('user_id', $user->user_id)->get()->last();
+                        $lastEnrollment = Enrollment::where('student_id', $studentID)->get()->last();
 
                         if ($lastEnrollment) {
                             $lastEnrolledClass = AcademicPeriodClass::where('id', $lastEnrollment->academic_period_class_id)->get()->first();
@@ -274,10 +275,13 @@ class ClassAssessmentsController extends Controller
                             if ($lastEnrolledClass) {
                                 # Proceed to importing
                                 # Add results to imports
+
                                 $course = Course::where('code', $code)->get()->first();
                                 if ($course) {
+                                    //dd($academicC == $academic && $titleC == $title && $code == $courseC && $aseesID == $AssessIDTemplateC && $total <= $assesTotal);
+                                   // dd($course);
                                     if ($academicC == $academic && $titleC == $title && $code == $courseC && $aseesID == $AssessIDTemplateC && $total <= $assesTotal) {
-                                        Grade::create([
+                                         $create = Grade::create([
                                             'academic_period_id' => $academicPeriodID,
                                             'student_id' => $studentID,
                                             'total' => $total, // Total
@@ -290,11 +294,12 @@ class ClassAssessmentsController extends Controller
                                             'created_at' => now(),
                                             'updated_at' => now(),
                                         ]);
+                                        //dd($create);
                                     }
                                 }
                             }
                         }
-                    }
+                   }
                 }
             }
 
@@ -311,7 +316,7 @@ class ClassAssessmentsController extends Controller
     {
         $id = Qs::decodeHash($id);
         $period = $this->academic->find($id);
-        $programs = $this->classaAsessmentRepo->publishAvailablePrograms($id);
+        $programs = $this->classaAsessmentRepo->publishAvailableProgramsCas($id);
         //dd($programs);
         return view('pages.cas.edit', compact('programs', 'period'));
     }
