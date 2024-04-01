@@ -207,7 +207,6 @@ class EnrollmentRepository
                 $students = Student::with(['user', 'invoices.details', 'receipts'])
                     ->whereHas('enrollments.class', function ($query) use ($academicPeriod, $program) {
                         $query->where('academic_period_id', $academicPeriod->id);
-
                     })->where('program_id', $program->id)
                     ->get();
 
@@ -215,6 +214,7 @@ class EnrollmentRepository
                 $programArray = [
                     'program_id' => $program->id,
                     'program_name' => $program->name,
+                    'program_code' => $program->code,
                     'students' => []
                 ];
 
@@ -819,11 +819,11 @@ class EnrollmentRepository
     }
     public function totalStaff()
     {
-        return User::where('user_type_id','!=',3)->count();
+        return User::where('user_type_id', '!=', 3)->count();
     }
     public function totalAdmin()
     {
-        return User::where('user_type_id','=',1)->count();
+        return User::where('user_type_id', '=', 1)->count();
     }
     public static function todaysPayments()
     {
@@ -847,7 +847,7 @@ class EnrollmentRepository
 
         $totalAmount = 0;
 
-// Iterate through each invoice
+        // Iterate through each invoice
         foreach ($invoices as $invoice) {
             // Sum the amount in the details of each invoice
             $totalAmount += $invoice->details->sum('amount');
@@ -855,6 +855,4 @@ class EnrollmentRepository
 
         return $totalAmount;
     }
-
-
 }

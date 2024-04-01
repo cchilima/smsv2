@@ -22,7 +22,7 @@ class Attachment extends FormRequest
     public function rules(): array
     {
         return [
-            'attachment' => 'required|file|mimes:pdf|max:2048', // Example validation rules
+            'attachment' => 'nullable|file|mimes:pdf|max:5120'
         ];
     }
 }

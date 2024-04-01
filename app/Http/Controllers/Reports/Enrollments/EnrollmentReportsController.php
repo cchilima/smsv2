@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Reports\Enrollments;
 
+use App\Exports\AcademicPeriodEnrollmentsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\Student;
 use App\Http\Middleware\Custom\SuperAdmin;
@@ -14,14 +15,19 @@ use App\Repositories\Reports\enrollments\EnrollmentRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EnrollmentReportsController extends Controller
 {
     protected $enrollmentRepository, $academicPeriodRepository, $programsRepository, $studentRepo, $classAssessmentsRepo;
 
-    public function __construct(EnrollmentRepository $enrollmentRepository, AcademicPeriodRepository $academicPeriodRepository, ProgramsRepository $programsRepository
-        , StudentRepository $studentRepo, ClassAssessmentsRepo $classAssessmentsRepo)
-    {
+    public function __construct(
+        EnrollmentRepository $enrollmentRepository,
+        AcademicPeriodRepository $academicPeriodRepository,
+        ProgramsRepository $programsRepository,
+        StudentRepository $studentRepo,
+        ClassAssessmentsRepo $classAssessmentsRepo
+    ) {
         //$this->middleware(TeamSA::class, ['except' => ['destroy',]]);
         //$this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
@@ -37,7 +43,7 @@ class EnrollmentReportsController extends Controller
      */
     public function index()
     {
-        $data['ac'] = $this->academicPeriodRepository->getAllopen();
+        $data['academicPeriods'] = $this->academicPeriodRepository->getAllopen();
         $data['program'] = $this->programsRepository->getAll();
         return view('pages.reports.enrollments.index', $data);
     }
@@ -114,7 +120,7 @@ class EnrollmentReportsController extends Controller
         $fileName = $ac . '-program-student-list-' . now()->format('d-m-Y-His') . '.pdf';
         $logodata = file_get_contents(public_path('/images/logo.png'));
         $logo = base64_encode($logodata);
-        $pdf = Pdf::loadView('templates.pdf.program-student-list', compact('academic','logo'));
+        $pdf = Pdf::loadView('templates.pdf.program-student-list', compact('academic', 'logo'));
 
         return $pdf->download($fileName);
         // dd($academic);getStudentsForProgramAndAcademicPeriod($program_id, $academic_period_id)
@@ -126,7 +132,7 @@ class EnrollmentReportsController extends Controller
         $fileName = $ac . '-program-student-list-' . now()->format('d-m-Y-His') . '.pdf';
         $logodata = file_get_contents(public_path('/images/logo.png'));
         $logo = base64_encode($logodata);
-        $pdf = Pdf::loadView('templates.pdf.one-program-student-list', compact('academic','logo'));
+        $pdf = Pdf::loadView('templates.pdf.one-program-student-list', compact('academic', 'logo'));
 
         return $pdf->download($fileName);
     }
@@ -140,7 +146,7 @@ class EnrollmentReportsController extends Controller
         $fileName = $ac . '-class-student-list-' . now()->format('d-m-Y-His') . '.pdf';
         $logodata = file_get_contents(public_path('/images/logo.png'));
         $logo = base64_encode($logodata);
-        $pdf = Pdf::loadView('templates.pdf.class-student-list', compact('academic','logo'));
+        $pdf = Pdf::loadView('templates.pdf.class-student-list', compact('academic', 'logo'));
         return $pdf->download($fileName);
     }
 
@@ -154,7 +160,7 @@ class EnrollmentReportsController extends Controller
         $fileName = $ac . '-class-student-list-' . now()->format('d-m-Y-His') . '.pdf';
         $logodata = file_get_contents(public_path('/images/logo.png'));
         $logo = base64_encode($logodata);
-        $pdf = Pdf::loadView('templates.pdf.class-one-student-list', compact('academic','logo'));
+        $pdf = Pdf::loadView('templates.pdf.class-one-student-list', compact('academic', 'logo'));
         return $pdf->download($fileName);
     }
 
@@ -168,7 +174,7 @@ class EnrollmentReportsController extends Controller
         $fileName = 'E-exam-register-' . now()->format('d-m-Y-His') . '.pdf';
         $logodata = file_get_contents(public_path('/images/logo.png'));
         $logo = base64_encode($logodata);
-        $pdf = Pdf::loadView('templates.pdf.exam_register', compact('academics','logo'));
+        $pdf = Pdf::loadView('templates.pdf.exam_register', compact('academics', 'logo'));
         return $pdf->download($fileName);
         // dd($academic);
     }
@@ -182,7 +188,7 @@ class EnrollmentReportsController extends Controller
         // Initialize CSV content with header row
         $csvContent = "Name,Student ID,Email,Gender,Level,Program,Payment Percentage,Balance\n";
 
-// Iterate through each academic period's programs and students
+        // Iterate through each academic period's programs and students
         foreach ($academic['programs'] as $program) {
             foreach ($program['students'] as $student) {
                 // Format CSV data for each student
@@ -190,17 +196,17 @@ class EnrollmentReportsController extends Controller
             }
         }
 
-// Generate filename
+        // Generate filename
         // $filename = 'student-list-' . now()->format('Y-m-d-His') . '.csv';
 
-// Write CSV content to file
+        // Write CSV content to file
         // file_put_contents($filename, $csvContent);
         $filename = 'student-list-' . now()->format('Y-m-d-His') . '.csv';
 
-// Write CSV content to file
+        // Write CSV content to file
         file_put_contents($filename, $csvContent);
 
-// Return file download response
+        // Return file download response
         return response()->download($filename)->deleteFileAfterSend(true);
     }
 
@@ -210,19 +216,19 @@ class EnrollmentReportsController extends Controller
         // Initialize CSV content with header row
         $csvContent = "Name,Student ID,Email,Gender,Level,Payment Percentage,Balance\n";
 
-// Iterate through each student in the academic period
+        // Iterate through each student in the academic period
         foreach ($academic['students'] as $student) {
             // Format CSV data for each student
             $csvContent .= "{$student['name']},{$student['student_id']},{$student['email']},{$student['gender']},{$student['level']},{$student['payment_percentage']},{$student['balance']}\n";
         }
 
-// Generate filename
+        // Generate filename
         $filename = 'student-list-' . now()->format('Y-m-d-His') . '.csv';
 
-// Write CSV content to file
+        // Write CSV content to file
         file_put_contents($filename, $csvContent);
 
-// Return file download response
+        // Return file download response
         return response()->download($filename)->deleteFileAfterSend(true);
     }
 
@@ -234,7 +240,7 @@ class EnrollmentReportsController extends Controller
         // Initialize CSV content with header row
         $csvContent = "Class Code,Class Name\n";
 
-// Iterate through each class in the academic period
+        // Iterate through each class in the academic period
         foreach ($academic['classes'] as $class) {
             $csvContent .= "{$class['class_code']},{$class['class_name']}\n\n\n";
 
@@ -246,15 +252,14 @@ class EnrollmentReportsController extends Controller
             }
         }
 
-// Generate filename
+        // Generate filename
         $filename = 'student-list-' . now()->format('Y-m-d-His') . '.csv';
 
-// Write CSV content to file
+        // Write CSV content to file
         file_put_contents($filename, $csvContent);
 
-// Return file download response
+        // Return file download response
         return response()->download($filename)->deleteFileAfterSend(true);
-
     }
 
     public function DownloadAcOneClassListsCSV($ac, $classid)
@@ -266,77 +271,90 @@ class EnrollmentReportsController extends Controller
         // Initialize CSV content with header row
         $csvContent = "Class Code,Class Name,Student ID,Student Name,Email,Gender,Level,Payment Percentage,Balance\n";
 
-// Iterate through each student in the class
+        // Iterate through each student in the class
         foreach ($academic['class']['students'] as $student) {
             // Format CSV data for each student
             $csvContent .= "{$academic['class_code']},{$academic['class_name']},{$student['student_id']},{$student['name']},{$student['email']},{$student['gender']},{$student['level']},{$student['payment_percentage']},{$student['balance']}\n";
         }
 
-// Generate filename
+        // Generate filename
         $filename = 'class-student-list-' . now()->format('Y-m-d-His') . '.csv';
 
-// Write CSV content to file
+        // Write CSV content to file
         file_put_contents($filename, $csvContent);
 
-// Return file download response
+        // Return file download response
         return response()->download($filename)->deleteFileAfterSend(true);
-
     }
 
-    public function acsPrograms(Request $request)
+    public function downloadAcademicPeriodEnrollmentsReport(Request $request)
     {
-
         $academic_period_ids = $request->input('ac');
         $program_ids = $request->input('program');
 
-        // Initialize CSV content with header row
-        $csvContent = "Academic Period ID,Academic Period Name,Program Name,Student ID,Student Name,Student Number,Gender,Payment Percentage,Balance\n";
+        // Generate filename
+        $filename = 'students-for-periods-and-programs-' . now()->format('Y-m-d-His');
 
-// Retrieve data using the getStudentsForPeriodsAndPrograms function
-        $results = $this->enrollmentRepository->getStudentsForPeriodsAndPrograms($academic_period_ids, $program_ids);
+        // Retrieve data using the getStudentsForPeriodsAndPrograms function
+        $academicPeriods = $this->enrollmentRepository->getStudentsForPeriodsAndPrograms($academic_period_ids, $program_ids);
 
-// Iterate through each academic period
-        foreach ($results as $academicPeriod) {
-            // Write academic period information in CSV
-            $academicPeriodId = $academicPeriod['academic_period_id'];
-            $academicPeriodName = $academicPeriod['academic_period_name'];
+        if ($request->input('fileType') === 'csv') {
+            $filename .= '.csv';
 
-            // Iterate through each program in the academic period
-            foreach ($academicPeriod['programs'] as $program) {
-                // Write program information in CSV
-                $programId = $program['program_id'];
-                $programName = $program['program_name'];
+            $export = new AcademicPeriodEnrollmentsExport($academicPeriods);
 
-                // Iterate through each student in the program
-                foreach ($program['students'] as $student) {
-                    // Format CSV data for each student
-                    $studentId = $student['student_id'];
-                    $studentName = $student['name'];
-                    $studentNumber = $student['student_number'];
-                    $gender = $student['gender'];
-                    $paymentPercentage = $student['payment_percentage'];
-                    $balance = $student['balance'];
+            return Excel::download($export, $filename);
 
-                    // Append data to CSV content
-                    $csvContent .= "$academicPeriodId,$academicPeriodName,$programName,$studentId,$studentName,$studentNumber,$gender,$paymentPercentage,$balance\n";
-                }
-            }
+            // // Initialize CSV content with header row
+            // $csvContent = "Academic Period ID,Academic Period Name,Program Name,Student ID,Student Name,Student Number,Gender,Payment Percentage,Balance\n";
+
+            // // Iterate through each academic period
+            // foreach ($academicPeriods as $academicPeriod) {
+            //     // Write academic period information in CSV
+            //     $academicPeriodId = $academicPeriod['academic_period_id'];
+            //     $academicPeriodName = $academicPeriod['academic_period_name'];
+
+            //     // Iterate through each program in the academic period
+            //     foreach ($academicPeriod['programs'] as $program) {
+            //         // Write program information in CSV
+            //         $programId = $program['program_id'];
+            //         $programName = $program['program_name'];
+
+            //         // Iterate through each student in the program
+            //         foreach ($program['students'] as $student) {
+            //             // Format CSV data for each student
+            //             $studentId = $student['student_id'];
+            //             $studentName = $student['name'];
+            //             $studentNumber = $student['student_number'];
+            //             $gender = $student['gender'];
+            //             $paymentPercentage = $student['payment_percentage'];
+            //             $balance = $student['balance'];
+
+            //             // Append data to CSV content
+            //             $csvContent .= "$academicPeriodId,$academicPeriodName,$programName,$studentId,$studentName,$studentNumber,$gender,$paymentPercentage,$balance\n";
+            //         }
+            //     }
+            // }
+
+            // // Write CSV content to file
+            // file_put_contents($filename, $csvContent);
+
+            // // Return file download response
+            // return response()->download($filename)->deleteFileAfterSend(true);
         }
 
-// Generate filename
-        $filename = 'students-for-periods-and-programs-' . now()->format('Y-m-d-His') . '.csv';
+        if ($request->input('fileType') === 'pdf') {
+            $filename .= '.pdf';
 
-// Write CSV content to file
-        file_put_contents($filename, $csvContent);
+            $pdf = Pdf::loadView('templates.pdf.academic-period-enrollments', compact('academicPeriods'));
 
-// Return file download response
-        return response()->download($filename)->deleteFileAfterSend(true);
-
+            return $pdf->download($filename);
+        }
     }
 
     public function DownloadStudentIDs($student_id)
     {
-       // $student_id = $request->input('student_id');
+        // $student_id = $request->input('student_id');
         $student = $this->studentRepo->getStudentInforByID($student_id);
         // PDF::setOptions(['dpi' => 150, 'defaultFont' => 'sans-serif']);
         $css = public_path('/css/frontend.css');
@@ -350,10 +368,11 @@ class EnrollmentReportsController extends Controller
         $logodata = file_get_contents(public_path('/images/logo.png'));
         $logo = base64_encode($logodata);
         $fileName = 'E-exam-register-' . now()->format('d-m-Y-His') . '.pdf';
-        $pdf = Pdf::loadView('templates.pdf.student_id_show', compact('student', 'passportPhotoUrl', 'base64', 'css', 'app', 'logo'))->setPaper(array(1, 1, 600, 1050), 'landscape')->setWarnings(false);//->save('/images/' . 'download' . '.pdf');;
+        $pdf = Pdf::loadView('templates.pdf.student_id_show', compact('student', 'passportPhotoUrl', 'base64', 'css', 'app', 'logo'))->setPaper(array(1, 1, 600, 1050), 'landscape')->setWarnings(false); //->save('/images/' . 'download' . '.pdf');;
         return $pdf->download($fileName);
     }
-    public function DownloadStudentTranscript($student_id){
+    public function DownloadStudentTranscript($student_id)
+    {
 
         $studentu = \App\Models\Admissions\Student::find($student_id);
         $results = $this->classAssessmentsRepo->GetExamGrades($studentu->user_id);
@@ -365,10 +384,11 @@ class EnrollmentReportsController extends Controller
         $logodata = file_get_contents(public_path('/images/logo.png'));
         $logo = base64_encode($logodata);
         $fileName = 'E-exam-transcript-' . now()->format('d-m-Y-His') . '.pdf';
-        $pdf = Pdf::loadView('templates.pdf.transcript', compact('student', 'results', 'css', 'app', 'logo'))->setPaper(array(1, 1, 600, 1050), 'landscape')->setWarnings(false);//->save('/images/' . 'download' . '.pdf');;
+        $pdf = Pdf::loadView('templates.pdf.transcript', compact('student', 'results', 'css', 'app', 'logo'))->setPaper(array(1, 1, 600, 1050), 'landscape')->setWarnings(false); //->save('/images/' . 'download' . '.pdf');;
         return $pdf->download($fileName);
     }
-    public function DownloadStudentExamSlip($student_id){
+    public function DownloadStudentExamSlip($student_id)
+    {
 
         $studentu = \App\Models\Admissions\Student::find($student_id);
         $student = $this->classAssessmentsRepo->getStudentDetails($studentu->user_id);
@@ -380,8 +400,7 @@ class EnrollmentReportsController extends Controller
         $logodata = file_get_contents(public_path('/images/logo.png'));
         $logo = base64_encode($logodata);
         $fileName = 'E-exam-slip-' . now()->format('d-m-Y-His') . '.pdf';
-        $pdf = Pdf::loadView('templates.pdf.examslip', compact('student', 'course', 'css', 'app', 'logo'))->setPaper(array(1, 1, 600, 1050), 'landscape')->setWarnings(false);//->save('/images/' . 'download' . '.pdf');;
+        $pdf = Pdf::loadView('templates.pdf.examslip', compact('student', 'course', 'css', 'app', 'logo'))->setPaper(array(1, 1, 600, 1050), 'landscape')->setWarnings(false); //->save('/images/' . 'download' . '.pdf');;
         return $pdf->download($fileName);
-        dd($courses);
     }
 }

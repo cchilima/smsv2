@@ -7,9 +7,20 @@ use App\Models\Applications\Applicant;
 use App\Models\Applications\ApplicantAttachment;
 use Illuminate\Support\Facades\Storage;
 use DB;
+use Illuminate\Support\Arr;
 
 class ApplicantRepository
 {
+    public function getAll()
+    {
+        return Applicant::all();
+    }
+
+    public function getByDate($date)
+    {
+        return Applicant::where('created_at', 'like', "%{$date}%");
+    }
+
     public function initiateApplication($applicantIdentifier)
     {
         $application = Applicant::create($applicantIdentifier);
@@ -63,7 +74,30 @@ class ApplicantRepository
         }
     }
 
-    public function completeApplication($application_id)
+    // public function completeApplication($application_id)
+    // {
+    //     // Find the application
+    //     $application = Applicant::find($application_id);
+
+    //     // Check if application exists
+    //     if (!$application) {
+    //         return response()->json(['message' => 'Application not found'], 404);
+    //     }
+
+    //     // Check if all fields except status are filled
+    //     $fieldsToCheck = array_except($application->toArray(), ['status']);
+    //     $allFieldsFilled = collect($fieldsToCheck)->filter()->isEmpty();
+
+    //     // Update status to pending if all fields except status are filled
+    //     if ($allFieldsFilled) {
+    //         $application->status = 'pending';
+    //         $application->save();
+    //     }
+
+    //     return response()->json(['message' => 'Application updated successfully'], 200);
+    // }
+
+    public function checkApplicationCompletion($application_id)
     {
         // Find the application
         $application = Applicant::find($application_id);
@@ -73,17 +107,23 @@ class ApplicantRepository
             return response()->json(['message' => 'Application not found'], 404);
         }
 
-        // Check if all fields except status are filled
-        $fieldsToCheck = array_except($application->toArray(), ['status']);
-        $allFieldsFilled = collect($fieldsToCheck)->filter()->isEmpty();
+        // Check if all mandatory fields are filled 
+        $fieldsToCheck = Arr::except($application->toArray(), ['status', 'middle_name', 'postal_code', 'period_type_id', 'application_date']);
+        $allFieldsFilled = array_filter($fieldsToCheck, fn ($value) => $value === null);
+
+        // Check if application has an attachments
+        $hasAttachments = $application->attachments()->count() > 0;
 
         // Update status to pending if all fields except status are filled
-        if ($allFieldsFilled) {
+        if (empty($allFieldsFilled) && $hasAttachments) {
             $application->status = 'pending';
             $application->save();
+
+            return true;
         }
 
-        return response()->json(['message' => 'Application updated successfully'], 200);
+        // return response()->json(['message' => 'Application completed successfully'], 200);
+        return false;
     }
 
     public function uploadAttachment($request, $application_id)
@@ -98,7 +138,7 @@ class ApplicantRepository
             $filename = time() . '.' . $attachment->getClientOriginalExtension();
 
             // Store the file in the storage disk
-            $path = $attachment->storeAs('uploads', $filename, 'public');
+            $path = $attachment->storeAs('uploads/attachments/applications', $filename, 'public');
 
             return $application->attachments()->create(['type' => 'Results', 'attachment' => $filename]);
         }

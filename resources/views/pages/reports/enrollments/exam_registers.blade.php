@@ -14,20 +14,20 @@
                 <div class="tab-pane fade show active" id="all-classes">
                     <div class="row mt-0 mb-1">
                         <div class="col-md-12">
-                            <form class="ajax-store-test" method="post" action="{{ route('ac.exam.registers')  }}">
+                            <form class="ajax-store-test" method="post" action="{{ route('ac.exam.registers') }}">
                                 @csrf
                                 <div class="form-group row">
                                     <div class="col-md-4">
                                         <div class="form-group row">
-                                            <label class="col-lg-3 col-form-label font-weight-semibold">Academic Period <span
-                                                    class="text-danger">*</span></label>
+                                            <label class="col-lg-3 col-form-label font-weight-semibold">Academic Period
+                                                <span class="text-danger">*</span></label>
                                             <div class="col-lg-9">
-                                                <select name="ac_id[]" id="ac_id" multiple class="form-control select-search classID" required>
-                                                    <option
-                                                        value="">select option</option>
+                                                <select name="ac_id[]" id="ac_id" multiple
+                                                    class="form-control select-search classID" required>
+                                                    <option value="">Select academic periods</option>
                                                     @foreach ($ac as $c)
-                                                        <option
-                                                            value="{{ $c->id }}">{{ $c->code }} {{ $c->name }}</option>
+                                                        <option value="{{ $c->id }}">{{ $c->code }}
+                                                            {{ $c->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -35,16 +35,16 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group row">
-                                            <label class="col-lg-3 col-form-label font-weight-semibold">Programs <span
+                                            <label class="col-lg-3 col-form-label font-weight-semibold">Classes <span
                                                     class="text-danger">*</span></label>
                                             <div class="col-lg-9">
-                                                <select name="class_id[]" multiple id="class_id" class="form-control select-search class_id" required>
-                                                    <option
-                                                        value="">select option</option>
-                                                    {{--                                                    @foreach ($instructors as $instructor)--}}
-                                                    {{--                                                        <option--}}
-                                                    {{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option>--}}
-                                                    {{--                                                    @endforeach--}}
+                                                <select name="class_id[]" multiple id="class_id"
+                                                    class="form-control select-search class_id" required>
+                                                    <option value="">Select classes</option>
+                                                    {{--                                                    @foreach ($instructors as $instructor) --}}
+                                                    {{--                                                        <option --}}
+                                                    {{--                                                            value="{{ $instructor->id }}">{{ $instructor->first_name }} {{ $instructor->last_name }}</option> --}}
+                                                    {{--                                                    @endforeach --}}
                                                 </select>
                                             </div>
                                         </div>
@@ -52,36 +52,37 @@
                                 </div>
                                 <div class="col-md">
                                     <div class="text-right">
-                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Download <i class="icon-paperplane"></i></button>
+                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Download <i
+                                                class="icon-paperplane"></i></button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    @if(isset($transactions))
+                    @if (isset($transactions))
                         <table class="table datatable-button-html5-columns">
                             <thead>
-                            <tr>
-                                <th>Receipt ID</th>
-                                <th>Student ID</th>
-                                <th>Student Name</th>
-                                <th>Program</th>
-                                <th>Amount</th>
-                                <th>Date Created</th>
-                            </tr>
+                                <tr>
+                                    <th>Receipt ID</th>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Program</th>
+                                    <th>Amount</th>
+                                    <th>Date Created</th>
+                                </tr>
                             </thead>
                             <tbody>
 
-                            @foreach($transactions as $u)
-                                <tr>
-                                    <td>{{ $u->id  }}</td>
-                                    <td>{{ $u->student_id }}</td>
-                                    <td>{{ $u->student->user->first_name.' '.$u->student->user->last_name }}</td>
-                                    <td>{{ $u->student->program->name}}</td>
-                                    <td>K{{ $u->amount }}</td>
-                                    <td>{{ date('j F Y', strtotime($u->created_at)) }}</td>
-                                </tr>
-                            @endforeach
+                                @foreach ($transactions as $u)
+                                    <tr>
+                                        <td>{{ $u->id }}</td>
+                                        <td>{{ $u->student_id }}</td>
+                                        <td>{{ $u->student->user->first_name . ' ' . $u->student->user->last_name }}</td>
+                                        <td>{{ $u->student->program->name }}</td>
+                                        <td>K{{ $u->amount }}</td>
+                                        <td>{{ date('j F Y', strtotime($u->created_at)) }}</td>
+                                    </tr>
+                                @endforeach
 
                             </tbody>
                         </table>
