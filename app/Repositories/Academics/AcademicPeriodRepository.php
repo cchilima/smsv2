@@ -2,13 +2,15 @@
 
 namespace App\Repositories\Academics;
 
-use App\Models\Academics\{AcademicPeriod,
+use App\Models\Academics\{
+    AcademicPeriod,
     AcademicPeriodClass,
     AcademicPeriodFee,
     AcademicPeriodInformation,
     ClassAssessment,
     PeriodType,
-    StudyMode};
+    StudyMode
+};
 use App\Models\Admissions\{AcademicPeriodIntake};
 use App\Models\Accounting\Fee;
 use Illuminate\Support\Facades\Auth;
@@ -32,9 +34,9 @@ class AcademicPeriodRepository
     {
         return AcademicPeriod::with('period_types')->whereDate('ac_end_date', '<', now())->orderByDesc($order)->get();
     }
-//ac_start_date
-//ac_end_date
 
+    //ac_start_date
+    //ac_end_date
 
     public function update($id, $data)
     {
@@ -49,7 +51,7 @@ class AcademicPeriodRepository
     }
     public function getAcadeperiodClasses($id)
     {
-        return AcademicPeriodClass::with('course','instructor')->where('academic_period_id',$id)->get();
+        return AcademicPeriodClass::with('course', 'instructor')->where('academic_period_id', $id)->get();
     }
 
 
@@ -82,19 +84,19 @@ class AcademicPeriodRepository
     //methods for academic period information
     public function getAPInformation($id)
     {
-        return AcademicPeriodInformation::with('academic_period','study_mode','intake')->where('academic_period_id',$id)->get()->first();
+        return AcademicPeriodInformation::with('academic_period', 'study_mode', 'intake')->where('academic_period_id', $id)->get()->first();
     }
     public function APcreate($data)
     {
         return AcademicPeriodInformation::create($data);
     }
-    public function APUpdate($id,$data)
+    public function APUpdate($id, $data)
     {
         return AcademicPeriodInformation::find($id)->update($data);;
     }
     public function APFind($data)
     {
-        return AcademicPeriodInformation::with('academic_period','study_mode','intake')->find($data);
+        return AcademicPeriodInformation::with('academic_period', 'study_mode', 'intake')->find($data);
     }
 
     //fee management
@@ -106,37 +108,37 @@ class AcademicPeriodRepository
 
     public function getAPFeeInformation($id)
     {
-        return AcademicPeriodFee::with('academic_period','fee')->where('academic_period_id',$id)->get();
+        return AcademicPeriodFee::with('academic_period', 'fee')->where('academic_period_id', $id)->get();
     }
 
     public function getOneAPFeeInformation($id)
     {
-        return AcademicPeriodFee::with('academic_period','fee','programs')->find($id);
+        return AcademicPeriodFee::with('academic_period', 'fee', 'programs')->find($id);
     }
 
-    public function APFeeUpdate($id,$data)
+    public function APFeeUpdate($id, $data)
     {
         return AcademicPeriodFee::find($id)->update($data);;
     }
     //academic period assessment types
     public function getAcadeperiodClassAssessments()
     {
-        return AcademicPeriod::whereDate('ac_end_date', '>=', now())->with('classes.class_assessments.assessment_type','classes.instructor','classes.course')->get();
+        return AcademicPeriod::whereDate('ac_end_date', '>=', now())->with('classes.class_assessments.assessment_type', 'classes.instructor', 'classes.course')->get();
     }
     public static function getAllOpened($order = 'created_at')
     {
         $user = Auth::user();
-        if ($user->userType->title == 'instructor'){
-                return AcademicPeriod::whereDate('ac_end_date', '>=', now())->has('classes.instructor')->get();
-        }else {
+        if ($user->userType->title == 'instructor') {
+            return AcademicPeriod::whereDate('ac_end_date', '>=', now())->has('classes.instructor')->get();
+        } else {
             return  AcademicPeriod::whereDate('ac_end_date', '>=', now())
                 ->orderByDesc($order)
                 ->distinct('id')
                 ->get();
-
         }
     }
-    public function showClasses($id){
+    public function showClasses($id)
+    {
         $user = Auth::user();
 
         if ($user->userType->title == 'instructor') {
@@ -148,7 +150,7 @@ class AcademicPeriodRepository
                 ->find($id);
         } else {
             // If the authenticated user is not an instructor, get all AcademicPeriods with related classes
-           // dd(AcademicPeriod::with('classes.class_assessments.assessment_type', 'classes.instructor', 'classes.course')->find($id));
+            // dd(AcademicPeriod::with('classes.class_assessments.assessment_type', 'classes.instructor', 'classes.course')->find($id));
             return AcademicPeriod::with('classes.class_assessments.assessment_type', 'classes.instructor', 'classes.course')->find($id);
         }
     }

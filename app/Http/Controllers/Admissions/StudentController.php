@@ -24,7 +24,7 @@ class StudentController extends Controller
     protected $registrationRepo;
     protected $userPersonalInfoRepo;
     protected $userRepo;
-    protected $userNextOfKinRepo,$enrollmentRepo,$classaAsessmentRepo;
+    protected $userNextOfKinRepo, $enrollmentRepo, $classaAsessmentRepo;
 
     public function __construct(
         StudentRepository $studentRepo,
@@ -231,17 +231,14 @@ class StudentController extends Controller
 
                 // Update the user data
                 $user->update($userData);
-
             } elseif ($personalData) {
 
                 // Update or create UserPersonalInfo
                 $userPersonalInfo = $user->userPersonalInfo()->update($personalData);
-
             } elseif ($nextOfKinDataWithPrefix) {
 
                 // Update or create NextOfKin
                 $nextOfKin = $user->userNextOfKin()->update($nextOfKinData);
-
             } elseif ($studentData) {
 
                 // Update or create Student
@@ -251,7 +248,6 @@ class StudentController extends Controller
             DB::commit();
 
             return Qs::jsonStoreOk();
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -304,6 +300,8 @@ class StudentController extends Controller
         $data['results'] = $this->classaAsessmentRepo->GetExamGrades($id);
         $data['caresults'] = $this->classaAsessmentRepo->GetCaStudentGrades($id);
         //dd($data['enrollments']);
+
+        // dd($data['results']);
 
         // 'student','countries','programs','towns','provinces','course_levels','periodIntakes','studyModes','periodTypes','relationships','maritalStatuses'
         return view('pages.students.show', $data);

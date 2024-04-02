@@ -59,7 +59,7 @@ class HomeController extends Controller
             $data['registered'] = $this->enrollmentRepository->getStudentsSumForAllOpenPeriods();
             $data['todaysPayments'] = $this->enrollmentRepository->todaysPayments();
             $data['todaysInvoices'] = $this->enrollmentRepository->todaysInvoices();
-            $data['todaysApplicants'] = $this->applicantRepo->getByDate(now()->toDateString())->count();
+            $data['todaysApplicants'] = $this->applicantRepo->getByDate(now())->count();
             $data['applicants'] = $this->applicantRepo->getAll()->count();
             return view('pages.home.home', $data);
         }

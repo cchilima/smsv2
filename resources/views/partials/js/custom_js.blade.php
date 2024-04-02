@@ -1,5 +1,5 @@
 <script>
-    {{-- Notifications --}}
+    // Notifications
 
     @if (session('pop_error'))
         pop({
@@ -669,45 +669,47 @@
             })
         }
     }
-    function modifyMarksCAsL(id, student, code, name, grades) {
-        console.log(grades );
 
     function modifyMarksCAsL(id, student, code, name, grades) {
-        console.log(student);
+        console.log(grades);
 
-        // const user = JSON.parse(student);
-        //console.log(user);
-        //console.log(typeof user );
-        //$('#staticBackdrop').modal('show');
-        var modalBody = $('#staticBackdrop .modal-body');
-        modalBody.empty();
-        //  const data = JSON.parse(grades);
+        function modifyMarksCAsL(id, student, code, name, grades) {
+            console.log(student);
 
-
-       // const user = JSON.parse(decodeURIComponent(student));
-        const data = JSON.parse(decodeURIComponent(grades));
-        console.log(data);
-
-
-        // Check if the response is valid and contains data
-        if (data && data.length > 0) {
-            // Assuming that you want to update the modal body with data from the response
-
-            var title = $('#staticBackdropLabel');
-            title.text(student);
-            // Clear the existing content in the modal body
+            // const user = JSON.parse(student);
+            //console.log(user);
+            //console.log(typeof user );
+            //$('#staticBackdrop').modal('show');
+            var modalBody = $('#staticBackdrop .modal-body');
             modalBody.empty();
-            var assessmentHtml = '<div>';
-            assessmentHtml += '<p>Student Number : ' + id + '</p>';
-            assessmentHtml += '<p class="title">Code: ' + code + '</p>';
-            assessmentHtml += '<p class="header">Title: ' + name + '</p>';
-            assessmentHtml += '</div>';
+            //  const data = JSON.parse(grades);
 
-            modalBody.append(assessmentHtml);
-            data.forEach(function (assessment) {
-             //   if (parseInt(assessment.student_id) === parseInt(id)) {
+
+            // const user = JSON.parse(decodeURIComponent(student));
+            const data = JSON.parse(decodeURIComponent(grades));
+            console.log(data);
+
+
+            // Check if the response is valid and contains data
+            if (data && data.length > 0) {
+                // Assuming that you want to update the modal body with data from the response
+
+                var title = $('#staticBackdropLabel');
+                title.text(student);
+                // Clear the existing content in the modal body
+                modalBody.empty();
+                var assessmentHtml = '<div>';
+                assessmentHtml += '<p>Student Number : ' + id + '</p>';
+                assessmentHtml += '<p class="title">Code: ' + code + '</p>';
+                assessmentHtml += '<p class="header">Title: ' + name + '</p>';
+                assessmentHtml += '</div>';
+
+                modalBody.append(assessmentHtml);
+                data.forEach(function(assessment) {
+                    //   if (parseInt(assessment.student_id) === parseInt(id)) {
                     //var assessmentHtml = '<div>';
-                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.outof + '" data-id="' +
+                    var assessmentHtml = '<div class="assessment" data-outof="' + assessment.outof +
+                        '" data-id="' +
                         assessment.id + '" data-code="' + code + '">';
                     assessmentHtml += '<p>Assessment: ' + assessment.type + '</p>';
                     assessmentHtml += '<p>' + assessment.total + ' Out of: ' + assessment.outof + '</p>';
@@ -721,29 +723,30 @@
                     assessmentHtml += '</div>';
 
                     modalBody.append(assessmentHtml);
-              //  }
-            });
-            var assessmentHtml = '<br/>';
-            assessmentHtml += ' <div class="form-check">';
-            assessmentHtml +=
-                '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
-            assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault1">Subtract</label>';
-            assessmentHtml += '</div>';
-            assessmentHtml += '<div class="form-check">';
-            assessmentHtml +=
-                '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
-            assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault2">Add</label>';
-            assessmentHtml += '</div>';
-            modalBody.append(assessmentHtml);
+                    //  }
+                });
+                var assessmentHtml = '<br/>';
+                assessmentHtml += ' <div class="form-check">';
+                assessmentHtml +=
+                    '    <input class="form-check-input" value="0" type="radio" name="operation" id="operation1" >';
+                assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault1">Subtract</label>';
+                assessmentHtml += '</div>';
+                assessmentHtml += '<div class="form-check">';
+                assessmentHtml +=
+                    '    <input class="form-check-input" value="1" type="radio" name="operation" id="operation2" >';
+                assessmentHtml += '        <label class="form-check-label" for="flexRadioDefault2">Add</label>';
+                assessmentHtml += '</div>';
+                modalBody.append(assessmentHtml);
 
-            // Show the modal
-            $('#staticBackdrop').modal('show');
-        } else {
-            // Handle the case where there is no data or an error occurred
-            flash({
-                msg: 'No Assessments found for the course',
-                type: 'danger'
-            })
+                // Show the modal
+                $('#staticBackdrop').modal('show');
+            } else {
+                // Handle the case where there is no data or an error occurred
+                flash({
+                    msg: 'No Assessments found for the course',
+                    type: 'danger'
+                })
+            }
         }
     }
 
@@ -1091,7 +1094,8 @@
                     console.log(resp)
                     $('.success-mail').css('display', 'block');
                     $('.publish-results-board').attr("disabled", false);
-                    $('.publish-results-board').html('<i class="fa fa-share"></i> Publish Results');
+                    $('.publish-results-board').html(
+                        '<i class="fa fa-share"></i> Publish Results');
 
                     resp.ok && resp.msg ? flash({
                         msg: resp.msg,
@@ -1109,7 +1113,8 @@
                     })
                     $('.success-mail').css('display', 'block');
                     $('.publish-results-board').attr("disabled", false);
-                    $('.publish-results-board').html('<i class="fa fa-share"></i> Publish Results');
+                    $('.publish-results-board').html(
+                        '<i class="fa fa-share"></i> Publish Results');
                 }
             });
         }
@@ -1136,9 +1141,9 @@
             success: function(response) {
                 console.log(response)
                 if (response && Object.keys(response.students).length > 0) {
-                    $.each(response.students, function (studentId, student) {
+                    $.each(response.students, function(studentId, student) {
                         var coursesHtml = '';
-                        $.each(student.courses, function (courseId, course) {
+                        $.each(student.courses, function(courseId, course) {
                             coursesHtml += `
                 <tr>
                     <td>0</td>
@@ -1153,7 +1158,8 @@
                                     <td>Out of</td>
                                     <td>Grade</td>
                                 </tr>`;
-                                $.each(course.course_details.student_grades, function (index, grades) {
+                            $.each(course.course_details.student_grades, function(index,
+                                grades) {
                                 coursesHtml += `
                                 <tr>
                                     <td>${grades.type}</td>
@@ -1161,7 +1167,7 @@
                                     <td>${grades.outof}</td>
                                     <td>${grades.grade}</td>
                                 </tr>`;
-                                });
+                            });
                             coursesHtml += `   </tbody>
                         </table>
                     </td>
@@ -1197,14 +1203,18 @@
             <hr>
         `;
                         $('.loading-more-results').append(studentHtml);
-                        $('#pagenumbers').text('Page ' + response.current_page + ' of ' + response.last_page)
+                        $('#pagenumbers').text('Page ' + response.current_page + ' of ' +
+                            response.last_page)
                     });
 
                     if (response.last_page === response.current_page) {
                         $('.load-more-results').hide();
                     }
 
-                    flash({msg: 'success', type: 'success'});
+                    flash({
+                        msg: 'success',
+                        type: 'success'
+                    });
                 } else {
                     $('.load-more-results').hide();
                     flash({
@@ -1249,9 +1259,9 @@
                 console.log(response.data)
 
                 if (response && Object.keys(response.students).length > 0) {
-                    $.each(response.students, function (studentId, student) {
+                    $.each(response.students, function(studentId, student) {
                         var coursesHtml = '';
-                        $.each(student.courses, function (courseId, course) {
+                        $.each(student.courses, function(courseId, course) {
                             coursesHtml += `
                 <tr>
                     <td>0</td>
@@ -1308,14 +1318,18 @@
             <hr>
         `;
                         $('.loading-more-results').append(studentHtml);
-                        $('#pagenumbers').text('Page ' + response.current_page + ' of ' + response.last_page)
+                        $('#pagenumbers').text('Page ' + response.current_page + ' of ' +
+                            response.last_page)
                     });
 
                     if (response.last_page === response.current_page) {
                         $('.load-more-results').hide();
                     }
 
-                    flash({msg: 'success', type: 'success'});
+                    flash({
+                        msg: 'success',
+                        type: 'success'
+                    });
                 } else {
                     $('.load-more-results').hide();
                     flash({
@@ -1324,8 +1338,12 @@
                     });
                 }
 
-            }, error: function (xhr, status, error) {
-                flash({msg: error, type: 'danger'})
+            },
+            error: function(xhr, status, error) {
+                flash({
+                    msg: error,
+                    type: 'danger'
+                })
             }
         });
     }
@@ -1406,6 +1424,20 @@
 
         maskNRC();
     });
+
+    // Inline Editale Table Rows
+    $.fn.editable.defaults.mode = 'inline';
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        }
+    })
+
+    $(document).ready(() => {
+        // Editable marks (student.show)
+        $('.editable').editable();
+    })
 </script>
 
 <!-- Modal -->
