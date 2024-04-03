@@ -1076,7 +1076,6 @@
                                                 </div>
                                             </div>
 
-
                                             <!-- Add more rows as needed -->
                                             <div class="col-md-6">
                                                 <div class="form-group">
@@ -1311,7 +1310,36 @@
                                                 <th>{{ $loop->iteration }}</th>
                                                 <td>{{ $course['course_code'] }}</td>
                                                 <td>{{ $course['course_title'] }}</td>
-                                                <td> {{ $course['total'] }}</td>
+                                                <td>
+                                                    @php
+                                                        $apStartDate = \Carbon\Carbon::make(
+                                                            $academicData['academic_period_start_date'],
+                                                        );
+
+                                                        $apEndDate = \Carbon\Carbon::make(
+                                                            $academicData['academic_period_end_date'],
+                                                        );
+
+                                                        $apIsOngoing = $apStartDate <= now() && now() <= $apEndDate;
+                                                    @endphp
+
+                                                    @if ($apIsOngoing)
+                                                        <a class="editable" id="{{ $loop->iteration }}"
+                                                            data-type="number" data-pk="{{ $course['grade_id'] }}"
+                                                            data-url="/grades/{{ $course['grade_id'] }}/edit"
+                                                            data-name="total" data-title="Enter total marks">
+                                                            {{ $course['total'] }}
+                                                        </a>
+                                                    @else
+                                                        {{ $course['total'] }}
+                                                    @endif
+
+                                                    {{-- <form action="#" method="POST">
+                                                        @csrf @method('PUT')
+                                                        <input class="form-control " type="number" name="total"
+                                                            value="{{ $course['total'] }}">
+                                                    </form> --}}
+                                                </td>
                                                 <td>{{ $course['grade'] }}</td>
                                             </tr>
                                         @endforeach
@@ -1538,4 +1566,5 @@
         </div>
 
     </div>
+
 @endsection

@@ -24,6 +24,7 @@ use App\Http\Controllers\Academics\CourseController;
 use App\Http\Controllers\Accounting\{InvoiceController, PaymentMethodController, StatementController};
 use App\Http\Controllers\Academics\AcademicPeriodController;
 use App\Http\Controllers\Academics\AcademicPeriodClassController;
+use App\Http\Controllers\Academics\GradeContoller;
 use App\Http\Controllers\Academics\StudentRegistrationController;
 
 use App\Http\Controllers\Admissions\StudentController;
@@ -235,3 +236,6 @@ Route::group(['prefix' => 'student'], function () {
     Route::get('/statements/{invoice}/download/', [StatementController::class, 'downloadStatement'])->name('student.download-statement');
     Route::get('/statements/{student}/export/', [StatementController::class, 'exportStatements'])->name('student.export-statements');
 });
+
+// Student Grades Routes
+Route::post('/grades/{id}/edit', [GradeContoller::class, 'update']);

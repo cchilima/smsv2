@@ -18,7 +18,7 @@ class ApplicantRepository
 
     public function getByDate($date)
     {
-        return Applicant::where('created_at', 'like', "%{$date}%");
+        return Applicant::whereDate('created_at', $date);
     }
 
     public function initiateApplication($applicantIdentifier)
