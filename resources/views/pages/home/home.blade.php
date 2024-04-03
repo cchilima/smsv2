@@ -8,6 +8,27 @@
 
     @if (true)
         <div class="row">
+            @if (count($announcements) > 0)
+                <div class="col-12">
+                    @foreach ($announcements as $announcement)
+                        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                            <a class="d-block h-100" href="{{ route('announcement.fullview', $announcement->id) }}">
+                                <i class="icon icon-alert mr-2"></i>
+                                <span class="mr-2">{{ str()->limit($announcement->title, 100) }}</span>
+                                <span class="alert-link">Read more &rarr;</span>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="col-12">
+                    <h4 class="center-text"> No announcements available.</h4>
+                </div>
+            @endif
+
             <div class="col-sm-6 col-xl-3">
                 <div class="card card-body bg-blue-400 has-bg-image">
                     <div class="media">

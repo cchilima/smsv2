@@ -18,16 +18,19 @@ class AnnouncementRepository
         return Announcement::orderBy($order)->get();
     }
 
-    public function getAllStudentAnnouncements($order = 'title')
+    public function getAllByUserType($userType)
     {
-        return Announcement::join('user_types', 'user_types.id', 'announcements.addressed_to')->where('announcements.archived', false)->where('user_types.name', 'Student')->orderBy($order)->get(['announcements.title', 'announcements.description', 'announcements.addressed_to', 'attachment', 'user_types.name', 'announcements.created_at as created_at', 'announcements.id as id', 'announcements.archived']);
+        return Announcement::with('userType')
+            ->latest('created_at')
+            ->where('archived', false)
+            ->where('addressed_to', null)
+            ->orWhereHas('userType', fn ($query) => $query->where('user_types.name', $userType))
+            ->get();
     }
 
-    public function getAllInstructorAnnouncements($order = 'title')
+    public function dismissAnnouncement(string $user_id, string $announcement_id)
     {
-        return Announcement::join('user_types', 'user_types.id', 'announcements.addressed_to')->where('announcements.archived', false)->where('user_types.name', 'Instructor')->orderBy($order)->get(['announcements.title', 'announcements.description', 'announcements.addressed_to', 'attachment', 'user_types.name', 'announcements.created_at as created_at', 'announcements.id as id' , 'announcements.archived']);
     }
-
 
     public function update($id, $data)
     {
@@ -36,8 +39,8 @@ class AnnouncementRepository
 
     public function find($id)
     {
-       // return Announcement::with('userTypes')->find($id);
-       return Announcement::find($id);
+        // return Announcement::with('userTypes')->find($id);
+        return Announcement::find($id);
     }
 
 
