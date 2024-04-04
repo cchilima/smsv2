@@ -10,6 +10,7 @@ use App\Http\Requests\Announcements\Announcement;
 use App\Http\Requests\Announcements\AnnouncementUpdate;
 use App\Repositories\Announcements\AnnouncementRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AnnouncementController extends Controller
 {
@@ -128,13 +129,23 @@ class AnnouncementController extends Controller
         return back()->with('flash_success', __('msg.delete_ok'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function ShowAnnouncement($id)
     {
         $data['announcement'] = $this->announcement->find($id);
 
         return view('pages.announcements.show_announcement', $data);
+    }
+
+    public function dismissAnnouncement(string $announcement_id)
+    {
+        try {
+            $userId = Auth::user()->id;
+            $this->announcement->dismissAnnouncement($userId, $announcement_id);
+            return redirect()->back()->with('flash_success', __('Announcement dismissed'));
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('flash_error', __('Failed to dismiss announcement'));
+            //throw $th;
+        }
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Users\UserType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Announcement extends Model
 {
@@ -16,5 +17,10 @@ class Announcement extends Model
     public function userType(): BelongsTo
     {
         return $this->belongsTo(UserType::class, 'addressed_to', 'id');
+    }
+
+    public function dismissedAnnouncements(): HasMany
+    {
+        return $this->hasMany(DismissedAnnouncement::class);
     }
 }

@@ -15,16 +15,15 @@
                             <i class="icon icon-alert mr-2"></i>
                             <span class="mr-2">{{ str()->limit($announcement->title, 100) }}</span>
                             <span class="alert-link">Read more &rarr;</span>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                            <form action="{{ route('announcement.dismiss', $announcement->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="close" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </form>
                         </a>
                     </div>
                 @endforeach
-            </div>
-        @else
-            <div class="col-12">
-                <h4 class="center-text"> No announcements available.</h4>
             </div>
         @endif
     </div>
