@@ -10,6 +10,7 @@ use App\Http\Requests\Announcements\Announcement;
 use App\Http\Requests\Announcements\AnnouncementUpdate;
 use App\Repositories\Announcements\AnnouncementRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AnnouncementController extends Controller
 {
@@ -18,8 +19,8 @@ class AnnouncementController extends Controller
 
     public function __construct(AnnouncementRepository $announcement)
     {
-       // $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-       // $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        // $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
+        // $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
 
         $this->announcement = $announcement;
     }
@@ -49,21 +50,22 @@ class AnnouncementController extends Controller
      */
     public function store(Request $request)
     {
-        if($request->hasFile('attachment')) {
-            $data = $request->only(['user_type_id','title', 'description','attachment', 'addressed_to', 'archived']);
+        // Set 'addressed_to' to null if 'everyone' is selected
+        $request['addressed_to'] = $request['addressed_to'] === 'everyone' ? null : $request['addressed_to'];
+
+        if ($request->hasFile('attachment')) {
+            $data = $request->only(['addressed_to', 'title', 'description', 'attachment', 'archived']);
             $attachment = $request->file('attachment');
 
             $f = Qs::getFileMetaData($attachment);
 
-            $f['name'] = $data['attachment'].'announcement.' . $f['ext'];
+            $f['name'] = $data['attachment'] . 'announcement.' . $f['ext'];
             $f['path'] = $attachment->storeAs(Qs::getPublicUploadPathAnnouncements(), $f['name']);
             $attachment_path = asset('storage/announcements/' . $f['name']);
             $data['attachment'] = $attachment_path;
             $this->announcement->create($data);
-
-        }else{
-
-            $data = $request->only(['user_type_id','title', 'description', 'addressed_to', 'archived']);
+        } else {
+            $data = $request->only(['addressed_to', 'title', 'description', 'archived']);
             $this->announcement->create($data);
         }
 
@@ -87,9 +89,9 @@ class AnnouncementController extends Controller
         $data['announcement'] = $announcement = $this->announcement->find($id);
 
         $data['userTypes'] = $this->announcement->getUserTypes();
-        
 
-        return !is_null($announcement  ) ? view('pages.announcements.edit',$data)
+
+        return !is_null($announcement) ? view('pages.announcements.edit', $data)
             : Qs::goWithDanger('pages.announcements.index');
     }
 
@@ -98,21 +100,20 @@ class AnnouncementController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if($request->hasFile('attachment')) {
-            $data = $request->only(['user_type_id','title', 'description','attachment', 'addressed_to', 'archived']);
+        if ($request->hasFile('attachment')) {
+            $data = $request->only(['addressed_to', 'title', 'description', 'attachment', 'archived']);
             $attachment = $request->file('attachment');
 
             $f = Qs::getFileMetaData($attachment);
 
-            $f['name'] = $data['attachment'].'announcement.' . $f['ext'];
+            $f['name'] = $data['attachment'] . 'announcement.' . $f['ext'];
             $f['path'] = $attachment->storeAs(Qs::getPublicUploadPathAnnouncements(), $f['name']);
             $attachment_path = asset('storage/announcements/' . $f['name']);
             $data['attachment'] = $attachment_path;
             $this->announcement->update($id, $data);
+        } else {
 
-        }else{
-
-            $data = $request->only(['user_type_id','title', 'description', 'addressed_to', 'archived']);
+            $data = $request->only(['addressed_to', 'title', 'description', 'archived']);
             $this->announcement->update($id, $data);
         }
 
@@ -128,13 +129,23 @@ class AnnouncementController extends Controller
         return back()->with('flash_success', __('msg.delete_ok'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function ShowAnnouncement($id)
     {
         $data['announcement'] = $this->announcement->find($id);
 
         return view('pages.announcements.show_announcement', $data);
+    }
+
+    public function dismissAnnouncement(string $announcement_id)
+    {
+        try {
+            $userId = Auth::user()->id;
+            $this->announcement->dismissAnnouncement($userId, $announcement_id);
+            return redirect()->back()->with('flash_success', __('Announcement dismissed'));
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('flash_error', __('Failed to dismiss announcement'));
+            //throw $th;
+        }
     }
 }

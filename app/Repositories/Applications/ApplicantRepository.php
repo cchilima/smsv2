@@ -107,8 +107,11 @@ class ApplicantRepository
             return response()->json(['message' => 'Application not found'], 404);
         }
 
+        $applicationArr = $application->toArray();
+
         // Check if all mandatory fields are filled 
-        $fieldsToCheck = Arr::except($application->toArray(), ['status', 'middle_name', 'postal_code', 'period_type_id', 'application_date']);
+        $fieldsToCheck = Arr::except($applicationArr, ['status', 'middle_name', 'postal_code', 'period_type_id', 'application_date']);
+
         $allFieldsFilled = array_filter($fieldsToCheck, fn ($value) => $value === null);
 
         // Check if application has an attachments
