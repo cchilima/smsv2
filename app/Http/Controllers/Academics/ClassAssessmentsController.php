@@ -462,6 +462,10 @@ class ClassAssessmentsController extends Controller
         $this->classaAsessmentRepo->publishGrades($request->ids, $academicPeriodID,$type);
         return Qs::json('Marks updated successfully', true);
     }
+    public function PublishForAllStudents($ac,$type){
+
+        $this->classaAsessmentRepo->publishGrades(null, $ac,$type);
+    }
     public function MyCAResults()
     {
         $user = Auth::user();

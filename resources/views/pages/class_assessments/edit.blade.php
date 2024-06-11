@@ -11,6 +11,8 @@
         </div>
 
         <div class="card-body">
+            <a href="{{ route('PublishForAllStudents',['ac'=>$period->id,'type'=>0]) }}"
+               class="dropdown-item"><i class="icon-eye"></i> Publish Results for {{$period->code}}</a>
             <table class="table datatable-button-html5-columns">
                 <thead>
                 <tr>
@@ -24,6 +26,7 @@
                 </thead>
                 <tbody>
                 @foreach($programs as $program)
+                    @if($program['students']>0)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $program['name'] }}</td>
@@ -55,16 +58,17 @@
                                         @endforeach
 
                                     @if($program['status'] == 0)
-                                            <form class="ajax-store-publish" method="post" action="{{ route('publishProgramResults')  }}">
-                                                @csrf
+{{--                                            <form class="ajax-store-publish" method="post" action="{{ route('publishProgramResults')  }}">--}}
+{{--                                                @csrf--}}
 
-                                                <input type="hidden" name="programID" value="{{ $program['id'] }}">
-                                                <input type="hidden" name="academicPeriodID" value="{{ $period->id }}">
+{{--                                                <input type="hidden" name="programID" value="{{ $program['id'] }}">--}}
+{{--                                                <input type="hidden" name="academicPeriodID" value="{{ $period->id }}">--}}
+{{--                                                <input type="hidden" name="type" value="1">--}}
 
-                                                <div class="text-right">
-                                                    <button id="ajax-btn" type="submit" class="dropdown-item">Publish Results <i class="icon-paperplane ml-2"></i></button>
-                                                </div>
-                                            </form>
+{{--                                                <div class="text-right">--}}
+{{--                                                    <button id="ajax-btn" type="submit" class="dropdown-item">Publish Results <i class="icon-paperplane ml-2"></i></button>--}}
+{{--                                                </div>--}}
+{{--                                            </form>--}}
 {{--                                            <a href="{{ route('publishProgramResults',['aid'=>Qs::hash($apid),'pid'=>Qs::hash($program->id)]) }}"--}}
 {{--                                               class="dropdown-item"><i class="icon-eye"></i> Publish Results</a>--}}
 
@@ -74,6 +78,7 @@
                             </div>
                         </td>
                     </tr>
+                    @endif
                 @endforeach
                 </tbody>
             </table>

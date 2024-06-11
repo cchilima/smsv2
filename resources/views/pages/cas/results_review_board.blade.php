@@ -97,7 +97,7 @@
                                                 <input type="hidden" name="level_name"
                                                        value="{{ $student['course_level_id'] }}">
                                                 <input type="hidden" name="type"
-                                                       value="1">
+                                                       value="0">
                                             </div>
 
                                             <thead>

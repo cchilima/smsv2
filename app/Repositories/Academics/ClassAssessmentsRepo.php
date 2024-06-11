@@ -111,7 +111,11 @@ class ClassAssessmentsRepo
             ->distinct('course_id')
             ->pluck('course_id');
 
-        $programs = Program::whereIn('id', function ($query) use ($courseIdsWithGrades) {
+        $studentIds = Grade::where('academic_period_id', $id)->whereNot('assessment_type_id', 1)
+            ->distinct('student_id')
+            ->pluck('student_id');
+
+        $programs = Program::with('qualification')->whereIn('id', function ($query) use ($courseIdsWithGrades) {
             $query->select('program_id')
                 ->from('program_courses')
                 ->whereIn('course_id', $courseIdsWithGrades)
@@ -127,7 +131,7 @@ class ClassAssessmentsRepo
                 'program_code' => $program->code,
                 'name' => $program->name,
                 'id' => $program->id,
-                'qualifications' => '',
+                'qualifications' => $program->qualification->name,
                 'students' => 0, // Initialize total students count for the program
                 'status' => 0, // Default status is published (status 1)
                 'levels' => [],
@@ -135,11 +139,7 @@ class ClassAssessmentsRepo
 
             foreach ($program->programCourses as $programCourse) {
                 $course = $programCourse->course;
-
-                $studentsCount = Grade::where('academic_period_id', $id)
-                    ->where('course_id', $course->id)
-                    ->distinct('student_id')
-                    ->count();
+                $studentsCount = Student::whereIn('id',$studentIds)->where('program_id',$program->id)->distinct('id')->count();
 
                 $programData['students'] += $studentsCount; // Add students count to total students for the program
 
@@ -187,8 +187,11 @@ class ClassAssessmentsRepo
         $courseIdsWithGrades = Grade::where('academic_period_id', $id)
             ->distinct('course_id')
             ->pluck('course_id');
+        $studentIds = Grade::where('academic_period_id', $id)->whereNot('assessment_type_id', 1)
+            ->distinct('student_id')
+            ->pluck('student_id');
 
-        $programs = Program::whereIn('id', function ($query) use ($courseIdsWithGrades) {
+        $programs = Program::with('qualification')->whereIn('id', function ($query) use ($courseIdsWithGrades) {
             $query->select('program_id')
                 ->from('program_courses')
                 ->whereIn('course_id', $courseIdsWithGrades)
@@ -204,7 +207,7 @@ class ClassAssessmentsRepo
                 'program_code' => $program->code,
                 'name' => $program->name,
                 'id' => $program->id,
-                'qualifications' => '',
+                'qualifications' => $program->qualification->name,
                 'students' => 0, // Initialize total students count for the program
                 'status' => 0, // Default status is published (status 1)
                 'levels' => [],
@@ -213,10 +216,7 @@ class ClassAssessmentsRepo
             foreach ($program->programCourses as $programCourse) {
                 $course = $programCourse->course;
 
-                $studentsCount = Grade::where('academic_period_id', $id)
-                    ->where('course_id', $course->id)
-                    ->distinct('student_id')
-                    ->count();
+                $studentsCount = Student::whereIn('id',$studentIds)->where('program_id',$program->id)->distinct('id')->count();
 
                 $programData['students'] += $studentsCount; // Add students count to total students for the program
 
@@ -905,18 +905,32 @@ class ClassAssessmentsRepo
         ]);
     }
 
-    public function publishGrades($id, $apid, $type)
+    public function publishGrades($id = null, $apid, $type)
     {
-        if ($type == 1) {
-            Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->where('assessment_type_id', 1)
-                ->update([
-                    'publication_status' => 1,
-                ]);
-        } else {
-            Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->whereNot('assessment_type_id', 1)
-                ->update([
-                    'publication_status' => 1,
-                ]);
+        if (!empty($id)) {
+            if ($type == 1) {
+                Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->where('assessment_type_id', 1)
+                    ->update([
+                        'publication_status' => 1,
+                    ]);
+            } else {
+                Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->whereNot('assessment_type_id', 1)
+                    ->update([
+                        'publication_status' => 1,
+                    ]);
+            }
+        }else{
+            if ($type == 1) {
+                Grade::where('academic_period_id', $apid)->where('assessment_type_id', 1)
+                    ->update([
+                        'publication_status' => 1,
+                    ]);
+            } else {
+                Grade::where('academic_period_id', $apid)->whereNot('assessment_type_id', 1)
+                    ->update([
+                        'publication_status' => 1,
+                    ]);
+            }
         }
     }
 
