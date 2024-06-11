@@ -43,15 +43,16 @@ class HomeController extends Controller
 
         if ($user->userType->title == 'student') {
 
-            $data['announcements'] = $this->announcementRepo->getAllStudentAnnouncements();
+            $data['announcements'] = $this->announcementRepo->getAllByUserType('Student');
 
             return view('pages.home.student_home', $data);
         } else if ($user->userType->title == 'instructor') {
 
-            $data['announcements'] = $this->announcementRepo->getAllInstructorAnnouncements();
+            $data['announcements'] = $this->announcementRepo->getAllByUserType('Instructor');
 
             return view('pages.home.instructor_home',  $data);
         } else {
+            $data['announcements'] = $this->announcementRepo->getAllByUserType('Super Admin');
             $data['students'] = $this->enrollmentRepository->totalStudents();
             $data['users'] = $this->enrollmentRepository->totalUsers();
             $data['staff'] = $this->enrollmentRepository->totalStaff();

@@ -49,6 +49,7 @@ Route::get('/', function () {
 });
 
 Route::get('announcement/{announcement_id}', [AnnouncementController::class, 'ShowAnnouncement'])->name('announcement.fullview');
+Route::post('announcement/{announcement_id}/dismiss', [AnnouncementController::class, 'dismissAnnouncement'])->name('announcement.dismiss');
 
 Route::get('/staff-login', function () {
     return view('auth.staff_login');
