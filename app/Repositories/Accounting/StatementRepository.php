@@ -36,7 +36,7 @@ class StatementRepository
                         ->groupBy('statements.invoice_id');
                 }, 'statements_total')
                 ->where('student_id', $student_id)
-                ->groupBy('invoices.id')
+                ->groupBy('invoices.id','invoices.student_id', 'invoices.academic_period_id', 'invoices.raised_by', 'invoices.cancelled', 'invoices.created_at', 'invoices.updated_at' )
                 ->orderBy('invoices.created_at')
                 ->get();
 

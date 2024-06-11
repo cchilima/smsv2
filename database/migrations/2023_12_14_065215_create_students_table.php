@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('course_level_id')->constrained('course_levels')->onDelete('restrict');
             $table->foreignId('period_type_id')->constrained('period_types')->onDelete('restrict');
             $table->enum('admission_status', ['active', 'inactive']);
+            $table->enum('semester', ['1','2'])->nullable();
             $table->year('admission_year');
             $table->boolean('graduated')->default(0);
             $table->timestamps();

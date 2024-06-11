@@ -22,7 +22,7 @@ class APinformation extends FormRequest
     public function rules(): array
     {
         return [
-            'academic_period_intake_id' => 'required|integer|exists:academic_periods,id',
+            'academic_period_intake_id' => 'required|integer|exists:academic_period_intakes,id',
             'study_mode_id' => 'required|integer|exists:study_modes,id',
             'view_results_threshold' => 'required|integer|between:1,100',
             'exam_slip_threshold' => 'required|integer|between:1,100',

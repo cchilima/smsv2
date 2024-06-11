@@ -30,6 +30,7 @@ class StudentRegistrationRepository
         if ($student_id) {
             // incase request from management
             $student = Student::find($student_id);
+            
         } else {
             // incase request from student
             $student = $this->getStudent();
@@ -104,7 +105,7 @@ class StudentRegistrationRepository
         $classIds = $courses ? $courses->pluck('id')->toArray() : [];
 
         // check if student has already been enrolled in courses
-        $enrollmentExists = Enrollment::whereIn('academic_period_class_id', $classIds)->exists();
+        $enrollmentExists = Enrollment::whereIn('academic_period_class_id', $classIds)->where('student_id', $student_id)->exists();
 
         return $enrollmentExists;
     }
@@ -113,6 +114,8 @@ class StudentRegistrationRepository
     {
         // Get academic information
         $academicInfo = $this->getAcademicInfo($student_id);
+
+        // dd($academicInfo);
 
         if( $academicInfo ) {
 
@@ -137,6 +140,7 @@ class StudentRegistrationRepository
         } else {
             // Outside registration period
             return false;
+            
         }
     }
     }

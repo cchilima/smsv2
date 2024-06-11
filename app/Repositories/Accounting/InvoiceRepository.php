@@ -24,6 +24,7 @@ class InvoiceRepository
         return Student::find($student_id);
     }
 
+
     public function invoiceStudents($academic_period_id)
     {
         DB::beginTransaction();
@@ -40,6 +41,8 @@ class InvoiceRepository
 
             // tracks all programs of students
             $programs_lists = [];
+            $student_program_ids = [];
+            
 
             // check if student have already been invoiced
 
@@ -48,35 +51,73 @@ class InvoiceRepository
                 $exists = Invoice::where('student_id', $student->id)->where('academic_period_id', $academic_period_id)->exists();
 
                 if (!$exists) {
-                    array_push($students_filtered_ids, $student->id);
-                    array_push($programs_lists, $student->program->id);
+                    //array_push($students_filtered_ids, $student->id);
+                    //array_push($programs_lists, $student->program->id);
+
+                    $students_filtered_ids[] = ['student_id' => $student->id, 'program_id' => $student->program->id];
+
+                    $student_program_ids[$student->id] = $student->program->id;
                 }
             }
 
   
             // Get academic period fees associated with the student's program for the specified academic period
-            $academicFees = $student->program->academicPeriodFees->where('academic_period_id', $academic_period_id);
+            //$academicFees = $student->program->academicPeriodFees->where('academic_period_id', $academic_period_id)->with('programs');
+
+            // Ensure there are students to invoice
+        if (empty($student_program_ids)) {
+            DB::commit();
+            return false; // No students to invoice
+        }
+
+        // Fetch all unique programs for filtered students
+        $program_ids = array_values(array_unique(array_values($student_program_ids)));
+
+        // Get academic period fees associated with the students' programs for the specified academic period
+        /*$academicFees = AcademicPeriodFee::where('academic_period_id', $academic_period_id)
+        ->whereHas('programs', function ($query) use ($program_ids) {
+            $query->whereIn('programs.id', $program_ids);
+        })->with('programs')
+        ->get();*/
+
+        $academicFees = DB::table('academic_period_fees')
+            ->join('program_academic_period_fee', 'academic_period_fees.id', '=', 'program_academic_period_fee.academic_period_fee_id')
+            ->join('programs', 'program_academic_period_fee.program_id', '=', 'programs.id')
+            ->where('academic_period_fees.academic_period_id', $academic_period_id)
+            ->whereIn('programs.id', $program_ids)
+            ->select('academic_period_fees.*', 'programs.id as program_id')
+            ->get();
+
 
             // Get universal fees (academic period fees with no associations)
             $universalFees = AcademicPeriodFee::doesntHave('programs')->get();
 
+
             // Merge academic fees and universal fees
-            $fees = $academicFees->merge($universalFees);
+            //$fees = $academicFees->merge($universalFees);
 
            // $fees = AcademicPeriodFee::where('academic_period_id', $academic_period_id)->get();
 
             // invoice the students
-            foreach ($students_filtered_ids as $student_id) {
+            foreach ($students_filtered_ids as $student) {
                 // create invoice
-                $invoice = Invoice::create(['student_id' => $student_id, 'academic_period_id' => $academic_period_id, 'raised_by' => Auth::user()->id]);
+                $invoice = Invoice::create(['student_id' => $student['student_id'], 'academic_period_id' => $academic_period_id, 'raised_by' => Auth::user()->id]);
 
-                foreach ($fees as $fee) {
+                foreach ($academicFees as $fee) {
                     // create invoice details
-                    $invoiceDetails = InvoiceDetail::create(['invoice_id' => $invoice->id, 'fee_id' => $fee->fee_id, 'amount' => $fee->amount]);
+                    if($student['program_id'] == $fee->program_id){
+                        $invoiceDetails = InvoiceDetail::create(['invoice_id' => $invoice->id, 'fee_id' => $fee->fee_id, 'amount' => $fee->amount]);
+                    }
+                }
+
+
+                foreach ($universalFees as $ufee) {
+                    // create invoice details
+                    $invoiceDetails = InvoiceDetail::create(['invoice_id' => $invoice->id, 'fee_id' => $ufee->fee_id, 'amount' => $ufee->amount]);
                 }
 
                 // get student
-                $student_obj = $this->getStudent($student_id);
+                $student_obj = $this->getStudent($student['student_id']);
 
                 // check for any hanging money and push any money found towards invoice
                 $this->statementRepo->applyNegativeAmountToInvoice($student_obj, $invoice);
@@ -101,7 +142,6 @@ class InvoiceRepository
     public function invoiceStudent($academic_period_id, $student_id)
     {
 
-       // dd("here");
         DB::beginTransaction();
 
         try {
@@ -121,13 +161,21 @@ class InvoiceRepository
             if (!$exists) {
 
                 // Get academic period fees associated with the student's program for the specified academic period
-                $academicFees = $student->program->academicPeriodFees->where('academic_period_id', $academic_period_id);
+                //$academicFees = $student->program->academicPeriodFees->where('academic_period_id', $academic_period_id);
+
+                $academicFees = DB::table('academic_period_fees')
+                ->join('program_academic_period_fee', 'academic_period_fees.id', '=', 'program_academic_period_fee.academic_period_fee_id')
+                ->join('programs', 'program_academic_period_fee.program_id', '=', 'programs.id')
+                ->where('academic_period_fees.academic_period_id', $academic_period_id)
+                ->whereIn('programs.id', $student->program_id)
+                ->select('academic_period_fees.*', 'programs.id as program_id')
+                ->get();
 
                 // Get universal fees (academic period fees with no associations)
                 $universalFees = AcademicPeriodFee::doesntHave('programs')->get();
 
                 // Merge academic fees and universal fees
-                $fees = $academicFees->merge($universalFees);
+                //$fees = $academicFees->merge($universalFees);
                 
                 // get academic period fees
                // $fees = AcademicPeriodFee::where('academic_period_id', $academic_period_id)->get();
@@ -137,10 +185,25 @@ class InvoiceRepository
                 // create invoice
                 $invoice = Invoice::create(['student_id' => $student->id, 'academic_period_id' => $academic_period_id, 'raised_by' => Auth::user()->id]);
 
-                foreach ($fees as $fee) {
+
+
+                foreach ($academicFees as $fee) {
+                    // create invoice details
+                    if($student->program_id == $fee->program_id){
+                        $invoiceDetails = InvoiceDetail::create(['invoice_id' => $invoice->id, 'fee_id' => $fee->fee_id, 'amount' => $fee->amount]);
+                    }
+                }
+
+
+                foreach ($universalFees as $ufee) {
+                    // create invoice details
+                    $invoiceDetails = InvoiceDetail::create(['invoice_id' => $invoice->id, 'fee_id' => $ufee->fee_id, 'amount' => $ufee->amount]);
+                }
+
+                /*foreach ($fees as $fee) {
                     // create invoice details
                     $invoiceDetails = InvoiceDetail::create(['invoice_id' => $invoice->id, 'fee_id' => $fee->fee_id, 'amount' => $fee->amount]);
-                }
+                }*/
 
                 // check for any hanging money and push any money found towards invoice
                 $this->statementRepo->applyNegativeAmountToInvoice($student_obj, $invoice);
