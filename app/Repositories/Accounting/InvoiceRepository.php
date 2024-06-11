@@ -167,7 +167,7 @@ class InvoiceRepository
                 ->join('program_academic_period_fee', 'academic_period_fees.id', '=', 'program_academic_period_fee.academic_period_fee_id')
                 ->join('programs', 'program_academic_period_fee.program_id', '=', 'programs.id')
                 ->where('academic_period_fees.academic_period_id', $academic_period_id)
-                ->whereIn('programs.id', $student->program_id)
+                ->where('programs.id', $student->program_id)
                 ->select('academic_period_fees.*', 'programs.id as program_id')
                 ->get();
 
