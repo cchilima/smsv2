@@ -106,6 +106,7 @@
                                                 <th>Course Code</th>
                                                 <th>Course Name</th>
                                                 <th>Assessments</th>
+                                                <th>CA</th>
                                                 <th>Modify</th>
                                             </tr>
                                             </thead>
@@ -115,6 +116,10 @@
                                                     <th>{{ $loop->iteration }}</th>
                                                     <td>{{ $course['course_details']['course_code']  }}</td>
                                                     <td>{{ $course['course_details']['course_title'] }}</td>
+                                                    @php
+                                                        $totalSum = 0;
+                                                        $totalCA = 0;
+                                                    @endphp
                                                     <td>
                                                         <table class="table table-bordered table-hover table-striped">
                                                             <tbody>
@@ -122,7 +127,7 @@
                                                                 <td>Assessment Type</td>
                                                                 <td>Total</td>
                                                                 <td>Out of</td>
-                                                                <td>Grade</td>
+{{--                                                                <td>Grade</td>--}}
                                                             </tr>
                                                             {{--                                                            @foreach ($courses->class->course->grades as $grade)--}}
                                                             @foreach ($course['course_details']['student_grades'] as $grade)
@@ -130,12 +135,18 @@
                                                                     <td>{{ $grade['type'] }}</td>
                                                                     <td>{{ $grade['total'] }}</td>
                                                                     <td>{{ $grade['outof'] }}</td>
-                                                                    <td>{{ $grade['grade'] }}</td>
+{{--                                                                    <td>{{ $grade['grade'] }}</td>--}}
+                                                                    @php
+                                                                        $totalCA += $grade['total'];
+                                                                        $totalSum += $grade['outof'];
+                                                                    @endphp
                                                                 </tr>
                                                             @endforeach
                                                             </tbody>
                                                         </table>
                                                     </td>
+                                                    <td>{{ $totalCA .'  out of  '. $totalSum }}</td>
+
                                                     <td>
                                                         @if(Qs::userIsTeamSA())
                                                             <a onclick="modifyMarksCAsL('{{ $student['id'] }}','{{ $student['name'] }}','{{ $course['course_details']['course_code'] }}','{{ $course['course_details']['course_title'] }}','{{ json_encode($course['course_details']['student_grades']) }}')"

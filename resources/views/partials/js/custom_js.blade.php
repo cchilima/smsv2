@@ -1143,10 +1143,12 @@
                 if (response && Object.keys(response.students).length > 0) {
                     $.each(response.students, function(studentId, student) {
                         var coursesHtml = '';
+                        let counter = 1;
                         $.each(student.courses, function(courseId, course) {
+                            var totalSum = 0, totalCa = 0;
                             coursesHtml += `
                 <tr>
-                    <td>0</td>
+                    <td>${counter++}</td>
                     <td>${course.course_details.course_code}</td>
                     <td>${course.course_details.course_title}</td>
                     <td>
@@ -1156,21 +1158,26 @@
                                     <td>Assessment Type</td>
                                     <td>Total</td>
                                     <td>Out of</td>
-                                    <td>Grade</td>
+<!--                                    <td>Grade</td> <td>//</td> -->
                                 </tr>`;
+
                             $.each(course.course_details.student_grades, function(index,
                                 grades) {
+                                totalSum += grades.outof;
+                                totalCa += grades.total;
                                 coursesHtml += `
                                 <tr>
                                     <td>${grades.type}</td>
                                     <td>${grades.total}</td>
                                     <td>${grades.outof}</td>
-                                    <td>${grades.grade}</td>
+
                                 </tr>`;
                             });
+
                             coursesHtml += `   </tbody>
                         </table>
-                    </td>
+                    </td>`;
+                            coursesHtml +=`<td>${totalCa}  out of  ${totalSum} </td>
                 <td><a onclick="modifyMarksCAsL('${studentId}','${student.name}','${course.course_details.course_code}','${course.course_details.course_title}','${encodeURIComponent(JSON.stringify(course.course_details.student_grades))}')"
                                                                class="nav-link"><i class="icon-pencil"></i></a></td>
                 </tr>`;
@@ -1190,6 +1197,7 @@
                         <th>Course Code</th>
                         <th>Course Name</th>
                         <th>Assessments</th>
+                        <th>CA</th>
                          <th>Modify</th>
                     </tr>
                 </thead>
