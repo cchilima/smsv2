@@ -910,7 +910,7 @@ class ClassAssessmentsRepo
         $stud = Student::find($studentId);
 
         if (!$stud) {
-            return response()->json(['error' => 'Student not found'], 404);
+            return ['message' => 'Student not found'];
         }
 
         // Retrieve distinct course levels for the student's program
@@ -942,7 +942,7 @@ class ClassAssessmentsRepo
         $stud->course_level_id = $nextCourseLevelId;
         $stud->save();
     }else{
-            if ($stud->semster == 1){
+            if ($stud->semester == 1){
                 $stud->semester = 2;
                 $stud->save();
             }else{
