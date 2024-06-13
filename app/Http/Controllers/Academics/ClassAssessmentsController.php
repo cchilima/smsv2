@@ -465,6 +465,8 @@ class ClassAssessmentsController extends Controller
     public function PublishForAllStudents($ac,$type){
 
         $this->classaAsessmentRepo->publishGrades(null, $ac,$type);
+
+        redirect(route('getPublishPrograms',$ac));
     }
     public function MyCAResults()
     {

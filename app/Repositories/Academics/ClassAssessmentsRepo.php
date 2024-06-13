@@ -904,34 +904,131 @@ class ClassAssessmentsRepo
             'total' => $newTotal,
         ]);
     }
-
-    public function publishGrades($id = null, $apid, $type)
+    public function checkStudentCourseLevel($studentId)
     {
-        if (!empty($id)) {
-            if ($type == 1) {
-                Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->where('assessment_type_id', 1)
-                    ->update([
-                        'publication_status' => 1,
-                    ]);
-            } else {
-                Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->whereNot('assessment_type_id', 1)
-                    ->update([
-                        'publication_status' => 1,
-                    ]);
-            }
-        }else{
-            if ($type == 1) {
-                Grade::where('academic_period_id', $apid)->where('assessment_type_id', 1)
-                    ->update([
-                        'publication_status' => 1,
-                    ]);
-            } else {
-                Grade::where('academic_period_id', $apid)->whereNot('assessment_type_id', 1)
-                    ->update([
-                        'publication_status' => 1,
-                    ]);
+        // Retrieve student information
+        $stud = Student::find($studentId);
+
+        if (!$stud) {
+            return response()->json(['error' => 'Student not found'], 404);
+        }
+
+        // Retrieve distinct course levels for the student's program
+        $distinctCourseLevels = ProgramCourses::where('program_id', $stud->program_id)
+            ->distinct('course_level_id')
+            ->orderBy('course_level_id')
+            ->pluck('course_level_id');
+
+        // Determine the student's current course level
+        $currentCourseLevelId = $stud->course_level_id;
+
+        // Find the index of the current course level in the list of distinct course levels
+        $currentIndex = $distinctCourseLevels->search($currentCourseLevelId);
+
+        if ($currentIndex === false) {
+            return ['message' => 'Current course level not found in program courses'];
+        }
+
+        if ($stud->study_mode_id == 3) {
+
+        // Determine the next course level
+        $nextCourseLevelId = $distinctCourseLevels->get($currentIndex + 1);
+
+        if (!$nextCourseLevelId) {
+            return ['message' => 'Student is already in the final year'];
+        }
+
+        // Update the student's course level to the next level
+        $stud->course_level_id = $nextCourseLevelId;
+        $stud->save();
+    }else{
+            if ($stud->semster == 1){
+                $stud->semester = 2;
+                $stud->save();
+            }else{
+                // Determine the next course level
+                $nextCourseLevelId = $distinctCourseLevels->get($currentIndex + 1);
+
+                if (!$nextCourseLevelId) {
+                    return ['message' => 'Student is already in the final year'];
+                }
+
+                // Update the student's course level to the next level
+                $stud->semester = 1;
+                $stud->course_level_id = $nextCourseLevelId;
+                $stud->save();
             }
         }
+
+        // Prepare the response
+        $response = [
+//            'student_id' => $stud->id,
+//            'program_id' => $stud->program_id,
+//            'previous_course_level_id' => $currentCourseLevelId,
+//            'new_course_level_id' => $stud->course_level_id,
+            'message' => 'true'
+        ];
+
+        return $response;
+    }
+    public function publishGrades($id = null, $apid, $type)
+    {/*
+        $id = Grade::where('academic_period_id', $apid)
+            ->distinct('student_id')
+            ->orderBy('student_id')
+            ->pluck('student_id');
+          foreach ($id as $item) {
+               dd($item);
+              $status = $this->TermSemesterStatus($item, $apid, $type);
+
+              if ($status['status'] == 'new'){
+                  $this->checkStudentCourseLevel($item);
+              }
+          }
+          */
+          if (!empty($id)) {
+              if ($type == 1) {
+                  Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->where('assessment_type_id', 1)
+                      ->update([
+                          'publication_status' => 1,
+                      ]);
+                  foreach ($id as $item) {
+                      $status = $this->TermSemesterStatus($item, $apid, $type);
+
+                      if ($status['status'] == 'new'){
+                          $this->checkStudentCourseLevel($item);
+                      }
+                  }
+              } else {
+                  Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->whereNot('assessment_type_id', 1)
+                      ->update([
+                          'publication_status' => 1,
+                      ]);
+              }
+          }else{
+              if ($type == 1) {
+                  Grade::where('academic_period_id', $apid)->where('assessment_type_id', 1)
+                      ->update([
+                          'publication_status' => 1,
+                      ]);
+                  $id = Grade::where('academic_period_id', $apid)
+                      ->distinct('student_id')
+                      ->orderBy('student_id')
+                      ->pluck('student_id');
+                  foreach ($id as $item) {
+                      $status = $this->TermSemesterStatus($item, $apid, $type);
+
+                      if ($status['status'] == 'new'){
+                          $this->checkStudentCourseLevel($item);
+                      }
+                  }
+              } else {
+                  Grade::where('academic_period_id', $apid)->whereNot('assessment_type_id', 1)
+                      ->update([
+                          'publication_status' => 1,
+                      ]);
+              }
+          }
     }
 
     public function getStudentDetails($id)
@@ -1040,7 +1137,96 @@ class ClassAssessmentsRepo
         }
     }
 
+//exams semester term level
 
+    public function TermSemesterStatus($student_id = null, $academicPeriodID, $type)
+    {
+        // Fetching all courses associated with the student's enrollments
+        if (!empty($student_id)) {
+            $student = Student::with(['enrollments.class.course'])->find($student_id);
+            $courses = [];
+
+            foreach ($student->enrollments as $enrollment) {
+                if ($academicPeriodID == $enrollment->class->academic_period_id) {
+                    $courses[$enrollment->class->course->code] = [
+                        'course_code' => $enrollment->class->course->code,
+                        'course_title' => $enrollment->class->course->name,
+                        'total_score' => 0 // Initialize total_score to 0 for courses not found in grades
+                    ];
+                }
+            }
+
+            // Fetching grades for the specified student and academic period
+            $grades = Grade::where('student_id', $student_id)
+                ->where('assessment_type_id', 1) // Assuming assessment_type_id 1 indicates a type that should not be counted
+                ->where('academic_period_id', $academicPeriodID)
+                ->with(['academicPeriods', 'student'])
+                ->select('academic_period_id', 'course_code', 'course_title', 'student_id')
+                ->selectRaw('SUM(total) as total_score')
+                ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id')
+                ->orderBy('academic_period_id')
+                ->orderBy('course_code')
+                ->get();
+
+            foreach ($grades as $grade) {
+                if (isset($courses[$grade->course_code])) {
+                    // Update total_score for courses found in grades
+                    $courses[$grade->course_code]['total_score'] = $grade->total_score;
+                    $courses[$grade->course_code]['course_code'] = $grade->course_code;
+                    $courses[$grade->course_code]['course_title'] = $grade->course_title;
+                }
+            }
+            //dd($courses);
+
+            // Count the courses
+            $courseCount = count($courses);
+            $passedCourse = 0;
+            $failedCourse = 0;
+            $coursesPassedArray = [];
+            $courseFailedArray = [];
+
+            // Determine pass/fail status and populate passed/failed courses array
+            foreach ($courses as $course) {
+                if ($course['total_score'] >= 40 || $course['total_score'] == -1) { // Adjust the pass threshold as necessary
+                    $passedCourse++;
+                    $coursesPassedArray[] = $course;
+                } else {
+                    $failedCourse++;
+                    $courseFailedArray[] = $course;
+                }
+            }
+
+            // Determine comment and status based on pass/fail counts
+            $comment = '';
+            $status = 'same';
+
+            if ($courseCount == $failedCourse) {
+                $comment = 'Part Time';
+            } elseif ($passedCourse == $courseCount) {
+                $comment = 'Clear Pass';
+                $status = 'new';
+            } elseif ($courseCount - 1 == $passedCourse || $courseCount - 2 == $passedCourse) {
+                $coursesToRepeat = implode(", ", array_column($courseFailedArray, 'course_code'));
+                $comment = 'Proceed, RPT ' . $coursesToRepeat;
+                $status = 'new';
+            } elseif ($courseCount - 3 >= $passedCourse) {
+                $coursesToRepeat = implode(", ", array_column($courseFailedArray, 'course_code'));
+                $comment = 'Part time ' . $coursesToRepeat;
+                $status = 'same';
+            }
+
+            // Prepare and return the data
+            return [
+                'student_id' => $student_id,
+                'comment' => $comment,
+                'coursesPassed' => $coursesPassedArray,
+                'coursesPassedCount' => $passedCourse,
+                'coursesFailed' => $courseFailedArray,
+                'coursesFailedCount' => $failedCourse,
+                'status' => $status,
+            ];
+        }
+    }
     //for exams
     public function comments($student_id, $academicPeriodID, $type)
     {
