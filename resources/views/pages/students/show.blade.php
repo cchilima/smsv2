@@ -1306,6 +1306,7 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($academicData['grades'] as $course)
+                                            @if($course['student_id'] == $student->id)
                                             <tr>
                                                 <th>{{ $loop->iteration }}</th>
                                                 <td>{{ $course['course_code'] }}</td>
@@ -1342,6 +1343,7 @@
                                                 </td>
                                                 <td>{{ $course['grade'] }}</td>
                                             </tr>
+                                            @endif
                                         @endforeach
                                     </tbody>
 

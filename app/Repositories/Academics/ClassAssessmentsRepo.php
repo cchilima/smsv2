@@ -1082,40 +1082,49 @@ class ClassAssessmentsRepo
         $student_id = Student::where('user_id', $id)->first();
         $student = $student_id->id;
 
+//        $grades = Grade::where('student_id', $student)
+//            ->with(['academicPeriods', 'student'])->select('id', 'course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+//            ->selectRaw('SUM(total) as total_sum')
+//            ->groupBy('id', 'academic_period_id', 'course_code', 'course_title', 'student_id', 'course_id')
+//            ->orderBy('academic_period_id')
+//            ->orderBy('course_code')
+//            ->get();
         $grades = Grade::where('student_id', $student)
-            ->with(['academicPeriods', 'student'])->select('id', 'course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->with(['academicPeriods', 'student'])
+            ->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
             ->selectRaw('SUM(total) as total_sum')
-            ->groupBy('id', 'academic_period_id', 'course_code', 'course_title', 'student_id', 'course_id')
+            ->groupBy('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
             ->orderBy('academic_period_id')
             ->orderBy('course_code')
             ->get();
         $organizedResults = [];
 
         foreach ($grades as $grade) {
-
-            $academicPeriodId = $grade->academic_period_id;
-            //$academicPeriodId = 'courses';
-            $course = [
-                'grade_id' => $grade->id,
-                'course_code' => $grade->course_code,
-                'course_title' => $grade->course_title,
-                'student_id' => $grade->student_id,
-                'total' => $grade->total_sum,
-                'grade' => $this->calculateGrade($grade->total_sum)
-            ];
-
-            if (!isset($organizedResults[$academicPeriodId])) {
-                $organizedResults[$academicPeriodId] = [
-                    'academic_period_name' => $grade->academicPeriods->name,
-                    'academic_period_code' => $grade->academicPeriods->code,
-                    'academic_period_id' => $grade->academicPeriods->id,
-                    'academic_period_start_date' => $grade->academicPeriods->ac_start_date,
-                    'academic_period_end_date' => $grade->academicPeriods->ac_end_date,
-                    'comments' => $this->comments($grade->student_id, $grade->academicPeriods->id, 1),
+            if ($grade->student_id == $student) {
+                $academicPeriodId = $grade->academic_period_id;
+                //$academicPeriodId = 'courses';
+                $course = [
+                    'grade_id' => $grade->id,
+                    'course_code' => $grade->course_code,
+                    'course_title' => $grade->course_title,
+                    'student_id' => $grade->student_id,
+                    'total' => $grade->total_sum,
+                    'grade' => $this->calculateGrade($grade->total_sum)
                 ];
-            }
 
-            $organizedResults[$academicPeriodId]['grades'][] = $course;
+                if (!isset($organizedResults[$academicPeriodId])) {
+                    $organizedResults[$academicPeriodId] = [
+                        'academic_period_name' => $grade->academicPeriods->name,
+                        'academic_period_code' => $grade->academicPeriods->code,
+                        'academic_period_id' => $grade->academicPeriods->id,
+                        'academic_period_start_date' => $grade->academicPeriods->ac_start_date,
+                        'academic_period_end_date' => $grade->academicPeriods->ac_end_date,
+                        'comments' => $this->comments($grade->student_id, $grade->academicPeriods->id, 1),
+                    ];
+                }
+
+                $organizedResults[$academicPeriodId]['grades'][] = $course;
+            }
         }
 
         return $organizedResults;
