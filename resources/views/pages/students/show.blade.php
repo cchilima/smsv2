@@ -1280,9 +1280,6 @@
                                     data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
                             </li>
                         @endforeach
-                        <li class="nav-item">
-                            <a href="#profile-info" class="nav-link" data-toggle="tab">{{ 'Profile Details' }}</a>
-                        </li>
                     </ul>
 
                     <div class="tab-content">
@@ -1354,45 +1351,6 @@
 
                             </div>
                         @endforeach
-                        <div class="tab-pane fade show" id="profile-info">
-                            <table class="table table-bordered">
-                                <tbody>
-                                    <tr>
-                                        <td class="font-weight-bold">Gender</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Email</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">NRC</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Date of Birth</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Marital Status</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Mobile</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Street</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Province</td>
-                                        <td></td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1406,20 +1364,20 @@
                     <ul class="nav nav-tabs nav-tabs-highlight">
                         @foreach ($caresults as $innerIndex => $academicData)
                             <li class="nav-item {{ $innerIndex == 0 ? 'active' : '' }}">
-                                <a href="#results-{{ $academicData['academic_period_id'] }}" class="nav-link"
+                                <a href="#results-cs{{ $academicData['academic_period_id'] }}" class="nav-link"
                                     data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
                             </li>
                         @endforeach
-                        <li class="nav-item">
-                            <a href="#profile-info" class="nav-link" data-toggle="tab">{{ 'Profile Details' }}</a>
-                        </li>
+{{--                        <li class="nav-item">--}}
+{{--                            <a href="#profile-info" class="nav-link" data-toggle="tab">{{ 'Profile Details' }}</a>--}}
+{{--                        </li>--}}
                     </ul>
 
                     <div class="tab-content">
                         {{-- Basic Info --}}
-                        @foreach ($results as $innerIndex => $academicData)
+                        @foreach ($caresults as $innerIndex => $academicData)
                             <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
-                                id="results-{{ $academicData['academic_period_id'] }}">
+                                id="results-cs{{ $academicData['academic_period_id'] }}">
                                 <h5 class="p-2">
                                     <strong>{{ $academicData['academic_period_code'] . ' - ' . $academicData['academic_period_name'] }}</strong>
                                 </h5>
@@ -1431,7 +1389,7 @@
                                             <th>Course Code</th>
                                             <th>Course Name</th>
                                             <th>Mark</th>
-                                            <th>Grade</th>
+                                            <th>out of</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1441,7 +1399,7 @@
                                                 <td>{{ $course['course_code'] }}</td>
                                                 <td>{{ $course['course_title'] }}</td>
                                                 <td> {{ $course['total'] }}</td>
-                                                <td>{{ $course['grade'] }}</td>
+                                                <td>{{ $course['outof'] }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -1453,45 +1411,6 @@
 
                             </div>
                         @endforeach
-                        <div class="tab-pane fade show" id="profile-info">
-                            <table class="table table-bordered">
-                                <tbody>
-                                    <tr>
-                                        <td class="font-weight-bold">Gender</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Email</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">NRC</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Date of Birth</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Marital Status</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Mobile</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Street</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-justify">Province</td>
-                                        <td></td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
                 </div>
             </div>

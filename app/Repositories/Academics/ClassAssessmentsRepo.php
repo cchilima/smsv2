@@ -1042,12 +1042,21 @@ class ClassAssessmentsRepo
         $student = $student_id->id;
 
         $grades = Grade::where('student_id', $student)->whereNot('assessment_type_id', 1)
-            ->with(['academicPeriods', 'student'])->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
-            ->selectRaw('SUM(total) as total_sum')
-            ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id', 'course_id')
-            ->orderBy('academic_period_id')
-            ->orderBy('course_code')
-            ->get();
+//            ->with(['academicPeriods', 'student'])
+//            ->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+//            ->selectRaw('SUM(total) as total_sum')
+//            ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id', 'course_id')
+//            ->orderBy('academic_period_id')
+//            ->orderBy('course_code')
+//            ->get();
+
+        ->with(['academicPeriods', 'student'])
+        ->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+        ->selectRaw('SUM(total) as total_sum')
+        ->groupBy('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+        ->orderBy('academic_period_id')
+        ->orderBy('course_code')
+        ->get();
         $organizedResults = [];
 
         foreach ($grades as $grade) {
@@ -1119,7 +1128,7 @@ class ClassAssessmentsRepo
                         'academic_period_id' => $grade->academicPeriods->id,
                         'academic_period_start_date' => $grade->academicPeriods->ac_start_date,
                         'academic_period_end_date' => $grade->academicPeriods->ac_end_date,
-                        'comments' => $this->comments($grade->student_id, $grade->academicPeriods->id, 1),
+                        'comments' => $this->comments($student, $grade->academicPeriods->id, 1),
                     ];
                 }
 
