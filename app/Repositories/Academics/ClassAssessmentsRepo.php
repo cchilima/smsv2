@@ -1130,6 +1130,7 @@ class ClassAssessmentsRepo
                         'academic_period_end_date' => $grade->academicPeriods->ac_end_date,
                         'comments' => $this->comments($student, $grade->academicPeriods->id, 1),
                     ];
+                   // dd($this->comments($student, $grade->academicPeriods->id, 1));
                 }
 
                 $organizedResults[$academicPeriodId]['grades'][] = $course;
@@ -1306,7 +1307,8 @@ class ClassAssessmentsRepo
         $status = 'same';
 
         if ($courseCount == $failedCourse) {
-            $comment = 'Part Time';
+            $coursesToRepeat = implode(",", array_column($courseFailedArray, 'course_code'));
+            $comment = 'Part time ' . $coursesToRepeat;
         } elseif ($passedCourse == $courseCount) {
             $comment = 'Clear Pass';
             $status = 'new';
@@ -1315,7 +1317,7 @@ class ClassAssessmentsRepo
             $comment = 'Proceed, RPT ' . $coursesToRepeat;
             $status = 'new';
         } elseif ($courseCount - 3 >= $passedCourse) {
-            $coursesToRepeat = implode(", ", array_column($courseFailedArray, 'course_code'));
+            $coursesToRepeat = implode(",", array_column($courseFailedArray, 'course_code'));
             $comment = 'Part time ' . $coursesToRepeat;
             $status = 'same';
         }
@@ -1330,148 +1332,6 @@ class ClassAssessmentsRepo
             'coursesFailedCount' => $failedCourse,
             'status' => $status,
         ];
-
-        /*
-                // check all couses failed if they have passed in the current academic period.
-                if ($type == 1) {
-                    $courses = Grade::where('student_id', $student)->where('academic_period_id', $academicPeriodID)
-                        ->with(['academicPeriods', 'student'])->select('academic_period_id', 'course_code', 'course_title', 'student_id')
-                        ->selectRaw('SUM(total) as total_score')
-                        ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id')
-                        ->orderBy('academic_period_id')
-                        ->orderBy('course_code')
-                        ->get();
-
-                } else {
-                    $courses = Grade::where('student_id', $student)->whereNot('assessment_type_id', 1)->where('academic_period_id', $academicPeriodID)
-                        ->with(['academicPeriods', 'student'])->select('academic_period_id', 'course_code', 'course_title', 'student_id')
-                        ->selectRaw('SUM(total) as total_score')
-                        ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id')
-                        ->orderBy('academic_period_id')
-                        ->orderBy('course_code')
-                        ->get();
-
-                }
-
-
-                $courseCount = count($courses);
-                //$courses = (object)$courses;
-
-                # Filter passed and failed courses
-                $passedCourse = 0;
-                $failedCourse = 0;
-
-                //  dd($courses);
-
-                foreach ($courses as $course) {
-                    //dd($course->total_score);
-                    //    if ($course['gradeType'] == 1) {
-
-                    if ($course->total_score >= 50 || $course->total_score == -1) { # -1 is for exeptions
-
-                        $coursePassed = $course->course_code;
-                        $passedCourse = $passedCourse + 1;
-
-                        $coursesPassed[] = $coursePassed;
-                        $coursesPassedArray[] = $course;
-
-                        $passedCourses[] = $passedCourse;
-                    } else {
-
-                        // Check if course was taken before and has been cleared now
-
-                        $courseFailed = $course->course_code;
-                        $courseFailedArray[] = $course;
-                        $failedCourse = $failedCourse + 1;
-                        $coursesFailed[] = $courseFailed;
-                    }
-                    // will be a grading for CBU based on the program
-        //            } else {
-        //
-        //                if ($course['total_score'] >= 40 || $course['total_score'] == -1) { # -1 is for exeptions
-        //
-        //                    $coursePassed = $course['course_code'];
-        //                    $passedCourse = $passedCourse + 1;
-        //
-        //                    $coursesPassed[]      = $coursePassed;
-        //                    $coursesPassedArray[] = $course;
-        //
-        //                    $passedCourses[]      = $passedCourse;
-        //                } else {
-        //
-        //                    $courseFailed                   = $course['course_code'];
-        //                    $courseFailedArray[]            = $course;
-        //                    $failedCourse                   = $failedCourse + 1;
-        //                    $coursesFailed[]                = $courseFailed;
-        //                }
-        //            }
-                }
-
-                if ($courseCount == $failedCourse) {
-
-                    foreach ($courses as $course) {
-                        if ($course['total_score'] == 0) {
-                            $comment = '';
-                        } else {
-                            $comment = 'Part Time';
-                            //$comment = 'Repeat year';
-                        }
-                    }
-                }
-                $status = '';
-                if ($passedCourse == $courseCount) {
-                    $comment = "Clear Pass";
-                    $status = 'new';
-                }
-                if ($courseCount - 1 == $passedCourse) {
-                    $coursesToRepeat = implode(", ", $coursesFailed);
-                    $comment = 'Proceed, RPT ' . $coursesToRepeat;
-                    $status = 'new';
-                }
-                if ($courseCount - 2 == $passedCourse) {
-                    $coursesToRepeat = implode(", ", $coursesFailed);
-                    $comment = 'Proceed, RPT ' . $coursesToRepeat;
-                    $status = 'new';
-                }
-
-                if ($courseCount - 3 == $passedCourse) {
-                    $coursesToRepeat = implode(", ", $coursesFailed);
-                    $comment = 'Part time ' . $coursesToRepeat;
-                    $status = 'same';
-                }
-
-                if ($courseCount - 4 == $passedCourse) {
-                    $coursesToRepeat = implode(", ", $coursesFailed);
-                    //$coursesToRepeat = array_merge($data['coursesFailed'],$data['coursesPassed']); //with comment Repeat year
-                    // $comment = 'Repeat Year ';
-                    $comment = 'Part time ' . $coursesToRepeat;
-                    $status = 'same';
-                }
-
-
-                if (empty($comment)) {
-                    $comment = '';
-                    $status = 'same';
-                }
-
-
-                if (empty($courseFailedArray)) {
-                    $courseFailedArray = [];
-                }
-                if (empty($coursesPassedArray)) {
-                    $coursesPassedArray = [];
-                }
-
-                return $data = [
-                    'student_id' => $student,
-                    'comment' => $comment,
-                    'coursesPassed' => $coursesPassedArray,
-                    'coursesPassedCount' => $passedCourse,
-                    'coursesFailed' => $courseFailedArray,
-                    'coursesFailedCount' => $failedCourse,
-                    'status' => $status,
-                ];
-                */
     }
 
     public

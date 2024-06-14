@@ -1341,6 +1341,46 @@
                                                 <td>{{ $course['grade'] }}</td>
                                             </tr>
                                             @endif
+                                            @foreach($academicData['comments']['coursesFailed'] as $gra)
+                                                @if($course['course_code'] != $gra['course_code'])
+                                                    <tr>
+                                                        <th>{{ $loop->iteration }}</th>
+                                                        <td>{{ $gra['course_code'] }}</td>
+                                                        <td>{{ $gra['course_title'] }}</td>
+                                                        <td>
+                                                            @php
+                                                                $apStartDate = \Carbon\Carbon::make(
+                                                                    $academicData['academic_period_start_date'],
+                                                                );
+
+                                                                $apEndDate = \Carbon\Carbon::make(
+                                                                    $academicData['academic_period_end_date'],
+                                                                );
+
+                                                                $apIsOngoing = $apStartDate <= now() && now() <= $apEndDate;
+                                                            @endphp
+
+                                                            @if ($apIsOngoing)
+                                                                <a class="editable" id="{{ $loop->iteration }}"
+                                                                   data-type="number" data-pk=""
+                                                                   data-url="/grades/{{ $gra['course_code'] }}/edit"
+                                                                   data-name="total" data-title="Enter total marks">
+                                                                    {{ $gra['total_score'] }}
+                                                                </a>
+                                                            @else
+                                                                {{ $gra['total_score'] }}
+                                                            @endif
+
+                                                            {{-- <form action="#" method="POST">
+                                                                @csrf @method('PUT')
+                                                                <input class="form-control " type="number" name="total"
+                                                                    value="{{ $course['total'] }}">
+                                                            </form> --}}
+                                                        </td>
+                                                        <td>NE</td>
+                                                    </tr>
+                                                @endif
+                                            @endforeach
                                         @endforeach
                                     </tbody>
 
