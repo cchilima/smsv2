@@ -1264,12 +1264,12 @@ class ClassAssessmentsRepo
 
         // Fetching grades for the specified student and academic period
         $grades = Grade::where('student_id', $student_id)
-            ->where('assessment_type_id', 1) // Assuming assessment_type_id 1 indicates a type that should not be counted
+           // ->where('assessment_type_id', 1) // Assuming assessment_type_id 1 indicates a type that should not be counted
             ->where('academic_period_id', $academicPeriodID)
             ->with(['academicPeriods', 'student'])
             ->select('academic_period_id', 'course_code', 'course_title', 'student_id')
             ->selectRaw('SUM(total) as total_score')
-            ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->groupBy('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
             ->orderBy('academic_period_id')
             ->orderBy('course_code')
             ->get();
