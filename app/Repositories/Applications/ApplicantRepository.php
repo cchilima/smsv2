@@ -109,7 +109,7 @@ class ApplicantRepository
 
         $applicationArr = $application->toArray();
 
-        // Check if all mandatory fields are filled 
+        // Check if all mandatory fields are filled
         $fieldsToCheck = Arr::except($applicationArr, ['status', 'middle_name', 'postal_code', 'period_type_id', 'application_date']);
 
         $allFieldsFilled = array_filter($fieldsToCheck, fn ($value) => $value === null);
@@ -161,5 +161,85 @@ class ApplicantRepository
     public function getApplication($application_id)
     {
         return Applicant::find($application_id);
+    }
+
+    //applications count summary
+
+    // Method to get the count of not paid applicants
+    public function getNotPaidCount() {
+        return Applicant::where('status', 'not_paid')
+            ->count();
+    }
+
+    // Method to get the count of paid applicants
+    public function getPaidCount() {
+        return Applicant::where('status', 'paid')
+            ->count();
+    }
+
+    // Method to get the count of distinct programs
+    public function getProgramsCount() {
+        return Applicant::distinct('program_id')
+            ->count('program_id');
+    }
+
+    // Method to get the count of female applicants
+    public function getGirlsCount() {
+        return Applicant::where('gender', 'female')
+            ->count();
+    }
+
+    // Method to get the count of male applicants
+    public function getBoysCount() {
+        return Applicant::where('gender', 'male')
+            ->count();
+    }
+
+    // Method to get the count of declined applicants
+    public function getDeclinedCount() {
+        return Applicant::where('status', 'declined')
+            ->count();
+    }
+
+    // Method to get the count of completed applications
+    public function getCompletedCount() {
+        return Applicant::where('status', 'completed')
+            ->count();
+    }
+
+    // Method to get the count of incomplete applications
+    public function getIncompleteCount() {
+        return Applicant::where('status', 'incomplete')
+            ->count();
+    }
+
+    // Method to get the count of processed applications
+    public function getProcessedCount() {
+        return Applicant::where('status', 'processed')
+            ->count();
+    }
+
+    // Method to get the total count of applicants
+    public function getApplicantsCount() {
+        return Applicant::whereDate('created_at', '>=', now())->count();
+    }
+
+    // Method to get the count of last five applications
+    public function getLastFiveAppsCount() {
+        return Applicant::orderBy('created_at', 'desc')
+            ->take(5)
+            ->count();
+    }
+    public function getApplicationStatus($status) {
+        return Applicant::where('status', $status)
+            ->get();
+    }
+    public function getGender($gender) {
+        return Applicant::where('gender', $gender)
+            ->get();
+    }
+    public function getPaymentStatus($status) {
+        return Applicant::with('payment')->where('payment.amount', 150)
+            ->get();
     }
 }

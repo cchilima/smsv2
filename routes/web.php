@@ -161,6 +161,9 @@ Route::get('/application/step-2/{application_id}', [ApplicantController::class, 
 Route::put('/application/step-3/{id}', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
 Route::get('/application/{application_id}', [ApplicantController::class, 'show'])->name('application.show');
 Route::get('/application/attachment/{attachment_id}/download', [ApplicantController::class, 'downloadAttachment'])->name('application.download_attachment');
+Route::get('/applications/summary', [ApplicantController::class, 'ApplicationsSummary'])->name('application.summary_reports');
+//Applications report
+Route::get('/applications/{status}/{id}', [ApplicantController::class, 'ApplicationsStatus'])->name('status.applications_reports');
 /*}); */
 
 

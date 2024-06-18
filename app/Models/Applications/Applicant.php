@@ -35,7 +35,7 @@ class Applicant extends Model
         'study_mode_id',
         'academic_period_intake_id',
     ];
-    
+
 
     public function program()
     {
@@ -71,7 +71,11 @@ class Applicant extends Model
     {
         return $this->hasMany(ApplicantAttachment::class, 'applicant_id');
     }
+    public function payment()
+    {
+        return $this->hasOne(ApplicantPayment::class, 'applicant_id');
+    }
 
-    
-    
+
+
 }
