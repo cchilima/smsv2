@@ -302,14 +302,22 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['application.index', 'application.show', 'application.initiate', 'application.start_application', 'application.complete_application', 'application.save_application']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['application.index', 'application.show', 'application.initiate', 'application.start_application', 'application.complete_application', 'application.save_application','application.summary_reports']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-user-plus"></i> <span>
                                     Admissions</span></a>
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Admissions">
                                 <li class="nav-item">
+                                    <a href="{{ route('application.summary_reports') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['application.summary_reports']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Reports</span></a>
+                                </li>
+                            </ul>
+
+                            <ul class="nav nav-group-sub" data-submenu-title="Manage Admissions">
+                                <li class="nav-item">
                                     <a href="{{ route('application.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['applications.index']) ? 'active' : '' }}"><i
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['applications.index']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Applications</span></a>
                                 </li>
                             </ul>

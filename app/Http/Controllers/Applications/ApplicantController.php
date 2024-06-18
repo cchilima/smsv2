@@ -178,7 +178,7 @@ class ApplicantController extends Controller
 
         $data = $request;
 
-        /*   $data = $request->only([ 
+        /*   $data = $request->only([
 
             'nrc',
             'passport',
@@ -235,5 +235,38 @@ class ApplicantController extends Controller
             return Qs::json(false, 'msg.download_failed');
             // throw $th;
         }
+    }
+
+    public function ApplicationsSummary(){
+
+        $data['not_paid'] = $this->applicantRepo->getNotPaidCount();
+        $data['paid'] = $this->applicantRepo->getPaidCount();
+        $data['programs'] = $this->applicantRepo->getProgramsCount();
+        $data['girls'] = $this->applicantRepo->getGirlsCount();
+        $data['boys'] = $this->applicantRepo->getBoysCount();
+        $data['declined'] = $this->applicantRepo->getDeclinedCount();
+        $data['completed'] = $this->applicantRepo->getCompletedCount();
+        $data['incomplete'] = $this->applicantRepo->getIncompleteCount();
+        $data['processed'] = $this->applicantRepo->getProcessedCount();
+        $data['pending'] = $this->applicantRepo->getProcessedCount();
+        $data['applicants'] = $this->applicantRepo->getApplicantsCount();
+        $data['app_apps'] = $this->applicantRepo->getLastFiveAppsCount();
+        //dd($data);
+        return view('pages.applications.applications_summary_index',$data);
+    }
+    public function ApplicationsStatus(string $status,$id){
+        $id = Qs::decodeHash($id);
+        $applications = [];
+        if ($id == 1){
+            $applications = $this->applicantRepo->getApplicationStatus($status);
+        }else if ($id == 2){
+            $applications = $this->applicantRepo->getGender($status);
+        }else if ($id == 3){
+            $applications = $this->applicantRepo->getPaymentStatus($status);
+        }
+
+        return view('pages.applications.index', compact('applications'));
+//enum('incomplete', 'pending', 'complete', 'accepted', 'rejected')
+        //enum('Male', 'Female')
     }
 }
