@@ -37,7 +37,7 @@ class InvoiceRepository
             $academic_period = AcademicPeriod::find($academic_period_id);
             $full_academic_period_info = $academic_period->academic_period_information;
 
-            $students = Student::where('academic_period_intake_id', $full_academic_period_info->academic_period_intake_id)->where('period_type_id', $academic_period->period_type_id)->where('study_mode_id', $full_academic_period_info->study_mode_id)->get();
+            $students = Student::/*where('academic_period_intake_id', $full_academic_period_info->academic_period_intake_id)->*/where('period_type_id', $academic_period->period_type_id)->where('study_mode_id', $full_academic_period_info->study_mode_id)->get();
 
             // tracks all programs of students
             $programs_lists = [];
@@ -126,7 +126,6 @@ class InvoiceRepository
                 $this->statementRepo->removeZeroStatementAmounts();
             }
 
-
             DB::commit();
 
             return true;
@@ -145,18 +144,22 @@ class InvoiceRepository
         DB::beginTransaction();
 
         try {
+
             // get student object
             $student_obj = $this->getStudent($student_id);
 
+            // get next academic period
+            $periodInfo = $this->openAcademicPeriod($student_obj);
+
             // get academic period
-            $academic_period = AcademicPeriod::find($academic_period_id);
+            $academic_period = AcademicPeriod::find($periodInfo->academic_period_id);
             $full_academic_period_info = $academic_period->academic_period_information;
 
-            $student = Student::where('academic_period_intake_id', $full_academic_period_info->academic_period_intake_id)->where('period_type_id', $academic_period->period_type_id)->where('study_mode_id', $full_academic_period_info->study_mode_id)->where('id', $student_id)->first();
+            //$student = Student::where('academic_period_intake_id', $full_academic_period_info->academic_period_intake_id)->where('period_type_id', $academic_period->period_type_id)->where('study_mode_id', $full_academic_period_info->study_mode_id)->where('id', $student_id)->first();
 
             // check if student have already been invoiced
 
-            $exists = Invoice::where('student_id', $student->id)->where('academic_period_id', $academic_period_id)->exists();
+            $exists = Invoice::where('student_id', $student_obj->id)->where('academic_period_id', $periodInfo->academic_period_id)->exists();
 
             if (!$exists) {
 
@@ -166,8 +169,8 @@ class InvoiceRepository
                 $academicFees = DB::table('academic_period_fees')
                 ->join('program_academic_period_fee', 'academic_period_fees.id', '=', 'program_academic_period_fee.academic_period_fee_id')
                 ->join('programs', 'program_academic_period_fee.program_id', '=', 'programs.id')
-                ->where('academic_period_fees.academic_period_id', $academic_period_id)
-                ->where('programs.id', $student->program_id)
+                ->where('academic_period_fees.academic_period_id', $periodInfo->academic_period_id)
+                ->where('programs.id', $student_obj->program_id)
                 ->select('academic_period_fees.*', 'programs.id as program_id')
                 ->get();
 
@@ -183,13 +186,13 @@ class InvoiceRepository
                 // invoice the student
 
                 // create invoice
-                $invoice = Invoice::create(['student_id' => $student->id, 'academic_period_id' => $academic_period_id, 'raised_by' => Auth::user()->id]);
+                $invoice = Invoice::create(['student_id' => $student_obj->id, 'academic_period_id' => $periodInfo->academic_period_id, 'raised_by' => Auth::user()->id]);
 
 
 
                 foreach ($academicFees as $fee) {
                     // create invoice details
-                    if($student->program_id == $fee->program_id){
+                    if($student_obj->program_id == $fee->program_id){
                         $invoiceDetails = InvoiceDetail::create(['invoice_id' => $invoice->id, 'fee_id' => $fee->fee_id, 'amount' => $fee->amount]);
                     }
                 }
@@ -248,6 +251,23 @@ class InvoiceRepository
             DB::rollback();
             dd($e);
         }
+    }
+
+    public function openAcademicPeriod($student)
+    {
+        $currentDate = date('Y-m-d');
+
+        // Get the next available academic period by joining with the academic_periods table
+        $nextAcademicPeriod = DB::table('academic_period_information')
+            ->join('academic_periods', 'academic_period_information.academic_period_id', '=', 'academic_periods.id')
+            ->where('academic_period_information.study_mode_id', $student->study_mode_id)
+            ->where('academic_periods.ac_start_date', '<=', $currentDate)
+            ->where('academic_periods.ac_end_date', '>=', $currentDate)
+            ->orderBy('academic_periods.created_at', 'asc')
+            ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
+            ->first();
+
+            return $nextAcademicPeriod;
     }
 }
 

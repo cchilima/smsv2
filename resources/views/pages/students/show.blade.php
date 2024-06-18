@@ -3,6 +3,7 @@
 @section('content')
     @php
         use App\Helpers\Qs;
+         $latestInvoice = $student->invoices->sortByDesc('created_at')->first();
     @endphp
 
     @if (session('status'))
@@ -583,7 +584,7 @@
                                 <form class="ajax-store" method="post" action="{{ route('invoices.invoice') }}">
                                     @csrf
                                     <input name="academic_period" hidden
-                                        value="{{ $student->academic_info ? $student->academic_info->academic_period_id : '' }}"
+                                        value="{{ $student->study_mode_id ? $student->study_mode_id : '' }}"
                                         type="text">
                                     <input name="student_id" hidden value="{{ $student->id }}" type="text">
                                     <div class="text-left">
@@ -1510,7 +1511,7 @@
                         <form action="{{ route('registration.summary') }}" method="get">
                             @csrf
                             <input name="academic_period_id" type="hidden"
-                                value="{{ $student->academic_info->academic_period_id }}" />
+                                value="{{ $latestInvoice->academic_period_id }}" />
                             <input name="student_number" type="hidden" value="{{ $student->id }}" />
                             <button type="submit" class="btn btn-primary mt-2">Download summary</button>
                         </form>
