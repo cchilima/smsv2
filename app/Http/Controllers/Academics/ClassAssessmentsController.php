@@ -466,7 +466,13 @@ class ClassAssessmentsController extends Controller
 
         $this->classaAsessmentRepo->publishGrades(null, $ac,$type);
 
-        redirect(route('getPublishPrograms',$ac));
+       // $id = Qs::decodeHash($ac);
+        $period = $this->academic->find($ac);
+        $programs = $this->classaAsessmentRepo->publishAvailableProgramsCas($ac);
+        //dd($programs);
+        return view('pages.cas.edit', compact('programs', 'period'));
+
+        //return redirect(route('getPublishPrograms',$ac));
     }
     public function MyCAResults()
     {

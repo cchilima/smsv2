@@ -144,13 +144,13 @@ class ClassAssessmentsRepo
                 $programData['students'] += $studentsCount; // Add students count to total students for the program
 
                 // Check if publication status is 0 for any student in the course
-                $publicationStatus = Grade::where('academic_period_id', $id)
+                $publicationStatus = Grade::where('academic_period_id', $id)->whereNot('assessment_type_id', 1)
                     ->where('course_id', $course->id)
                     ->where('publication_status', 1)
                     ->exists();
 
                 if ($publicationStatus) {
-                    // If any student in the course has publication status 0, set program status to 0
+                    // If any student in the course has publication status 0, set program status to 1
                     $programData['status'] = 1;
                 }
                 $courseLevel = $programCourse->courseLevel;
@@ -1041,7 +1041,7 @@ class ClassAssessmentsRepo
         $student_id = Student::where('user_id', $id)->first();
         $student = $student_id->id;
 
-        $grades = Grade::where('student_id', $student)->whereNot('assessment_type_id', 1)
+        $grades = Grade::where('student_id', $student)->where('publication_status', 1)->whereNot('assessment_type_id', 1)
 //            ->with(['academicPeriods', 'student'])
 //            ->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
 //            ->selectRaw('SUM(total) as total_sum')
@@ -1090,15 +1090,23 @@ class ClassAssessmentsRepo
     {
         $student_id = Student::where('user_id', $id)->first();
         $student = $student_id->id;
-
-//        $grades = Grade::where('student_id', $student)
-//            ->with(['academicPeriods', 'student'])->select('id', 'course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
-//            ->selectRaw('SUM(total) as total_sum')
-//            ->groupBy('id', 'academic_period_id', 'course_code', 'course_title', 'student_id', 'course_id')
-//            ->orderBy('academic_period_id')
-//            ->orderBy('course_code')
-//            ->get();
+        /*
+        $grades = Grade::where('student_id', $student)->where('publication_status', 1)
+            ->with(['academicPeriods', 'student'])
+            ->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->selectRaw('SUM(total) as total_sum')
+            ->groupBy('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->orderBy('academic_period_id')
+            ->orderBy('course_code')
+            ->get();*/
         $grades = Grade::where('student_id', $student)
+            ->where('publication_status', 1)
+            ->whereIn('course_id', function($query) use ($student) {
+                $query->select('course_id')
+                    ->from('grades')
+                    ->where('student_id', $student)
+                    ->where('assessment_type_id', 1);
+            })
             ->with(['academicPeriods', 'student'])
             ->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
             ->selectRaw('SUM(total) as total_sum')
@@ -1106,6 +1114,7 @@ class ClassAssessmentsRepo
             ->orderBy('academic_period_id')
             ->orderBy('course_code')
             ->get();
+
         $organizedResults = [];
 
         foreach ($grades as $grade) {
