@@ -1210,6 +1210,8 @@
             </p>
             <hr>
         `;
+                        updateLoadMoreButtonCAs(response, program, academic, level);
+
                         $('.loading-more-results').append(studentHtml);
                         $('#pagenumbers').text('Page ' + response.current_page + ' of ' +
                             response.last_page)
@@ -1366,6 +1368,7 @@
 
     function updateLoadMoreButtonCAs(academicData, program, academic, level) {
         // Dynamically set the onclick function with the new academicData
+        console.log(program);
         var button = $('.load-more-results-first-cas');
         button.attr('onclick',
             `LoadMoreResultsCas('${academicData.current_page}', '${academicData.last_page}', '${academicData.per_page}', '${program}', '${academic}', '${level}')`

@@ -11,7 +11,7 @@
         </div>
 
         <div class="card-body">
-            <a href="{{ route('PublishForAllStudents',['ac'=>$period->id,'type'=>0]) }}"
+            <a href="{{ route('PublishForAllStudents',['ac'=>$period->id,'type'=>1]) }}"
                class="dropdown-item"><i class="icon-eye"></i> Publish Results for {{$period->code}}</a>
             <table class="table datatable-button-html5-columns">
                 <thead>

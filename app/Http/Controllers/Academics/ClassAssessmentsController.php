@@ -243,6 +243,7 @@ class ClassAssessmentsController extends Controller
             $data = Excel::toCollection('', $path, null, \Maatwebsite\Excel\Excel::TSV)[0];
 
             $data->forget(0);
+            //$data->forget(1);
             //$firstElement = $data->shift();
 
             foreach ($data as $row) {
@@ -254,7 +255,7 @@ class ClassAssessmentsController extends Controller
                 $aseesID = $row[7];
                 $total = $row[9];
                 $outof = $row[8];
-                $user = Student::where('id', '=', $studentID)->get()->first();
+                $user = Student::find($studentID);//where('id', '=', $studentID)->get()->first();
                 if (!empty($user)) {
                     $program = $user->program_id;
                     $student_level = $user->course_level_id;
@@ -275,11 +276,9 @@ class ClassAssessmentsController extends Controller
                             if ($lastEnrolledClass) {
                                 # Proceed to importing
                                 # Add results to imports
-
                                 $course = Course::where('code', $code)->get()->first();
                                 if ($course) {
                                     //dd($academicC == $academic && $titleC == $title && $code == $courseC && $aseesID == $AssessIDTemplateC && $total <= $assesTotal);
-                                   // dd($course);
                                     if ($academicC == $academic && $titleC == $title && $code == $courseC && $aseesID == $AssessIDTemplateC && $total <= $assesTotal) {
                                          $create = Grade::create([
                                             'academic_period_id' => $academicPeriodID,
@@ -296,6 +295,7 @@ class ClassAssessmentsController extends Controller
                                         ]);
                                         //dd($create);
                                     }
+
                                 }
                             }
                         }
@@ -470,6 +470,9 @@ class ClassAssessmentsController extends Controller
         $period = $this->academic->find($ac);
         $programs = $this->classaAsessmentRepo->publishAvailableProgramsCas($ac);
         //dd($programs);
+        if ($type == 1){
+            return view('pages.class_assessments.edit', compact('programs', 'period'));
+        }
         return view('pages.cas.edit', compact('programs', 'period'));
 
         //return redirect(route('getPublishPrograms',$ac));
