@@ -25,13 +25,6 @@ class StudentRegistrationRepository
         return $student;
     }
 
-
-
-
-
-
-
-
     public function getAll($student_id = null)
     {
         // step 1 - get student
@@ -66,7 +59,6 @@ class StudentRegistrationRepository
             ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
             ->first();
 
-
         // Get the all closed available
         $closedAcademicPeriods = DB::table('academic_period_information')
             ->join('academic_periods', 'academic_period_information.academic_period_id', '=', 'academic_periods.id')
@@ -78,153 +70,123 @@ class StudentRegistrationRepository
             ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
             ->get();
 
+        if ($nextAcademicPeriod) {
+            // previous results
+            $history = [];
 
-            if($nextAcademicPeriod){
-
-
-
-                        // previous results
-        $history = [];
-
-        foreach ($closedAcademicPeriods as $period) {
-            $history[] = $this->results($student->id, $period->academic_period_id);
-        }
-
-
-        // check for failed courses and check if the are prerequisites
-        $failedCoursesPrerequisites = [];
-
-        $allFailedCourseIds = [];
-        $allPassedCourseIds = [];
-
-        foreach ($history as $historyEntry) {
-
-            foreach ($historyEntry['coursesPassed'] as $passedCourse) {
-                $allPassedCourseIds[] = $passedCourse['course_id'];
+            foreach ($closedAcademicPeriods as $period) {
+                $history[] = $this->results($student->id, $period->academic_period_id);
             }
 
-            foreach ($historyEntry['coursesFailed'] as $failedCourse) {
-                $courseId = $failedCourse['course_id'];
-                $allFailedCourseIds[] = $failedCourse['course_id'];
-                $allPassedCourseIds[] = $passedCourse['course_id'];
+            // check for failed courses and check if the are prerequisites
+            $failedCoursesPrerequisites = [];
 
-                $prerequisites = DB::table('prerequisites')->where('course_id', $courseId)->pluck('prerequisite_course_id');
+            $allFailedCourseIds = [];
+            $allPassedCourseIds = [];
 
-                $failedCoursesPrerequisites[] = [
-                    'course_id' => $courseId,
-                    'prerequisites' => $prerequisites,
-                ];
+            foreach ($history as $historyEntry) {
+                foreach ($historyEntry['coursesPassed'] as $passedCourse) {
+                    $allPassedCourseIds[] = $passedCourse['course_id'];
+                }
+
+                foreach ($historyEntry['coursesFailed'] as $failedCourse) {
+                    $courseId = $failedCourse['course_id'];
+                    $allFailedCourseIds[] = $failedCourse['course_id'];
+                    $allPassedCourseIds[] = $passedCourse['course_id'];
+
+                    $prerequisites = DB::table('prerequisites')->where('course_id', $courseId)->pluck('prerequisite_course_id');
+
+                    $failedCoursesPrerequisites[] = [
+                        'course_id' => $courseId,
+                        'prerequisites' => $prerequisites,
+                    ];
+                }
             }
-        }
 
-        // Set the academic period id
-        $currentAcademicPeriodId = $nextAcademicPeriod->academic_period_id;
+            // Set the academic period id
+            $currentAcademicPeriodId = $nextAcademicPeriod->academic_period_id;
 
-        if ($currentAcademicPeriodId) {
-            // Match courses for a specific academic period
-            $currentCourses = $courses->filter(function ($course) use ($currentAcademicPeriodId) {
-                return AcademicPeriodClass::where('course_id', $course->id)
-                    ->where('academic_period_id', $currentAcademicPeriodId)
-                    ->exists();
-            });
+            if ($currentAcademicPeriodId) {
+                // Match courses for a specific academic period
+                $currentCourses = $courses->filter(function ($course) use ($currentAcademicPeriodId) {
+                    return AcademicPeriodClass::where('course_id', $course->id)
+                        ->where('academic_period_id', $currentAcademicPeriodId)
+                        ->exists();
+                });
 
+                // Step 7 - Filter and get academic class info
+                $filteredCourses = [];
+                $filteredOutCourses = [];  // Track courses that were filtered out
 
-            // Step 7 - Filter and get academic class info
-            $filteredCourses = [];
-            $filteredOutCourses = []; // Track courses that were filtered out
+                // Filter out courses based on unmet prerequisites
+                $filteredCourses = $currentCourses->filter(function ($course) use ($failedCoursesPrerequisites, &$filteredOutCourses) {
+                    foreach ($failedCoursesPrerequisites as $failedCoursePrerequisite) {
+                        if (in_array($course->id, $failedCoursePrerequisite['prerequisites']->toArray())) {
+                            $filteredOutCourses[] = $failedCoursePrerequisite['course_id'];  // $course;  // Track the filtered out course
+                            return false;
+                        }
+                    }
+                    return true;
+                });
 
-            // Filter out courses based on unmet prerequisites
-            $filteredCourses = $currentCourses->filter(function ($course) use ($failedCoursesPrerequisites, &$filteredOutCourses) {
-                foreach ($failedCoursesPrerequisites as $failedCoursePrerequisite) {
-                    if (in_array($course->id, $failedCoursePrerequisite['prerequisites']->toArray())) {
-                        $filteredOutCourses[] = $failedCoursePrerequisite['course_id']; //$course;  // Track the filtered out course
-                        return false;
+                // Pluck course IDs from filteredCourses and filteredOutCourses
+                $filteredCourseIds = $filteredCourses->pluck('course_id')->toArray();
+                $filteredOutCourseIds = $filteredOutCourses;  // collect($filteredOutCourses)->pluck('course_id')->toArray();
+
+                // Combine the course IDs
+                $courseIds = array_merge($filteredCourseIds, $filteredOutCourseIds, $allFailedCourseIds);
+
+                // Get only unique id
+                $courseIds = array_unique($courseIds);
+
+                // check if student should go part time
+                if (count($allFailedCourseIds) >= 3) {
+                    // Get
+                    $currentCourses = AcademicPeriodClass::join('courses', 'courses.id', 'academic_period_classes.course_id')
+                        ->whereIn('course_id', $allFailedCourseIds)
+                        ->where('academic_period_id', $currentAcademicPeriodId)
+                        ->get(['code', 'name', 'course_id', 'academic_period_classes.id']);
+
+                    // Check if student has invoice for that academic period
+                    $invoice = $this->getInvoice($student->id, $currentAcademicPeriodId);
+
+                    // If student has invoice present them the courses
+                    if ($invoice) {
+                        return $currentCourses;
+                    }
+                } elseif (count($allFailedCourseIds) == 0) {
+                    $filteredWithoutPassed = array_diff($filteredCourseIds, $allPassedCourseIds);
+
+                    $currentCourses = AcademicPeriodClass::join('courses', 'courses.id', 'academic_period_classes.course_id')
+                        ->whereIn('course_id', $filteredWithoutPassed)
+                        ->where('academic_period_id', $currentAcademicPeriodId)
+                        ->get(['code', 'name', 'course_id', 'academic_period_classes.id']);
+
+                    // Check if student has invoice for that academic period
+                    $invoice = $this->getInvoice($student->id, $currentAcademicPeriodId);
+
+                    // If student has invoice present them the courses
+                    if ($invoice) {
+                        return $currentCourses;
+                    }
+                } else {
+                    $currentCourses = AcademicPeriodClass::join('courses', 'courses.id', 'academic_period_classes.course_id')
+                        ->whereIn('course_id', $courseIds)
+                        ->where('academic_period_id', $currentAcademicPeriodId)
+                        ->get(['code', 'name', 'course_id', 'academic_period_classes.id']);
+
+                    // Check if student has invoice for that academic period
+                    $invoice = $this->getInvoice($student->id, $currentAcademicPeriodId);
+
+                    // If student has invoice present them the courses
+                    if ($invoice) {
+                        return $currentCourses;
                     }
                 }
-                return true;
-            });
-
-            // Pluck course IDs from filteredCourses and filteredOutCourses
-            $filteredCourseIds = $filteredCourses->pluck('course_id')->toArray();
-            $filteredOutCourseIds = $filteredOutCourses; //collect($filteredOutCourses)->pluck('course_id')->toArray();
-
-            
-            // Combine the course IDs
-            $courseIds = array_merge($filteredCourseIds, $filteredOutCourseIds, $allFailedCourseIds);
-
-            // Get only unique id
-            $courseIds = array_unique($courseIds);
-
-            // check if student should go part time
-            if (count($allFailedCourseIds) >= 3) {
-
-                // Get
-                $currentCourses = AcademicPeriodClass::join('courses', 'courses.id', 'academic_period_classes.course_id')
-                    ->whereIn('course_id', $allFailedCourseIds)
-                    ->where('academic_period_id', $currentAcademicPeriodId)
-                    ->get(['code', 'name', 'course_id', 'academic_period_classes.id']);
-
-
-                // Check if student has invoice for that academic period
-                $invoice = $this->getInvoice($student->id, $currentAcademicPeriodId);
-
-                // If student has invoice present them the courses
-                if ($invoice) {
-                    return $currentCourses;
-                }
-
-            } elseif(count($allFailedCourseIds) == 0) {
-
-                $filteredWithoutPassed = array_diff($filteredCourseIds, $allPassedCourseIds);
-
-
-                $currentCourses = AcademicPeriodClass::join('courses', 'courses.id', 'academic_period_classes.course_id')
-                    ->whereIn('course_id', $filteredWithoutPassed)
-                    ->where('academic_period_id', $currentAcademicPeriodId)
-                    ->get(['code', 'name', 'course_id', 'academic_period_classes.id']);
-
-                // Check if student has invoice for that academic period
-                $invoice = $this->getInvoice($student->id, $currentAcademicPeriodId);
-
-                // If student has invoice present them the courses
-                if ($invoice) {
-                    return $currentCourses;
-                }
-
-            } else {
-
-                $currentCourses = AcademicPeriodClass::join('courses', 'courses.id', 'academic_period_classes.course_id')
-                    ->whereIn('course_id', $courseIds)
-                    ->where('academic_period_id', $currentAcademicPeriodId)
-                    ->get(['code', 'name', 'course_id', 'academic_period_classes.id']);
-
-                // Check if student has invoice for that academic period
-                $invoice = $this->getInvoice($student->id, $currentAcademicPeriodId);
-
-                // If student has invoice present them the courses
-                if ($invoice) {
-                    return $currentCourses;
-                }
-
             }
         }
-        
-
-            }
-
-
-
-
-
     }
 
-
-
-
-
-
-
-    
     public function getAllReturning($student_id = null)
     {
         // step 1 - get student
@@ -439,7 +401,7 @@ class StudentRegistrationRepository
                 $courses[$enrollment->class->course->code] = [
                     'course_code' => $enrollment->class->course->code,
                     'course_title' => $enrollment->class->course->name,
-                    'total_score' => 0, // Initialize total_score to 0 for courses not found in grades
+                    'total_score' => 0,  // Initialize total_score to 0 for courses not found in grades
                     'course_id' => $enrollment->class->course->id,
                 ];
             }
