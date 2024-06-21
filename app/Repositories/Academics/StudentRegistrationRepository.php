@@ -170,8 +170,12 @@ class StudentRegistrationRepository
                         return $currentCourses;
                     }
                 } else {
+
+                    $filteredWithoutPassed = array_diff($filteredCourseIds, $allPassedCourseIds);
+
+
                     $currentCourses = AcademicPeriodClass::join('courses', 'courses.id', 'academic_period_classes.course_id')
-                        ->whereIn('course_id', $courseIds)
+                        ->whereIn('course_id', $filteredWithoutPassed)
                         ->where('academic_period_id', $currentAcademicPeriodId)
                         ->get(['code', 'name', 'course_id', 'academic_period_classes.id']);
 
