@@ -1171,6 +1171,7 @@ class ClassAssessmentsRepo
             ->orderBy('academic_period_id')
             ->orderBy('course_code')
             ->get();*/
+
         $organizedResults = [];
 
         foreach ($grades as $grade) {
