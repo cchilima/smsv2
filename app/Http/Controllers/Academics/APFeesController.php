@@ -52,16 +52,18 @@ class APFeesController extends Controller
 
             DB::beginTransaction();
 
-            $data = $request->only(['amount', 'fee_id', 'academic_period_id', 'program_id']);
-
+            $data = $request->only(['amount', 'fee_id', 'academic_period_id']);
+            $data['program_id'] = $request->input('program_id');
             // Create the academic period fee
             $period = $this->periods->APFeeCreate($data);
             $periodId = $period->id;
             // Attach the academic period fee to each program
-            foreach ($data['program_id'] as $program_id) {
-                $program = Program::find($program_id);
-                $academicPeriodFee = AcademicPeriodFee::find($periodId);//where('fee_id', $data['fee_id'])->first();
-                $program->academicPeriodFees()->attach($academicPeriodFee->id);
+            if (!empty($data['program_id'])) {
+                foreach ($data['program_id'] as $program_id) {
+                    $program = Program::find($program_id);
+                    $academicPeriodFee = AcademicPeriodFee::find($periodId);//where('fee_id', $data['fee_id'])->first();
+                    $program->academicPeriodFees()->attach($academicPeriodFee->id);
+                }
             }
             DB::commit();
 

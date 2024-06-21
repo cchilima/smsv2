@@ -214,7 +214,7 @@
                                     <label for="program_id" class="col-lg-3 col-form-label font-weight-semibold">Program Name
                                         (<span class="text-warning">optional</span>)</label>
                                     <div class="col-lg-9">
-                                        <select required data-placeholder="Select type" multiple
+                                        <select data-placeholder="Select type" multiple
                                                 class="form-control select-search multiselect" name="program_id[]" id="program_id">
                                             <option value=""></option>
                                             @foreach ($programsCourses as $p)
