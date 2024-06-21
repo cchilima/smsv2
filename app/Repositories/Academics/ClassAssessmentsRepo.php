@@ -912,12 +912,18 @@ class ClassAssessmentsRepo
     public function checkStudentCourseLevel($studentId)
     {
         // Retrieve student information
-        $stud = Student::find($studentId);
+        $stud = Student::with('grades','enrollments.class.course')->find($studentId);
+        //dd($stud);
 
         if (!$stud) {
             return ['message' => 'Student not found'];
         }
-
+        $matchingCourseCount = $stud->enrollments->pluck('class.course_id')->filter(
+            function ($courseId) use ($stud) {
+                return $stud->grades->where('publication_status', 0)->where('assessment_type_id', 1)->where('course_id', $courseId)->isNotEmpty();
+            }
+        )->count();
+       // dd($matchingCourseCount);
         // Retrieve distinct course levels for the student's program
         $distinctCourseLevels = ProgramCourses::where('program_id', $stud->program_id)
             ->distinct('course_level_id')
@@ -934,7 +940,7 @@ class ClassAssessmentsRepo
             return ['message' => 'Current course level not found in program courses'];
         }
 
-        if ($stud->study_mode_id == 3) {
+        if ($stud->study_mode_id == 3 && $matchingCourseCount>3) {
 
         // Determine the next course level
         $nextCourseLevelId = $distinctCourseLevels->get($currentIndex + 1);
@@ -946,11 +952,16 @@ class ClassAssessmentsRepo
         // Update the student's course level to the next level
         $stud->course_level_id = $nextCourseLevelId;
         $stud->save();
-    }else{
-            if ($stud->semester == 1){
+        }else{
+            //dd($stud->semester);
+
+            if ($stud->semester == 1 && $matchingCourseCount>1){
                 $stud->semester = 2;
                 $stud->save();
-            }else{
+                return [
+                    'message' => 'true'
+                ];
+            }elseif ( $matchingCourseCount>1){
                 // Determine the next course level
                 $nextCourseLevelId = $distinctCourseLevels->get($currentIndex + 1);
 
@@ -962,6 +973,9 @@ class ClassAssessmentsRepo
                 $stud->semester = 1;
                 $stud->course_level_id = $nextCourseLevelId;
                 $stud->save();
+                return [
+                    'message' => 'true'
+                ];
             }
         }
 
@@ -991,12 +1005,10 @@ class ClassAssessmentsRepo
               }
           }
           */
+
+
           if (!empty($id)) {
               if ($type == 1) {
-                  Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->where('assessment_type_id', 1)
-                      ->update([
-                          'publication_status' => 1,
-                      ]);
                   foreach ($id as $item) {
                       $status = $this->TermSemesterStatus($item, $apid, $type);
 
@@ -1004,6 +1016,10 @@ class ClassAssessmentsRepo
                           $this->checkStudentCourseLevel($item);
                       }
                   }
+                  Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->where('assessment_type_id', 1)
+                      ->update([
+                          'publication_status' => 1,
+                      ]);
               } else {
                   Grade::whereIn('student_id', $id)->where('academic_period_id', $apid)->whereNot('assessment_type_id', 1)
                       ->update([
@@ -1012,21 +1028,23 @@ class ClassAssessmentsRepo
               }
           }else{
               if ($type == 1) {
-                  Grade::where('academic_period_id', $apid)->where('assessment_type_id', 1)
-                      ->update([
-                          'publication_status' => 1,
-                      ]);
                   $id = Grade::where('academic_period_id', $apid)
                       ->distinct('student_id')
                       ->orderBy('student_id')
                       ->pluck('student_id');
                   foreach ($id as $item) {
                       $status = $this->TermSemesterStatus($item, $apid, $type);
-
-                      if ($status['status'] == 'new'){
+                      // $status = $this->TermSemesterStatus($id[7], $apid, $type);
+                      // dd($status);
+                      if ($status['status'] === 'new'){
                           $this->checkStudentCourseLevel($item);
                       }
                   }
+                  Grade::where('academic_period_id', $apid)->where('assessment_type_id', 1)
+                      ->update([
+                          'publication_status' => 1,
+                      ]);
+                  //dd($id);
               } else {
                   Grade::where('academic_period_id', $apid)->whereNot('assessment_type_id', 1)
                       ->update([
@@ -1207,41 +1225,40 @@ class ClassAssessmentsRepo
 
     public function TermSemesterStatus($student_id = null, $academicPeriodID, $type)
     {
+
         // Fetching all courses associated with the student's enrollments
-        if (!empty($student_id)) {
-            $student = Student::with(['enrollments.class.course'])->find($student_id);
-            $courses = [];
+        $student = Student::with(['enrollments.class.course'])->find($student_id);
+        $courses = [];
 
-            foreach ($student->enrollments as $enrollment) {
-                if ($academicPeriodID == $enrollment->class->academic_period_id) {
-                    $courses[$enrollment->class->course->code] = [
-                        'course_code' => $enrollment->class->course->code,
-                        'course_title' => $enrollment->class->course->name,
-                        'total_score' => 0 // Initialize total_score to 0 for courses not found in grades
-                    ];
-                }
+        foreach ($student->enrollments as $enrollment) {
+            if ($academicPeriodID == $enrollment->class->academic_period_id) {
+                $courses[$enrollment->class->course->code] = [
+                    'course_code' => $enrollment->class->course->code,
+                    'course_title' => $enrollment->class->course->name,
+                    'total_score' => 0 // Initialize total_score to 0 for courses not found in grades
+                ];
             }
+        }
 
-            // Fetching grades for the specified student and academic period
-            $grades = Grade::where('student_id', $student_id)
-                ->where('assessment_type_id', 1) // Assuming assessment_type_id 1 indicates a type that should not be counted
-                ->where('academic_period_id', $academicPeriodID)
-                ->with(['academicPeriods', 'student'])
-                ->select('academic_period_id', 'course_code', 'course_title', 'student_id')
-                ->selectRaw('SUM(total) as total_score')
-                ->groupBy('academic_period_id', 'course_code', 'course_title', 'student_id')
-                ->orderBy('academic_period_id')
-                ->orderBy('course_code')
-                ->get();
+        // Fetching grades for the specified student and academic period
+        $grades = Grade::where('student_id', $student_id)
+            ->where('academic_period_id', $academicPeriodID)
+            ->with(['academicPeriods', 'student'])
+            ->select('course_id','academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->selectRaw('SUM(total) as total_score')
+            ->groupBy('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->orderBy('academic_period_id')
+            ->orderBy('course_code')
+            ->get();
 
-            foreach ($grades as $grade) {
-                if (isset($courses[$grade->course_code])) {
-                    // Update total_score for courses found in grades
-                    $courses[$grade->course_code]['total_score'] = $grade->total_score;
-                    $courses[$grade->course_code]['course_code'] = $grade->course_code;
-                    $courses[$grade->course_code]['course_title'] = $grade->course_title;
-                }
+        foreach ($grades as $grade) {
+            if (isset($courses[$grade->course_code])) {
+                // Update total_score for courses found in grades
+                $courses[$grade->course_code]['total_score'] = $grade->total_score;
+                $courses[$grade->course_code]['course_code'] = $grade->course_code;
+                $courses[$grade->course_code]['course_title'] = $grade->course_title;
             }
+        }
             //dd($courses);
 
             // Count the courses
@@ -1291,7 +1308,6 @@ class ClassAssessmentsRepo
                 'coursesFailedCount' => $failedCourse,
                 'status' => $status,
             ];
-        }
     }
     //for exams
     public function comments($student_id, $academicPeriodID, $type)
