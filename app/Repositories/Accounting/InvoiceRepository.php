@@ -89,6 +89,10 @@ public function invoiceStudents($academic_period_id)
     DB::beginTransaction();
 
     try {
+
+         // non-invoiced student list
+         $student_id_list = [];
+
         // Get the academic period and related information
         $academic_period = AcademicPeriod::find($academic_period_id);
         $full_academic_period_info = $academic_period->academic_period_information;
@@ -97,11 +101,18 @@ public function invoiceStudents($academic_period_id)
         $students = Student::where('period_type_id', $academic_period->period_type_id)
                            ->where('study_mode_id', $full_academic_period_info->study_mode_id)
                            ->get();
+                           
 
-        // Collect IDs of students who have not been invoiced
-        $student_id_list = $students->filter(function($student) use ($academic_period_id) {
-            return !Invoice::where('student_id', $student->id)->where('academic_period_id', $academic_period_id)->exists();
-        })->pluck('id')->toArray();
+        // check if student have already been invoiced
+        foreach ($students as $student) {
+
+            $exists = Invoice::where('student_id', $student->id)->where('academic_period_id', $academic_period_id)->exists();
+
+            if (!$exists) {
+                array_push($student_id_list, $student->id );
+            }
+        }
+
 
         // Ensure there are students to invoice
         if (empty($student_id_list)) {
