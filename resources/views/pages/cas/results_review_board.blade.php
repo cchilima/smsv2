@@ -177,7 +177,7 @@
 
                                 @else
                                     <button type="button"
-                                            class="float-right mr-5 btn btn-primary load-more-results load-more-results-first btn-sm mt-3"
+                                            class="float-right mr-5 btn btn-primary load-more-results load-more-results-first-cas btn-sm mt-3"
                                             onclick="LoadMoreResultsCas('{{ $grades['current_page'] }}','{{ $grades['last_page']}}','{{ $grades['per_page'] }}','{{$program_data->id}}','{{ $period->id }}','{{ $student['course_level_id'] }}')">
                                         <i class="fa fa-share"></i> Load More
                                     </button>

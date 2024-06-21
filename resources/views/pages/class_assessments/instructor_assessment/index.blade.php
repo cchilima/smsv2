@@ -46,9 +46,8 @@
                         @foreach($class_ass->enrollments as $enroll)
                             <tr>
 {{--                                @dd($enroll->student->grades[0])--}}
-                              {{--  @if($enroll->student && $class_ass->course->code == $enroll->student->grades[0]->course_code)--}}
-
-                                @if(isset($enroll->student) || $class_ass->course->code == ($enroll->student && isset($enroll->student->grades[0]) ? $enroll->student->grades[0]->course_code : null))
+{{--                                @if($enroll->student && $class_ass->course->code == $enroll->student->grades[0]->course_code)--}}
+                                    @if(isset($enroll->student))
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $enroll->student->user->first_name.' '.$enroll->student->user->last_name }}</td>
                                 <td>{{ $enroll->student->id }}</td>
