@@ -4,16 +4,13 @@ namespace App\Http\Controllers\Admissions;
 
 use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\Custom\SuperAdmin;
-use App\Http\Middleware\Custom\TeamSA;
-use App\Repositories\Academics\ClassAssessmentsRepo;
-use App\Repositories\Enrollments\EnrollmentRepository;
+use App\Http\Middleware\Custom\{SuperAdmin, TeamSA};
 use App\Http\Requests\Students\{Student, StudentUpdate, UserInfo, PersonalInfo, NextOfKinInfo, AcademicInfo, ResetPasswordInfo};
-use App\Repositories\Academics\StudentRegistrationRepository;
+use App\Repositories\Academics\{ClassAssessmentsRepo, StudentRegistrationRepository};
 use App\Repositories\Admissions\StudentRepository;
-use App\Repositories\Users\userNextOfKinRepository;
-use App\Repositories\Users\UserPersonalInfoRepository;
-use App\Repositories\Users\UserRepository;
+use App\Repositories\Accounting\InvoiceRepository;
+use App\Repositories\Enrollments\EnrollmentRepository;
+use App\Repositories\Users\{userNextOfKinRepository, UserPersonalInfoRepository, UserRepository};
 use http\Client\Curl\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +21,7 @@ class StudentController extends Controller
     protected $registrationRepo;
     protected $userPersonalInfoRepo;
     protected $userRepo;
+    protected $invoiceRepo;
     protected $userNextOfKinRepo, $enrollmentRepo, $classaAsessmentRepo;
 
     public function __construct(
@@ -33,7 +31,8 @@ class StudentController extends Controller
         UserRepository $userRepo,
         userNextOfKinRepository $userNextOfKinRepo,
         EnrollmentRepository $enrollmentRepo,
-        ClassAssessmentsRepo $classaAsessmentRepo
+        ClassAssessmentsRepo $classaAsessmentRepo,
+        InvoiceRepository $invoiceRepo
     ) {
         $this->middleware(TeamSA::class, ['except' => ['destroy']]);
         $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
@@ -45,6 +44,7 @@ class StudentController extends Controller
         $this->userNextOfKinRepo = $userNextOfKinRepo;
         $this->enrollmentRepo = $enrollmentRepo;
         $this->classaAsessmentRepo = $classaAsessmentRepo;
+        $this->invoiceRepo = $invoiceRepo;
     }
 
     /**
@@ -101,7 +101,6 @@ class StudentController extends Controller
     public function store(Student $request)
     {
         try {
-
             DB::beginTransaction();
 
             $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
@@ -146,13 +145,11 @@ class StudentController extends Controller
 
             return Qs::jsonStoreOk();
         } catch (\Exception $e) {
-
             DB::rollBack();
             // Log the error or handle it accordingly
             return Qs::json('msg.create_failed => ' . $e->getMessage(), false);
         }
     }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -180,9 +177,7 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
         try {
-
             DB::beginTransaction();
 
             $userData = null;
@@ -196,7 +191,6 @@ class StudentController extends Controller
             $nextOfKinInfoRequest = new NextOfKinInfo();
             $academicInfoRequest = new AcademicInfo();
 
-
             // Determine the type of request and validate accordingly
             if ($request->email && $request->gender) {
                 $userData = $request->validate($userInfoRequest->rules());
@@ -208,9 +202,7 @@ class StudentController extends Controller
                 $studentData = $request->validate($academicInfoRequest->rules());
             }
 
-
             if ($nextOfKinDataWithPrefix) {
-
                 // Remove the "kin_" prefix from keys
                 $nextOfKinData = array_combine(
                     array_map(function ($key) {
@@ -223,24 +215,18 @@ class StudentController extends Controller
             // Check if the user already exists
             $user = $this->studentRepo->findUser($id);
 
-
-
             // Determine what user info to update
 
             if ($userData) {
-
                 // Update the user data
                 $user->update($userData);
             } elseif ($personalData) {
-
                 // Update or create UserPersonalInfo
                 $userPersonalInfo = $user->userPersonalInfo()->update($personalData);
             } elseif ($nextOfKinDataWithPrefix) {
-
                 // Update or create NextOfKin
                 $nextOfKin = $user->userNextOfKin()->update($nextOfKinData);
             } elseif ($studentData) {
-
                 // Update or create Student
                 $student = $user->student()->update($studentData);
             }
@@ -249,7 +235,6 @@ class StudentController extends Controller
 
             return Qs::jsonStoreOk();
         } catch (\Exception $e) {
-
             DB::rollBack();
 
             dd($e);
@@ -257,7 +242,6 @@ class StudentController extends Controller
             return Qs::json(false, 'failed to update');
         }
     }
-
 
     public function search(Request $request)
     {
@@ -296,10 +280,12 @@ class StudentController extends Controller
         $data['isRegistered'] = $this->registrationRepo->getRegistrationStatus($student->student->id);
         $data['isWithinRegistrationPeriod'] = $this->registrationRepo->checkIfWithinRegistrationPeriod($student->student->id);
         $data['isInvoiced'] = $this->registrationRepo->checkIfInvoiced($student->student->id);
-        $data['enrollments']  = $this->enrollmentRepo->getEnrollments($student->student->id);
+        $data['enrollments'] = $this->enrollmentRepo->getEnrollments($student->student->id);
         $data['results'] = $this->classaAsessmentRepo->GetExamGrades($id);
         $data['caresults'] = $this->classaAsessmentRepo->GetCaStudentGrades($id);
-        //dd($data['enrollments']);
+
+        $data['percentage'] = $this->invoiceRepo->paymentPercentage($student->student->id);
+        // dd($data['enrollments']);
 
         // dd($data['results']);
 

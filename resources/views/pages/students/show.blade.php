@@ -525,6 +525,10 @@
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-tabs-highlight">
 
+                    <li class="nav-item">
+                            <a href="#percentage" class="nav-link"
+                               data-toggle="tab">{{ 'Payment Percentage' }}</a>
+                        </li>
                         <li class="nav-item">
                             <a href="#invoice" class="nav-link"
                                data-toggle="tab">{{ 'Invoice Student - Academic period' }}</a>
@@ -611,6 +615,23 @@
                                 </div>
                             @endif
                         </div>
+
+
+
+
+
+                        <div class="tab-pane fade show" id="percentage">
+
+                                <div class="container">
+                                    <p>{{ number_format($percentage, 2) }}%</p>
+                                </div>
+             
+                        </div>
+
+
+
+
+
 
                         <div class="tab-pane fade show" id="collect-payment">
                             @if ($student->academic_info)
