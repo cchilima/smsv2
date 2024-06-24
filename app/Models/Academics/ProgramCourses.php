@@ -5,10 +5,12 @@ namespace App\Models\Academics;
 use App\Models\Admissions\Student;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class ProgramCourses extends Model
+class ProgramCourses extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $fillable = ['course_level_id','course_id','program_id'];
     public $timestamps = true;

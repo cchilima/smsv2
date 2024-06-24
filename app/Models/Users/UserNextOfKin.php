@@ -8,10 +8,12 @@ use App\Models\Residency\Province;
 use App\Models\Residency\Town;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class UserNextOfKin extends Model
+class UserNextOfKin extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $fillable = ['full_name', 'telephone', 'mobile', 'relationship_id', 'town_id', 'province_id', 'country_id'];
 

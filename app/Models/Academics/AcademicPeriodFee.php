@@ -5,10 +5,12 @@ namespace App\Models\Academics;
 use App\Models\Accounting\Fee;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class AcademicPeriodFee extends Model
+class AcademicPeriodFee extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
     
     protected $fillable = ['amount','academic_period_id','fee_id','status'];
 

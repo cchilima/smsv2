@@ -312,12 +312,7 @@ class StudentRepository
             return true;
         }
     }
-
-    public function updatePersonalInfo()
-    {
-        
-    }
-
+    
     public function destroy($id)
     {
         return Student::destroy($id);

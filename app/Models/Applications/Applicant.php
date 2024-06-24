@@ -8,10 +8,12 @@ use App\Models\Applications\{ApplicantAttachment};
 use App\Models\Academics\{Program,StudyMode};
 use App\Models\Admissions\{AcademicPeriodIntake};
 use App\Models\Residency\{Country, Province, Town};
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Applicant extends Model
+class Applicant extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $fillable = [
         'nrc',

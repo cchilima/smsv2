@@ -14,10 +14,32 @@ use App\Models\Accounting\{Invoice, Statement, Receipt};
 use App\Models\Enrollments\Enrollment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Student extends Model
+class Student extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
+
+    /**
+     * Update attributes using query builder and log audit.
+     *
+     * @param  array  $attributes
+     * @param  array  $values
+     * @return int
+     */
+    public static function updateAndAudit(array $attributes, array $values)
+    {
+        // Perform the update
+        $affectedRows = static::where($attributes)->update($values);
+
+        // Manually log the audit for each affected row
+        foreach (static::where($attributes)->get() as $model) {
+            Auditor::execute($model);
+        }
+
+        return $affectedRows;
+    }
 
     protected $fillable = ['id', 'graduated', 'program_id', 'academic_period_intake_id', 'study_mode_id', 'course_level_id', 'period_type_id', 'user_id', 'admission_year'];
 

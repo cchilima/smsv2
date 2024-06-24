@@ -170,6 +170,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         Vinkla\Hashids\HashidsServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        OwenIt\Auditing\AuditingServiceProvider::class,
+
     ])->toArray(),
 
     /*

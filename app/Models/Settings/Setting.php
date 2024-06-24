@@ -4,12 +4,14 @@ namespace App\Models\Settings;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Setting extends Model
+class Setting extends Model implements AuditableContract
 {
-    protected $table = 'settings';
+    use HasFactory, Auditable;
 
+    protected $table = 'settings';
     protected $fillable = ['type', 'description'];
 
-    use HasFactory;
 }

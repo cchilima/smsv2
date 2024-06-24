@@ -5,10 +5,12 @@ namespace App\Models\Academics;
 use App\Models\Admissions\Student;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Grade extends Model
+class Grade extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $fillable = ['course_code', 'course_title', 'total', 'publication_status', 'student_id', 'academic_period_id', 'assessment_type_id','course_id'];
 

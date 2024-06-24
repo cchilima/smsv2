@@ -5,10 +5,14 @@ namespace App\Models\Academics;
 use App\Models\Admissions\Student;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Program extends Model
+
+class Program extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
+
     protected $fillable = ['code','name','department_id','qualification_id','description','slug'];
 
     public function department(): \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -147,7 +147,7 @@ Route::group(['prefix' => 'reports'], function () {
 });
 
 Route::group(['prefix' => 'accounts'], function () {
-    Route::get('/results', [ClassAssessmentsController::class, 'MyResults'])->name('student-exam_results');
+  //  Route::get('/results', [ClassAssessmentsController::class, 'MyResults'])->name('student-exam_results');
     Route::get('/ca-results', [ClassAssessmentsController::class, 'MyCAResults'])->name('student_ca_results');
     Route::get('/exam-registration', [ClassAssessmentsController::class, 'ExamRegistration'])->name('student-exam_registration');
 });

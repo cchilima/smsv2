@@ -5,12 +5,14 @@ namespace App\Models\Accounting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Admissions\Student;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-use App\Models\A\User;
+use App\Models\Users\User;
 
-class Invoice extends Model
+class Invoice extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $fillable = ['student_id', 'raised_by', 'cancelled', 'academic_period_id'];
 

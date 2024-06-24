@@ -336,15 +336,21 @@ class InvoiceRepository
     {
         $accumulative_total = 0;
         $accumulative_payments = 0;
-
+    
         $student = $this->getStudent($student_id);
-
-        foreach ($student->invoices as $key => $invoice){
+    
+        foreach ($student->invoices as $key => $invoice) {
             $accumulative_total += $invoice->details->sum('amount');
             $accumulative_payments += $invoice->statements->sum('amount');
         }
-
-        return (($accumulative_payments / $accumulative_total ) * 100);
+    
+        // Safeguard against division by zero
+        if ($accumulative_total == 0) {
+            return 0; // or you can choose another appropriate value or action
+        }
+    
+        return (($accumulative_payments / $accumulative_total) * 100);
     }
+    
 
 }
