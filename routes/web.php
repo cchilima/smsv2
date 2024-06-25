@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditReports\AuditReportsController;
 use App\Http\Controllers\Reports\Accounts\AccountReportsController;
 use App\Http\Controllers\Reports\Enrollments\EnrollmentReportsController;
 use App\Http\Controllers\Users\MyAccountController;
@@ -193,6 +194,7 @@ Route::resource('academic-periods', AcademicPeriodController::class);
 Route::resource('academic-period-classes', AcademicPeriodClassController::class);
 Route::resource('academic-period-management', APManagementController::class);
 Route::resource('academic-period-fees', APFeesController::class);
+Route::resource('audits', AuditReportsController::class);
 
 Route::get('/academic-period/{academicPeriodId}/programs', [AcademicPeriodController::class, 'getProgramsByAcademicPeriod'])->name('academic-periods.getProgramsByAcademicPeriod');
 

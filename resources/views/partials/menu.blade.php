@@ -388,6 +388,11 @@
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Marital statuses</span></a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('audits.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Audit Reports</span></a>
+                                </li>
 
                             </ul>
                         </li>
