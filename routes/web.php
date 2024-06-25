@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Accomodation\BedSpaceController;
+use App\Http\Controllers\Accomodation\BookingController;
+use App\Http\Controllers\Accomodation\HostelController;
+use App\Http\Controllers\Accomodation\RoomController;
 use App\Http\Controllers\AuditReports\AuditReportsController;
 use App\Http\Controllers\Reports\Accounts\AccountReportsController;
 use App\Http\Controllers\Reports\Enrollments\EnrollmentReportsController;
@@ -195,6 +199,11 @@ Route::resource('academic-period-classes', AcademicPeriodClassController::class)
 Route::resource('academic-period-management', APManagementController::class);
 Route::resource('academic-period-fees', APFeesController::class);
 Route::resource('audits', AuditReportsController::class);
+//Accommodation Module
+Route::resource('hostels', HostelController::class);
+Route::resource('rooms', RoomController::class);
+Route::resource('booking', BookingController::class);
+Route::resource('bed-space', BedSpaceController::class);
 
 Route::get('/academic-period/{academicPeriodId}/programs', [AcademicPeriodController::class, 'getProgramsByAcademicPeriod'])->name('academic-periods.getProgramsByAcademicPeriod');
 

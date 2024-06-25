@@ -396,6 +396,39 @@
 
                             </ul>
                         </li>
+
+                        <li
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['marital-statuses.create', 'marital-statuses.edit', 'marital-statuses.index', 'countries.index', 'countries.edit', 'provinces.index', 'provinces.edit', 'towns.index', 'towns.edit']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            <a href="#" class="nav-link"><i class="icon-equalizer"></i> <span>
+                                    Accommodation management</span></a>
+
+                            <ul class="nav nav-group-sub" data-submenu-title="Manage Profile">
+                                <li class="nav-item">
+                                    <a href="{{ route('announcements.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['announcements.create', 'announcements.edit', 'announcements.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Hostels</span></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('countries.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['countries.create', 'countries.edit', 'countries.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Rooms</span></a>
+                                </li>
+                                <li class="nav-item">
+
+                                    <a href="{{ route('provinces.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['provinces.create', 'provinces.edit', 'provinces.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Bed Spaces</span></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('towns.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['towns.create', 'towns.edit', 'towns.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Booking</span></a>
+                                </li>
+
+                            </ul>
+                        </li>
                     @endif
 
                 @endif
