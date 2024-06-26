@@ -55,6 +55,13 @@
         </i> <span>Finances</span>
     </a>
 </li>
+<li class="nav-item">
+    <a href="{{ route('student_applied.rooms') }}"
+       class="nav-link {{ in_array(Route::currentRouteName(), ['student_applied.rooms']) ? 'active' : '' }}"><i
+            class="icon-cash2">
+        </i> <span>Accommodation </span>
+    </a>
+</li>
 
 <li class="nav-item">
     <a href="/registration"

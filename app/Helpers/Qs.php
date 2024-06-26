@@ -340,6 +340,10 @@ class Qs
     {
         return self::json(__('msg.store_ok'));
     }
+    public static function jsonError()
+    {
+        return self::json(__('msg.failed'),false);
+    }
 
     public static function jsonUpdateOk()
     {
@@ -394,7 +398,7 @@ class Qs
     {
         return self::json(__($msg));
     }
-    
+
 
     public static function getDaysOfTheWeek()
     {
