@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('applicants', function (Blueprint $table) {
             $table->id();
+            $table->string('applicant_code')->unique();
             $table->string('nrc')->nullable();
             $table->string('passport')->nullable();
             $table->string('first_name')->nullable();

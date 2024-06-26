@@ -9,6 +9,8 @@ use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Applications\ApplicantAttachmentRepository;
 use App\Repositories\Applications\ApplicantRepository;
 use Illuminate\Http\Request;
+use Elibyy\TCPDF\Facades\TCPDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Redirect;
 
 class ApplicantController extends Controller
@@ -85,7 +87,7 @@ class ApplicantController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        dd('update hit');
+        //
     }
 
     /**
@@ -94,6 +96,45 @@ class ApplicantController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Applications pending fee collection
+     */
+    public function applicationsPendingFeeCollection()
+    {
+
+        if (Qs::userIsTeamSAT() || Qs::userIsSuperAdmin()) {
+            $applications = $this->applicantRepo->getAll();
+            $paymentMethods = $this->studentRepo->getPaymentMethods();
+            // Application step 1
+            return view('pages.applications.collect_application_fee', compact('applications','paymentMethods'));
+        }
+
+        return redirect(route('home'));
+
+    }
+
+
+    /**
+     * Collect application fee
+     */
+    public function collectFee(Request $request)
+    {
+        if (Qs::userIsTeamSAT() || Qs::userIsSuperAdmin()) {
+
+            $data = $request;
+            $collected = $this->applicantRepo->collectApplicantFee($data);
+
+            if($collected){
+                return Qs::jsonStoreOk();
+            } else {
+                return Qs::json(false,'msg.create_failed');
+            }
+
+        }
+
+        return redirect(route('home'));
     }
 
     /**
@@ -251,10 +292,12 @@ class ApplicantController extends Controller
         $data['pending'] = $this->applicantRepo->getProcessedCount();
         $data['applicants'] = $this->applicantRepo->getApplicantsCount();
         $data['app_apps'] = $this->applicantRepo->getLastFiveAppsCount();
-        //dd($data);
+
         return view('pages.applications.applications_summary_index',$data);
     }
+
     public function ApplicationsStatus(string $status,$id){
+
         $id = Qs::decodeHash($id);
         $applications = [];
         if ($id == 1){
@@ -268,5 +311,21 @@ class ApplicantController extends Controller
         return view('pages.applications.index', compact('applications'));
 //enum('incomplete', 'pending', 'complete', 'accepted', 'rejected')
         //enum('Male', 'Female')
+    }
+
+
+     /**
+     * Download registration summary.
+     */
+    public function provisional(Request $request)
+    {
+
+        $applicant = $this->applicantRepo->getApplication($request->applicant_id);
+
+        $fileName = $applicant->applicant_code . '-provisional letter-' . now()->format('d-m-Y-His') . '.pdf';
+
+        $pdf = Pdf::loadView('templates.pdf.provisional-letter', compact('applicant'));
+
+        return $pdf->download($fileName);
     }
 }

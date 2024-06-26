@@ -17,6 +17,7 @@
                         <th>Name</th>
                         <th>Program</th>
                         <th>Status</th>
+                        <th>Applicant Code</th>
                         <th>Date</th>
                         <th>Actions</th>
                     </tr>
@@ -28,6 +29,7 @@
                             <td>{{ $application->first_name ?? '' }} {{ $application->last_name ?? '' }}</td>
                             <td>{{ $application->program->name ?? '' }}</td>
                             <td>{{ $application->status ?? '' }}</td>
+                            <td>{{ $application->applicant_code ?? '' }}</td>
                             <td>{{ $application->created_at ?? '' }}</td>
 
                             <td class="">

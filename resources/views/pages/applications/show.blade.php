@@ -1,3 +1,4 @@
+
 @extends('layouts.master')
 @section('page_title', 'Application')
 @section('content')
@@ -7,65 +8,191 @@
     @endphp
 
     <div class="card">
-
-        <div class="card-header bg-white header-elements-inline">
-
+        <div class="card-header header-elements-inline">
+            <h6 class="card-title">Applications</h6>
             {!! Qs::getPanelOptions() !!}
-
         </div>
 
-        <br><br><br>
-        <div class="container">
-            <h5>Personal data</h5>
-            <p>First Name : {{ $application->first_name ?? 'Missing' }}</p>
-            <p>Middle Name : {{ $application->middle_name ?? 'Missing' }}</p>
-            <p>Last Name : {{ $application->last_name ?? 'Missing' }}</p>
-            <p>Gender : {{ $application->gender ?? 'Missing' }}</p>
-            <p>Date of Birth : {{ $application->date_of_birth ?? 'Missing' }}</p>
+        <div class="card-body">
+            <ul class="nav nav-tabs nav-tabs-highlight">
+                <li class="nav-item"><a href="#application" class="nav-link active" data-toggle="tab">Application</a></li>
+                <li class="nav-item"><a href="#provisional-letter" class="nav-link" data-toggle="tab">Provisional letter</a></li>
 
-            <br><br>
+            </ul>
 
-            <h5>Contacts</h5>
-            <p>Email Address: {{ $application->email ?? 'Missing' }}</p>
-            <p>Mobile: {{ $application->phone_number ?? 'Missing' }}</p>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="application">
 
-            <br><br>
 
-            <h5>Residency</h5>
-            <p>Country : {{ $application->country->country ?? 'Missing' }}</p>
-            <p>Province : {{ $application->province->name ?? 'Missing' }}</p>
-            <p>Town : {{ $application->town->name ?? 'Missing' }}</p>
-            <p>Address : {{ $application->address ?? 'Missing' }}</p>
 
-            <br><br>
 
-            <!-- Academics Information -->
-            <h5>Academic Information</h5>
-            <p>Program : {{ $application->program->name ?? 'Missing' }}</p>
-            <p>Academic Period Intake : {{ $application->intake->name ?? 'Missing' }}</p>
-            <p>Study Mode : {{ $application->study_mode->name ?? 'Missing' }}</p>
 
-            <br><br>
+                    <div class="card">
 
-            <!-- Attachments -->
-            <h5>Attachments</h5>
+                        <div class="card-header bg-white header-elements-inline">
+                            {!! Qs::getPanelOptions() !!}
+                        </div>
 
-            @if (count($application->attachments) > 0)
-                @foreach ($application->attachments as $attachment)
-                    <div class="d-flex align-items-center mb-3">
-                        <span class="d-inline-block mr-3">{{ $attachment->type }}</span>
-                        <form action={{ route('application.download_attachment', $attachment->id) }} method="GET">
-                            @csrf @method('GET')
-                            <button type="submit" class="btn btn-primary">Download</button>
-                        </form>
+                        <div class="container mt-4">
+                            <h5><b>Student Information</b></h5>
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>First Name</th>
+                                        <td>{{ $application->first_name ?? 'Missing' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Middle Name</th>
+                                        <td>{{ $application->middle_name ?? 'Missing' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Last Name</th>
+                                        <td>{{ $application->last_name ?? 'Missing' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Gender</th>
+                                        <td>{{ $application->gender ?? 'Missing' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Date of Birth</th>
+                                        <td>{{ $application->date_of_birth ?? 'Missing' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Email Address</th>
+                                        <td>{{ $application->email ?? 'Missing' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Mobile</th>
+                                        <td>{{ $application->phone_number ?? 'Missing' }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Country</th>
+                                        <td>{{ $application->country->country ?? 'Missing' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Province</th>
+                                        <td>{{ $application->province->name ?? 'Missing' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Town</th>
+                                        <td>{{ $application->town->name ?? 'Missing' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Address</th>
+                                        <td>{{ $application->address ?? 'Missing' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <br><br>
+
+                            <h5><b>Academic Information</b></h5>
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>Program</th>
+                                        <td>{{ $application->program->name ?? 'Missing' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Academic Period Intake</th>
+                                        <td>{{ $application->intake->name ?? 'Missing' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Study Mode</th>
+                                        <td>{{ $application->study_mode->name ?? 'Missing' }}</td>
+                                    </tr>
+                                    @if (count($application->attachments) > 0)
+                                        @foreach ($application->attachments as $attachment)
+                                            <tr>
+                                                <td>{{ $attachment->type }}</td>
+                                                <td>
+                                                    <form
+                                                        action="{{ route('application.download_attachment', $attachment->id) }}"
+                                                        method="GET">
+                                                        @csrf @method('GET')
+                                                        <button type="submit" class="btn btn-primary">Download</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td>No attachments added</td>
+                                            <td></td>
+                                        </tr>
+                                    @endif
+
+                                </tbody>
+                            </table>
+                            <br><br><br>
+                        </div>
                     </div>
-                @endforeach
-            @else
-                <p>No attachments added</p>
-            @endif
 
-            <!-- Display attachments if any -->
+
+
+
+
+
+                </div>
+
+                <div class="tab-pane fade show" id="provisional-letter">
+
+
+
+                <table class="table table-bordered">
+                                <tbody>
+                                
+                                    @if (count($application->attachments) > 0)
+
+                                    <tr>
+                                                <td>Application fee payment</td>
+                                                <td>
+                                                    K {{ $application->payment->sum('amount') ?? 'K0' }} 
+                                                </td>
+                                            </tr>
+
+                                      
+                                            <tr>
+                                                <td>Provisional letter</td>
+                                                <td>
+                                                    @if($application->status == 'complete')
+                                                    <form
+                                                        action="{{ route('application.download_provisional') }}"
+                                                        method="GET">
+                                                        @csrf @method('GET')
+                                                        <input name="applicant_id" hidden type="text" value="{{$application->id}}">
+                                                        <button type="submit" class="btn btn-primary">Download</button>
+                                                    </form>
+                                                    @else
+                                                    Make full application fee payment to download letter.
+                                                    @endif
+                                                </td>
+                                            </tr>
+
+                                    @else
+                                        <tr>
+                                            <td>No attachments added</td>
+                                            <td></td>
+                                        </tr>
+                                    @endif
+
+                                </tbody>
+                            </table>
+                    
+
+
+
+                </div>
+            </div>
         </div>
-        <br><br><br>
     </div>
+
 @endsection
+
+
+
+
+
+
+
