@@ -16,6 +16,7 @@ class Applicant extends Model implements AuditableContract
     use HasFactory, Auditable;
 
     protected $fillable = [
+        'applicant_code',
         'nrc',
         'passport',
         'first_name',
@@ -75,8 +76,9 @@ class Applicant extends Model implements AuditableContract
     }
     public function payment()
     {
-        return $this->hasOne(ApplicantPayment::class, 'applicant_id');
+        return $this->hasMany(ApplicantPayment::class, 'applicant_id');
     }
+
 
 
 

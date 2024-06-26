@@ -2,15 +2,64 @@
 
 namespace App\Repositories\Applications;
 
-use App\Http\Requests\Applications\Attachment;
-use App\Models\Applications\Applicant;
-use App\Models\Applications\ApplicantAttachment;
-use Illuminate\Support\Facades\Storage;
 use DB;
 use Illuminate\Support\Arr;
+use App\Models\Applications\Applicant;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\Applications\Attachment;
+use App\Models\Applications\{ApplicantAttachment, ApplicantPayment};
+
+
 
 class ApplicantRepository
 {
+
+    private function generateUniqueApplicantCode()
+    {
+        do {
+            $code = $this->generateMixedCaseCode(10); // Adjust the length as needed
+        } while (Applicant::where('applicant_code', $code)->exists());
+
+        return $code;
+    }
+
+    private function generateMixedCaseCode($length)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    public function collectApplicantFee($data)
+    {
+
+        $amount = $data->amount;
+        $method = $data->payment_method_id;
+
+        try {
+            
+            $applicant = Applicant::where('applicant_code', $data->applicant)->first();
+            $updated = ApplicantPayment::create(['applicant_id' => $applicant->id, 'amount' => $amount, 'payment_method_id' => $method]);
+
+            if($updated){
+                $this->checkApplicationCompletion($applicant->id);
+            }
+            
+            return true;
+
+        } catch (\Throwable $th) {
+            dd($th);
+            return false;
+        }
+
+       
+        
+    }
+
     public function getAll()
     {
         return Applicant::all();
@@ -23,6 +72,10 @@ class ApplicantRepository
 
     public function initiateApplication($applicantIdentifier)
     {
+        $applicant_code = $this->generateUniqueApplicantCode();
+
+        $applicantIdentifier['applicant_code'] = $applicant_code;
+
         $application = Applicant::create($applicantIdentifier);
 
         if ($application) {
@@ -53,14 +106,14 @@ class ApplicantRepository
             $application->update($data->toArray());
 
             // Check if you can make application as pending
-            //  $this->completeApplication($application->id);
+               $this->checkApplicationCompletion($application_id);
 
             DB::commit();
 
             return $application_id;
+
         } catch (\Exception $e) {
             DB::rollback();
-            // Handle exceptions, you may log or throw an error here
             return false;  // Returning false to indicate the update failed
         }
     }
@@ -74,28 +127,7 @@ class ApplicantRepository
         }
     }
 
-    // public function completeApplication($application_id)
-    // {
-    //     // Find the application
-    //     $application = Applicant::find($application_id);
 
-    //     // Check if application exists
-    //     if (!$application) {
-    //         return response()->json(['message' => 'Application not found'], 404);
-    //     }
-
-    //     // Check if all fields except status are filled
-    //     $fieldsToCheck = array_except($application->toArray(), ['status']);
-    //     $allFieldsFilled = collect($fieldsToCheck)->filter()->isEmpty();
-
-    //     // Update status to pending if all fields except status are filled
-    //     if ($allFieldsFilled) {
-    //         $application->status = 'pending';
-    //         $application->save();
-    //     }
-
-    //     return response()->json(['message' => 'Application updated successfully'], 200);
-    // }
 
     public function checkApplicationCompletion($application_id)
     {
@@ -110,16 +142,27 @@ class ApplicantRepository
         $applicationArr = $application->toArray();
 
         // Check if all mandatory fields are filled
-        $fieldsToCheck = Arr::except($applicationArr, ['status', 'middle_name', 'postal_code', 'period_type_id', 'application_date']);
+        $fieldsToCheck = Arr::except($applicationArr, ['status', 'middle_name', 'postal_code', 'period_type_id', 'application_date','nrc','passport']);
+
 
         $allFieldsFilled = array_filter($fieldsToCheck, fn ($value) => $value === null);
 
         // Check if application has an attachments
         $hasAttachments = $application->attachments()->count() > 0;
 
+        // Check if application has payment(s)
+        $feePaid = $application->payment->sum('amount');
+
         // Update status to pending if all fields except status are filled
-        if (empty($allFieldsFilled) && $hasAttachments) {
+        if (empty($allFieldsFilled) && $hasAttachments && $feePaid < 150) {
             $application->status = 'pending';
+            $application->save();
+
+            return true;
+
+        } elseif(empty($allFieldsFilled) && $hasAttachments && $feePaid >= 150){
+           
+            $application->status = 'complete';
             $application->save();
 
             return true;

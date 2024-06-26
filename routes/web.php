@@ -162,6 +162,11 @@ Route::put('/application/step-3/{id}', [ApplicantController::class, 'saveApplica
 Route::get('/application/{application_id}', [ApplicantController::class, 'show'])->name('application.show');
 Route::get('/application/attachment/{attachment_id}/download', [ApplicantController::class, 'downloadAttachment'])->name('application.download_attachment');
 Route::get('/applications/summary', [ApplicantController::class, 'ApplicationsSummary'])->name('application.summary_reports');
+Route::get('/provisional-letter', [ApplicantController::class, 'provisional'])->name('application.download_provisional');
+
+Route::get('/applications-pending-fee-collection', [ApplicantController::class, 'applicationsPendingFeeCollection'])->name('application.pending_collection');
+Route::post('/collect-application-fee', [ApplicantController::class, 'collectFee'])->name('application.collect_fee');
+
 //Applications report
 Route::get('/applications/{status}/{id}', [ApplicantController::class, 'ApplicationsStatus'])->name('status.applications_reports');
 /*}); */

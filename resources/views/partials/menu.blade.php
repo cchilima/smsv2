@@ -92,7 +92,7 @@
                             ])
                                 ? 'nav-item-expanded nav-item-open'
                                 : '' }} ">
-                            <a href="#" class="nav-link"><i class="icon-library2"></i> <span> Deptments &
+                            <a href="#" class="nav-link"><i class="icon-library2"></i> <span> Departments &
                                     Programs</span></a>
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Academics">
@@ -275,6 +275,12 @@
                                     <a href="{{ route('payment-methods.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['payment-methods.create', 'payment-methods.edit', 'payment-methods.index']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Payment Methods</span></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('application.pending_collection') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['application.pending_collection']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Collect Application Payment</span></a>
                                 </li>
 
                             </ul>

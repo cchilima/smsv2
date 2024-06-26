@@ -11,5 +11,5 @@ class ApplicantPayment extends Model implements AuditableContract
 {
     use HasFactory, Auditable;
     
-    protected  $fillable = ['applicant_id', 'amount'];
+    protected  $fillable = ['applicant_id', 'amount', 'payment_method_id'];
 }
