@@ -1,38 +1,49 @@
 @extends('layouts.master')
-@section('page_title', 'Manage Marital Statuses')
+@section('page_title', 'Hostel Room Booking Management')
 @section('content')
     @php
         use App\Helpers\Qs;
     @endphp
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h6 class="card-title">Manage Marital Statuses</h6>
+            <h6 class="card-title">Manage Booking</h6>
             {!! Qs::getPanelOptions() !!}
         </div>
 
         <div class="card-body">
             <ul class="nav nav-tabs nav-tabs-highlight">
-                <li class="nav-item"><a href="#all-statuses" class="nav-link active" data-toggle="tab">Manage Marital Statuses</a></li>
-                <li class="nav-item"><a href="#new-status" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i> Create New Marital Status</a></li>
+                <li class="nav-item"><a href="#all-bookings" class="nav-link active" data-toggle="tab">Latest Bookings</a></li>
+                <li class="nav-item"><a href="#new-booking" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i> Create New Booking</a></li>
+                <li class="nav-item"><a href="#new-reports" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i> Reports</a></li>
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane fade show active" id="all-statuses">
+                <div class="tab-pane fade show active" id="all-bookings">
                     <table class="table datatable-button-html5-columns">
                         <thead>
                         <tr>
                             <th>S/N</th>
-                            <th>Status</th>
-                            <th>Description</th>
+                            <th>student Number</th>
+                            <th>student Name</th>
+                            <th>Hostel</th>
+                            <th>Room number</th>
+                            <th>Bed number</th>
+                            <th>Expiring Date</th>
+                            <th>Booking Date</th>
                             <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($statuses as $status)
+                        @foreach($closed as $c)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $status->status }}</td>
-                                <td>{{ $status->description }}</td>
+                                <td>{{ $c->student_id }}</td>
+                                <td>{{ $c->student->user->first_name.' '.$c->student->user->last_name }}</td>
+                                <td>{{ $c->bedSpace->room->hostel->hostel_name }}</td>
+                                <td>{{ $c->bedSpace->room->room_number }}</td>
+                                <td>{{ $c->bedSpace->bed_number }}</td>
+                                <td>{{ date('j F Y', strtotime($c->expiration_date)) }}</td>
+                                <td>{{ date('j F Y', strtotime($c->booking_date)) }}</td>
                                 <td class="text-center">
                                     <div class="list-icons">
                                         <div class="dropdown">
@@ -42,11 +53,11 @@
 
                                             <div class="dropdown-menu dropdown-menu-left">
                                                 @if(Qs::userIsTeamSA())
-                                                    <a href="{{ route('marital-statuses.edit', $status->id) }}" class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
+                                                    <a href="{{ route('booking.edit', $c->id) }}" class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
                                                 @endif
                                                 @if(Qs::userIsSuperAdmin())
-                                                    <a id="{{ $status->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>
-                                                    <form method="post" id="item-delete-{{ $status->id }}" action="{{ route('marital-statuses.destroy', $status->id) }}" class="hidden">@csrf @method('delete')</form>
+                                                    <a id="{{ $c->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>
+                                                    <form method="post" id="item-delete-{{ $c->id }}" action="{{ route('booking.destroy', $c->id) }}" class="hidden">@csrf @method('delete')</form>
                                                 @endif
                                             </div>
                                         </div>
@@ -58,22 +69,54 @@
                     </table>
                 </div>
 
-                <div class="tab-pane fade" id="new-status">
+                <div class="tab-pane fade" id="new-booking">
                     <div class="row">
                         <div class="col-md-6">
-                            <form class="ajax-store" method="post" action="{{ route('marital-statuses.store')  }}">
+                            <form class="ajax-store" method="post" action="{{ route('booking.store')  }}">
                                 @csrf
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Status <span class="text-danger">*</span></label>
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Hostel Name <span class="text-danger">*</span></label>
                                     <div class="col-lg-9">
-                                        <input name="status" value="{{ old('status') }}" required type="text" class="form-control" placeholder="Marital Status">
+                                        <select name="hostel_id" id="hostel_id" onchange="getHostelRooms(this.value)" class="form-control select-search" required>
+                                            <option value=""> Choose Hostel</option>
+                                            @foreach ($hostel as $h)
+                                                <option value="{{ $h->id }}">{{ $h->hostel_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Room <span class="text-danger">*</span></label>
+                                    <div class="col-lg-9">
+                                        <select name="room_id" id="room_id" onchange="getRoomBedSpaces(this.value)" class="form-control select-search" required>
+                                            <option value=""> Choose Hostel</option>
+                                            {{--                                            @foreach ($hostels as $h)--}}
+                                            {{--                                                <option value="{{ $h->id }}">{{ $h->hostel_name }}</option>--}}
+                                            {{--                                            @endforeach--}}
+                                        </select>
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Description <span class="text-danger">*</span></label>
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Bed Space <span class="text-danger">*</span></label>
                                     <div class="col-lg-9">
-                                        <input name="description" value="{{ old('description') }}" required type="text" class="form-control" placeholder="Description">
+                                        <select name="bed_space_id" id="bed_space_id" class="form-control select-search" required>
+                                            <option value=""> Choose Bed Space</option>
+{{--                                            @foreach ($hostels as $h)--}}
+{{--                                                <option value="{{ $h->id }}">{{ $h->hostel_name }}</option>--}}
+{{--                                            @endforeach--}}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Student Name <span class="text-danger">*</span></label>
+                                    <div class="col-lg-9">
+                                        <select name="student_id" id="student_id" class="form-control select-search" required>
+                                            <option value=""> Choose Hostel</option>
+                                            {{--                                            @foreach ($hostels as $h)--}}
+                                            {{--                                                <option value="{{ $h->id }}">{{ $h->hostel_name }}</option>--}}
+                                            {{--                                            @endforeach--}}
+                                        </select>
                                     </div>
                                 </div>
 

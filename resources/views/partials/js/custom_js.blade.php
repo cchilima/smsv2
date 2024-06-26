@@ -432,7 +432,128 @@
             }
         })
     }
+//accommodation start
+    function getHostelRooms() {
+        var hostel_id = $('#hostel_id').val();
+        var url = '<?php echo e(route('hostel-rooms', [':id'])); ?>';
+        url = url.replace(':id', hostel_id);
+        var room_id = $('#room_id');
 
+        $.ajax({
+            dataType: 'json',
+            url: url,
+            success: function(resp) {
+                room_id.empty();
+                room_id.append($('<option>', {
+                    value: '',
+                    text: 'Choose ...'
+                }));
+                $.each(resp, function(i, data) {
+                    room_id.append($('<option>', {
+                        value: data.id,
+                        text: data.room_number
+                    }));
+                });
+            }
+        })
+    }
+    function getHostelRoomsOne() {
+        var hostel_id = $('#hostel_ids').val();
+        var url = '<?php echo e(route('hostel-rooms', [':id'])); ?>';
+        url = url.replace(':id', hostel_id);
+        var room_id = $('#room_ids');
+
+        $.ajax({
+            dataType: 'json',
+            url: url,
+            success: function(resp) {
+                room_id.empty();
+                room_id.append($('<option>', {
+                    value: '',
+                    text: 'Choose ...'
+                }));
+                $.each(resp, function(i, data) {
+                    room_id.append($('<option>', {
+                        value: data.id,
+                        text: data.room_number
+                    }));
+                });
+            }
+        })
+    }
+    function getRoomBedSpaces() {
+        var room_id = $('#room_id').val();
+        var url = '<?php echo e(route('room-bed-space', [':id'])); ?>';
+        url = url.replace(':id', room_id);
+        var bed_space_id = $('#bed_space_id');
+        var student_id = $('#student_id');
+
+        $.ajax({
+            dataType: 'json',
+            url: url,
+            success: function(resp) {
+                bed_space_id.empty();
+                student_id.empty();
+                bed_space_id.append($('<option>', {
+                    value: '',
+                    text: 'Choose ...'
+                }));
+                student_id.append($('<option>', {
+                    value: '',
+                    text: 'Choose ...'
+                }));
+                $.each(resp.students, function(i, data) {
+                    student_id.append($('<option>', {
+                        value: data.id,
+                        text: data.user.first_name
+                    }));
+                });
+                $.each(resp.spaces, function(i, data) {
+                    bed_space_id.append($('<option>', {
+                        value: data.id,
+                        text: data.bed_number
+                    }));
+                });
+            }
+        })
+    }
+    function getRoomBedSpacesStudent() {
+        var room_id = $('#room_ids').val();
+        var url = '<?php echo e(route('room-bed-space-student', [':id'])); ?>';
+        url = url.replace(':id', room_id);
+        var bed_space_id = $('#bed_space_ids');
+        var student_id = $('#student_ids');
+
+        $.ajax({
+            dataType: 'json',
+            url: url,
+            success: function(resp) {
+                bed_space_id.empty();
+                student_id.empty();
+                bed_space_id.append($('<option>', {
+                    value: '',
+                    text: 'Choose ...'
+                }));
+                $.each(resp.spaces, function(i, data) {
+                    bed_space_id.append($('<option>', {
+                        value: data.id,
+                        text: data.bed_number
+                    }));
+                });
+                student_id.append($('<option>', {
+                    value: '',
+                    text: 'Choose ...'
+                }));
+                $.each(resp.students, function(i, data) {
+                    student_id.append($('<option>', {
+                        value: data.id,
+                        text: data.user.first_name
+                    }));
+                });
+            }
+        })
+    }
+    //accommodation end
     $('.edit-total-link').on('click', function() {
 
         var row = $(this).closest('tr');

@@ -13,19 +13,19 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <form class="ajax-update" data-reload="#page-header" method="post" action="{{ route('marital-statuses.update', $maritalStatus->id) }}">
+                    <form class="ajax-update" data-reload="#page-header" method="post" action="{{ route('hostels.update', $hostel->id) }}">
                         @csrf @method('PUT')
                         <div class="form-group row">
-                            <label class="col-lg-3 col-form-label font-weight-semibold">Status <span class="text-danger">*</span></label>
+                            <label class="col-lg-3 col-form-label font-weight-semibold">Name <span class="text-danger">*</span></label>
                             <div class="col-lg-9">
-                                <input name="status" required type="text" class="form-control" placeholder="Marital Status" value="{{ $maritalStatus->status }}">
+                                <input name="hostel_name" value="{{ $hostel->hostel_name }}" required type="text" class="form-control" placeholder="name">
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-lg-3 col-form-label font-weight-semibold">Description <span class="text-danger">*</span></label>
+                            <label class="col-lg-3 col-form-label font-weight-semibold">Location <span class="text-danger"></span></label>
                             <div class="col-lg-9">
-                                <input name="description" required type="text" class="form-control" placeholder="Description" value="{{ $maritalStatus->description }}">
+                                <input name="location" value="{{ $hostel->location }}" type="text" class="form-control" placeholder="location">
                             </div>
                         </div>
 

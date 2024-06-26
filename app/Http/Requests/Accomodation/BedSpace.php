@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Accomodation;
 
+use App\Rules\ValidBedCount;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BedSpace extends FormRequest
@@ -11,7 +12,7 @@ class BedSpace extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,9 @@ class BedSpace extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'room_id' => 'required|integer|exists:rooms,id',
+            'bed_number' => 'required|integer|unique:bed_spaces,bed_number',
+            'is_available' => 'required|string',
         ];
     }
 }

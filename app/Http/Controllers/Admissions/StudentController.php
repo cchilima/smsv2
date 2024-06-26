@@ -4,6 +4,13 @@ namespace App\Http\Controllers\Admissions;
 
 use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Accomodation\BedSpace;
+use App\Http\Requests\Accomodation\Booking;
+use App\Repositories\Accommodation\BedSpaceRepository;
+use App\Repositories\Accommodation\BookingRepository;
+use App\Repositories\Accommodation\HostelRepository;
+use App\Repositories\Accommodation\RoomRepository;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\Custom\{SuperAdmin, TeamSA};
 use App\Http\Requests\Students\{Student, StudentUpdate, UserInfo, PersonalInfo, NextOfKinInfo, AcademicInfo, ResetPasswordInfo};
 use App\Repositories\Academics\{ClassAssessmentsRepo, StudentRegistrationRepository};
@@ -23,6 +30,7 @@ class StudentController extends Controller
     protected $userRepo;
     protected $invoiceRepo;
     protected $userNextOfKinRepo, $enrollmentRepo, $classaAsessmentRepo;
+    protected $booking_repository,$bed_space_repository,$rooms_repository,$hostel_repository;
 
     public function __construct(
         StudentRepository $studentRepo,
@@ -32,10 +40,14 @@ class StudentController extends Controller
         userNextOfKinRepository $userNextOfKinRepo,
         EnrollmentRepository $enrollmentRepo,
         ClassAssessmentsRepo $classaAsessmentRepo,
-        InvoiceRepository $invoiceRepo
+        InvoiceRepository $invoiceRepo,
+        BookingRepository $booking_repository,
+        BedSpaceRepository $bed_space_repository,
+        RoomRepository $rooms_repository,
+        HostelRepository $hostel_repository
     ) {
-        $this->middleware(TeamSA::class, ['except' => ['destroy']]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
+        //$this->middleware(TeamSA::class, ['except' => ['destroy']]);
+        //$this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
 
         $this->studentRepo = $studentRepo;
         $this->registrationRepo = $registrationRepo;
@@ -45,6 +57,10 @@ class StudentController extends Controller
         $this->enrollmentRepo = $enrollmentRepo;
         $this->classaAsessmentRepo = $classaAsessmentRepo;
         $this->invoiceRepo = $invoiceRepo;
+        $this->bed_space_repository = $bed_space_repository;
+        $this->booking_repository = $booking_repository;
+        $this->rooms_repository = $rooms_repository;
+        $this->hostel_repository = $hostel_repository;
     }
 
     /**
@@ -342,5 +358,46 @@ class StudentController extends Controller
 
             return Qs::json('msg.delete_failed => ' . $e->getMessage(), false);
         }
+    }
+    //student accommodation
+  public function getAppliedBedSpaces()
+  {
+      $id = Auth::user();
+      $student_id = \App\Models\Admissions\Student::where('user_id',$id->id)->first();
+      $data['hostel'] = $this->hostel_repository->getAll();
+      $data['open'] = $this->booking_repository->getOpenBookings();
+      $data['closed'] = $this->booking_repository->getClosedBookingsOne($student_id->id);
+      return view('pages.students.accommodation',$data);
+  }
+  public function applyBedSpace(Booking $request)
+  {
+      $data = $request->only(['student_id', 'bed_space_id']);
+      $data['booking_date'] = date('Y-m-d', strtotime(now()));
+      $data['expiration_date'] = date('Y-m-d', strtotime('+1 day', time()));
+      // 'student_id','bed_space_id','booking_date','expiration_date'
+      $dataB['is_available'] = 'false';
+      $data = $this->booking_repository->create($data);
+      $this->bed_space_repository->update($data['bed_space_id'],$dataB);
+      if ($data) {
+          return Qs::jsonStoreOk();
+      } else {
+          return Qs::jsonError(__('msg.create_failed'));
+      }
+  }
+
+    public
+    function getRooms(string $id)
+    {
+        return $this->rooms_repository->getSpecificRooms($id);
+    }
+    public
+    function getBedSpaces(string $ids)
+    {
+        $id = Auth::user();
+        $student_id = \App\Models\Admissions\Student::where('user_id',$id->id)->first();
+        $data['students'] = $this->bed_space_repository->getActiveStudentOne($student_id->id);
+        $data['spaces'] = $this->bed_space_repository->getAvailable($ids);
+
+        return $data;
     }
 }

@@ -11,7 +11,7 @@ class HostelUpdate extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class HostelUpdate extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'hostel_name' => 'required|string',
+            'location' => 'string',
         ];
     }
 }
