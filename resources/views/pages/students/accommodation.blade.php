@@ -57,10 +57,10 @@
                                                     </a>
 
                                                     <div class="dropdown-menu dropdown-menu-left">
-                                                        @if(Qs::userIsTeamSA())
+                                                        @if(true)
                                                             <a href="{{ route('booking.edit', $c->id) }}" class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
                                                         @endif
-                                                        @if(Qs::userIsSuperAdmin())
+                                                        @if(true)
                                                             <a id="{{ $c->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>
                                                             <form method="post" id="item-delete-{{ $c->id }}" action="{{ route('booking.destroy', $c->id) }}" class="hidden">@csrf @method('delete')</form>
                                                         @endif
@@ -95,9 +95,6 @@
                                             <div class="col-lg-9">
                                                 <select name="room_ids" id="room_ids" onchange="getRoomBedSpacesStudent(this.value)" class="form-control select-search" required>
                                                     <option value=""> Choose Hostel</option>
-                                                    {{--                                            @foreach ($hostels as $h)--}}
-                                                    {{--                                                <option value="{{ $h->id }}">{{ $h->hostel_name }}</option>--}}
-                                                    {{--                                            @endforeach--}}
                                                 </select>
                                             </div>
                                         </div>
@@ -107,9 +104,6 @@
                                             <div class="col-lg-9">
                                                 <select name="bed_space_id" id="bed_space_ids" class="form-control select-search" required>
                                                     <option value=""> Choose Bed Space</option>
-                                                    {{--                                            @foreach ($hostels as $h)--}}
-                                                    {{--                                                <option value="{{ $h->id }}">{{ $h->hostel_name }}</option>--}}
-                                                    {{--                                            @endforeach--}}
                                                 </select>
                                             </div>
                                         </div>
@@ -118,9 +112,6 @@
                                             <div class="col-lg-9">
                                                 <select name="student_id" id="student_ids" class="form-control select-search" required>
                                                     <option value=""> Choose Hostel</option>
-                                                    {{--                                            @foreach ($hostels as $h)--}}
-                                                    {{--                                                <option value="{{ $h->id }}">{{ $h->hostel_name }}</option>--}}
-                                                    {{--                                            @endforeach--}}
                                                 </select>
                                             </div>
                                         </div>

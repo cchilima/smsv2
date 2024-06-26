@@ -11,7 +11,7 @@ class BookingUpdate extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class BookingUpdate extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'bed_space_id' => 'required|integer|exists:bed_spaces,id',
+            'student_id' => 'required|integer|exists:students,id',
         ];
     }
 }

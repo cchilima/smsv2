@@ -12,9 +12,12 @@
 
         <div class="card-body">
             <ul class="nav nav-tabs nav-tabs-highlight">
-                <li class="nav-item"><a href="#all-bookings" class="nav-link active" data-toggle="tab">Latest Bookings</a></li>
-                <li class="nav-item"><a href="#new-booking" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i> Create New Booking</a></li>
-                <li class="nav-item"><a href="#new-reports" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i> Reports</a></li>
+                <li class="nav-item"><a href="#all-bookings" class="nav-link active" data-toggle="tab">Latest
+                        Bookings</a></li>
+                <li class="nav-item"><a href="#new-booking" class="nav-link" data-toggle="tab"><i
+                            class="icon-plus2"></i> Create New Booking</a></li>
+                <li class="nav-item"><a href="#new-reports" class="nav-link" data-toggle="tab"><i
+                            class="icon-plus2"></i> Reports</a></li>
             </ul>
 
             <div class="tab-content">
@@ -53,11 +56,15 @@
 
                                             <div class="dropdown-menu dropdown-menu-left">
                                                 @if(Qs::userIsTeamSA())
-                                                    <a href="{{ route('booking.edit', $c->id) }}" class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
+                                                    <a href="{{ route('booking.edit', $c->id) }}" class="dropdown-item"><i
+                                                            class="icon-pencil"></i> Edit</a>
                                                 @endif
                                                 @if(Qs::userIsSuperAdmin())
-                                                    <a id="{{ $c->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>
-                                                    <form method="post" id="item-delete-{{ $c->id }}" action="{{ route('booking.destroy', $c->id) }}" class="hidden">@csrf @method('delete')</form>
+                                                    <a id="{{ $c->id }}" onclick="confirmDelete(this.id)" href="#"
+                                                       class="dropdown-item"><i class="icon-trash"></i> Delete</a>
+                                                    <form method="post" id="item-delete-{{ $c->id }}"
+                                                          action="{{ route('booking.destroy', $c->id) }}"
+                                                          class="hidden">@csrf @method('delete')</form>
                                                 @endif
                                             </div>
                                         </div>
@@ -75,9 +82,11 @@
                             <form class="ajax-store" method="post" action="{{ route('booking.store')  }}">
                                 @csrf
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Hostel Name <span class="text-danger">*</span></label>
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Hostel Name <span
+                                            class="text-danger">*</span></label>
                                     <div class="col-lg-9">
-                                        <select name="hostel_id" id="hostel_id" onchange="getHostelRooms(this.value)" class="form-control select-search" required>
+                                        <select name="hostel_id" id="hostel_id" onchange="getHostelRooms(this.value)"
+                                                class="form-control select-search" required>
                                             <option value=""> Choose Hostel</option>
                                             @foreach ($hostel as $h)
                                                 <option value="{{ $h->id }}">{{ $h->hostel_name }}</option>
@@ -90,10 +99,7 @@
                                     <div class="col-lg-9">
                                         <select name="room_id" id="room_id" onchange="getRoomBedSpaces(this.value)" class="form-control select-search" required>
                                             <option value=""> Choose Hostel</option>
-                                            {{--                                            @foreach ($hostels as $h)--}}
-                                            {{--                                                <option value="{{ $h->id }}">{{ $h->hostel_name }}</option>--}}
-                                            {{--                                            @endforeach--}}
-                                        </select>
+                                         </select>
                                     </div>
                                 </div>
 
@@ -102,10 +108,7 @@
                                     <div class="col-lg-9">
                                         <select name="bed_space_id" id="bed_space_id" class="form-control select-search" required>
                                             <option value=""> Choose Bed Space</option>
-{{--                                            @foreach ($hostels as $h)--}}
-{{--                                                <option value="{{ $h->id }}">{{ $h->hostel_name }}</option>--}}
-{{--                                            @endforeach--}}
-                                        </select>
+                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -113,9 +116,6 @@
                                     <div class="col-lg-9">
                                         <select name="student_id" id="student_id" class="form-control select-search" required>
                                             <option value=""> Choose Hostel</option>
-                                            {{--                                            @foreach ($hostels as $h)--}}
-                                            {{--                                                <option value="{{ $h->id }}">{{ $h->hostel_name }}</option>--}}
-                                            {{--                                            @endforeach--}}
                                         </select>
                                     </div>
                                 </div>

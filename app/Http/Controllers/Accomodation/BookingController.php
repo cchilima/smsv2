@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Accomodation\Booking;
+use App\Http\Requests\Accomodation\BookingUpdate;
 use App\Repositories\Accommodation\BedSpaceRepository;
 use App\Repositories\Accommodation\BookingRepository;
 use App\Repositories\Accommodation\HostelRepository;
@@ -80,15 +81,32 @@ class BookingController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $booking = $this->booking_repository->find($id);
+        $data['hostel'] = $this->hostel_repository->getAll();
+        return !is_null($booking) ? view('pages.booking.edit', $data,compact('booking'))
+            : Qs::goWithDanger('pages.hostels.index');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(BookingUpdate $request, string $id)
     {
-        //
+        $data = $request->only(['student_id', 'bed_space_id']);
+        $data['booking_date'] = date('Y-m-d', strtotime(now()));
+        $data['expiration_date'] = date('Y-m-d', strtotime('+1 day', time()));
+        $dataF['is_available'] = 'false';
+        $current = $this->booking_repository->find($id);
+        $dataB['is_available'] = 'true';
+        $this->bed_space_repository->update($current->bed_space_id,$dataB);
+        $update = $this->booking_repository->update($id,$data);
+        $this->bed_space_repository->update($data['bed_space_id'],$dataF);
+
+        if ($update) {
+            return Qs::jsonStoreOk();
+        } else {
+            return Qs::jsonError(__('msg.create_failed'));
+        }
     }
 
     /**
@@ -96,7 +114,11 @@ class BookingController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $current = $this->booking_repository->find($id);
+        $dataB['is_available'] = 'true';
+        $this->bed_space_repository->update($current->bed_space_id,$dataB);
+        $this->booking_repository->find($id)->delete();
+        return back()->with('flash_success', __('msg.delete_ok'));
     }
 
     public

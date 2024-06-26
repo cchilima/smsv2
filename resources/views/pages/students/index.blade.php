@@ -46,6 +46,10 @@
 
                                                 <div class="dropdown-menu dropdown-menu-left">
                                                     @if (Qs::userIsTeamSA())
+                                                        <a href="{{ route('show.student', $student->user->id, ['ac' => 1]) }}"
+                                                           class="dropdown-item"><i class="icon-eye"></i> Show</a>
+                                                    @endif
+                                                    @if (Qs::userIsTeamSA())
                                                         <a href="{{ route('students.edit', $student->id) }}"
                                                             class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
                                                     @endif
