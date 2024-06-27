@@ -6,6 +6,7 @@ use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
+use App\Http\Middleware\Custom\TeamSAT;
 use App\Http\Requests\Accomodation\Booking;
 use App\Http\Requests\Accomodation\BookingUpdate;
 use App\Repositories\Accommodation\BedSpaceRepository;
@@ -25,6 +26,7 @@ class BookingController extends Controller
     {
         //$this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
         //$this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSAT::class, ['only' => ['destroy',]]);
 
         $this->bed_space_repository = $bed_space_repository;
         $this->booking_repository = $booking_repository;

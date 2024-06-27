@@ -11,7 +11,7 @@ use App\Repositories\Accommodation\BookingRepository;
 use App\Repositories\Accommodation\HostelRepository;
 use App\Repositories\Accommodation\RoomRepository;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Middleware\Custom\{SuperAdmin, TeamSA};
+use App\Http\Middleware\Custom\{SuperAdmin, TeamSA, TeamSAT};
 use App\Http\Requests\Students\{Student, StudentUpdate, UserInfo, PersonalInfo, NextOfKinInfo, AcademicInfo, ResetPasswordInfo};
 use App\Repositories\Academics\{ClassAssessmentsRepo, StudentRegistrationRepository};
 use App\Repositories\Admissions\StudentRepository;
@@ -48,6 +48,7 @@ class StudentController extends Controller
     ) {
         //$this->middleware(TeamSA::class, ['except' => ['destroy']]);
         //$this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
+        $this->middleware(TeamSAT::class, ['only' => ['destroy',]]);
 
         $this->studentRepo = $studentRepo;
         $this->registrationRepo = $registrationRepo;
@@ -253,9 +254,9 @@ class StudentController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            dd($e);
+            //dd($e);
             // Log the error or handle it accordingly
-            return Qs::json(false, 'failed to update');
+            return Qs::json('failed to update', false);
         }
     }
 

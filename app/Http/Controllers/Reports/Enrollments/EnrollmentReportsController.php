@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\Student;
 use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
+use App\Http\Middleware\Custom\TeamSAT;
 use App\Repositories\Academics\AcademicPeriodRepository;
 use App\Repositories\Academics\ClassAssessmentsRepo;
 use App\Repositories\Academics\ProgramsRepository;
@@ -30,6 +31,7 @@ class EnrollmentReportsController extends Controller
     ) {
         //$this->middleware(TeamSA::class, ['except' => ['destroy',]]);
         //$this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
+        $this->middleware(TeamSAT::class, ['except' => ['destroy',]]);
 
         $this->enrollmentRepository = $enrollmentRepository;
         $this->academicPeriodRepository = $academicPeriodRepository;

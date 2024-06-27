@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Reports\Accounts;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
+use App\Http\Middleware\Custom\TeamSAT;
 use App\Repositories\Accounting\InvoiceRepository;
 use App\Repositories\Accounting\PaymentMethodRepository;
 use App\Repositories\Reports\Accounts\AccountsReportsRepository;
@@ -17,6 +18,7 @@ class AccountReportsController extends Controller
     {
         //$this->middleware(TeamSA::class, ['except' => ['destroy',]]);
         //$this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
+        $this->middleware(TeamSAT::class, ['except' => ['destroy',]]);
         $this->revenue_analysis = $revenue_analysis;
         $this->payment_methods = $payment_methods;
     }

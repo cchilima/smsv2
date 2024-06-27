@@ -65,7 +65,7 @@ class Qs
 
     public static function getTeamSAT()
     {
-        return ['admin', 'super_admin', 'instructor'];
+        return ['admin', 'super_admin', 'instructor','student', 'accountant'];
     }
 
     public static function getTeamAcademic()
@@ -75,6 +75,10 @@ class Qs
     public static function getSupportTeam()
     {
         return ['admin', 'super_admin', 'instructor', 'accountant'];
+    }
+    public static function getSupportTeamAll()
+    {
+        return ['admin', 'super_admin', 'instructor','student', 'accountant'];
     }
 
     public static function getTeamAdministrative()

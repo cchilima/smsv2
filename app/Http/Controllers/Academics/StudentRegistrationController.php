@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Academics;
 
 use App\Helpers\Qs;
+use App\Http\Middleware\Custom\TeamSAT;
 use Illuminate\Http\Request;
 use Elibyy\TCPDF\Facades\TCPDF;
 use App\Http\Controllers\Controller;
@@ -24,6 +25,7 @@ class StudentRegistrationController extends Controller
     {
         // $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
         // $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSAT::class, ['only' => ['destroy',]]);
 
         $this->registrationRepo = $registrationRepo;
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Accounting;
 
 use App\Exports\InvoicesExport;
 use App\Helpers\Qs;
+use App\Http\Middleware\Custom\TeamSAT;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Accounting\Invoice;
@@ -21,7 +22,9 @@ class InvoiceController extends Controller
 
     public function __construct(InvoiceRepository $invoiceRepo)
     {
+        $this->middleware(TeamSAT::class, ['only' => ['destroy',]]);
         $this->invoiceRepo = $invoiceRepo;
+
     }
 
     /**

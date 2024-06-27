@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Accounting;
 
 use App\Exports\StatementsExport;
 use App\Helpers\Qs;
+use App\Http\Middleware\Custom\TeamSAT;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Accounting\Invoice;
@@ -20,6 +21,7 @@ class StatementController extends Controller
 
     public function __construct(StatementRepository $statementRepo)
     {
+        $this->middleware(TeamSAT::class, ['only' => ['destroy',]]);
         $this->statementRepo = $statementRepo;
     }
 

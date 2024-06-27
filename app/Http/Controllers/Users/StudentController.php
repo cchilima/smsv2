@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Users;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
+use App\Http\Middleware\Custom\TeamSAT;
 use App\Models\Accounting\Invoice;
 use App\Repositories\Academics\ClassAssessmentsRepo;
 use App\Repositories\Academics\StudentRegistrationRepository;
@@ -39,6 +40,7 @@ class StudentController extends Controller
     ) {
         //        $this->middleware(TeamSA::class, ['except' => ['destroy']]);
         //        $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
+        $this->middleware(TeamSAT::class, ['except' => ['destroy',]]);
 
         $this->studentRepo = $studentRepo;
         $this->registrationRepo = $registrationRepo;

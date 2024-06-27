@@ -6,6 +6,7 @@ use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
+use App\Http\Middleware\Custom\TeamSAT;
 use App\Http\Requests\Announcements\Announcement;
 use App\Http\Requests\Announcements\AnnouncementUpdate;
 use App\Repositories\Announcements\AnnouncementRepository;
@@ -21,6 +22,7 @@ class AnnouncementController extends Controller
     {
         // $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
         // $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSAT::class, ['except' => ['destroy',]]);
 
         $this->announcement = $announcement;
     }
