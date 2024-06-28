@@ -136,9 +136,10 @@ class BookingController extends Controller
         $student_id = $request->input('student_id');
         $studentIdsFromEnrollment = Enrollment::where('student_id', $student_id)
             ->first();
-        $ac = AcademicPeriodClass::where('academic_period_class_id',$studentIdsFromEnrollment->academic_period_class_id)->first();
+        //dd($request);
+        $ac = AcademicPeriodClass::where('id',$studentIdsFromEnrollment->academic_period_class_id)->first();
         // Get next academic period
-        $aca = AcademicPeriod::find($ac);
+        $aca = AcademicPeriod::find($ac->academic_period_id);
         $data['expiration_date'] = $aca->ac_end_date;
         $data = $this->booking_repository->update($id,$data);
         if ($data) {
