@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('fees', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('type', ['recurring', 'once off', 'course repeat fee']);
+            $table->enum('type', ['recurring', 'once off', 'course repeat fee', 'accommodation fee']);
             $table->integer('archieved')->default(0);
             $table->timestamps();
 
