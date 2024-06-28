@@ -211,6 +211,7 @@ Route::resource('booking', BookingController::class);
 Route::resource('bed-space', BedSpaceController::class);
 Route::get('/hostel-rooms/{id}', [BookingController::class, 'getRooms'])->name('hostel-rooms');
 Route::get('/room-bed-spaces/{id}', [BookingController::class, 'getBedSpaces'])->name('room-bed-space');
+Route::post('/accommodation-confirm/', [BookingController::class, 'ConfirmBooking'])->name('confirmation.booking');
 // accommodation module student side
 Route::post('/accommodation-apply/', [StudentController::class, 'applyBedSpace'])->name('student.apply_accommodation');
 Route::get('/my-applications-rooms/', [StudentController::class, 'getAppliedBedSpaces'])->name('student_applied.rooms');

@@ -131,7 +131,5 @@ class BedSpaceRepository
         return Student::with('user')->where('id',$student_id)
             ->whereIn('id', $finalStudentIds)
             ->get();
-
-
     }
 }

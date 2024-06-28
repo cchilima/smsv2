@@ -42,13 +42,13 @@ class StudentController extends Controller
         ClassAssessmentsRepo $classaAsessmentRepo,
         InvoiceRepository $invoiceRepo,
         BookingRepository $booking_repository,
-        BedSpaceRepository $bed_space_repository,
+        HostelRepository $hostel_repository,
         RoomRepository $rooms_repository,
-        HostelRepository $hostel_repository
+        BedSpaceRepository $bed_space_repository
     ) {
         //$this->middleware(TeamSA::class, ['except' => ['destroy']]);
         //$this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
-        $this->middleware(TeamSAT::class, ['only' => ['destroy',]]);
+        $this->middleware(TeamSAT::class, ['except' => ['destroy',]]);
 
         $this->studentRepo = $studentRepo;
         $this->registrationRepo = $registrationRepo;
@@ -262,6 +262,7 @@ class StudentController extends Controller
 
     public function search(Request $request)
     {
+        
         if (isset($request['query']) && !$request['query'] == '') {
             $searchText = $request['query'];
             $users['users'] = $this->studentRepo->studentSearch($searchText);

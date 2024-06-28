@@ -52,6 +52,7 @@ class StatementController extends Controller
 
             $collected = $this->statementRepo->collectPayment($request->amount, $request->academic_period, $request->student_id, $request->payment_method_id);
 
+
             if ($collected) {
                 return Qs::jsonStoreOk();
             } else {

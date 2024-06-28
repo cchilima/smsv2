@@ -65,6 +65,15 @@
                                                     <form method="post" id="item-delete-{{ $c->id }}"
                                                           action="{{ route('booking.destroy', $c->id) }}"
                                                           class="hidden">@csrf @method('delete')</form>
+
+                                                        <form class="ajax-store" method="post" action="{{ route('confirmation.booking')  }}">
+                                                            @csrf
+                                                            <input type="hidden" name="id" value="{{ $c->id }}">
+                                                            <input type="hidden" name="student_id" value="{{ $c->student_id }}">
+                                                            <div class="text-right">
+                                                                <a id="ajax-btn" type="submit" class="dropdown-item">Submit form <i class="icon-paperplane ml-2"></i></a>
+                                                            </div>
+                                                        </form>
                                                 @endif
                                             </div>
                                         </div>
