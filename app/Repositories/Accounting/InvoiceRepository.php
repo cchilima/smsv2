@@ -229,12 +229,13 @@ class InvoiceRepository
             ->select('academic_period_fees.*', 'programs.id as program_id')
             ->get();
 
-        // Get universal fees (academic period fees with no associations)
-        $universalFees = AcademicPeriodFee::doesntHave('programs')
+            // Get universal fees (academic period fees with no associations)
+            $universalFees = AcademicPeriodFee::doesntHave('programs')
             ->whereHas('fee', function ($query) {
-                $query->whereNot('type', 'course repeat fee');
+                $query->whereNotIn('type', ['course repeat fee', 'accommodation fee']);
             })
             ->get();
+
 
         // Create a new invoice
         $invoice = Invoice::create([

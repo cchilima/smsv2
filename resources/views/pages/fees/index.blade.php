@@ -76,6 +76,7 @@
                                                 <option value="Recurring">Recurring</option>
                                             <option value="Once off">Once off</option>
                                             <option value="Course repeat fee">Course repeat fee</option>
+                                            <option value="Accommodation fee">Accommodation fee</option>
                                         </select>
                                     </div>
                                 </div>
