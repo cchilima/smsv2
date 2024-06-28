@@ -22,11 +22,10 @@ class BookingRepository
     protected $statementRepo;
     protected $registrationRepo,$booking_repository;
 
-    public function __construct(StatementRepository $statementRepo, StudentRegistrationRepository $registrationRepo,BookingRepository $booking_repository)
+    public function __construct(StatementRepository $statementRepo, StudentRegistrationRepository $registrationRepo)
     {
         $this->statementRepo = $statementRepo;
         $this->registrationRepo = $registrationRepo;
-        $this->booking_repository = $booking_repository;
     }
 
     public function create($data)
@@ -48,6 +47,7 @@ class BookingRepository
     {
         return Booking::find($id);
     }
+
     public function getOpenBookings()
     {
        // return Booking::with('student','bedSpace')->get();

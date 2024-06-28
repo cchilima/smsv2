@@ -262,7 +262,7 @@ class StudentController extends Controller
 
     public function search(Request $request)
     {
-        
+
         if (isset($request['query']) && !$request['query'] == '') {
             $searchText = $request['query'];
             $users['users'] = $this->studentRepo->studentSearch($searchText);
@@ -361,6 +361,7 @@ class StudentController extends Controller
             return Qs::json('msg.delete_failed => ' . $e->getMessage(), false);
         }
     }
+
     //student accommodation
   public function getAppliedBedSpaces()
   {
