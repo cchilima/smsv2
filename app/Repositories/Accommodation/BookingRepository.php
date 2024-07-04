@@ -79,7 +79,7 @@ class BookingRepository
 
             $studentIdsFromEnrollment = Enrollment::where('student_id', $student_id)
                 ->first();
-            $ac = AcademicPeriodClass::where('academic_period_class_id',$studentIdsFromEnrollment->academic_period_class_id)->first();
+            $ac = AcademicPeriodClass::where('id',$studentIdsFromEnrollment->academic_period_class_id)->first();
 
             // Get next academic period
             $periodInfo = AcademicPeriod::find($ac->academic_period_id);

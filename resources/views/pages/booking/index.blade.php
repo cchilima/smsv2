@@ -71,7 +71,7 @@
                                                             <input type="hidden" name="id" value="{{ $c->id }}">
                                                             <input type="hidden" name="student_id" value="{{ $c->student_id }}">
                                                             <div class="text-right">
-                                                                <a id="ajax-btn" type="submit" class="dropdown-item">Submit form <i class="icon-paperplane ml-2"></i></a>
+                                                                <button id="ajax-btn" type="submit" class="dropdown-item"><i class="icon-paperplane ml-2"> Confirm Booking</i></button>
                                                             </div>
                                                         </form>
                                                 @endif
