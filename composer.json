@@ -18,6 +18,7 @@
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
         "laravelcollective/html": "^6.4",
+        "livewire/livewire": "^3.5",
         "maatwebsite/excel": "^3.1",
         "owen-it/laravel-auditing": "^13.6",
         "vinkla/hashids": "^11.0"

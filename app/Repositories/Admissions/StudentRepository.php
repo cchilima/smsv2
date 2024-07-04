@@ -50,9 +50,19 @@ class StudentRepository
         return Student::find($id)->user;
     }
 
+    public function getProvinceTowns($id)
+    {
+        return Town::where('province_id', $id)->get();
+    }
+
     public function getTowns()
     {
         return Town::all(['id', 'name']);
+    }
+
+    public function getCountryProvinces($id)
+    {
+        return Province::where('country_id', $id)->get();
     }
 
     public function getProvinces()
@@ -103,6 +113,58 @@ class StudentRepository
     public function getIntakes()
     {
         return AcademicPeriodIntake::all(['id', 'name']);
+    }
+
+    public function getSubjects()
+    {
+         
+        $subjects = [
+
+            ["id" => 1, "name" => "English Language"],
+            ["id" => 2, "name" => "Mathematics"],
+            ["id" => 3, "name" => "Biology"],
+            ["id" => 4, "name" => "Chemistry"],
+            ["id" => 5, "name" => "Physics"],
+            ["id" => 6, "name" => "Civic Education"],
+            ["id" => 7, "name" => "Agricultural Science"],
+            ["id" => 8, "name" => "Business Studies"],
+            ["id" => 9, "name" => "Computer Studies"],
+            ["id" => 10, "name" => "Geography"],
+            ["id" => 11, "name" => "History"],
+            ["id" => 12, "name" => "Literature in English"],
+            ["id" => 13, "name" => "Religious Education"],
+            ["id" => 14, "name" => "Design and Technology"],
+            ["id" => 15, "name" => "Art"],
+            ["id" => 16, "name" => "Music"],
+            ["id" => 17, "name" => "Physical Education"],
+            ["id" => 18, "name" => "Home Economics"],
+            ["id" => 19, "name" => "Commerce"],
+            ["id" => 20, "name" => "Principles of Accounts"],
+            ["id" => 21, "name" => "French"],
+            ["id" => 22, "name" => "Additional Mathematics"],
+            ["id" => 23, "name" => "Technical Drawing"]
+        ];
+        
+
+        return $subjects;
+        
+    }
+
+
+    public function getSchools()
+    {
+         
+        $schools = [
+            
+            ["id" => 1, "name" => "Kitwe boys secondary"],
+            ["id" => 2, "name" => "Alim secondary"],
+            ["id" => 3, "name" => "Hellen Kaunda secondary"],
+            ["id" => 4, "name" => "Faith christian school"],
+        ];
+        
+
+        return $schools;
+        
     }
 
     public function addStudentId($studentData)

@@ -18,7 +18,7 @@
     <div class="collapse navbar-collapse" id="navbar-mobile">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
-                <a href="{{ route('application.initiate') }}" class="navbar-nav-link py-1 ">
+                <a href="{{ route('start-application') }}" class="navbar-nav-link py-1 ">
                     <i class="icon-pencil7"></i>
                     <span class="ml-2">Apply Now</span>
                 </a>

@@ -129,6 +129,7 @@ class ApplicantRepository
 
 
 
+
     public function checkApplicationCompletion($application_id)
     {
         // Find the application
@@ -142,13 +143,13 @@ class ApplicantRepository
         $applicationArr = $application->toArray();
 
         // Check if all mandatory fields are filled
-        $fieldsToCheck = Arr::except($applicationArr, ['status', 'middle_name', 'postal_code', 'period_type_id', 'application_date','nrc','passport']);
+        $fieldsToCheck = Arr::except($applicationArr, ['status', 'middle_name', 'period_type_id', 'application_date', 'nrc', 'passport']);
 
 
         $allFieldsFilled = array_filter($fieldsToCheck, fn ($value) => $value === null);
 
         // Check if application has an attachments
-        $hasAttachments = $application->attachments()->count() > 0;
+        $hasAttachments = $application->attachment()->count() > 0;
 
         // Check if application has payment(s)
         $feePaid = $application->payment->sum('amount');
@@ -168,26 +169,55 @@ class ApplicantRepository
             return true;
         }
 
-        // return response()->json(['message' => 'Application completed successfully'], 200);
         return false;
     }
 
-    public function uploadAttachment($request, $application_id)
+    public function uploadAttachment($document, $application_id)
     {
-        if ($request->hasFile('attachment')) {
+
+
+        if ($document) {
+
             $application = Applicant::find($application_id);
-
-            // Retrieve the uploaded file
-            $attachment = $request->file('attachment');
-
-            // Generate a unique filename
-            $filename = time() . '.' . $attachment->getClientOriginalExtension();
-
-            // Store the file in the storage disk
-            $path = $attachment->storeAs('uploads/attachments/applications', $filename, 'public');
-
-            return $application->attachments()->create(['type' => 'Results', 'attachment' => $filename]);
+        
+            $exists = $application->attachment;
+        
+            if (!$exists) {
+        
+                // Retrieve the uploaded file
+                $attachment = $document; //$request->file('attachment');
+        
+                // Generate a unique filename
+                $filename = time() . '.' . $attachment->getClientOriginalExtension();
+        
+                // Store the file in the storage disk
+                $path = $attachment->storeAs('uploads/attachments/applications', $filename, 'public');
+        
+                return $application->attachment()->create(['type' => 'Results', 'attachment' => $filename]);
+        
+            } else {
+        
+                // Delete previous file using unlink
+                $previousFile = public_path('storage/uploads/attachments/applications/' . $application->attachment->attachment);
+                if (file_exists($previousFile)) {
+                    unlink($previousFile);
+                }
+        
+                // Retrieve the uploaded file
+                $attachment = $document; //$request->file('attachment');
+        
+                // Generate a unique filename
+                $filename = time() . '.' . $attachment->getClientOriginalExtension();
+        
+                // Store the file in the storage disk
+                $path = $attachment->storeAs('uploads/attachments/applications', $filename, 'public');
+        
+                // Update the existing attachment record with the new file details
+                return $application->attachment()->update(['type' => 'Results', 'attachment' => $filename]);
+            }
         }
+        
+
 
         return null;  // Return null if no file is uploaded
     }

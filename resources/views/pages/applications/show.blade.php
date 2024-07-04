@@ -102,20 +102,20 @@
                                         <th>Study Mode</th>
                                         <td>{{ $application->study_mode->name ?? 'Missing' }}</td>
                                     </tr>
-                                    @if (count($application->attachments) > 0)
-                                        @foreach ($application->attachments as $attachment)
+                                    @if ($application->attachment)
+                               
                                             <tr>
-                                                <td>{{ $attachment->type }}</td>
+                                                <td>{{ $application->attachment->type }}</td>
                                                 <td>
                                                     <form
-                                                        action="{{ route('application.download_attachment', $attachment->id) }}"
+                                                        action="{{ route('application.download_attachment', $application->attachment->id) }}"
                                                         method="GET">
                                                         @csrf @method('GET')
                                                         <button type="submit" class="btn btn-primary">Download</button>
                                                     </form>
                                                 </td>
                                             </tr>
-                                        @endforeach
+                                 
                                     @else
                                         <tr>
                                             <td>No attachments added</td>
@@ -143,7 +143,7 @@
                 <table class="table table-bordered">
                                 <tbody>
                                 
-                                    @if (count($application->attachments) > 0)
+                                    @if ($application->attachment)
 
                                     <tr>
                                                 <td>Application fee payment</td>

@@ -1,22 +1,15 @@
 <?php
 
-use App\Http\Controllers\Accomodation\BedSpaceController;
-use App\Http\Controllers\Accomodation\BookingController;
-use App\Http\Controllers\Accomodation\HostelController;
-use App\Http\Controllers\Accomodation\RoomController;
-use App\Http\Controllers\AuditReports\AuditReportsController;
-use App\Http\Controllers\Reports\Accounts\AccountReportsController;
-use App\Http\Controllers\Reports\Enrollments\EnrollmentReportsController;
-use App\Http\Controllers\Users\MyAccountController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\Academics\AcademicPeriodClassController;
+use App\Http\Controllers\Academics\AcademicPeriodController;
 use App\Http\Controllers\Academics\APFeesController;
 use App\Http\Controllers\Academics\APManagementController;
 use App\Http\Controllers\Academics\AssessmentsTypesController;
 use App\Http\Controllers\Academics\ClassAssessmentsController;
+use App\Http\Controllers\Academics\CourseController;
 use App\Http\Controllers\Academics\CourseLevelController;
 use App\Http\Controllers\Academics\DepartmentController;
+use App\Http\Controllers\Academics\GradeContoller;
 use App\Http\Controllers\Academics\IntakeController;
 use App\Http\Controllers\Academics\PeriodTypeController;
 use App\Http\Controllers\Academics\PrerequisiteController;
@@ -24,34 +17,41 @@ use App\Http\Controllers\Academics\ProgramController;
 use App\Http\Controllers\Academics\ProgramCoursesController;
 use App\Http\Controllers\Academics\QualificationController;
 use App\Http\Controllers\Academics\SchoolController;
-use App\Http\Controllers\Academics\StudyModeController;
-use App\Http\Controllers\Academics\CourseController;
-use App\Http\Controllers\Accounting\{InvoiceController, PaymentMethodController, StatementController};
-use App\Http\Controllers\Academics\AcademicPeriodController;
-use App\Http\Controllers\Academics\AcademicPeriodClassController;
-use App\Http\Controllers\Academics\GradeContoller;
 use App\Http\Controllers\Academics\StudentRegistrationController;
-
-use App\Http\Controllers\Admissions\StudentController;
-
-use App\Http\Controllers\Applications\ApplicantController;
-
-use App\Http\Controllers\Profile\MaritalStatusController;
-
+use App\Http\Controllers\Academics\StudyModeController;
+use App\Http\Controllers\Accomodation\BedSpaceController;
+use App\Http\Controllers\Accomodation\BookingController;
+use App\Http\Controllers\Accomodation\HostelController;
+use App\Http\Controllers\Accomodation\RoomController;
+use App\Http\Controllers\Accounting\{InvoiceController, PaymentMethodController, StatementController};
 use App\Http\Controllers\Accounting\FeeController;
-
-use App\Http\Controllers\Notices\AnnouncementController;
-
-use App\Http\Controllers\Users\UserController;
-
+use App\Http\Controllers\Admissions\StudentController;
+use App\Http\Controllers\Applications\ApplicantController;
+use App\Http\Controllers\AuditReports\AuditReportsController;
 use App\Http\Controllers\Enrollments\EnrollmentController;
+use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\Notices\AnnouncementController;
+use App\Http\Controllers\Profile\MaritalStatusController;
+use App\Http\Controllers\Reports\Accounts\AccountReportsController;
+use App\Http\Controllers\Reports\Enrollments\EnrollmentReportsController;
 use App\Http\Controllers\Residency\{CountryController, ProvinceController, TownController};
 use App\Http\Controllers\Settings\SettingsController;
+use App\Http\Controllers\Users\MyAccountController;
 use App\Http\Controllers\Users\StudentController as UsersStudentController;
+use App\Http\Controllers\Users\UserController;
+use App\Livewire\Applications\{InitiateApplication, CompleteApplication, MyApplications};
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+
+
+
+
+
 
 Route::get('announcement/{announcement_id}', [AnnouncementController::class, 'ShowAnnouncement'])->name('announcement.fullview');
 Route::post('announcement/{announcement_id}/dismiss', [AnnouncementController::class, 'dismissAnnouncement'])->name('announcement.dismiss');
@@ -95,7 +95,6 @@ Route::group(['prefix' => 'assess'], function () {
     });
 });
 
-
 Route::group(['prefix' => 'reports'], function () {
     Route::group(['prefix' => 'accounts'], function () {
         Route::get('/revenue-analysis', [AccountReportsController::class, 'RevenueAnalysis'])->name('revenue.analysis');
@@ -123,22 +122,20 @@ Route::group(['prefix' => 'reports'], function () {
         Route::get('/student-list-reports', [EnrollmentReportsController::class, 'StudentList'])->name('student.list.reports');
         Route::get('/audit-trail', [EnrollmentReportsController::class, 'AuditTrailReports'])->name('audit.trail.reports');
 
-
-
-        //student list pdf
+        // student list pdf
         Route::get('/programs-student-list/{ac}', [EnrollmentReportsController::class, 'DownloadStudentProgramList'])->name('student.program.list');
         Route::get('/program-student-list/{ac}/{pid}', [EnrollmentReportsController::class, 'DownloadStudentProgramListOne'])->name('student.one.program.list');
         Route::get('/class-student-list/{ac}', [EnrollmentReportsController::class, 'DownloadAcClassLists'])->name('student.class.list');
         Route::get('/class-student-list/{ac}/{classid}', [EnrollmentReportsController::class, 'DownloadAcOneClassLists'])->name('student.one.class.list');
 
-        //regidters
+        // regidters
         Route::post('/exam-registers', [EnrollmentReportsController::class, 'ExamRegistersDownload'])->name('ac.exam.registers');
-        //student id
+        // student id
         Route::get('/student-id/{student_id}', [EnrollmentReportsController::class, 'DownloadStudentIDs'])->name('student.id.download');
         Route::get('/student-slip-id/{student_id}', [EnrollmentReportsController::class, 'DownloadStudentExamSlip'])->name('student.exam.slip.download');
         Route::get('/student-transcript-id/{student_id}', [EnrollmentReportsController::class, 'DownloadStudentTranscript'])->name('student.transcript.download');
 
-        //csv
+        // csv
         Route::get('/programs-csv-student-list/{ac}', [EnrollmentReportsController::class, 'DownloadstudentProgramListCsv'])->name('student.program.list.csv');
         Route::get('/program-csv-student-list/{ac}/{pid}', [EnrollmentReportsController::class, 'DownloadStudentProgramListOneCSV'])->name('student.csv.one.program.list');
 
@@ -146,23 +143,31 @@ Route::group(['prefix' => 'reports'], function () {
 
         Route::get('/class-csv-student-list/{ac}/{classid}', [EnrollmentReportsController::class, 'DownloadAcOneClassListsCSV'])->name('student.csv.one.class.list');
 
-        //normal reports
+        // normal reports
         Route::post('/all-enrollments', [EnrollmentReportsController::class, 'downloadAcademicPeriodEnrollmentsReport'])->name('reports.enrollments.download');
     });
 });
 
 Route::group(['prefix' => 'accounts'], function () {
-  //  Route::get('/results', [ClassAssessmentsController::class, 'MyResults'])->name('student-exam_results');
+    //  Route::get('/results', [ClassAssessmentsController::class, 'MyResults'])->name('student-exam_results');
     Route::get('/ca-results', [ClassAssessmentsController::class, 'MyCAResults'])->name('student_ca_results');
     Route::get('/exam-registration', [ClassAssessmentsController::class, 'ExamRegistration'])->name('student-exam_registration');
 });
 
 // Student application routes
-/*Route::group(['prefix' => 'application'], function () { */
+/* Route::group(['prefix' => 'application'], function () { */
+
+
+Route::get('/my-applications/{id}', MyApplications::class)->name('application.my-applications');
+Route::get('/start-application', InitiateApplication::class)->name('start-application');
+Route::get('/application/step-2/{application_id}', CompleteApplication::class)->name('application.complete_application');
+
+
+
 Route::get('/applications', [ApplicantController::class, 'index'])->name('application.index');
-Route::get('/applications/initiate', [ApplicantController::class, 'initiate'])->name('application.initiate');
+//Route::get('/applications/initiate', [ApplicantController::class, 'initiate'])->name('application.initiate');
 Route::post('/application/step-1', [ApplicantController::class, 'startApplication'])->name('application.start_application');
-Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
+//Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
 Route::put('/application/step-3/{id}', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
 Route::get('/application/{application_id}', [ApplicantController::class, 'show'])->name('application.show');
 Route::get('/application/attachment/{attachment_id}/download', [ApplicantController::class, 'downloadAttachment'])->name('application.download_attachment');
@@ -172,10 +177,9 @@ Route::get('/provisional-letter', [ApplicantController::class, 'provisional'])->
 Route::get('/applications-pending-fee-collection', [ApplicantController::class, 'applicationsPendingFeeCollection'])->name('application.pending_collection');
 Route::post('/collect-application-fee', [ApplicantController::class, 'collectFee'])->name('application.collect_fee');
 
-//Applications report
+// Applications report
 Route::get('/applications/{status}/{id}', [ApplicantController::class, 'ApplicationsStatus'])->name('status.applications_reports');
-/*}); */
-
+/* }); */
 
 Route::resource('courses', CourseController::class);
 Route::resource('programs', ProgramController::class);
@@ -204,7 +208,7 @@ Route::resource('academic-period-classes', AcademicPeriodClassController::class)
 Route::resource('academic-period-management', APManagementController::class);
 Route::resource('academic-period-fees', APFeesController::class);
 Route::resource('audits', AuditReportsController::class);
-//Accommodation Module
+// Accommodation Module
 Route::resource('hostels', HostelController::class);
 Route::resource('rooms', RoomController::class);
 Route::resource('booking', BookingController::class);
@@ -244,7 +248,7 @@ Route::resource('settings', SettingsController::class);
 // Payment Methods Routes
 Route::resource('payment-methods', PaymentMethodController::class);
 
-//my account
+// my account
 Route::group(['prefix' => 'my_account'], function () {
     Route::get('/', [MyAccountController::class, 'index'])->name('my_account');
     // Route::put('/', 'MyAccountController@update_profile')->name('my_account.update');

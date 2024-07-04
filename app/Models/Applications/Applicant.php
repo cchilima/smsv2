@@ -70,13 +70,19 @@ class Applicant extends Model implements AuditableContract
         return $this->belongsTo(StudyMode::class, 'academic_period_intake_id');
     }
 
-    public function attachments()
+    public function attachment()
     {
-        return $this->hasMany(ApplicantAttachment::class, 'applicant_id');
+        return $this->hasOne(ApplicantAttachment::class, 'applicant_id');
     }
+
     public function payment()
     {
         return $this->hasMany(ApplicantPayment::class, 'applicant_id');
+    }
+
+    public function grades()
+    {
+        return $this->hasMany(ApplicantGrade::class);
     }
 
 
