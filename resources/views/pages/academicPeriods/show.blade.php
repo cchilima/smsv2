@@ -181,13 +181,13 @@
                 <div class="card-body collapse">
                     <ul class="nav nav-tabs nav-tabs-highlight">
                         <li class="nav-item">
-                            <a href="#all-classes" class="nav-link active" data-toggle="tab">
-                                All classes
+                            <a href="#all-ac-programs" class="nav-link" data-toggle="tab">
+                                Running programs
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#all-ac-programs" class="nav-link" data-toggle="tab">
-                                Running programs
+                            <a href="#all-classes" class="nav-link active" data-toggle="tab">
+                                All classes
                             </a>
                         </li>
                     </ul>

@@ -101,7 +101,9 @@
     $('form#ajax-reg').on('submit', function(ev) {
         ev.preventDefault();
         submitForm($(this), 'store');
-        $('#ajax-reg-t-0').get(0).click();
+        //$('#ajax-reg-t-0').get(0).click();
+        var div = $(this).data('reload');
+        div ? reloadDiv(div) : '';
     });
 
     $('form.ajax-pay').on('submit', function(ev) {

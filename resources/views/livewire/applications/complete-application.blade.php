@@ -8,9 +8,14 @@
                 ->
 
             <a wire:click="sectionChanged('academic_info')"
-                class="{{ $currentSection === 'academic_info' ? 'active' : '' }}">Academic Info</a>
+                class="{{ $currentSection === 'academic_info' ? 'active' : '' }}">Program Applied for</a>
 
                 ->
+
+            <a wire:click="sectionChanged('next_of_kin')"
+               class="{{ $currentSection === 'next_of_kin' ? 'active' : '' }}">Next of Kin</a>
+
+            ->
 
             <a wire:click="sectionChanged('results')"
                 class="{{ $currentSection === 'results' ? 'active' : '' }}">Results</a>
@@ -208,7 +213,7 @@
                                 </thead>
 
                                 <tbody class="light-deca">
-             
+
                                         <tr>
                                             <td>1. </td>
                                             <td>{{ $applicant->attachment->type }}</td>
@@ -216,7 +221,7 @@
                                             <td><a href="{{ asset('storage/uploads/attachments/applications/' . $applicant->attachment->attachment) }}" target="_blank">open</a></td>
 
                                         </tr>
-                                   
+
 
                                 </tbody>
                             </table>
@@ -225,6 +230,84 @@
 
                         </div>
                     @endif
+
+                   @if ($currentSection === 'next_of_kin')
+                            <div id="next_of_kin">
+                                <div class="row">
+                                    <div class="input-field col m6 s12">
+                                        <input wire:model="nk_name" placeholder="Name" type="text"
+                                               class="validate">
+                                        <label class="active">Name</label>
+                                        @error('name')
+                                        <span class="red-text darken-4 error">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="input-field col m6 s12">
+                                        <input wire:model="nk_address" placeholder="Address" type="text"
+                                               class="validate">
+                                        <label class="active">Address</label>
+                                        @error('address')
+                                        <span class="red-text darken-4 error">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="input-field col m6 s12">
+                                        <input wire:model="nk_email" placeholder="Email" type="email"
+                                               class="validate">
+                                        <label class="active">Email</label>
+                                        @error('email')
+                                        <span class="red-text darken-4 error">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="input-field col m6 s12">
+                                        <input wire:model="nk_phone_number" placeholder="Phone" type="text"
+                                               class="validate">
+                                        <label class="active">Phone</label>
+                                        @error('phone_number')
+                                        <span class="red-text darken-4 error">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col m12 s12">
+                                        <label class="active">Country</label>
+                                        <select wire:model.live="nk_country_id" class="browser-default custom-select ">
+                                            <option></option>
+                                            @foreach ($countries as $country)
+                                                <option value="{{ $country->id }}">{{ $country->country }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+
+                                    <div class="col m6 s12">
+                                        <label class="active">Province</label>
+                                        <select wire:model.live="nk_province_id" class="browser-default custom-select ">
+                                            <option></option>
+                                            @foreach ($provinces as $province)
+                                                <option value="{{ $province->id }}">{{ $province->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+
+                                    <div class="col m6 s12">
+                                        <label class="active">Town</label>
+                                        <select wire:model.live="nk_town_id" class="browser-default custom-select ">
+                                            <option></option>
+                                            @foreach ($towns as $town)
+                                                <option value="{{ $town->id }}">{{ $town->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        @endif
 
                     @if ($currentSection === 'results')
                         <div id="results">
@@ -307,6 +390,7 @@
                     @endif
 
                     <button type="submit" class="btn btn-small black mt-10 rounded">Save Progress</button>
+                        <a href="{{ route('application.my-applications',$this->applicant->id) }}" type="button" class="btn btn-small black mt-10 rounded">My Applications</a>
                 </form>
             </div>
         </div>

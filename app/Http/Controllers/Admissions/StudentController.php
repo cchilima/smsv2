@@ -10,6 +10,7 @@ use App\Repositories\Accommodation\BedSpaceRepository;
 use App\Repositories\Accommodation\BookingRepository;
 use App\Repositories\Accommodation\HostelRepository;
 use App\Repositories\Accommodation\RoomRepository;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\Custom\{SuperAdmin, TeamSA, TeamSAT};
 use App\Http\Requests\Students\{Student, StudentUpdate, UserInfo, PersonalInfo, NextOfKinInfo, AcademicInfo, ResetPasswordInfo};
@@ -159,13 +160,15 @@ class StudentController extends Controller
             $student = $user->student()->create($studentData);
 
             DB::commit();
-
-            return Qs::jsonStoreOk();
+            return redirect(\route('students.index'));
+           //return Qs::goWithSuccess('students.index','stored successfully');
         } catch (\Exception $e) {
             DB::rollBack();
             // Log the error or handle it accordingly
+           // return redirect(\route('students.index'));
             return Qs::json('msg.create_failed => ' . $e->getMessage(), false);
         }
+        //return Qs::jsonStoreOk();
     }
 
     /**
