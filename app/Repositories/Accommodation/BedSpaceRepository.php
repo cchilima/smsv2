@@ -89,7 +89,9 @@ class BedSpaceRepository
 // Remove active student IDs from the combined array
         $finalStudentIds = $combinedStudentIds->diff($activeStudentIds);
 
-        return Student::with('user')
+        return Student::with('user')->whereHas('user', function ($query) use ($gender) {
+            $query->where('gender', '=', $gender);
+        })
             ->whereIn('id', $finalStudentIds)
             ->get();
 
