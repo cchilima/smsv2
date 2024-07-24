@@ -71,7 +71,19 @@
                     </table>
                 </div>
 
+
+
+
+
+
+
+
+
                 <div class="tab-pane fade" id="new-student">
+
+
+
+
 
                     <div class="card">
 
@@ -462,7 +474,16 @@
                         </form>
                     </div>
 
+
+
+
+
                 </div>
+
+
+
+
+                
             </div>
         </div>
     </div>
