@@ -91,9 +91,9 @@
                             <div class="row">
                                 <div class="input-field col m6 s12">
                                     <select wire:model="gender" class="browser-default custom-select">
-                                        <option value="" disabled selected>Gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
+                                        <option selected>Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
                                     </select>
                                     <label class="active"></label>
                                     @error('gender')

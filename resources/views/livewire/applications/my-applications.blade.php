@@ -34,7 +34,7 @@
                             <td>{{ $application->first_name }} {{ $application->last_name }}</td>
                             <td>{{ $application->program->name ?? '' }}</td>
                             <td>{{ $application->status ?? '' }}</td>
-                            <td>K{{ count($application->payment) > 0 ? $application->payment->amount :  '0' }}</td>
+                            <td>K{{ $application->payment->sum('amount') ?? 'K0' }}</td>
 
                             <td>{{ $application->created_at ? $application->created_at->format('d M Y') : '' }}</td>
 
