@@ -42,6 +42,8 @@
                                         <div class="dropdown-menu dropdown-menu-left">
                                             <a href="{{ route('application.show', $application->id) }}"
                                                 class="dropdown-item"><i class="icon-eye"></i>View</a>
+                                            <a href="{{ route('application.show', $application->id) }}"
+                                               class="dropdown-item"><i class="icon-eye"></i>Accept</a>
 
                                             @if ($application->status === 'incomplete')
                                                 <a href="/application/step-2/{{ $application->id }}"

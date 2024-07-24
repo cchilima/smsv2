@@ -103,7 +103,7 @@
                                         <td>{{ $application->study_mode->name ?? 'Missing' }}</td>
                                     </tr>
                                     @if ($application->attachment)
-                               
+
                                             <tr>
                                                 <td>{{ $application->attachment->type }}</td>
                                                 <td>
@@ -115,7 +115,7 @@
                                                     </form>
                                                 </td>
                                             </tr>
-                                 
+
                                     @else
                                         <tr>
                                             <td>No attachments added</td>
@@ -142,17 +142,17 @@
 
                 <table class="table table-bordered">
                                 <tbody>
-                                
+
                                     @if ($application->attachment)
 
                                     <tr>
                                                 <td>Application fee payment</td>
                                                 <td>
-                                                    K {{ $application->payment->sum('amount') ?? 'K0' }} 
+                                                    K {{ $application->payment->sum('amount') ?? 'K0' }}
                                                 </td>
                                             </tr>
 
-                                      
+
                                             <tr>
                                                 <td>Provisional letter</td>
                                                 <td>
@@ -179,12 +179,13 @@
 
                                 </tbody>
                             </table>
-                    
+
 
 
 
                 </div>
             </div>
+            <a href="{{ route('application.my-applications',$application->id) }}" type="button" class="btn btn-small black rounded">My Applications</a>
         </div>
     </div>
 
