@@ -36,7 +36,7 @@
 
                         <div class="mb-2">
                             <button type="submit" class="btn btn-small black rounded">submit</button>
-                            <a class="btn btn-small black rounded" href="{{ route('login') }}">Home</a>
+                            <a class="right" href="{{ route('login') }}"> go to home</a>
                         </div>
                     </form>
                 </div>
