@@ -135,15 +135,20 @@ class ApplicantRepository
         // Find the application
         $application = Applicant::find($application_id);
 
+        $applicationNextOfKin = $application->nextOfKin;
+
         // Check if application exists
         if (!$application) {
             return response()->json(['message' => 'Application not found'], 404);
         }
 
+        $applicationNextOfKinArr = $applicationNextOfKin->toArray();
         $applicationArr = $application->toArray();
 
+        $applicationArr = array_merge($applicationArr, $applicationNextOfKinArr); 
+
         // Check if all mandatory fields are filled
-        $fieldsToCheck = Arr::except($applicationArr, ['status', 'middle_name', 'period_type_id', 'application_date', 'nrc', 'passport']);
+        $fieldsToCheck = Arr::except($applicationArr, ['status', 'middle_name', 'period_type_id', 'application_date', 'nrc', 'passport', 'telephone']);
 
 
         $allFieldsFilled = array_filter($fieldsToCheck, fn ($value) => $value === null);

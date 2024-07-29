@@ -318,13 +318,18 @@
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['application.summary_reports']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Reports</span></a>
                                 </li>
-                            </ul>
 
-                            <ul class="nav nav-group-sub" data-submenu-title="Manage Admissions">
                                 <li class="nav-item">
                                     <a href="{{ route('application.index') }}"
                                        class="nav-link {{ in_array(Route::currentRouteName(), ['applications.index']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Applications</span></a>
+                                </li>
+
+
+                                <li class="nav-item">
+                                    <a href="{{ route('start-application') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['start-application']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Admit Student</span></a>
                                 </li>
                             </ul>
                         </li>

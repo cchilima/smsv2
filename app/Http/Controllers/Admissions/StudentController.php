@@ -119,6 +119,7 @@ class StudentController extends Controller
     public function store(Student $request)
     {
         try {
+            
             DB::beginTransaction();
 
             $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
