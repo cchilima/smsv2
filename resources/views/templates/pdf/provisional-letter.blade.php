@@ -129,7 +129,7 @@ use App\Helpers\Qs;
     <div class="container mt-5">
         <div class="card">
             <div class="card-body">
-                <p>Dear Mr/Ms/Mrs <span class="font-weight-bold">{{$applicant->nrc ? 'NRC : ' : 'Passport : '}} - {{$applicant->nrc ? $applicant->nrc : $applicant->passport }}</span>,</p>
+                <p>Dear Mr/Ms/Mrs <span class="font-weight-bold">{{$applicant->nrc ? 'NRC : ' : 'Passport : '}} {{$applicant->nrc ? $applicant->nrc : $applicant->passport }}</span>,</p>
 
                 <h5 class="mt-4 mb-3">RE: PROVISIONAL OFFER OF ADMISSION</h5>
 
