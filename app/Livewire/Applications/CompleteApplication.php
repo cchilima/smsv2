@@ -95,38 +95,35 @@ class CompleteApplication extends Component
         ]);
 
         $this->applicantRepo->checkApplicationCompletion($this->applicant->id);
-
     }
 
     public function saveGrade()
     {
         try {
 
-            if($this->secondary_school && $this->subject && $this->grade){
+            if ($this->secondary_school && $this->subject && $this->grade) {
 
                 $existingGrade = $this->applicant->grades()
-                ->where('secondary_school', $this->secondary_school)
-                ->where('subject', $this->subject)
-                ->first();
+                    ->where('secondary_school', $this->secondary_school)
+                    ->where('subject', $this->subject)
+                    ->first();
 
-            if ($existingGrade) {
-                // Update the existing record
-                $existingGrade->update(['grade' => $this->grade]);
-            } else {
-                // Create a new record
-                $this->applicant->grades()->create([
-                    'secondary_school' => $this->secondary_school,
-                    'subject' => $this->subject,
-                    'grade' => $this->grade
-                ]);
-            }
+                if ($existingGrade) {
+                    // Update the existing record
+                    $existingGrade->update(['grade' => $this->grade]);
+                } else {
+                    // Create a new record
+                    $this->applicant->grades()->create([
+                        'secondary_school' => $this->secondary_school,
+                        'subject' => $this->subject,
+                        'grade' => $this->grade
+                    ]);
+                }
 
-                $this->reset([ 'subject', 'grade']);
-    
+                $this->reset(['subject', 'grade']);
+
                 session()->flash('success', 'Grade uploaded successfully');
-
             }
-
         } catch (\Throwable $th) {
 
             dd($th);
@@ -140,17 +137,16 @@ class CompleteApplication extends Component
 
             $this->applicantRepo->uploadAttachment($this->results, $this->applicant->id);
             $this->reset(['results']);
-
         } else {
             // Handle the case where $this->results is not a file
             throw new Exception('The provided results are not a valid file.');
         }
     }
-    
+
 
     public function updated($propertyName)
     {
-         $this->saveProgress();
+        $this->saveProgress();
     }
 
     public function sectionChanged($section)
@@ -170,7 +166,6 @@ class CompleteApplication extends Component
         if ($this->province_id) {
             // get towns under selected province.
             $towns = $this->studentRepo->getProvinceTowns($this->province_id);
-
         } else {
             $towns = [];
         }

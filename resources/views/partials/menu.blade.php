@@ -308,9 +308,25 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['application.index', 'application.show', 'application.initiate', 'application.start_application', 'application.complete_application', 'application.save_application','application.summary_reports']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [ 'application.index', 'application.show', 'start-application',  'application.complete_application', 'application.save_application','application.summary_reports']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-user-plus"></i> <span>
                                     Admissions</span></a>
+
+                            <ul class="nav nav-group-sub" data-submenu-title="New Application">
+                                <li class="nav-item">
+                                    <a href="{{ route('start-application') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['applications.initiate']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>New Student Application</span></a>
+                                </li>
+                            </ul>
+
+                            <ul class="nav nav-group-sub" data-submenu-title="Manage Admissions">
+                                <li class="nav-item">
+                                    <a href="{{ route('application.index') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['applications.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Applications</span></a>
+                                </li>
+                            </ul>
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Admissions">
                                 <li class="nav-item">
@@ -320,12 +336,38 @@
                                 </li>
                             </ul>
 
-                            <ul class="nav nav-group-sub" data-submenu-title="Manage Admissions">
+                        </li>
+
+                        <li
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['hostels.create', 'hostels.edit', 'hostels.index', 'rooms.index', 'rooms.edit', 'booking.index', 'booking.edit', 'bed-space.index', 'bed-space.edit']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            <a href="#" class="nav-link"><i class="icon-office"></i> <span>
+                                    Accommodation</span></a>
+
+                            <ul class="nav nav-group-sub" data-submenu-title="Manage Profile">
                                 <li class="nav-item">
-                                    <a href="{{ route('application.index') }}"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['applications.index']) ? 'active' : '' }}"><i
-                                            class="icon-fence"></i> <span>Applications</span></a>
+                                    <a href="{{ route('hostels.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['hostels.create', 'hostels.edit', 'hostels.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Hostels</span></a>
                                 </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('rooms.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['rooms.create', 'rooms.edit', 'rooms.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Rooms</span></a>
+                                </li>
+                                <li class="nav-item">
+
+                                    <a href="{{ route('bed-space.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['bed-space.create', 'bed-space.edit', 'bed-space.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Bed Spaces</span></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('booking.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['booking.create', 'booking.edit', 'booking.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Bed Space Booking</span></a>
+                                </li>
+
                             </ul>
                         </li>
 
@@ -360,7 +402,7 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['marital-statuses.create', 'marital-statuses.edit', 'marital-statuses.index', 'countries.index', 'countries.edit', 'provinces.index', 'provinces.edit', 'towns.index', 'towns.edit']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['announcements.index', 'marital-statuses.create', 'marital-statuses.edit', 'marital-statuses.index', 'countries.index', 'countries.edit', 'provinces.index', 'provinces.edit', 'towns.index', 'towns.edit']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-equalizer"></i> <span>
                                     Other</span></a>
 
@@ -403,38 +445,7 @@
                             </ul>
                         </li>
 
-                        <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['hostels.create', 'hostels.edit', 'hostels.index', 'rooms.index', 'rooms.edit', 'booking.index', 'booking.edit', 'bed-space.index', 'bed-space.edit']) ? 'nav-item-expanded nav-item-open' : '' }} ">
-                            <a href="#" class="nav-link"><i class="icon-equalizer"></i> <span>
-                                    Accommodation management</span></a>
-
-                            <ul class="nav nav-group-sub" data-submenu-title="Manage Profile">
-                                <li class="nav-item">
-                                    <a href="{{ route('hostels.index') }}"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['hostels.create', 'hostels.edit', 'hostels.index']) ? 'active' : '' }}"><i
-                                            class="icon-fence"></i> <span>Hostels</span></a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="{{ route('rooms.index') }}"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['rooms.create', 'rooms.edit', 'rooms.index']) ? 'active' : '' }}"><i
-                                            class="icon-fence"></i> <span>Rooms</span></a>
-                                </li>
-                                <li class="nav-item">
-
-                                    <a href="{{ route('bed-space.index') }}"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['bed-space.create', 'bed-space.edit', 'bed-space.index']) ? 'active' : '' }}"><i
-                                            class="icon-fence"></i> <span>Bed Spaces</span></a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="{{ route('booking.index') }}"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['booking.create', 'booking.edit', 'booking.index']) ? 'active' : '' }}"><i
-                                            class="icon-fence"></i> <span>Bed Space Booking</span></a>
-                                </li>
-
-                            </ul>
-                        </li>
+                        
                     @endif
 
                 @endif
