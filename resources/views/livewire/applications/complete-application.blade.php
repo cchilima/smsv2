@@ -1,7 +1,7 @@
 <div>
     <div class="container p-10">
 
-        <div class="form-wizard mt-10 mb-5">
+        <div class="form-wizard mt-10 mb-5 items-center">
             <a wire:click="sectionChanged('personal_info')"
                 class="{{ $currentSection === 'personal_info' ? 'active' : '' }}">Personal Info</a>
 

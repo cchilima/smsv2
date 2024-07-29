@@ -155,39 +155,41 @@ class CompleteApplication extends Component
 
 
 
+public function saveGrade()
+{
+    try {
+        if ($this->secondary_school && $this->subject && $this->grade) {
+            $existingGrade = $this->applicant->grades()
+                ->where('secondary_school', $this->secondary_school)
+                ->where('subject', $this->subject)
+                ->first();
 
-    public function saveGrade()
-    {
-        try {
-            if ($this->secondary_school && $this->subject && $this->grade) {
-                $existingGrade = $this
-                    ->applicant
-                    ->grades()
-                    ->where('secondary_school', $this->secondary_school)
-                    ->where('subject', $this->subject)
-                    ->first();
-
-                if ($existingGrade) {
-                    // Update the existing record
-                    $existingGrade->update(['grade' => $this->grade]);
-                } else {
-                    // Create a new record
-                    $this->applicant->grades()->create([
-                        'secondary_school' => $this->secondary_school,
-                        'subject' => $this->subject,
-                        'grade' => $this->grade
-                    ]);
-                }
-
-                $this->reset(['subject', 'grade']);
-
-                session()->flash('success', 'Grade uploaded successfully');
+            if ($existingGrade) {
+                // Update the existing record
+                $existingGrade->update(['grade' => $this->grade]);
+            } else {
+                // Create a new record
+                $this->applicant->grades()->create([
+                    'secondary_school' => $this->secondary_school,
+                    'subject' => $this->subject,
+                    'grade' => $this->grade
+                ]);
             }
-        } catch (\Throwable $th) {
-            dd($th);
-            session()->flash('error', 'Grade uploaded failed.');
+
+            $this->reset(['subject', 'grade']);
+
+            session()->flash('success', 'Grade uploaded successfully');
+        } else {
+            session()->flash('error', 'Please provide all required information.');
         }
+    } catch (\Throwable $th) {
+        dd($th);
+        session()->flash('error', 'Grade upload failed.');
     }
+}
+
+
+
 
     public function uploadDocument()
     {
