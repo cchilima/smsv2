@@ -5,15 +5,15 @@
             <a wire:click="sectionChanged('personal_info')"
                 class="{{ $currentSection === 'personal_info' ? 'active' : '' }}">Personal Info</a>
 
-                ->
+            ->
 
             <a wire:click="sectionChanged('academic_info')"
                 class="{{ $currentSection === 'academic_info' ? 'active' : '' }}">Program Applied for</a>
 
-                ->
+            ->
 
             <a wire:click="sectionChanged('next_of_kin')"
-               class="{{ $currentSection === 'next_of_kin' ? 'active' : '' }}">Next of Kin</a>
+                class="{{ $currentSection === 'next_of_kin' ? 'active' : '' }}">Next of Kin</a>
 
             ->
 
@@ -71,8 +71,7 @@
 
                             <div class="row">
                                 <div class="input-field col m6 s12">
-                                    <input wire:model="email" placeholder="Email" type="email"
-                                        class="validate">
+                                    <input wire:model="email" placeholder="Email" type="email" class="validate">
                                     <label class="active">Email</label>
                                     @error('email')
                                         <span class="red-text darken-4 error">{{ $message }}</span>
@@ -91,7 +90,7 @@
                             <div class="row">
                                 <div class="input-field col m6 s12">
                                     <select wire:model="gender" class="browser-default custom-select">
-                                        <option selected>Select Gender</option>
+                                        <option selected>Select gender</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
                                     </select>
@@ -111,35 +110,32 @@
                                 <div class="col m12 s12">
                                     <label class="active">Country</label>
                                     <select wire:model.live="country_id" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select country</option>
                                         @foreach ($countries as $country)
                                             <option value="{{ $country->id }}">{{ $country->country }} </option>
                                         @endforeach
                                     </select>
                                 </div>
 
-
                                 <div class="col m6 s12">
                                     <label class="active">Province</label>
                                     <select wire:model.live="province_id" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select province</option>
                                         @foreach ($provinces as $province)
                                             <option value="{{ $province->id }}">{{ $province->name }} </option>
                                         @endforeach
                                     </select>
                                 </div>
 
-
                                 <div class="col m6 s12">
                                     <label class="active">Town</label>
                                     <select wire:model.live="town_id" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select town</option>
                                         @foreach ($towns as $town)
                                             <option value="{{ $town->id }}">{{ $town->name }} </option>
                                         @endforeach
                                     </select>
                                 </div>
-
 
                             </div>
                         </div>
@@ -159,7 +155,6 @@
                                     </select>
                                 </div>
 
-
                                 <div class="col m6 s12">
                                     <label class="active">Study mode</label>
                                     <select wire:model.live="study_mode_id" class="browser-default custom-select ">
@@ -169,7 +164,6 @@
                                         @endforeach
                                     </select>
                                 </div>
-
 
                                 <div class="col m6 s12">
                                     <label class="active">Intake</label>
@@ -182,7 +176,6 @@
                                     </select>
                                 </div>
 
-
                                 <div class="col m6 s12  mt-4">
                                     <label class="active">Upload merged results : accepted Files: PDF (Max 5MB)</label>
                                     <div class="form-group">
@@ -191,123 +184,115 @@
                                 </div>
                             </div>
 
-
-
                             <div class="p-2 ">
                                 <button wire:click="uploadDocument()" class="btn btn-small black"><i
                                         class="material-icons right">arrow_upward</i>save attachment</button>
                             </div>
 
-                            @if($applicant->attachment)
+                            @if ($applicant->attachment)
+                                <h5>Single results & ID file</h5>
 
-                            <h5>Single results & ID file</h5>
+                                <table class="rounded white z-depth-0 centered striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Type</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
 
-                            <table class="rounded white z-depth-0 centered striped">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Type</th>
-                                        <th></th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-
-                                <tbody class="light-deca">
+                                    <tbody class="light-deca">
 
                                         <tr>
                                             <td>1. </td>
                                             <td>{{ $applicant->attachment->type }}</td>
                                             <td>{{ $applicant->attachment->attachment }}</td>
-                                            <td><a href="{{ asset('storage/uploads/attachments/applications/' . $applicant->attachment->attachment) }}" target="_blank">open</a></td>
+                                            <td><a href="{{ asset('storage/uploads/attachments/applications/' . $applicant->attachment->attachment) }}"
+                                                    target="_blank">open</a></td>
 
                                         </tr>
 
-
-                                </tbody>
-                            </table>
-
+                                    </tbody>
+                                </table>
                             @endif
 
                         </div>
                     @endif
 
-                   @if ($currentSection === 'next_of_kin')
-                            <div id="next_of_kin">
-                                <div class="row">
-                                    <div class="input-field col m6 s12">
-                                        <input wire:model="nk_name" placeholder="Name" type="text"
-                                               class="validate">
-                                        <label class="active">Name</label>
-                                        @error('name')
+                    @if ($currentSection === 'next_of_kin')
+                        <div id="next_of_kin">
+                            <div class="row">
+                                <div class="input-field col m6 s12">
+                                    <input wire:model="nk_name" placeholder="Name" type="text" class="validate">
+                                    <label class="active">Name</label>
+                                    @error('name')
                                         <span class="red-text darken-4 error">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <div class="input-field col m6 s12">
-                                        <input wire:model="nk_address" placeholder="Address" type="text"
-                                               class="validate">
-                                        <label class="active">Address</label>
-                                        @error('address')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                        @enderror
-                                    </div>
+                                    @enderror
                                 </div>
-
-                                <div class="row">
-                                    <div class="input-field col m6 s12">
-                                        <input wire:model="nk_email" placeholder="Email" type="email"
-                                               class="validate">
-                                        <label class="active">Email</label>
-                                        @error('email')
+                                <div class="input-field col m6 s12">
+                                    <input wire:model="nk_address" placeholder="Address" type="text"
+                                        class="validate">
+                                    <label class="active">Address</label>
+                                    @error('address')
                                         <span class="red-text darken-4 error">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <div class="input-field col m6 s12">
-                                        <input wire:model="nk_phone_number" placeholder="Phone" type="text"
-                                               class="validate">
-                                        <label class="active">Phone</label>
-                                        @error('phone_number')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col m12 s12">
-                                        <label class="active">Country</label>
-                                        <select wire:model.live="nk_country_id" class="browser-default custom-select ">
-                                            <option></option>
-                                            @foreach ($countries as $country)
-                                                <option value="{{ $country->id }}">{{ $country->country }} </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-
-                                    <div class="col m6 s12">
-                                        <label class="active">Province</label>
-                                        <select wire:model.live="nk_province_id" class="browser-default custom-select ">
-                                            <option></option>
-                                            @foreach ($provinces as $province)
-                                                <option value="{{ $province->id }}">{{ $province->name }} </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-
-                                    <div class="col m6 s12">
-                                        <label class="active">Town</label>
-                                        <select wire:model.live="nk_town_id" class="browser-default custom-select ">
-                                            <option></option>
-                                            @foreach ($towns as $town)
-                                                <option value="{{ $town->id }}">{{ $town->name }} </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-
+                                    @enderror
                                 </div>
                             </div>
-                        @endif
+
+                            <div class="row">
+                                <div class="input-field col m6 s12">
+                                    <input wire:model="nk_email" placeholder="Email" type="email"
+                                        class="validate">
+                                    <label class="active">Email</label>
+                                    @error('email')
+                                        <span class="red-text darken-4 error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="input-field col m6 s12">
+                                    <input wire:model="nk_phone_number" placeholder="Phone" type="text"
+                                        class="validate">
+                                    <label class="active">Phone</label>
+                                    @error('phone_number')
+                                        <span class="red-text darken-4 error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col m12 s12">
+                                    <label class="active">Country</label>
+                                    <select wire:model.live="nk_country_id" class="browser-default custom-select ">
+                                        <option diabled>Select country</option>
+                                        @foreach ($countries as $country)
+                                            <option value="{{ $country->id }}">{{ $country->country }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col m6 s12">
+                                    <label class="active">Province</label>
+                                    <select wire:model.live="nk_province_id" class="browser-default custom-select ">
+                                        <option selected>Select province</option>
+                                        @foreach ($provinces as $province)
+                                            <option value="{{ $province->id }}">{{ $province->name }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col m6 s12">
+                                    <label class="active">Town</label>
+                                    <select wire:model.live="nk_town_id" class="browser-default custom-select ">
+                                        <option selected>Select town</option>
+                                        @foreach ($towns as $town)
+                                            <option value="{{ $town->id }}">{{ $town->name }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                    @endif
 
                     @if ($currentSection === 'results')
                         <div id="results">
@@ -340,7 +325,6 @@
                                     @enderror
                                 </div>
 
-
                                 <div class="input-field col m6 s12">
                                     <input wire:model="grade" placeholder="Grade" type="number" pattern="[1-9]"
                                         class="validate">
@@ -357,32 +341,31 @@
 
                             </div>
 
+                            @if (count($applicant->grades) > 0)
 
-                            @if(count($applicant->grades) > 0)
+                                <h5>Grades</h5>
 
-                            <h5>Grades</h5>
-
-                            <table class="rounded white z-depth-0 centered striped">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Subject</th>
-                                        <th>Grade</th>
-
-                                    </tr>
-                                </thead>
-
-                                <tbody class="light-deca">
-                                    @foreach ($applicant->grades as $key => $grade)
+                                <table class="rounded white z-depth-0 centered striped">
+                                    <thead>
                                         <tr>
-                                            <td>{{ ++$key }}</td>
-                                            <td>{{ $grade->subject }}</td>
-                                            <td>{{ $grade->grade }}</td>
-                                        </tr>
-                                    @endforeach
+                                            <th>#</th>
+                                            <th>Subject</th>
+                                            <th>Grade</th>
 
-                                </tbody>
-                            </table>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody class="light-deca">
+                                        @foreach ($applicant->grades as $key => $grade)
+                                            <tr>
+                                                <td>{{ ++$key }}</td>
+                                                <td>{{ $grade->subject }}</td>
+                                                <td>{{ $grade->grade }}</td>
+                                            </tr>
+                                        @endforeach
+
+                                    </tbody>
+                                </table>
 
                             @endif
 
@@ -390,7 +373,8 @@
                     @endif
 
                     <button type="submit" class="btn btn-small black mt-10 rounded">Save Progress</button>
-                        <a href="{{ route('application.my-applications',$this->applicant->id) }}" type="button" class="btn btn-small black mt-10 rounded">My Applications</a>
+                    <a href="{{ route('application.my-applications', $this->applicant->id) }}" type="button"
+                        class="btn btn-small black mt-10 rounded">My Applications</a>
                 </form>
             </div>
         </div>
