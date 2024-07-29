@@ -39,7 +39,7 @@ use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Users\MyAccountController;
 use App\Http\Controllers\Users\StudentController as UsersStudentController;
 use App\Http\Controllers\Users\UserController;
-use App\Livewire\Applications\{InitiateApplication, CompleteApplication, MyApplications};
+use App\Livewire\Applications\{InitiateApplication, CompleteApplication, CompletedApplication, MyApplications};
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -161,7 +161,7 @@ Route::group(['prefix' => 'accounts'], function () {
 Route::get('/my-applications/{id}', MyApplications::class)->name('application.my-applications');
 Route::get('/start-application', InitiateApplication::class)->name('start-application');
 Route::get('/application/step-2/{application_id}', CompleteApplication::class)->name('application.complete_application');
-
+Route::get('/application/{application_id}', CompletedApplication::class)->name('application.show');
 
 
 Route::get('/applications', [ApplicantController::class, 'index'])->name('application.index');
@@ -169,7 +169,7 @@ Route::get('/applications', [ApplicantController::class, 'index'])->name('applic
 Route::post('/application/step-1', [ApplicantController::class, 'startApplication'])->name('application.start_application');
 //Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
 Route::put('/application/step-3/{id}', [ApplicantController::class, 'saveApplication'])->name('application.save_application');
-Route::get('/application/{application_id}', [ApplicantController::class, 'show'])->name('application.show');
+//Route::get('/application/{application_id}', [ApplicantController::class, 'show'])->name('application.show');
 Route::get('/application/attachment/{attachment_id}/download', [ApplicantController::class, 'downloadAttachment'])->name('application.download_attachment');
 Route::get('/applications/summary', [ApplicantController::class, 'ApplicationsSummary'])->name('application.summary_reports');
 Route::get('/provisional-letter', [ApplicantController::class, 'provisional'])->name('application.download_provisional');

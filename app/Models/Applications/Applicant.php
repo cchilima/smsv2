@@ -36,6 +36,7 @@ class Applicant extends Model implements AuditableContract
         'program_id',
         'period_type_id',
         'study_mode_id',
+        'marital_status_id',
         'academic_period_intake_id',
     ];
 
@@ -83,6 +84,11 @@ class Applicant extends Model implements AuditableContract
     public function grades()
     {
         return $this->hasMany(ApplicantGrade::class);
+    }
+
+    public function nextOfKin()
+    {
+        return $this->hasOne(ApplicantNextOfKin::class);
     }
 
 

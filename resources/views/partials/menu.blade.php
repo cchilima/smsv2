@@ -334,7 +334,6 @@
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['application.summary_reports']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Reports</span></a>
                                 </li>
-                            </ul>
 
                         </li>
 
@@ -354,6 +353,13 @@
                                     <a href="{{ route('rooms.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['rooms.create', 'rooms.edit', 'rooms.index']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Rooms</span></a>
+                                </li>
+
+
+                                <li class="nav-item">
+                                    <a href="{{ route('start-application') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['start-application']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Admit Student</span></a>
                                 </li>
                                 <li class="nav-item">
 

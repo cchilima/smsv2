@@ -17,14 +17,15 @@ return new class extends Migration
             $table->string('mobile');
             $table->string('telephone')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('restrict');
-            $table->string('relationship_id')->constrained('relationships')->onDelete('restrict');
-            $table->string('town_id')->constrained('towns')->onDelete('restrict');
-            $table->string('province_id')->constrained('provinces')->onDelete('restrict');
-            $table->string('country_id')->constrained('countries')->onDelete('restrict');
+            $table->foreignId('relationship_id')->constrained('relationships')->onDelete('restrict');
+            $table->string('address');
+            $table->foreignId('town_id')->constrained('towns')->onDelete('restrict');
+            $table->foreignId('province_id')->constrained('provinces')->onDelete('restrict');
+            $table->foreignId('country_id')->constrained('countries')->onDelete('restrict');
             $table->timestamps();
 
             // Add indexes
-            $table->index('id');
+            $table->index('user_id');
             $table->index('full_name');
         });
     }
