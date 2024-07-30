@@ -60,7 +60,7 @@
                 </li>
 
                 {{-- Academics --}}
-                @if (Qs::userIsSuperAdmin())
+                @if (Qs::userIsSuperAdmin() || Qs::userIsAdmin())
 
                     {{-- Administrative --}}
 
@@ -328,12 +328,15 @@
                                 </li>
                             </ul>
 
+
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Admissions">
                                 <li class="nav-item">
                                     <a href="{{ route('application.summary_reports') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['application.summary_reports']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Reports</span></a>
                                 </li>
+                            </ul>
+                        </li>
 
                         </li>
 
@@ -455,7 +458,7 @@
                     @endif
 
                 @endif
-                @if (Qs::userIsSuperAdmin())
+                @if (true)
                     <li
                         class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
                             'getPublishProgramsCas',
@@ -528,7 +531,7 @@
                                     @endif
 
                                     {{--                                    --}}{{-- Grades list --}}
-                                    @if (!Qs::userIsInstructor())
+                                    @if (true)
                                         <li
                                             class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['getPublishProgramsCas', 'getPramResultsLevel', 'smyClassList', 'getPublishPrograms', 'getPramResults']) ? 'nav-item-expanded nav-item-open' : 'getPublishPrograms' }}">
                                             <a href="#" class="nav-link"><span>Board of Examiners</span></a>
@@ -642,9 +645,8 @@
                         @csrf
                     </form>
                 </li>
-
             </ul>
         </div>
     </div>
-    </div>
 </div>
+
