@@ -60,7 +60,7 @@
                 </li>
 
                 {{-- Academics --}}
-                @if (Qs::userIsTeamSAT() || Qs::userIsSuperAdmin())
+                @if (Qs::userIsSuperAdmin())
 
                     {{-- Administrative --}}
 
@@ -451,11 +451,11 @@
                             </ul>
                         </li>
 
-                        
+
                     @endif
 
                 @endif
-                @if (Qs::userIsTeamSAT() || Qs::userIsSuperAdmin())
+                @if (Qs::userIsSuperAdmin())
                     <li
                         class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
                             'getPublishProgramsCas',
@@ -645,5 +645,6 @@
 
             </ul>
         </div>
+    </div>
     </div>
 </div>
