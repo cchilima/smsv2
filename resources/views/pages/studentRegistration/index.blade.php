@@ -66,6 +66,7 @@
             </div>
 
             <div class="card-body">
+                <p>You are registered for the current academic period.</p>
 
                 <form action="{{ route('registration.summary') }}" method="get">
                     @csrf
@@ -75,38 +76,49 @@
         </div>
     @else
         <div class="card">
-
             <div class="card-header header-elements-inline">
                 <h6 class="card-title">Courses available for registration</h6>
                 {!! Qs::getPanelOptions() !!}
             </div>
+            @if ($courses)
+                <div class="card-body">
 
-            <div class="card-body">
-
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>S/N</th>
-                            <th>Code</th>
-                            <th>Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($courses as $course)
+                    <table class="table table-bordered">
+                        <thead>
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $course->code }}</td>
-                                <td>{{ $course->name }}</td>
+                                <th>S/N</th>
+                                <th>Code</th>
+                                <th>Name</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach ($courses as $course)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $course->code }}</td>
+                                    <td>{{ $course->name }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
 
-                <form action="{{ route('enrollments.store') }}" method="post">
-                    @csrf
-                    <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register</button>
-                </form>
-            </div>
+                    @if ($isWithinRegistrationPeriod)
+                        @if (!$isRegistered)
+                            <form action="{{ route('enrollments.store') }}" method="post">
+                                @csrf
+                                <input name="student_number" type="hidden" value="{{ $student->id }}" />
+                                <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register
+                                </button>
+                            </form>
+                        @endif
+                    @endif
+                </div>
+            @else
+                <div class="container ">
+                    <h6> No courses available</h6>
+                    <p><i>tip - student either has no invoice or is not within the registration period.</i></p>
+                </div>
+            @endif
         </div>
 
     @endif
