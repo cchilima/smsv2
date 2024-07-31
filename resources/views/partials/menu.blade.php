@@ -60,7 +60,7 @@
                 </li>
 
                 {{-- Academics --}}
-                @if (Qs::userIsTeamSAT() || Qs::userIsSuperAdmin())
+                @if (Qs::userIsSuperAdmin() || Qs::userIsAdmin())
 
                     {{-- Administrative --}}
 
@@ -173,7 +173,7 @@
                                 <li class="nav-item">
                                     <a href="{{ route('academic-period-classes.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-classes.create', 'academic-period-classes.edit', 'academic-period-classes.index']) ? 'active' : '' }}"><i
-                                            class="icon-fence"></i> <span>Academic Period Classes</span></a>
+                                            class="icon-fence"></i> <span>Academic period class</span></a>
                                 </li>
 
                                 <li class="nav-item">
@@ -328,6 +328,7 @@
                                 </li>
                             </ul>
 
+
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Admissions">
                                 <li class="nav-item">
                                     <a href="{{ route('application.summary_reports') }}"
@@ -335,6 +336,7 @@
                                             class="icon-fence"></i> <span>Reports</span></a>
                                 </li>
                             </ul>
+                        </li>
 
                         </li>
 
@@ -354,6 +356,13 @@
                                     <a href="{{ route('rooms.index') }}"
                                        class="nav-link {{ in_array(Route::currentRouteName(), ['rooms.create', 'rooms.edit', 'rooms.index']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Rooms</span></a>
+                                </li>
+
+
+                                <li class="nav-item">
+                                    <a href="{{ route('start-application') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['start-application']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Admit Student</span></a>
                                 </li>
                                 <li class="nav-item">
 
@@ -445,11 +454,11 @@
                             </ul>
                         </li>
 
-                        
+
                     @endif
 
                 @endif
-                @if (Qs::userIsTeamSAT() || Qs::userIsSuperAdmin())
+                @if (true)
                     <li
                         class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
                             'getPublishProgramsCas',
@@ -522,7 +531,7 @@
                                     @endif
 
                                     {{--                                    --}}{{-- Grades list --}}
-                                    @if (!Qs::userIsInstructor())
+                                    @if (true)
                                         <li
                                             class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['getPublishProgramsCas', 'getPramResultsLevel', 'smyClassList', 'getPublishPrograms', 'getPramResults']) ? 'nav-item-expanded nav-item-open' : 'getPublishPrograms' }}">
                                             <a href="#" class="nav-link"><span>Board of Examiners</span></a>
@@ -636,8 +645,8 @@
                         @csrf
                     </form>
                 </li>
-
             </ul>
         </div>
     </div>
 </div>
+
