@@ -12,7 +12,7 @@
 
         <div class="card-body">
             <ul class="nav nav-tabs nav-tabs-highlight">
-                <li class="nav-item"><a href="#new-period" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
+                <li class="nav-item"><a href="#new-period" class="nav-link active show" data-toggle="tab"><i class="icon-plus2"></i>
                         Create New Academic Period</a></li>
                 <li class="nav-item"><a href="#all-fees" class="nav-link" data-toggle="tab"><i
                             class="icon-plus2"></i> Create Classes</a></li>
@@ -68,7 +68,7 @@
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="new-period">
+                <div class="tab-pane fade active show" id="new-period">
                     <div class="row">
                         <div class="col-md-12">
                             <form class="ajax-store" method="post"
@@ -112,15 +112,6 @@
                                         <input name="view_results_threshold" maxlength="3" max="100"
                                                value="{{ old('view_results_threshold') }}" required type="number"
                                                class="form-control" placeholder="View results Threshold">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Registration Threshold
-                                        <span class="text-danger">*</span></label>
-                                    <div class="col-lg-9">
-                                        <input name="registration_threshold" maxlength="3" max="100"
-                                               value="{{ old('registration_threshold') }}" required type="number"
-                                               class="form-control" placeholder="Registration threshold">
                                     </div>
                                 </div>
                                 <div class="form-group row">
