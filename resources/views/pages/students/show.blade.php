@@ -25,6 +25,7 @@
                          class="rounded-circle object-fit-cover w-100 h-100">
                     <br>
                     <h3 class="mt-3">{{ $student->user->first_name . ' ' . $student->user->last_name }}</h3>
+                    <h6 class="mt-1">{{ $student->id }}</h6>
                 </div>
             </div>
 
@@ -185,7 +186,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="font-weight-bold text-justify">relation</td>
+                                    <td class="font-weight-bold text-justify">Relationship</td>
                                     <td class="next-of-kin-infor">
                                         <span>{{ $student->user->userNextOfKin->relationship->relationship }}</span>
 
