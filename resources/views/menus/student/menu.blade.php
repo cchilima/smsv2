@@ -30,7 +30,7 @@
         <li class="nav-item">
             <a href="{{ route('student.enrollments') }}"
                 class="nav-link {{ in_array(Route::currentRouteName(), ['student.enrollments']) ? 'active' : '' }}">
-                Download Registration Summary
+                Enrollment Information
             </a>
         </li>
         <li class="nav-item">
