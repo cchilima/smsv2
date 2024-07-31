@@ -81,8 +81,6 @@ use App\Helpers\Qs;
             border: none;
             border-bottom: 2px solid rgb(153, 153, 153);
         }
-
-
     </style>
 </head>
 
@@ -126,35 +124,40 @@ use App\Helpers\Qs;
 
     <div class="margin-top">
 
-    <div class="container mt-5">
-        <div class="card">
-            <div class="card-body">
-                <p>Dear Mr/Ms/Mrs <span class="font-weight-bold">{{$applicant->nrc ? 'NRC : ' : 'Passport : '}} {{$applicant->nrc ? $applicant->nrc : $applicant->passport }}</span>,</p>
+        <div class="container mt-5">
+            <div class="card">
+                <div class="card-body">
+                    <p>Dear Mr/Ms/Mrs <span class="font-weight-bold">{{ $applicant->nrc ? 'NRC : ' : 'Passport : ' }}
+                            {{ $applicant->nrc ? $applicant->nrc : $applicant->passport }}</span>,</p>
 
-                <h5 class="mt-4 mb-3">RE: PROVISIONAL OFFER OF ADMISSION</h5>
+                    <h5 class="mt-4 mb-3">RE: PROVISIONAL OFFER OF ADMISSION</h5>
 
-                <p>We are pleased to inform you that the Senate of the ZUT has offered you admission to the <span class="font-weight-bold">(Program)</span> to study <span class="font-weight-bold">{{$applicant->program->program}}</span> commencing on <span class="font-weight-bold">(Date)</span>.</p>
+                    <p>We are pleased to inform you that the Senate of the ZUT has offered you admission to the <span
+                            class="font-weight-bold">(Program)</span> to study <span
+                            class="font-weight-bold">{{ $applicant->program->program }}</span> commencing on <span
+                            class="font-weight-bold">(Date)</span>.</p>
 
-                <p>This offer is conditional upon fulfilment of the following:</p>
-                
-                <ol>
-                    <li>Immediate payment of fees upon registration (the University will not accept conditional letters/offers of sponsorship from any organisation except a cash payment or a Bank certified cheque). All payments should be made through ZANACO STUDENTS BILL MUSTER.</li>
-                    <li>Production of original certificates or statements of results in support of your qualifications and a National Registration Card/Affidavit for identification.</li>
-                    <li>Production of a valid Zambian Study Permit (for foreign candidates).</li>
-                    <li>You are required to submit four (4) passport photographs during registration.</li>
-                    <li>Fees once paid are not refundable.</li>
-                    <li>This offer is only valid for the <span class="font-weight-bold">(Academic Year)</span>.</li>
-                </ol>
+                    <p>This offer is conditional upon fulfilment of the following:</p>
 
-                <p class="mt-4">Sincerely,</p>
-                <p><span class="font-weight-bold"></span><br>Admissions Office<br>ZUT.</p>
+                    <ol>
+                        <li>Immediate payment of fees upon registration (the University will not accept conditional
+                            letters/offers of sponsorship from any organisation except a cash payment or a Bank
+                            certified cheque). All payments should be made through ZANACO STUDENTS BILL MUSTER.</li>
+                        <li>Production of original certificates or statements of results in support of your
+                            qualifications and a National Registration Card/Affidavit for identification.</li>
+                        <li>Production of a valid Zambian Study Permit (for foreign candidates).</li>
+                        <li>You are required to submit four (4) passport photographs during registration.</li>
+                        <li>Fees once paid are not refundable.</li>
+                        <li>This offer is only valid for the <span class="font-weight-bold">(Academic Year)</span>.</li>
+                    </ol>
+
+                    <p class="mt-4">Sincerely,</p>
+                    <p><span class="font-weight-bold"></span><br>Admissions Office<br>ZUT.</p>
+                </div>
             </div>
         </div>
-    </div>
-
 
     </div>
-
 
 </body>
 

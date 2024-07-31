@@ -113,12 +113,11 @@
                                     @enderror
                                 </div>
 
-
                             </div>
 
                             <div class="row">
 
-                            <div class="input-field col m12 s12">
+                                <div class="input-field col m12 s12">
                                     <input wire:model="address" placeholder="Address" type="text" class="validate">
                                     <label class="active">Address</label>
                                     @error('address')
@@ -132,14 +131,13 @@
                                 <div class="col m12 s12">
                                     <label class="active">Country</label>
                                     <select wire:model.live="country_id" class="browser-default custom-select ">
-                                        <option selected></option>
+                                        <option></option>
                                         @foreach ($countries as $country)
                                             <option value="{{ $country->id }}">{{ $country->country }} </option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-
 
                             <div class="row">
 
@@ -153,7 +151,6 @@
                                     </select>
                                 </div>
 
-
                                 <div class="col m6 s12">
                                     <label class="active">Town</label>
                                     <select wire:model.live="town_id" class="browser-default custom-select ">
@@ -163,9 +160,6 @@
                                         @endforeach
                                     </select>
                                 </div>
-
-
-
 
                             </div>
                         </div>
@@ -185,7 +179,6 @@
                                     </select>
                                 </div>
 
-
                                 <div class="col m6 s12">
                                     <label class="active">Study mode</label>
                                     <select wire:model.live="study_mode_id" class="browser-default custom-select ">
@@ -197,7 +190,6 @@
                                 </div>
 
                             </div>
-
 
                             <div class="row">
 
@@ -212,7 +204,6 @@
                                     </select>
                                 </div>
 
-
                                 <div class="col m6 s12">
                                     <label class="active">Upload merged results : accepted Files: PDF (Max 5MB)</label>
                                     <div class="form-group">
@@ -220,8 +211,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
 
                             <div class="p-2 ">
                                 <button wire:click="uploadDocument()" class="btn btn-small black"><i
@@ -251,7 +240,6 @@
                                                     target="_blank">open</a></td>
 
                                         </tr>
-
 
                                     </tbody>
                                 </table>
@@ -287,7 +275,6 @@
                                         <span class="red-text darken-4 error">{{ $message }}</span>
                                     @enderror
                                 </div>
-
 
                             </div>
 
@@ -334,7 +321,6 @@
 
                             </div>
 
-
                             <div class="row">
 
                                 <div class="col m6 s12">
@@ -347,7 +333,6 @@
                                     </select>
                                 </div>
 
-
                                 <div class="col m6 s12">
                                     <label class="active">Town</label>
                                     <select wire:model.live="kin_town_id" class="browser-default custom-select ">
@@ -357,7 +342,6 @@
                                         @endforeach
                                     </select>
                                 </div>
-
 
                             </div>
                         </div>
@@ -394,7 +378,6 @@
                                     @enderror
                                 </div>
 
-
                                 <div class="input-field col m6 s12">
                                     <input wire:model="grade" placeholder="Grade" type="number" pattern="[1-9]"
                                         class="validate">
@@ -410,7 +393,6 @@
                                 </div>
 
                             </div>
-
 
                             @if (count($applicant->grades) > 0)
 

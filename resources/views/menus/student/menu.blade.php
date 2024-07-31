@@ -14,12 +14,12 @@
                 CA Results
             </a>
         </li>
-        <li class="nav-item">
-            <a href="{{ route('student-exam_registration') }}"
-                class="nav-link {{ in_array(Route::currentRouteName(), ['student-exam_registration']) ? 'active' : '' }}">
-                Exam registration
-            </a>
-        </li>
+        {{--        <li class="nav-item"> --}}
+        {{--            <a href="{{ route('student-exam_registration') }}" --}}
+        {{--                class="nav-link {{ in_array(Route::currentRouteName(), ['student-exam_registration']) ? 'active' : '' }}"> --}}
+        {{--                Exam registration --}}
+        {{--            </a> --}}
+        {{--        </li> --}}
     </ul>
 </li>
 
@@ -30,19 +30,19 @@
         <li class="nav-item">
             <a href="{{ route('student.enrollments') }}"
                 class="nav-link {{ in_array(Route::currentRouteName(), ['student.enrollments']) ? 'active' : '' }}">
-                Enrollment Information
+                Download Registration Summary
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ route('student.exam.slip.download', Auth::user()->student->id) }}"
                 class="nav-link {{ in_array(Route::currentRouteName(), ['student.transcript.download']) ? 'active' : '' }}">
-                Download Exam Slip
+                Download Exam slip
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ route('student.transcript.download', Auth::user()->student->id) }}"
                 class="nav-link {{ in_array(Route::currentRouteName(), ['student.exam.slip.download']) ? 'active' : '' }}">
-                Download Exam Transcript
+                Download Transcript
             </a>
         </li>
     </ul>
@@ -58,7 +58,7 @@
 <li class="nav-item">
     <a href="{{ route('student_applied.rooms') }}"
         class="nav-link {{ in_array(Route::currentRouteName(), ['student_applied.rooms']) ? 'active' : '' }}"><i
-            class="icon-office">
+            class="icon-cash2">
         </i> <span>Accommodation </span>
     </a>
 </li>
