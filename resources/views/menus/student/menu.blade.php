@@ -24,25 +24,25 @@
 </li>
 
 <li
-    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['student.exam.slip.download','student.transcript.download','student.enrollments']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['student.exam.slip.download', 'student.transcript.download', 'student.enrollments']) ? 'nav-item-expanded nav-item-open' : '' }} ">
     <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Academics </span></a>
     <ul class="nav nav-group-sub" data-submenu-title="Manage Academics">
         <li class="nav-item">
             <a href="{{ route('student.enrollments') }}"
                 class="nav-link {{ in_array(Route::currentRouteName(), ['student.enrollments']) ? 'active' : '' }}">
-                Download Registration Summary
+                Enrollment Information
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('student.exam.slip.download',Auth::user()->student->id) }}"
+            <a href="{{ route('student.exam.slip.download', Auth::user()->student->id) }}"
                 class="nav-link {{ in_array(Route::currentRouteName(), ['student.transcript.download']) ? 'active' : '' }}">
-                Download Exam slip
+                Download Exam Slip
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('student.transcript.download',Auth::user()->student->id) }}"
+            <a href="{{ route('student.transcript.download', Auth::user()->student->id) }}"
                 class="nav-link {{ in_array(Route::currentRouteName(), ['student.exam.slip.download']) ? 'active' : '' }}">
-                Download Transcript
+                Download Exam Transcript
             </a>
         </li>
     </ul>
@@ -57,8 +57,8 @@
 </li>
 <li class="nav-item">
     <a href="{{ route('student_applied.rooms') }}"
-       class="nav-link {{ in_array(Route::currentRouteName(), ['student_applied.rooms']) ? 'active' : '' }}"><i
-            class="icon-cash2">
+        class="nav-link {{ in_array(Route::currentRouteName(), ['student_applied.rooms']) ? 'active' : '' }}"><i
+            class="icon-office">
         </i> <span>Accommodation </span>
     </a>
 </li>
