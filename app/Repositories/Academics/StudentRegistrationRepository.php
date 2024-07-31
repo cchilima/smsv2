@@ -242,14 +242,14 @@ class StudentRegistrationRepository
     {
         $currentDate = date('Y-m-d');
 
-        // Get the next available academic period by joining with the academic_periods table
-        $nextAcademicPeriod = DB::table('academic_period_information')
-            ->join('academic_periods', 'academic_period_information.academic_period_id', '=', 'academic_periods.id')
-            ->where('academic_period_information.study_mode_id', $student->study_mode_id)
-            ->where('academic_periods.ac_start_date', '<=', $currentDate)
-            ->where('academic_periods.ac_end_date', '>=', $currentDate)
-            ->orderBy('academic_periods.created_at', 'asc')
-            ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
+        // Get next available academic period
+        $nextAcademicPeriod = AcademicPeriodInformation::with('academic_period')
+            ->whereHas('academic_period', function ($query) use ($currentDate) {
+                $query->whereDate('ac_start_date', '<=', $currentDate)
+                    ->whereDate('ac_end_date', '>=', $currentDate);
+            })
+            ->where('study_mode_id', $student->study_mode_id)
+            ->orderBy('created_at', 'asc')
             ->first();
 
         return $nextAcademicPeriod;

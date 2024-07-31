@@ -40,6 +40,8 @@ class StudentRegistrationController extends Controller
         $courses = $this->registrationRepo->getAll();
         $academicInfo = $this->registrationRepo->getAcademicInfo();
 
+        // dd($academicInfo);
+
         return view('pages.studentRegistration.index', compact('courses', 'academicInfo', 'isRegistered'));
     }
 
