@@ -14,12 +14,12 @@
                 CA Results
             </a>
         </li>
-        <li class="nav-item">
-            <a href="{{ route('student-exam_registration') }}"
-                class="nav-link {{ in_array(Route::currentRouteName(), ['student-exam_registration']) ? 'active' : '' }}">
-                Exam registration
-            </a>
-        </li>
+{{--        <li class="nav-item">--}}
+{{--            <a href="{{ route('student-exam_registration') }}"--}}
+{{--                class="nav-link {{ in_array(Route::currentRouteName(), ['student-exam_registration']) ? 'active' : '' }}">--}}
+{{--                Exam registration--}}
+{{--            </a>--}}
+{{--        </li>--}}
     </ul>
 </li>
 

@@ -458,7 +458,7 @@
                     @endif
 
                 @endif
-                @if (true)
+                @if (Qs::userIsSuperAdmin() || Qs::userIsAdmin())
                     <li
                         class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
                             'getPublishProgramsCas',
