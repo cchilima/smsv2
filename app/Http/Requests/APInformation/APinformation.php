@@ -52,6 +52,7 @@ class APinformation extends FormRequest
         // Check if academic period information exists with the same study_mode_id and academic_period_intake_id
         $existingInfo = AcademicPeriodInformation::where('study_mode_id', $studyModeId)
             ->where('academic_period_intake_id', $academicPeriodIntakeId)
+            ->where('academic_period_id', '!=', $academicPeriodId)
             ->first();
 
         if ($existingInfo) {
