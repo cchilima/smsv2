@@ -27,7 +27,8 @@ class StudentRepository
 
     public function getAll()
     {
-        return Student::paginate(20);
+        // Student::lastest()->paginate(20);
+        return Student::orderBy('id', 'desc')->paginate(20)->reverse();
     }
 
     public function update($id, $data)
@@ -117,7 +118,7 @@ class StudentRepository
 
     public function getSubjects()
     {
-         
+
         $subjects = [
 
             ["id" => 1, "name" => "English Language"],
@@ -144,27 +145,27 @@ class StudentRepository
             ["id" => 22, "name" => "Additional Mathematics"],
             ["id" => 23, "name" => "Technical Drawing"]
         ];
-        
+
 
         return $subjects;
-        
+
     }
 
 
     public function getSchools()
     {
-         
+
         $schools = [
-            
+
             ["id" => 1, "name" => "Kitwe boys secondary"],
             ["id" => 2, "name" => "Alim secondary"],
             ["id" => 3, "name" => "Hellen Kaunda secondary"],
             ["id" => 4, "name" => "Faith christian school"],
         ];
-        
+
 
         return $schools;
-        
+
     }
 
     public function addStudentId($studentData)
@@ -374,7 +375,7 @@ class StudentRepository
             return true;
         }
     }
-    
+
     public function destroy($id)
     {
         return Student::destroy($id);
