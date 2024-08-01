@@ -22,14 +22,53 @@ class APinformationUpdate extends FormRequest
     public function rules(): array
     {
         return [
-            'academic_period_intake_id' => 'required|integer|exists:academic_periods,id',
-            'study_mode_id' => 'required|integer|exists:study_modes,id',
-            'view_results_threshold' => 'required|numeric|between:1,100',
-            'exam_slip_threshold' => 'required|numeric|between:1,100',
-            'registration_threshold' => 'required|numeric|between:1,100',
-            'late_registration_end_date' => 'required|date|after:late_registration_date',
-            'late_registration_date' => 'required|date|after:registration_date',
-            'registration_date' => 'required|date|after_or_equal:today',
+            'academic_period_intake_id' => [
+                'required',
+                'integer',
+                'exists:academic_period_intakes,id',
+            ],
+
+            'study_mode_id' => [
+                'required',
+                'integer',
+                'exists:study_modes,id'
+            ],
+
+            'view_results_threshold' => [
+                'required',
+                'numeric',
+                'between:1,100'
+            ],
+
+            'exam_slip_threshold' => [
+                'required',
+                'numeric',
+                'between:1,100'
+            ],
+
+            'registration_threshold' => [
+                'required',
+                'numeric',
+                'between:1,100'
+            ],
+
+            'late_registration_end_date' => [
+                'required',
+                'date',
+                'after:late_registration_date'
+            ],
+
+            'late_registration_date' => [
+                'required',
+                'date',
+                'after:registration_date'
+            ],
+
+            'registration_date' => [
+                'required',
+                'date',
+                'after_or_equal:today'
+            ],
         ];
     }
 }

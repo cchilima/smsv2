@@ -21,12 +21,12 @@ class APManagementController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $periods, $periodClasses,$programsCourses;
+    protected $periods, $periodClasses, $programsCourses;
 
-    public function __construct(AcademicPeriodRepository $periods,AcademicPeriodClassRepository $periodClasses, AcademicPeriodClassRepository $programsCourses)
+    public function __construct(AcademicPeriodRepository $periods, AcademicPeriodClassRepository $periodClasses, AcademicPeriodClassRepository $programsCourses)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->periods = $periods;
         $this->periodClasses = $periodClasses;
@@ -36,7 +36,7 @@ class APManagementController extends Controller
     public function index()
     {
         $acid = request()->query('ac');
-        $academic= $this->periods->findOne($acid);
+        $academic = $this->periods->findOne($acid);
         $studyModes = $this->periods->getStudyModes();
         $intakes = $this->periods->getIntakes();
         $fees = $this->periods->getFees();
@@ -44,7 +44,7 @@ class APManagementController extends Controller
         $instructors = $this->periodClasses->getInstructors();
         $programsCourses = $this->programsCourses->academicPrograms($acid);
         //dd($programsCourses);
-        return view('pages.academicPeriodInformation.index', compact('courses', 'studyModes','programsCourses', 'intakes','academic','instructors','fees'));
+        return view('pages.academicPeriodInformation.index', compact('courses', 'studyModes', 'programsCourses', 'intakes', 'academic', 'instructors', 'fees'));
     }
 
     /**
@@ -62,9 +62,11 @@ class APManagementController extends Controller
     {
         //
 
-        $data = $request->only(['academic_period_intake_id', 'study_mode_id', 'view_results_threshold',
+        $data = $request->only([
+            'academic_period_intake_id', 'study_mode_id', 'view_results_threshold',
             'exam_slip_threshold', 'registration_threshold', 'late_registration_end_date', 'late_registration_date',
-            'registration_date','academic_period_id']);
+            'registration_date', 'academic_period_id'
+        ]);
 
         $data['late_registration_end_date'] = date('Y-m-d', strtotime($data['late_registration_end_date']));
         $data['late_registration_date'] = date('Y-m-d', strtotime($data['late_registration_date']));
@@ -74,7 +76,7 @@ class APManagementController extends Controller
         if ($period) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::json(false,'failed to create message');
+            return Qs::json(false, 'failed to create message');
         }
     }
 
@@ -104,19 +106,26 @@ class APManagementController extends Controller
      */
     public function update(APinformationUpdate $request, string $id)
     {
-        $data = $request->only(['academic_period_intake_id', 'study_mode_id', 'view_results_threshold',
-            'exam_slip_threshold', 'registration_threshold', 'late_registration_end_date', 'late_registration_date',
-            'registration_date']);
+        $data = $request->only([
+            'academic_period_intake_id',
+            'study_mode_id',
+            'view_results_threshold',
+            'exam_slip_threshold',
+            'registration_threshold',
+            'late_registration_end_date',
+            'late_registration_date',
+            'registration_date'
+        ]);
 
         $data['late_registration_end_date'] = date('Y-m-d', strtotime($data['late_registration_end_date']));
         $data['late_registration_date'] = date('Y-m-d', strtotime($data['late_registration_date']));
         $data['registration_date'] = date('Y-m-d', strtotime($data['registration_date']));
-        $period = $this->periods->APUpdate($id,$data);
+        $period = $this->periods->APUpdate($id, $data);
 
         if ($period) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::json(false,'failed to create message');
+            return Qs::json(false, 'failed to create message');
         }
     }
 
