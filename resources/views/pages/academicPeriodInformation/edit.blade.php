@@ -76,15 +76,6 @@
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-lg-3 col-form-label font-weight-semibold">Registration Threshold <span
-                                    class="text-danger">*</span></label>
-                            <div class="col-lg-9">
-                                <input name="registration_threshold" value="{{ $periods->registration_threshold }}"
-                                    required type="text" class="form-control" placeholder="Code">
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
                             <label class="col-lg-3 col-form-label font-weight-semibold">Registration Start Date <span
                                     class="text-danger">*</span></label>
                             <div class="col-lg-9">
