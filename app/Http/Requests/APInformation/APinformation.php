@@ -4,10 +4,18 @@ namespace App\Http\Requests\APInformation;
 
 use App\Models\Academics\AcademicPeriod;
 use App\Models\Academics\AcademicPeriodInformation;
+use App\Repositories\Academics\AcademicPeriodRepository;
 use Illuminate\Foundation\Http\FormRequest;
 
 class APinformation extends FormRequest
 {
+    protected $academicPeriodRepo;
+
+    public function __construct(AcademicPeriodRepository $academicPeriodRepo)
+    {
+        $this->academicPeriodRepo = $academicPeriodRepo;
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -38,34 +46,14 @@ class APinformation extends FormRequest
                 'integer',
                 'exists:academic_periods,id',
                 function ($attribute, $value, $fail) {
-                    $this->validateAcademicPeriod($value, $fail);
+                    $this->academicPeriodRepo->validateAcademicPeriod(
+                        $value,
+                        $fail,
+                        $this->input('study_mode_id'),
+                        $this->input('academic_period_intake_id')
+                    );
                 },
             ]
         ];
-    }
-
-    private function validateAcademicPeriod($academicPeriodId, $fail)
-    {
-        $studyModeId = $this->input('study_mode_id');
-        $academicPeriodIntakeId = $this->input('academic_period_intake_id');
-
-        // Check if academic period information exists with the same study_mode_id and academic_period_intake_id
-        $existingInfo = AcademicPeriodInformation::where('study_mode_id', $studyModeId)
-            ->where('academic_period_intake_id', $academicPeriodIntakeId)
-            ->where('academic_period_id', '!=', $academicPeriodId)
-            ->first();
-
-        if ($existingInfo) {
-            // Check if another academic period exists with the same start and end date and period type
-            $existingPeriod = AcademicPeriod::where('ac_start_date', $existingInfo->academic_period->ac_start_date)
-                ->where('ac_end_date', $existingInfo->academic_period->ac_end_date)
-                ->where('period_type_id', $existingInfo->academic_period->period_type_id)
-                ->where('id', '!=', $academicPeriodId)
-                ->exists();
-
-            if ($existingPeriod) {
-                $fail('An academic period with the same start date, end date and period type already exists. Kindly input a different study mode or intake');
-            }
-        }
     }
 }
