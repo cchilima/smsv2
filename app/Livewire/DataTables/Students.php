@@ -25,7 +25,7 @@ final class Students extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            Exportable::make('export')
+            Exportable::make('students-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -67,6 +67,10 @@ final class Students extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
+            Column::make('Last Name', 'user.last_name')
+                ->sortable()
+                ->searchable(),
+
             Column::make('Program', 'program.name')
                 ->sortable(),
 
@@ -77,6 +81,7 @@ final class Students extends PowerGridComponent
 
 
             Column::action('Action')
+                ->visibleInExport(visible: false)
         ];
     }
 

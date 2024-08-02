@@ -9,10 +9,10 @@
     <ul x-data="{ countChecked: @entangle('checkboxValues').live }" class="dropdown-menu">
         @if (in_array('xlsx', data_get($setUp, 'exportable.type')))
             <li class="d-flex">
-                <div class="dropdown-item">
-                    <span style="min-width: 25px;">@lang('XLSX')</span>
+                <div class="d-flex align-items-center p-2">
+                    <span class="mr-1" style="min-width: 25px;">@lang('XLSX')</span>
 
-                    <a class="text-black-50" wire:click.prevent="exportToXLS" href="#">
+                    <a class="text-black-50 btn btn-sm" wire:click.prevent="exportToXLS" href="#">
                         <span class="export-count">({{ $total }})</span>
                         @if (count($enabledFilters) === 0)
                             @lang('livewire-powergrid::datatable.labels.all')
@@ -22,7 +22,7 @@
                     </a>
                     @if ($checkbox)
                         /
-                        <a class="text-black-50" wire:click.prevent="exportToXLS(true)" href="#">
+                        <a class="text-black-50 btn btn-sm" wire:click.prevent="exportToXLS(true)" href="#">
                             (<span x-text="countChecked.length"></span>) @lang('livewire-powergrid::datatable.labels.selected')
                         </a>
                     @endif
@@ -31,9 +31,9 @@
         @endif
         @if (in_array('csv', data_get($setUp, 'exportable.type')))
             <li class="d-flex">
-                <div class="dropdown-item">
-                    <span>@lang('Csv')</span>
-                    <a class="text-black-50" wire:click.prevent="exportToCsv" href="#">
+                <div class="d-flex align-items-center p-2">
+                    <span class="mr-1">@lang('Csv')</span>
+                    <a class="text-black-50 btn btn-sm" wire:click.prevent="exportToCsv" href="#">
                         <span class="export-count">({{ $total }})</span>
                         @if (count($enabledFilters) === 0)
                             @lang('livewire-powergrid::datatable.labels.all')
@@ -43,7 +43,7 @@
                     </a>
                     @if ($checkbox)
                         /
-                        <a class="text-black-50" wire:click.prevent="exportToCsv(true)"
+                        <a class="text-black-50 btn btn-sm" wire:click.prevent="exportToCsv(true)"
                             x-bind:disabled="countChecked.length === 0" href="#">
                             (<span x-text="countChecked.length"></span>) @lang('livewire-powergrid::datatable.labels.selected')
                         </a>
