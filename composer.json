@@ -21,6 +21,7 @@
         "livewire/livewire": "^3.5",
         "maatwebsite/excel": "^3.1",
         "owen-it/laravel-auditing": "^13.6",
+        "power-components/livewire-powergrid": "^5.10",
         "vinkla/hashids": "^11.0"
     },
     "require-dev": {
