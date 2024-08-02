@@ -154,4 +154,35 @@ class AcademicPeriodRepository
             return AcademicPeriod::with('classes.class_assessments.assessment_type', 'classes.instructor', 'classes.course')->find($id);
         }
     }
+
+    // Custom unique validation rule for academic period information requests
+    public function validateAcademicPeriod($academicPeriodId, $fail, $studyModeId, $academicPeriodIntakeId)
+    {
+        // Check if academic period information exists for academic period       
+        $existingInfo = AcademicPeriodInformation::where('academic_period_id', $academicPeriodId)
+            ->first();
+
+        if ($existingInfo) {
+            return $fail('Academic period information already exists for this academic period. Kindly update it to make changes.');
+        }
+
+        // Check if academic period information exists with the same study_mode_id and academic_period_intake_id
+        $existingInfoFromAnotherPeriod = AcademicPeriodInformation::where('study_mode_id', $studyModeId)
+            ->where('academic_period_intake_id', $academicPeriodIntakeId)
+            ->where('academic_period_id', '!=', $academicPeriodId)
+            ->first();
+
+        if ($existingInfoFromAnotherPeriod) {
+            // Check if another academic period exists with the same start and end date and period type
+            $existingPeriod = AcademicPeriod::where('ac_start_date', $existingInfoFromAnotherPeriod->academic_period->ac_start_date)
+                ->where('ac_end_date', $existingInfoFromAnotherPeriod->academic_period->ac_end_date)
+                ->where('period_type_id', $existingInfoFromAnotherPeriod->academic_period->period_type_id)
+                ->where('id', '!=', $academicPeriodId)
+                ->exists();
+
+            if ($existingPeriod) {
+                return $fail('An academic period with the same start date, end date and period type already exists for the selected study mode and intake.');
+            }
+        }
+    }
 }

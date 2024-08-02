@@ -11,6 +11,7 @@ use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
 use App\Repositories\Academics\StudentRegistrationRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 
 class StudentRegistrationController extends Controller
 {
@@ -36,11 +37,14 @@ class StudentRegistrationController extends Controller
      */
     public function index()
     {
-        $isRegistered = $this->registrationRepo->getRegistrationStatus();
+        $student_id = Auth::user()->student->id;
+
+        $isRegistered = $this->registrationRepo->getRegistrationStatus($student_id);
+        $isWithinRegistrationPeriod = $this->registrationRepo->checkIfWithinRegistrationPeriod($student_id);
         $courses = $this->registrationRepo->getAll();
         $academicInfo = $this->registrationRepo->getAcademicInfo();
 
-        return view('pages.studentRegistration.index', compact('courses', 'academicInfo', 'isRegistered'));
+        return view('pages.studentRegistration.index', compact('courses', 'academicInfo', 'isRegistered', 'isWithinRegistrationPeriod'));
     }
 
     /**
@@ -101,11 +105,17 @@ class StudentRegistrationController extends Controller
         $studentNumber = $request->input('student_number');
         $academicPeriodId = $request->input('academic_period_id');
 
+        // If request is from student
+        if (!$studentNumber) {
+            $studentNumber = Auth::user()->student->id;
+            $academicPeriodId = Auth::user()->student->academic_info->academic_period->id;
+        }
+
         $courses = $this->registrationRepo->getSummaryCourses($studentNumber, $academicPeriodId);
         $student = $this->registrationRepo->getStudent($studentNumber);
         $studentUser = $student->user;
-        $studentUserPersonalInfo = $student->user->userPersonalInfo;
-        $nextOfKin = $student->user->userNextOfKin;
+        $studentUserPersonalInfo = $studentUser->userPersonalInfo;
+        $nextOfKin = $studentUser->userNextOfKin;
         $academicInfo = $this->registrationRepo->getSummaryAcademicInfo($academicPeriodId);
         $latestEnrollment = $student->enrollments->sortBy('created_at')->last();
 

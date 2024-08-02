@@ -162,11 +162,13 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                            <div class="text-right">
-                                <a href="{{ route('academic-period-management.edit', Qs::hash($periods->id)) }}"
-                                    id="ajax-btn" type="button" class="mbt-3 mt-4 btn btn-primary">Publish Fees
-                                    <i class="icon-paperplane ml-2"></i></a>
-                            </div>
+                            @if (!empty($periods->id))
+                                <div class="text-right">
+                                    <a href="{{ route('academic-period-management.edit', Qs::hash($periods->id)) }}"
+                                        id="ajax-btn" type="button" class="mbt-3 mt-4 btn btn-primary">Publish Fees
+                                        <i class="icon-paperplane ml-2"></i></a>
+                                </div>
+                            @endif
                         </div>
 
                     </div>
