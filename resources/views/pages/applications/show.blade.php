@@ -1,4 +1,3 @@
-
 @extends('layouts.master')
 @section('page_title', 'Application')
 @section('content')
@@ -16,16 +15,13 @@
         <div class="card-body">
             <ul class="nav nav-tabs nav-tabs-highlight">
                 <li class="nav-item"><a href="#application" class="nav-link active" data-toggle="tab">Application</a></li>
-                <li class="nav-item"><a href="#provisional-letter" class="nav-link" data-toggle="tab">Provisional letter</a></li>
+                <li class="nav-item"><a href="#provisional-letter" class="nav-link" data-toggle="tab">Provisional letter</a>
+                </li>
 
             </ul>
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="application">
-
-
-
-
 
                     <div class="card">
 
@@ -39,48 +35,48 @@
                                 <tbody>
                                     <tr>
                                         <th>First Name</th>
-                                        <td>{{ $application->first_name ?? 'Missing' }}</td>
+                                        <td>{{ $application->first_name ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Middle Name</th>
-                                        <td>{{ $application->middle_name ?? 'Missing' }}</td>
+                                        <td>{{ $application->middle_name ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Last Name</th>
-                                        <td>{{ $application->last_name ?? 'Missing' }}</td>
+                                        <td>{{ $application->last_name ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Gender</th>
-                                        <td>{{ $application->gender ?? 'Missing' }}</td>
+                                        <td>{{ $application->gender ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Date of Birth</th>
-                                        <td>{{ $application->date_of_birth ?? 'Missing' }}</td>
+                                        <td>{{ $application->date_of_birth ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Email Address</th>
-                                        <td>{{ $application->email ?? 'Missing' }}</td>
+                                        <td>{{ $application->email ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Mobile</th>
-                                        <td>{{ $application->phone_number ?? 'Missing' }}</td>
+                                        <td>{{ $application->phone_number ?? '-' }}</td>
                                     </tr>
 
                                     <tr>
                                         <th>Country</th>
-                                        <td>{{ $application->country->country ?? 'Missing' }}</td>
+                                        <td>{{ $application->country->country ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Province</th>
-                                        <td>{{ $application->province->name ?? 'Missing' }}</td>
+                                        <td>{{ $application->province->name ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Town</th>
-                                        <td>{{ $application->town->name ?? 'Missing' }}</td>
+                                        <td>{{ $application->town->name ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Address</th>
-                                        <td>{{ $application->address ?? 'Missing' }}</td>
+                                        <td>{{ $application->address ?? '-' }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -92,30 +88,28 @@
                                 <tbody>
                                     <tr>
                                         <th>Program</th>
-                                        <td>{{ $application->program->name ?? 'Missing' }}</td>
+                                        <td>{{ $application->program->name ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Academic Period Intake</th>
-                                        <td>{{ $application->intake->name ?? 'Missing' }}</td>
+                                        <td>{{ $application->intake->name ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Study Mode</th>
-                                        <td>{{ $application->study_mode->name ?? 'Missing' }}</td>
+                                        <td>{{ $application->study_mode->name ?? '-' }}</td>
                                     </tr>
                                     @if ($application->attachment)
-
-                                            <tr>
-                                                <td>{{ $application->attachment->type }}</td>
-                                                <td>
-                                                    <form
-                                                        action="{{ route('application.download_attachment', $application->attachment->id) }}"
-                                                        method="GET">
-                                                        @csrf @method('GET')
-                                                        <button type="submit" class="btn btn-primary">Download</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-
+                                        <tr>
+                                            <td>{{ $application->attachment->type }}</td>
+                                            <td>
+                                                <form
+                                                    action="{{ route('application.download_attachment', $application->attachment->id) }}"
+                                                    method="GET">
+                                                    @csrf @method('GET')
+                                                    <button type="submit" class="btn btn-primary">Download</button>
+                                                </form>
+                                            </td>
+                                        </tr>
                                     @else
                                         <tr>
                                             <td>No attachments added</td>
@@ -129,71 +123,52 @@
                         </div>
                     </div>
 
-
-
-
-
-
                 </div>
 
                 <div class="tab-pane fade show" id="provisional-letter">
 
+                    <table class="table table-bordered">
+                        <tbody>
 
+                            @if ($application->attachment)
 
-                <table class="table table-bordered">
-                                <tbody>
+                                <tr>
+                                    <td>Application fee payment</td>
+                                    <td>
+                                        K {{ $application->payment->sum('amount') ?? 'K0' }}
+                                    </td>
+                                </tr>
 
-                                    @if ($application->attachment)
+                                <tr>
+                                    <td>Provisional letter</td>
+                                    <td>
+                                        @if ($application->status == 'complete')
+                                            <form action="{{ route('application.download_provisional') }}" method="GET">
+                                                @csrf @method('GET')
+                                                <input name="applicant_id" hidden type="text"
+                                                    value="{{ $application->id }}">
+                                                <button type="submit" class="btn btn-primary">Download</button>
+                                            </form>
+                                        @else
+                                            Make full application fee payment to download letter.
+                                        @endif
+                                    </td>
+                                </tr>
+                            @else
+                                <tr>
+                                    <td>No attachments added</td>
+                                    <td></td>
+                                </tr>
+                            @endif
 
-                                    <tr>
-                                                <td>Application fee payment</td>
-                                                <td>
-                                                    K {{ $application->payment->sum('amount') ?? 'K0' }}
-                                                </td>
-                                            </tr>
-
-
-                                            <tr>
-                                                <td>Provisional letter</td>
-                                                <td>
-                                                    @if($application->status == 'complete')
-                                                    <form
-                                                        action="{{ route('application.download_provisional') }}"
-                                                        method="GET">
-                                                        @csrf @method('GET')
-                                                        <input name="applicant_id" hidden type="text" value="{{$application->id}}">
-                                                        <button type="submit" class="btn btn-primary">Download</button>
-                                                    </form>
-                                                    @else
-                                                    Make full application fee payment to download letter.
-                                                    @endif
-                                                </td>
-                                            </tr>
-
-                                    @else
-                                        <tr>
-                                            <td>No attachments added</td>
-                                            <td></td>
-                                        </tr>
-                                    @endif
-
-                                </tbody>
-                            </table>
-
-
-
+                        </tbody>
+                    </table>
 
                 </div>
             </div>
-            <a href="{{ route('application.my-applications',$application->id) }}" type="button" class="btn btn-small black rounded">My Applications</a>
+            <a href="{{ route('application.my-applications', $application->id) }}" type="button"
+                class="btn btn-small black rounded">My Applications</a>
         </div>
     </div>
 
 @endsection
-
-
-
-
-
-
-

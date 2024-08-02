@@ -14,33 +14,33 @@
                 CA Results
             </a>
         </li>
-{{--        <li class="nav-item">--}}
-{{--            <a href="{{ route('student-exam_registration') }}"--}}
-{{--                class="nav-link {{ in_array(Route::currentRouteName(), ['student-exam_registration']) ? 'active' : '' }}">--}}
-{{--                Exam registration--}}
-{{--            </a>--}}
-{{--        </li>--}}
+        {{--        <li class="nav-item"> --}}
+        {{--            <a href="{{ route('student-exam_registration') }}" --}}
+        {{--                class="nav-link {{ in_array(Route::currentRouteName(), ['student-exam_registration']) ? 'active' : '' }}"> --}}
+        {{--                Exam registration --}}
+        {{--            </a> --}}
+        {{--        </li> --}}
     </ul>
 </li>
 
 <li
-    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['student.exam.slip.download','student.transcript.download','student.enrollments']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['student.exam.slip.download', 'student.transcript.download', 'student.enrollments']) ? 'nav-item-expanded nav-item-open' : '' }} ">
     <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Academics </span></a>
     <ul class="nav nav-group-sub" data-submenu-title="Manage Academics">
         <li class="nav-item">
             <a href="{{ route('student.enrollments') }}"
                 class="nav-link {{ in_array(Route::currentRouteName(), ['student.enrollments']) ? 'active' : '' }}">
-                Download Registration Summary
+                Enrollment Information
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('student.exam.slip.download',Auth::user()->student->id) }}"
+            <a href="{{ route('student.exam.slip.download', Auth::user()->student->id) }}"
                 class="nav-link {{ in_array(Route::currentRouteName(), ['student.transcript.download']) ? 'active' : '' }}">
                 Download Exam slip
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('student.transcript.download',Auth::user()->student->id) }}"
+            <a href="{{ route('student.transcript.download', Auth::user()->student->id) }}"
                 class="nav-link {{ in_array(Route::currentRouteName(), ['student.exam.slip.download']) ? 'active' : '' }}">
                 Download Transcript
             </a>
@@ -57,7 +57,7 @@
 </li>
 <li class="nav-item">
     <a href="{{ route('student_applied.rooms') }}"
-       class="nav-link {{ in_array(Route::currentRouteName(), ['student_applied.rooms']) ? 'active' : '' }}"><i
+        class="nav-link {{ in_array(Route::currentRouteName(), ['student_applied.rooms']) ? 'active' : '' }}"><i
             class="icon-cash2">
         </i> <span>Accommodation </span>
     </a>

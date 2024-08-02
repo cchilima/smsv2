@@ -2,10 +2,20 @@
 
 namespace App\Http\Requests\APInformation;
 
+use App\Models\Academics\AcademicPeriod;
+use App\Models\Academics\AcademicPeriodInformation;
+use App\Repositories\Academics\AcademicPeriodRepository;
 use Illuminate\Foundation\Http\FormRequest;
 
 class APinformation extends FormRequest
 {
+    protected $academicPeriodRepo;
+
+    public function __construct(AcademicPeriodRepository $academicPeriodRepo)
+    {
+        $this->academicPeriodRepo = $academicPeriodRepo;
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -30,8 +40,20 @@ class APinformation extends FormRequest
             'late_registration_end_date' => 'required|date|after:late_registration_date',
             'late_registration_date' => 'required|date|after:registration_date',
             'registration_date' => 'required|date|after_or_equal:today',
-            'academic_period_id'  => 'required|integer|exists:academic_periods,id'
 
+            'academic_period_id'  => [
+                'required',
+                'integer',
+                'exists:academic_periods,id',
+                function ($attribute, $value, $fail) {
+                    $this->academicPeriodRepo->validateAcademicPeriod(
+                        $value,
+                        $fail,
+                        $this->input('study_mode_id'),
+                        $this->input('academic_period_intake_id')
+                    );
+                },
+            ]
         ];
     }
 }

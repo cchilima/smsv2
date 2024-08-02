@@ -16,7 +16,7 @@
                         <div class="row">
                             <div class="input-field col m12 s12">
                                 <label class="active" for="nrc">NRC</label>
-                                <input wire:model="nrc" id="nrc" maxlength="9" name="nrc" type="text"
+                                <input wire:model="nrc" id="nrc" maxlength="11" name="nrc" type="text"
                                     class="validate" placeholder="NRC">
                                 @error('nrc')
                                     <span class="red-text darken-4 error">{{ $message }}</span>

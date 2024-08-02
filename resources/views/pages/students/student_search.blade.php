@@ -52,9 +52,9 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $u->first_name }}</td>
                                         <td>{{ $u->last_name }}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td>{{ $u->student->id }}</td>
+                                        <td>{{ $u->userPersonalInfo->nrc }}</td>
+                                        <td>{{ $u->student->program->name }}</td>
                                         <td class="text-center">
                                             <div class="list-icons">
                                                 <div class="dropdown">
