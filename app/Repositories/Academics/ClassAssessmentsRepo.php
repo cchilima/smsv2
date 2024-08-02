@@ -348,7 +348,7 @@ class ClassAssessmentsRepo
                                 //                            'exam' => $grade->exam,
                                 'type' => $grade->assessment_type->name,
                                 'total' => $grade->total,
-                                'grade' => self::calculateGrade($grade->total),
+                                'grade' => self::calculateGrade($grade->total,$student->program->id),
                                 'outof' => self::getClassAssessmentCastotal($courseId, $aid),
                                 'id' => self::getGradeIDCAs($aid, $courseId, $studentId),
                             ];
@@ -454,7 +454,7 @@ class ClassAssessmentsRepo
                                 //                            'exam' => $grade->exam,
                                 'type' => $grade->assessment_type->name,
                                 'total' => $grade->total,
-                                'grade' => self::calculateGrade($grade->total),
+                                'grade' => self::calculateGrade($grade->total,$student->program->id),
                                 'outof' => self::getClassAssessmentCastotal($courseId, $aid),
                                 'id' => self::getGradeIDCAs($aid, $courseId, $studentId),
                             ];
@@ -605,7 +605,7 @@ class ClassAssessmentsRepo
                                 'exam' => $grade->exam,
                                 'ca' => $grade->ca,
                                 'total_sum' => $grade->total_sum,
-                                'grade' => self::calculateGrade($grade->total_sum),
+                                'grade' => self::calculateGrade($grade->total_sum,$student->program->id),
                                 'outof' => self::getClassAssessmentExams($enrollment->class->course->id, $aid),
                                 'id' => self::getGradeID($aid, $enrollment->class->course->id, $studentId),
                             ];
@@ -780,7 +780,7 @@ class ClassAssessmentsRepo
                                     'exam' => $grade->exam,
                                     'ca' => $grade->ca,
                                     'total_sum' => $grade->total_sum,
-                                    'grade' => self::calculateGrade($grade->total_sum),
+                                    'grade' => self::calculateGrade($grade->total_sum,$student->program->id),
                                     'outof' => self::getClassAssessmentExams($enrollment->class->course->id, $aid),
                                     'id' => self::getGradeID($aid, $enrollment->class->course->id, $studentId),
                                 ];
@@ -795,7 +795,7 @@ class ClassAssessmentsRepo
         }
         //dd($organizedData);
         return $organizedData;
-        return $this->extracted($result, $aid);
+        return $this->extracted($result, $aid,$student->program->id);
         /*$result = Student::where('program_id', $pid)->where('course_level_id', $level)
             ->with([
                 'enrollments.class' => function ($query) use ($aid) {
@@ -1184,7 +1184,7 @@ class ClassAssessmentsRepo
                     'course_title' => $grade->course_title,
                     'student_id' => $grade->student_id,
                     'total' => $grade->total_sum,
-                    'grade' => $this->calculateGrade($grade->total_sum)
+                    'grade' => $this->calculateGrade($grade->total_sum,$student_id->program_id)
                 ];
 
                 if (!isset($organizedResults[$academicPeriodId])) {
@@ -1397,54 +1397,93 @@ class ClassAssessmentsRepo
             'status' => $status,
         ];
     }
-
     public
-    static function calculateGrade($total)
+    static function calculateGrade($total,$program)
     {
         // Define your grade thresholds and corresponding values here
-        if ($total == 0) {
-            return 'Not Examined';
-        } else if ($total == -1) {
-            return 'Exempted';
-        } else if ($total == -2) {
-            return 'Withdrew with Permission';
-        } else if ($total == -3) {
-            return 'Disqualified';
-        } else if ($total == 0) {
-            return 'NE';
-        } else if ($total >= 1 && $total <= 39) {
-            return 'D';
-        } else if ($total >= 40 && $total <= 49) {
-            return 'D+';
-        } else if ($total >= 50 && $total <= 55) {
-            return 'C';
-        } else if ($total >= 56 && $total <= 61) {
-            return 'C+';
-        } else if ($total >= 62 && $total <= 67) {
-            return 'B';
-        } else if ($total >= 68 && $total <= 75) {
-            return 'B+';
-        } else if ($total >= 76 && $total <= 85) {
-            return 'A';
-        } else if ($total >= 86 && $total <= 100) {
-            return 'A+';
+        $programsuser = [ 6, 32];
+        if (!in_array($program, $programsuser))
+            if ($program) {
+            if ($total == 0) {
+                return 'Not Examined';
+            }
+            if ($total == -1) {
+                return 'Exempted';
+            }
+            if ($total == -2) {
+                return 'Withdrew with Permission';
+            }
+            if ($total == -3) {
+                return 'Disqualified';
+            }
+            if ($total == -4) {
+                return 'Deferred';
+            }
+            if ($total == -5) {
+                return 'Changed Mode of Study';
+            } else if ($total == 0) {
+                $grade = 'NE';
+            } else if ($total >= 1 && $total <= 29) {
+                return 'D';
+            } else if ($total >= 30 && $total <= 39) {
+                return 'D+';
+            } else if ($total >= 40 && $total <= 45) {
+                return 'C';
+            } else if ($total >= 46 && $total <= 55) {
+                return 'C+';
+            } else if ($total >= 56 && $total <= 65) {
+                return 'B';
+            } else if ($total >= 66 && $total <= 75) {
+                return 'B+';
+            } else if ($total >= 76 && $total <= 85) {
+                return 'A';
+            } else if ($total >= 86 && $total <= 100) {
+                return 'A+';
+            }
+        }else{
+            if ($total == 0) {
+                return 'Not Examined';
+            } else if ($total == -1) {
+                return 'Exempted';
+            } else if ($total == -2) {
+                return 'Withdrew with Permission';
+            } else if ($total == -3) {
+                return 'Disqualified';
+            } else if ($total == 0) {
+                return 'NE';
+            } else if ($total >= 1 && $total <= 39) {
+                return 'D';
+            } else if ($total >= 40 && $total <= 49) {
+                return 'D+';
+            } else if ($total >= 50 && $total <= 55) {
+                return 'C';
+            } else if ($total >= 56 && $total <= 61) {
+                return 'C+';
+            } else if ($total >= 62 && $total <= 67) {
+                return 'B';
+            } else if ($total >= 68 && $total <= 75) {
+                return 'B+';
+            } else if ($total >= 76 && $total <= 85) {
+                return 'A';
+            } else if ($total >= 86 && $total <= 100) {
+                return 'A+';
+            }
         }
     }
-
     /**
      * @param $result
      * @param $aid
      * @return mixed
      */
-    public function extracted($result, $aid): mixed
+    public function extracted($result, $aid,$program): mixed
     {
-        $result->getCollection()->transform(function ($item) use ($aid) {
+        $result->getCollection()->transform(function ($item) use ($program, $aid) {
             $item['calculated_grade'] = $this->comments($item['id'], $aid, 1);
-            $item->enrollments->transform(function ($enrollment) use ($item, $aid) {
+            $item->enrollments->transform(function ($enrollment) use ($program, $item, $aid) {
                 // dd($enrollment);
-                $enrollment->class->course->grades->transform(function ($grade) use ($item, $aid) {
+                $enrollment->class->course->grades->transform(function ($grade) use ($program, $item, $aid) {
                     // Perform calculations here based on the data retrieved
-                    $grade['grade'] = $this->calculateGrade($grade->total_sum);
+                    $grade['grade'] = $this->calculateGrade($grade->total_sum,$program);
                     $grade['outof'] = $this->getClassAssessmentExams($grade->course_id, $aid);
                     $grade['id'] = $this->getGradeID($aid, $grade->course_id, $item['id']);
                     return $grade;
