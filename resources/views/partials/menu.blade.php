@@ -287,7 +287,7 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['search', 'students.create', 'students.edit']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['search', 'students.create', 'students.edit', 'students.list']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-users"></i> <span>
                                     Students</span></a>
 
@@ -302,6 +302,11 @@
                                     <a href="{{ route('search') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['search', 'students.edit']) ? 'active' : '' }}"><i
                                             class="icon-fence"></i> <span>Student Information</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('students.list') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['search', 'students.edit', 'students.list']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Student List</span></a>
                                 </li>
 
                             </ul>

@@ -2,8 +2,7 @@
 
 namespace App\Livewire\DataTables;
 
-use App\Helpers\Qs;
-use App\Models\Settings\Setting;
+use App\Models\Admissions\Student;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -17,7 +16,7 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class Settings extends PowerGridComponent
+final class Students extends PowerGridComponent
 {
     use WithExport;
 
@@ -26,11 +25,10 @@ final class Settings extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            Exportable::make('settings-export')
+            Exportable::make('export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
-            Header::make()
-                ->showSearchInput(),
+            Header::make()->showSearchInput(),
             Footer::make()
                 ->showPerPage()
                 ->showRecordCount(),
@@ -39,7 +37,7 @@ final class Settings extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Setting::query();
+        return Student::query();
     }
 
     public function relationSearch(): array
@@ -51,28 +49,32 @@ final class Settings extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('id')
-            ->add('type')
-            ->add('description');
+            ->add('user.first_name')
+            ->add('user.last_name')
+            ->add('program.name')
+            ->add('admission_year')
+            ->add('level.name');
     }
 
     public function columns(): array
     {
         return [
-            // Column::make('Id', 'id'),
-            Column::make('Type', 'type')
+            Column::make('ID', 'id')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Description', 'description')
+            Column::make('First Name', 'user.first_name')
                 ->sortable()
                 ->searchable(),
 
-            // Column::make('Created at', 'created_at_formatted', 'created_at')
-            //     ->sortable(),
+            Column::make('Program', 'program.name')
+                ->sortable(),
 
-            // Column::make('Created at', 'created_at')
-            //     ->sortable()
-            //     ->searchable(),
+            Column::make('Admission Year', 'admission_year')
+                ->sortable(),
+
+            Column::make('Year of Study', 'level.name'),
+
 
             Column::action('Action')
         ];
@@ -83,17 +85,17 @@ final class Settings extends PowerGridComponent
         return [];
     }
 
-    #[\Livewire\Attributes\On('delete')]
-    public function delete($rowId): void
+    #[\Livewire\Attributes\On('edit')]
+    public function edit($rowId): void
     {
-        //
+        $this->js('alert(' . $rowId . ')');
     }
 
-    public function actions(Setting $row): array
+    public function actions(Student $row): array
     {
         return [
-            Button::add('actions')
-                ->bladeComponent('table-actions.settings', ['row' => $row])
+            Button::add('edit')
+                ->bladeComponent('table-actions.students', ['row' => $row->user])
         ];
     }
 
