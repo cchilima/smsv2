@@ -11,6 +11,9 @@
             <h6 class="card-title">Enter {{ $class_ass->class_assessments[0]->assessment_type->name }}  Results
                 for {{ $class_ass->course->code.' - '.$class_ass->course->name }}</h6>
             <h6 class="card-title assess-total">Being Marked out of {{ $class_ass->class_assessments[0]->total }}</h6>
+            <input type="hidden" name="course_id" value="{{ Qs::hash($class_ass->course_id) }}">
+            <input type="hidden" name="ac_id" value="{{ Qs::hash($class_ass->academic_period_id) }}">
+            <input type="hidden" name="assess_type_id" value="{{ Qs::hash($class_ass->class_assessments[0]->assessment_type_id) }}">
             {!! Qs::getPanelOptions() !!}
         </div>
 
@@ -74,7 +77,16 @@
                                     <input type="text" class="edit-mode form-control"
                                            id="class{{ Qs::hash($enroll->student->id) }}"
                                            value="{{ $enroll->student->grades[0]->total  }}" style="display: none;"
-                                           onchange="EnterResults('{{Qs::hash($enroll->student->id)}}','{{$class_ass->class_assessments[0]->total}}')">
+                                           onchange="EnterResults('{{Qs::hash($enroll->student->id)}}','{{$class_ass->class_assessments[0]->total}}',1)">
+                                    @else
+                                        <input type="hidden" id="gradeid{{ Qs::hash($enroll->student->id) }}"
+                                               value="0">
+                                        <span class="display-mode"
+                                              id="display-mode{{ Qs::hash($enroll->student->id) }}">NE</span>
+                                        <input type="text" class="edit-mode form-control"
+                                               id="class{{ Qs::hash($enroll->student->id) }}"
+                                               value="0" style="display: none;"
+                                               onchange="EnterResults('{{Qs::hash($enroll->student->id)}}','{{$class_ass->class_assessments[0]->total}}',0)">
                                     @endif
                                 </td>
                                 @endif

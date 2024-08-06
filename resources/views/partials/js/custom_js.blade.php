@@ -2,53 +2,53 @@
     // Notifications
 
     @if (session('pop_error'))
-        pop({
-            msg: '{{ session('pop_error') }}',
-            type: 'error'
-        });
+    pop({
+        msg: '{{ session('pop_error') }}',
+        type: 'error'
+    });
     @endif
 
     @if (session('pop_warning'))
-        pop({
-            msg: '{{ session('pop_warning') }}',
-            type: 'warning'
-        });
+    pop({
+        msg: '{{ session('pop_warning') }}',
+        type: 'warning'
+    });
     @endif
 
     @if (session('pop_success'))
-        pop({
-            msg: '{{ session('pop_success') }}',
-            type: 'success',
-            title: 'GREAT!!'
-        });
+    pop({
+        msg: '{{ session('pop_success') }}',
+        type: 'success',
+        title: 'GREAT!!'
+    });
     @endif
 
     @if (session('flash_info'))
-        flash({
-            msg: '{{ session('flash_info') }}',
-            type: 'info'
-        });
+    flash({
+        msg: '{{ session('flash_info') }}',
+        type: 'info'
+    });
     @endif
 
     @if (session('flash_success'))
-        flash({
-            msg: '{{ session('flash_success') }}',
-            type: 'success'
-        });
+    flash({
+        msg: '{{ session('flash_success') }}',
+        type: 'success'
+    });
     @endif
 
     @if (session('flash_warning'))
-        flash({
-            msg: '{{ session('flash_warning') }}',
-            type: 'warning'
-        });
+    flash({
+        msg: '{{ session('flash_warning') }}',
+        type: 'warning'
+    });
     @endif
 
     @if (session('flash_error') || session('flash_danger'))
-        flash({
-            msg: '{{ session('flash_error') ?: session('flash_danger') }}',
-            type: 'danger'
-        });
+    flash({
+        msg: '{{ session('flash_error') ?: session('flash_danger') }}',
+        type: 'danger'
+    });
     @endif
 
     {{-- End Notifications --}}
@@ -77,7 +77,7 @@
             icon: "warning",
             buttons: true,
             dangerMode: true
-        }).then(function(willDelete) {
+        }).then(function (willDelete) {
             if (willDelete) {
                 $('form#item-delete-' + id).submit();
             }
@@ -91,14 +91,14 @@
             icon: "warning",
             buttons: true,
             dangerMode: true
-        }).then(function(willDelete) {
+        }).then(function (willDelete) {
             if (willDelete) {
                 $('form#item-reset-' + id).submit();
             }
         });
     }
 
-    $('form#ajax-reg').on('submit', function(ev) {
+    $('form#ajax-reg').on('submit', function (ev) {
         ev.preventDefault();
         submitForm($(this), 'store');
         //$('#ajax-reg-t-0').get(0).click();
@@ -106,7 +106,7 @@
         div ? reloadDiv(div) : '';
     });
 
-    $('form.ajax-pay').on('submit', function(ev) {
+    $('form.ajax-pay').on('submit', function (ev) {
         ev.preventDefault();
         submitForm($(this), 'store');
 
@@ -132,21 +132,21 @@
         bal < 1 ? $('#' + form_id).fadeOut('slow').remove() : '';
     });
     //start
-    $('form.ajax-store').on('submit', function(ev) {
+    $('form.ajax-store').on('submit', function (ev) {
         ev.preventDefault();
         submitForm($(this), 'store');
         var div = $(this).data('reload');
         div ? reloadDiv(div) : '';
     });
 
-    $('form.ajax-update').on('submit', function(ev) {
+    $('form.ajax-update').on('submit', function (ev) {
         ev.preventDefault();
         submitForm($(this));
         var div = $(this).data('reload');
         div ? reloadDiv(div) : '';
     });
 
-    $('.download-receipt').on('click', function(ev) {
+    $('.download-receipt').on('click', function (ev) {
         ev.preventDefault();
         $.get($(this).attr('href'));
         flash({
@@ -174,7 +174,7 @@
             data: new FormData(form[0])
         };
         var req = $.ajax(ajaxOptions);
-        req.done(function(resp) {
+        req.done(function (resp) {
             resp.ok && resp.msg ?
                 flash({
                     msg: resp.msg,
@@ -190,14 +190,14 @@
             scrollTo('body');
             return resp;
         });
-        req.fail(function(e) {
+        req.fail(function (e) {
             if (e.status == 422) {
                 var errors = e.responseJSON.errors;
                 displayAjaxErr(errors);
             }
             if (e.status == 500) {
                 displayAjaxErr([e.status + ' ' + e.statusText +
-                    ' Please Check for Duplicate entry or Contact School Administrator/IT Personnel'
+                ' Please Check for Duplicate entry or Contact School Administrator/IT Personnel'
                 ])
             }
             if (e.status == 404) {
@@ -222,7 +222,7 @@
         $('#ajax-alert').show().html(
             ' <div class="alert alert-danger border-0 alert-dismissible" id="ajax-msg"><button type="button" class="close" data-dismiss="alert"><span>&times;</span></button></div>'
         );
-        $.each(errors, function(k, v) {
+        $.each(errors, function (k, v) {
             $('#ajax-msg').append('<span><i class="icon-arrow-right5"></i> ' + v + '</span><br/>');
         });
         scrollTo('body');
@@ -291,7 +291,7 @@
     }
 
     function UpdateGeneralinformation(data, countries, programs, towns, provinces, course_levels, intake, inforType,
-        username) {
+                                      username) {
 
 
     }
@@ -349,7 +349,7 @@
         $.ajax({
             dataType: 'json',
             url: url,
-            success: function(resp) {
+            success: function (resp) {
                 classId.empty();
                 classId.append($('<option>', {
                     value: '',
@@ -360,7 +360,7 @@
                     value: '',
                     text: 'Choose ...'
                 }));
-                $.each(resp, function(i, data) {
+                $.each(resp, function (i, data) {
                     classId.append($('<option>', {
                         value: data.id,
                         text: data.course.code + ' - ' + data.course.name
@@ -375,7 +375,7 @@
     }
 
     // Bind the function to the change event of the #ac_id input
-    $('#ac_id').on('change', function() {
+    $('#ac_id').on('change', function () {
         getAcClassesPDER();
     });
 
@@ -389,7 +389,7 @@
         }));
 
         // Iterate over each academic period ID
-        $.each(ac_ids, function(index, ac_id) {
+        $.each(ac_ids, function (index, ac_id) {
             var url = '<?php echo e(route('class-names', [':id'])); ?>';
             url = url.replace(':id', ac_id);
 
@@ -397,8 +397,8 @@
                 dataType: 'json',
                 url: url,
                 async: false, // Ensures synchronous processing
-                success: function(resp) {
-                    $.each(resp, function(i, data) {
+                success: function (resp) {
+                    $.each(resp, function (i, data) {
                         classId.append($('<option>', {
                             value: data.id,
                             text: data.course.code + ' - ' + data.course.name
@@ -419,13 +419,13 @@
         $.ajax({
             dataType: 'json',
             url: url,
-            success: function(resp) {
+            success: function (resp) {
                 classId.empty();
                 classId.append($('<option>', {
                     value: '',
                     text: 'Choose ...'
                 }));
-                $.each(resp, function(i, data) {
+                $.each(resp, function (i, data) {
                     classId.append($('<option>', {
                         value: data.id,
                         text: data.course.code + ' - ' + data.course.name
@@ -434,7 +434,8 @@
             }
         })
     }
-//accommodation start
+
+    //accommodation start
     function getHostelRooms() {
         var hostel_id = $('#hostel_id').val();
         var url = '<?php echo e(route('hostel-rooms', [':id'])); ?>';
@@ -444,13 +445,13 @@
         $.ajax({
             dataType: 'json',
             url: url,
-            success: function(resp) {
+            success: function (resp) {
                 room_id.empty();
                 room_id.append($('<option>', {
                     value: '',
                     text: 'Choose ...'
                 }));
-                $.each(resp, function(i, data) {
+                $.each(resp, function (i, data) {
                     room_id.append($('<option>', {
                         value: data.id,
                         text: data.room_number
@@ -459,6 +460,7 @@
             }
         })
     }
+
     function getHostelRoomsOne() {
         var hostel_id = $('#hostel_ids').val();
         var url = '<?php echo e(route('hostel-rooms', [':id'])); ?>';
@@ -468,13 +470,13 @@
         $.ajax({
             dataType: 'json',
             url: url,
-            success: function(resp) {
+            success: function (resp) {
                 room_id.empty();
                 room_id.append($('<option>', {
                     value: '',
                     text: 'Choose ...'
                 }));
-                $.each(resp, function(i, data) {
+                $.each(resp, function (i, data) {
                     room_id.append($('<option>', {
                         value: data.id,
                         text: data.room_number
@@ -483,6 +485,7 @@
             }
         })
     }
+
     function getRoomBedSpaces() {
         var room_id = $('#room_id').val();
         var url = '<?php echo e(route('room-bed-space', [':id'])); ?>';
@@ -493,7 +496,7 @@
         $.ajax({
             dataType: 'json',
             url: url,
-            success: function(resp) {
+            success: function (resp) {
                 bed_space_id.empty();
                 student_id.empty();
                 bed_space_id.append($('<option>', {
@@ -504,13 +507,13 @@
                     value: '',
                     text: 'Choose ...'
                 }));
-                $.each(resp.students, function(i, data) {
+                $.each(resp.students, function (i, data) {
                     student_id.append($('<option>', {
                         value: data.id,
                         text: data.user.first_name
                     }));
                 });
-                $.each(resp.spaces, function(i, data) {
+                $.each(resp.spaces, function (i, data) {
                     bed_space_id.append($('<option>', {
                         value: data.id,
                         text: data.bed_number
@@ -519,6 +522,7 @@
             }
         })
     }
+
     function getRoomBedSpacesStudent() {
         var room_id = $('#room_ids').val();
         var url = '<?php echo e(route('room-bed-space-student', [':id'])); ?>';
@@ -529,14 +533,14 @@
         $.ajax({
             dataType: 'json',
             url: url,
-            success: function(resp) {
+            success: function (resp) {
                 bed_space_id.empty();
                 student_id.empty();
                 bed_space_id.append($('<option>', {
                     value: '',
                     text: 'Choose ...'
                 }));
-                $.each(resp.spaces, function(i, data) {
+                $.each(resp.spaces, function (i, data) {
                     bed_space_id.append($('<option>', {
                         value: data.id,
                         text: data.bed_number
@@ -546,7 +550,7 @@
                     value: '',
                     text: 'Choose ...'
                 }));
-                $.each(resp.students, function(i, data) {
+                $.each(resp.students, function (i, data) {
                     student_id.append($('<option>', {
                         value: data.id,
                         text: data.user.first_name
@@ -555,15 +559,17 @@
             }
         })
     }
+
     //accommodation end
-    $('.edit-total-link').on('click', function() {
+    $('.edit-total-link').on('click', function () {
 
         var row = $(this).closest('tr');
         row.find('.display-mode').hide();
         row.find('.edit-mode').show();
     });
+
     //});
-    function EnterResults(classID, total) {
+    function EnterResults(classID, total, type) {
         let actual = $('#class' + classID).val();
 
         var displaymode = $('#display-mode' + classID);
@@ -579,43 +585,88 @@
         var newValues = ((actual / 100) * total).toFixed(2);
 
         let id = $('#gradeid' + classID).val();
-
-        let url = '{{ route('postedResults.process') }}';
-        $.ajax({
-            url: url, // Replace with the actual route
-            method: 'POST',
-            dataType: 'json',
-            data: {
-                total: newValues,
-                id: id,
-            },
-            success: function(resp) {
-                // Update the display mode with the new value
-                console.log(resp)
-                if (resp.ok === true) {
-                    displaymode.text(newValues);
-                    displaymode.show();
-                    input.hide();
-                } else {
-                    displaymode.text(textContent);
-                    displaymode.show();
-                    input.hide();
+        if (type === 1) {
+            let url = '{{ route('postedResults.process') }}';
+            $.ajax({
+                url: url, // Replace with the actual route
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    total: newValues,
+                    id: id,
+                },
+                success: function (resp) {
+                    // Update the display mode with the new value
+                    console.log(resp)
+                    if (resp.ok === true) {
+                        displaymode.text(newValues);
+                        displaymode.show();
+                        input.hide();
+                    } else {
+                        displaymode.text(textContent);
+                        displaymode.show();
+                        input.hide();
+                    }
+                    resp.ok && resp.msg ? flash({
+                        msg: resp.msg,
+                        type: 'success'
+                    }) : flash({
+                        msg: resp.msg,
+                        type: 'danger'
+                    });
+                },
+                error: function (xhr, status, error) {
+                    flash({
+                        msg: error,
+                        type: 'danger'
+                    })
                 }
-                resp.ok && resp.msg ? flash({
-                    msg: resp.msg,
-                    type: 'success'
-                }) : flash({
-                    msg: resp.msg,
-                    type: 'danger'
-                });
-            },
-            error: function(xhr, status, error) {
-                flash({
-                    msg: error,
-                    type: 'danger'
-                })
-            }
-        });
+            });
+        } else {
+            let url = '{{ route('AddResults.student') }}';
+            var ac_id = $('input[name="ac_id"]').val();
+            var assess_type_id = $('input[name="assess_type_id"]').val();
+            var course_id = $('input[name="course_id"]').val();
+
+            $.ajax({
+                url: url, // Replace with the actual route
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    total: newValues,
+                    id: classID,
+                    ac_id: ac_id,
+                    assess_type_id: assess_type_id,
+                    course_id: course_id,
+                },
+                success: function (resp) {
+                    // Update the display mode with the new value
+                    console.log(resp)
+                    if (resp.ok === true) {
+                        displaymode.text(newValues);
+                        displaymode.show();
+                        input.hide();
+                    } else {
+                        displaymode.text(textContent);
+                        displaymode.show();
+                        input.hide();
+                    }
+                    resp.ok && resp.msg ? flash({
+                        msg: resp.msg,
+                        type: 'success'
+                    }) : flash({
+                        msg: resp.msg,
+                        type: 'danger'
+                    });
+                },
+                error: function (xhr, status, error) {
+                    flash({
+                        msg: error,
+                        type: 'danger'
+                    })
+                }
+            });
+        }
     }
 
     $.ajaxSetup({
@@ -647,7 +698,7 @@
                 total: newValues,
                 end_date: newValuesendDate,
             },
-            success: function(resp) {
+            success: function (resp) {
                 // Update the display mode with the new value
                 displaymode.text(newValues);
                 displaymode.show();
@@ -665,7 +716,7 @@
                     type: 'danger'
                 });
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 flash({
                     msg: error,
                     type: 'danger'
@@ -686,7 +737,7 @@
                 classId: classID,
                 assessID: AssessID
             },
-            success: function(resp) {
+            success: function (resp) {
                 // resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({
                 //     msg: resp.msg,
                 //     type: 'danger'
@@ -711,7 +762,7 @@
                 }
 
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 flash({
                     msg: error,
                     type: 'danger'
@@ -748,11 +799,11 @@
             assessmentHtml += '</div>';
 
             modalBody.append(assessmentHtml);
-            data.forEach(function(assessment) {
+            data.forEach(function (assessment) {
                 if (parseInt(assessment.student_id) === parseInt(id)) {
                     //var assessmentHtml = '<div>';
                     var assessmentHtml = '<div class="assessment" data-outof="' + assessment.assessment_type
-                        .class_assessment.total + '" data-id="' +
+                            .class_assessment.total + '" data-id="' +
                         assessment.id + '" data-code="' + code + '">';
                     assessmentHtml += '<p>Assessment: ' + assessment.assessment_type.name + '</p>';
                     assessmentHtml += '<p>' + assessment.total + ' Out of: ' + assessment.assessment_type
@@ -828,7 +879,7 @@
                 assessmentHtml += '</div>';
 
                 modalBody.append(assessmentHtml);
-                data.forEach(function(assessment) {
+                data.forEach(function (assessment) {
                     //   if (parseInt(assessment.student_id) === parseInt(id)) {
                     //var assessmentHtml = '<div>';
                     var assessmentHtml = '<div class="assessment" data-outof="' + assessment.outof +
@@ -897,7 +948,7 @@
             assessmentHtml += '</div>';
 
             modalBody.append(assessmentHtml);
-            data.forEach(function(assessment) {
+            data.forEach(function (assessment) {
                 if (assessment.student_id === parseInt(id)) {
                     //var assessmentHtml = '<div>';
                     var assessmentHtml = '<div class="assessment" data-outof="' + assessment.outof +
@@ -966,7 +1017,7 @@
 
             modalBody.append(assessmentHtml);
             //data.each(function (index, assessment) {
-            data.forEach(function(assessment) {
+            data.forEach(function (assessment) {
                 if (assessment.student_id === parseInt(id)) {
                     //var assessmentHtml = '<div>';
                     var assessmentHtml = '<div class="assessment" data-outof="' + assessment.outof +
@@ -1024,7 +1075,7 @@
                 classID: classID,
                 exam: exam
             },
-            success: function(resp) {
+            success: function (resp) {
                 // Update the display mode with the new value
                 console.log(resp)
                 // Check if the response is valid and contains data
@@ -1041,10 +1092,10 @@
                     assessmentHtml += '</div>';
 
                     modalBody.append(assessmentHtml);
-                    resp.class_assessments.forEach(function(assessment) {
+                    resp.class_assessments.forEach(function (assessment) {
                         //var assessmentHtml = '<div>';
                         var assessmentHtml = '<div class="assessment" data-apid="' + resp
-                            .academic_period_id + '" data-code="' +
+                                .academic_period_id + '" data-code="' +
                             resp.course.code + '" data-id="' + assessment.assessment_type.id +
                             '"data-outof="' + assessment.total + '">';
                         assessmentHtml += '<p>Assessment: ' + assessment.assessment_type.name +
@@ -1089,7 +1140,7 @@
                 }
                 //resp.ok && resp.msg ? flash({msg: resp.msg, type: 'success'}) : flash({msg: resp.msg, type: 'danger'});
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 flash({
                     msg: error,
                     type: 'danger'
@@ -1098,7 +1149,8 @@
             }
 
         });
-        $('#assesmentID').val('');;
+        $('#assesmentID').val('');
+        ;
 
     }
 
@@ -1108,7 +1160,7 @@
         var updatedAssessments = [];
         var modalBody = $('#staticBackdrop .modal-body');
         var assessmentContainers = modalBody.find('.assessment');
-        assessmentContainers.each(function() {
+        assessmentContainers.each(function () {
             var assessment = {};
             assessment.total = $(this).find('.total-input').val();
             //assessment.total = $(this).find('.total-input').val();
@@ -1138,7 +1190,7 @@
                     operation: operation
 
                 },
-                success: function(resp) {
+                success: function (resp) {
                     console.log(resp)
                     if (resp.ok === true) {
                         $('#staticBackdrop').modal('hide');
@@ -1154,7 +1206,7 @@
                         type: 'danger'
                     });
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     flash({
                         msg: error,
                         type: 'danger'
@@ -1171,7 +1223,7 @@
     }
 
 
-    $('.user-all').change(function(e) {
+    $('.user-all').change(function (e) {
         var value = $('.user-all:checked').val();
         if (value == 1) {
             $('input[name="ckeck_user"]').prop('checked', true);
@@ -1183,7 +1235,7 @@
     });
 
 
-    $("input[name='ckeck_user']").change(function() {
+    $("input[name='ckeck_user']").change(function () {
         if ($("input[name='ckeck_user']:checked").length > 0) {
             $('.publish-results-board').removeAttr('disabled');
         } else {
@@ -1191,11 +1243,11 @@
         }
     });
 
-    $('.publish-results-board').click(function(e) {
+    $('.publish-results-board').click(function (e) {
         e.preventDefault();
         var ids = [];
 
-        $.each($('input[name="ckeck_user"]:checked'), function() {
+        $.each($('input[name="ckeck_user"]:checked'), function () {
             ids.push($(this).data('id'));
         });
         var academic = $('input[name="academic"]').val();
@@ -1213,7 +1265,7 @@
                     academicPeriodID: academic,
                     type: type
                 },
-                success: function(resp) {
+                success: function (resp) {
                     console.log(resp)
                     $('.success-mail').css('display', 'block');
                     $('.publish-results-board').attr("disabled", false);
@@ -1229,7 +1281,7 @@
                     });
 
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     flash({
                         msg: error,
                         type: 'danger'
@@ -1261,13 +1313,13 @@
                 academic: academic,
                 level: level
             },
-            success: function(response) {
+            success: function (response) {
                 console.log(response)
                 if (response && Object.keys(response.students).length > 0) {
-                    $.each(response.students, function(studentId, student) {
+                    $.each(response.students, function (studentId, student) {
                         var coursesHtml = '';
                         let counter = 1;
-                        $.each(student.courses, function(courseId, course) {
+                        $.each(student.courses, function (courseId, course) {
                             var totalSum = 0, totalCa = 0;
                             coursesHtml += `
                 <tr>
@@ -1284,8 +1336,8 @@
 <!--                                    <td>Grade</td> <td>//</td> -->
                                 </tr>`;
 
-                            $.each(course.course_details.student_grades, function(index,
-                                grades) {
+                            $.each(course.course_details.student_grades, function (index,
+                                                                                   grades) {
                                 totalSum += grades.outof;
                                 totalCa += grades.total;
                                 coursesHtml += `
@@ -1300,7 +1352,7 @@
                             coursesHtml += `   </tbody>
                         </table>
                     </td>`;
-                            coursesHtml +=`<td>${totalCa}  out of  ${totalSum} </td>
+                            coursesHtml += `<td>${totalCa}  out of  ${totalSum} </td>
                 <td><a onclick="modifyMarksCAsL('${studentId}','${student.name}','${course.course_details.course_code}','${course.course_details.course_title}','${encodeURIComponent(JSON.stringify(course.course_details.student_grades))}')"
                                                                class="nav-link"><i class="icon-pencil"></i></a></td>
                 </tr>`;
@@ -1357,7 +1409,7 @@
                 }
                 // $('.load-more-results-first').hide();
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 flash({
                     msg: error,
                     type: 'danger'
@@ -1388,13 +1440,13 @@
                 academic: academic,
                 level: level
             },
-            success: function(response) {
+            success: function (response) {
                 console.log(response.data)
 
                 if (response && Object.keys(response.students).length > 0) {
-                    $.each(response.students, function(studentId, student) {
+                    $.each(response.students, function (studentId, student) {
                         var coursesHtml = '';
-                        $.each(student.courses, function(courseId, course) {
+                        $.each(student.courses, function (courseId, course) {
                             coursesHtml += `
                 <tr>
                     <td>0</td>
@@ -1472,7 +1524,7 @@
                 }
 
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 flash({
                     msg: error,
                     type: 'danger'
@@ -1530,7 +1582,7 @@
 
     // Mask NRC input
     const maskNRC = () => {
-        $('#nrc').on('input', function() {
+        $('#nrc').on('input', function () {
             var nrc = $(this).val().replace(/\D/g, '');
 
             if (nrc.length > 6) {
@@ -1546,7 +1598,7 @@
     }
 
     $(document).ready(() => {
-        $('#academic-period-ids').change(function() {
+        $('#academic-period-ids').change(function () {
             const academicPeriodIds = $(this).val();
 
             if (academicPeriodIds.length > 0) {
@@ -1576,7 +1628,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="false">
+     aria-labelledby="staticBackdropLabel" aria-hidden="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content row col card card-body">
             <div class="modal-header">
@@ -1591,7 +1643,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary closeModalButton" onclick="CloseModal()"
-                    id="closeModalButton" data-bs-dismiss="modal">
+                        id="closeModalButton" data-bs-dismiss="modal">
                     Close
                 </button>
                 <button type="button" onclick="SubmitData()" class="btn btn-primary">Submit</button>
