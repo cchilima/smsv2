@@ -30,8 +30,7 @@ class SettingsController extends Controller
 
     public function index()
     {
-        $settings = $this->settingsRepo->getAll();
-        return view('pages.settings.index', compact('settings'));
+        return view('pages.settings.index');
     }
 
     /**

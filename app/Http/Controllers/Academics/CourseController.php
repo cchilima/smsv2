@@ -19,16 +19,15 @@ class CourseController extends Controller
     protected $courses;
     public function __construct(CourseRepository $courses)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->courses = $courses;
     }
 
     public function index()
     {
-        $courses['courses'] = $this->courses->getAll();
-        return view('pages.courses.index',$courses);
+        return view('pages.courses.index');
     }
 
     /**
@@ -65,7 +64,7 @@ class CourseController extends Controller
     {
         $courses['course'] = $courses = $this->courses->find($id);
 
-        return !is_null($courses ) ? view('pages.courses.edit', $courses)
+        return !is_null($courses) ? view('pages.courses.edit', $courses)
             : Qs::goWithDanger('pages.courses.index');
     }
 
@@ -74,7 +73,7 @@ class CourseController extends Controller
      */
     public function update(CoursesUpdate $req, string $id)
     {
-        $data = $req->only(['code','name']);
+        $data = $req->only(['code', 'name']);
         $this->courses->update($id, $data);
         return Qs::jsonUpdateOk();
     }

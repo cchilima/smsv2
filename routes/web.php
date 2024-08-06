@@ -65,6 +65,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::group(['prefix' => 'students'], function () {
     Route::get('/search', [StudentController::class, 'search'])->name('search');
     Route::post('/search', [StudentController::class, 'search'])->name('students.lists');
+    Route::get('/list', [StudentController::class, 'list'])->name('students.list');
     Route::get('/profile/{id}', [StudentController::class, 'studentShow'])->name('show.student');
 });
 Route::group(['prefix' => 'assess'], function () {
