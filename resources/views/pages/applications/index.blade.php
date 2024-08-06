@@ -1,20 +1,21 @@
 @extends('layouts.master')
-@section('page_title', 'Collect Application Payments')
+@section('page_title', 'Student Applications')
 @section('content')
     @php
         use App\Helpers\Qs;
     @endphp
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h6 class="card-title">Applications</h6>
+            <h6 class="card-title">Student Applications</h6>
             {!! Qs::getPanelOptions() !!}
         </div>
 
         <div class="card-body">
             <ul class="nav nav-tabs nav-tabs-highlight">
-                <li class="nav-item"><a href="#applications" class="nav-link active" data-toggle="tab">Applications</a></li>
-                <li class="nav-item"><a href="#collect-payment" class="nav-link" data-toggle="tab">Collect Payment</a></li>
-
+                <li class="nav-item"><a href="#applications" class="nav-link active" data-toggle="tab">Applications</a>
+                </li>
+                <li class="nav-item"><a href="#collect-payment" class="nav-link" data-toggle="tab">Collect Payment</a>
+                </li>
             </ul>
 
             <div class="tab-content">

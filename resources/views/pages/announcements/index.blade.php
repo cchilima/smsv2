@@ -20,7 +20,9 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-classes">
-                    <table class="table datatable-button-html5-columns">
+                    <livewire:datatables.notices.announcements />
+
+                    {{-- <table class="table datatable-button-html5-columns">
                         <thead>
                             <tr>
                                 <th>S/N</th>
@@ -67,7 +69,7 @@
                                 </tr>
                             @endforeach
                         </tbody>
-                    </table>
+                    </table> --}}
                 </div>
 
                 <div class="tab-pane fade" id="new-class">
