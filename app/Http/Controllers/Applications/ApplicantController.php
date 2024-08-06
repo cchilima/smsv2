@@ -36,9 +36,10 @@ class ApplicantController extends Controller
     {
         if (Qs::userIsTeamSAT() || Qs::userIsSuperAdmin()) {
             $applications = $this->applicantRepo->getAll();
+            $paymentMethods = $this->studentRepo->getPaymentMethods();
 
             // Application step 1
-            return view('pages.applications.index', compact('applications'));
+            return view('pages.applications.index', compact('applications', 'paymentMethods'));
         }
 
         return redirect(route('home'));
@@ -108,11 +109,10 @@ class ApplicantController extends Controller
             $applications = $this->applicantRepo->getAll();
             $paymentMethods = $this->studentRepo->getPaymentMethods();
             // Application step 1
-            return view('pages.applications.collect_application_fee', compact('applications','paymentMethods'));
+            return view('pages.applications.collect_application_fee', compact('applications', 'paymentMethods'));
         }
 
         return redirect(route('home'));
-
     }
 
 
@@ -126,12 +126,11 @@ class ApplicantController extends Controller
             $data = $request;
             $collected = $this->applicantRepo->collectApplicantFee($data);
 
-            if($collected){
+            if ($collected) {
                 return Qs::jsonStoreOk();
             } else {
-                return Qs::json(false,'msg.create_failed');
+                return Qs::json(false, 'msg.create_failed');
             }
-
         }
 
         return redirect(route('home'));
@@ -278,7 +277,8 @@ class ApplicantController extends Controller
         }
     }
 
-    public function ApplicationsSummary(){
+    public function ApplicationsSummary()
+    {
 
         $data['not_paid'] = $this->applicantRepo->getNotPaidCount();
         $data['paid'] = $this->applicantRepo->getPaidCount();
@@ -293,28 +293,29 @@ class ApplicantController extends Controller
         $data['applicants'] = $this->applicantRepo->getApplicantsCount();
         $data['app_apps'] = $this->applicantRepo->getLastFiveAppsCount();
 
-        return view('pages.applications.applications_summary_index',$data);
+        return view('pages.applications.applications_summary_index', $data);
     }
 
-    public function ApplicationsStatus(string $status,$id){
+    public function ApplicationsStatus(string $status, $id)
+    {
 
         $id = Qs::decodeHash($id);
         $applications = [];
-        if ($id == 1){
+        if ($id == 1) {
             $applications = $this->applicantRepo->getApplicationStatus($status);
-        }else if ($id == 2){
+        } else if ($id == 2) {
             $applications = $this->applicantRepo->getGender($status);
-        }else if ($id == 3){
+        } else if ($id == 3) {
             $applications = $this->applicantRepo->getPaymentStatus($status);
         }
 
         return view('pages.applications.index', compact('applications'));
-//enum('incomplete', 'pending', 'complete', 'accepted', 'rejected')
+        //enum('incomplete', 'pending', 'complete', 'accepted', 'rejected')
         //enum('Male', 'Female')
     }
 
 
-     /**
+    /**
      * Download registration summary.
      */
     public function provisional(Request $request)

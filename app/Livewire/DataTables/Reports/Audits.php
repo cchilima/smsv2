@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Livewire\Datatables\Academics;
+namespace App\Livewire\DataTables\Reports;
 
-use App\Models\Academics\Course;
+use OwenIt\Auditing\Models\Audit;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Blade;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Exportable;
@@ -17,16 +16,18 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class Prerequisites extends PowerGridComponent
+final class Audits extends PowerGridComponent
 {
     use WithExport;
 
     public function setUp(): array
     {
         $this->showCheckBox();
+        $this->sortBy('created_at');
+        $this->sortDirection = 'desc';
 
         return [
-            Exportable::make('prerequisites-export')
+            Exportable::make('audits-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -38,7 +39,7 @@ final class Prerequisites extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Course::query();
+        return Audit::query();
     }
 
     public function relationSearch(): array
@@ -49,39 +50,37 @@ final class Prerequisites extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('name')
-            // ->add('prerequisites.name');
-            ->add('prerequisites', function ($row) {
-                return Blade::render(
-                    '<x-table-fields.academics.prerequisites :row=$row />',
-                    ['row' => $row]
-                );
-            });
+            ->add('user', function (Audit $row) {
+                return $row->user->first_name . ' ' . $row->user->last_name;
+            })
+            ->add('event')
+            ->add('old_values', function (Audit $row) {
+                return json_encode($row->old_values);
+            })
+            ->add('new_values', function (Audit $row) {
+                return json_encode($row->new_values);
+            })
+            ->add('created_at');
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Course', 'name')
-                ->searchable()
-                ->sortable(),
+            Column::make('User', 'user'),
 
-            Column::make('Prerequisites', 'prerequisites'),
+            Column::make('Old Values', 'old_values'),
 
-            Column::action('Action')
+            Column::make('New Values', 'new_values'),
+
+            Column::make('Created At', 'created_at')
+                ->sortable()
+                ->searchable(),
+
         ];
     }
 
     public function filters(): array
     {
         return [];
-    }
-
-    public function actions(Course $row): array
-    {
-        return [
-            Button::add('actions')
-                ->bladeComponent('table-actions.academics.prerequisites', ['row' => $row])
-        ];
     }
 }
