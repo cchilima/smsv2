@@ -20,7 +20,7 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-settings">
-                    <livewire:datatables.settings />
+                    <livewire:datatables.settings.settings />
 
                     {{-- <table class="table datatable-button-html5-columns">
                         <thead>

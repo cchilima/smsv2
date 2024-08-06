@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables;
+namespace App\Livewire\DataTables\Admissions;
 
 use App\Models\Admissions\Student;
 use Illuminate\Support\Carbon;

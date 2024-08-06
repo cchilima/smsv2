@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables;
+namespace App\Livewire\DataTables\Settings;
 
 use App\Helpers\Qs;
 use App\Models\Settings\Setting;
