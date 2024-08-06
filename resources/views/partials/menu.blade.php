@@ -196,6 +196,13 @@
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['fees.create', 'fees.edit', 'fees.index']) ? 'active' : '' }}">
                                         <span>Fees</span></a>
                                 </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('payment-methods.index') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['payment-methods.create', 'payment-methods.edit', 'payment-methods.index']) ? 'active' : '' }}">
+                                        <span>Payment Methods</span></a>
+                                </li>
+
                                 @if (true)
                                     <li
                                         class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['credit.notes', 'student.list', 'creditors', 'aged.receivables', 'revenue.analysis', 'invoices']) ? 'nav-item-expanded nav-item-open' : '' }} ">
@@ -269,17 +276,12 @@
                                         </ul>
                                     </li>
                                 @endif
-                                <li class="nav-item">
-                                    <a href="{{ route('payment-methods.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['payment-methods.create', 'payment-methods.edit', 'payment-methods.index']) ? 'active' : '' }}">
-                                        <span>Payment Methods</span></a>
-                                </li>
 
-                                <li class="nav-item">
+                                {{-- <li class="nav-item">
                                     <a href="{{ route('application.pending_collection') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['application.pending_collection']) ? 'active' : '' }}">
                                         <span>Collect Application Payment</span></a>
-                                </li>
+                                </li> --}}
 
                             </ul>
                         </li>
