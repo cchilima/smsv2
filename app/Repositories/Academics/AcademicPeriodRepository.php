@@ -30,9 +30,18 @@ class AcademicPeriodRepository
     {
         return AcademicPeriod::with('period_types')->whereDate('ac_end_date', '>=', now())->orderByDesc($order)->get();
     }
+    public function getAllOpenedQuery($order = 'created_at')
+    {
+        return AcademicPeriod::with('period_types')->whereDate('ac_end_date', '>=', now())->orderByDesc($order);
+    }
     public function getAllClosed($order = 'created_at')
     {
         return AcademicPeriod::with('period_types')->whereDate('ac_end_date', '<', now())->orderByDesc($order)->get();
+    }
+
+    public function getAllClosedQuery($order = 'created_at')
+    {
+        return AcademicPeriod::with('period_types')->whereDate('ac_end_date', '<', now())->orderByDesc($order);
     }
 
     //ac_start_date

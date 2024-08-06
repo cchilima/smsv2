@@ -77,17 +77,11 @@ final class Settings extends PowerGridComponent
         return [];
     }
 
-    #[\Livewire\Attributes\On('delete')]
-    public function delete($rowId): void
-    {
-        //
-    }
-
     public function actions(Setting $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.settings', ['row' => $row])
+                ->bladeComponent('table-actions.settings.settings', ['row' => $row])
         ];
     }
 

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Livewire\DataTables\Admissions;
+namespace App\Livewire\Datatables\Academics\AcademicPeriods;
 
-use App\Models\Admissions\Student;
+use App\Models\Academics\AcademicPeriod;
+use App\Repositories\Academics\AcademicPeriodRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -16,16 +17,24 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class Students extends PowerGridComponent
+class Base extends PowerGridComponent
 {
     use WithExport;
+
+    protected AcademicPeriodRepository $academicPeriodRepo;
+
+    public function boot(): void
+    {
+        $this->academicPeriodRepo = new AcademicPeriodRepository();
+    }
 
     public function setUp(): array
     {
         $this->showCheckBox();
+        $this->sortBy('name');
 
         return [
-            Exportable::make('students-export')
+            Exportable::make('academic-periods-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -35,73 +44,57 @@ final class Students extends PowerGridComponent
         ];
     }
 
-    public function datasource(): Builder
-    {
-        return Student::query()->with(['user', 'program', 'level']);
-    }
 
     public function relationSearch(): array
     {
-        return [
-            'user' => [
-                'first_name',
-                'last_name',
-            ]
-        ];
+        return [];
     }
-
 
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('id')
-            ->add('user.first_name')
-            ->add('user.last_name')
-            ->add('program.name')
-            ->add('admission_year')
-            ->add('level.name');
+            ->add('name')
+            ->add('code')
+            ->add('ac_start_date')
+            ->add('ac_end_date')
+            ->add('period_types.name');
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Student ID', 'id')
+            Column::make('Name', 'name')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('First Name', 'user.first_name')
+            Column::make('Code', 'code')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Last Name', 'user.last_name')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Program', 'program.name')
+            Column::make('Start Date', 'ac_start_date')
                 ->sortable(),
 
-            Column::make('Admission Year', 'admission_year')
+            Column::make('End Date', 'ac_end_date')
                 ->sortable(),
 
-            Column::make('Year of Study', 'level.name')
-                ->sortable(),
-
+            Column::make('Period Type', 'period_types.name'),
 
             Column::action('Action')
-                ->visibleInExport(visible: false)
         ];
     }
 
     public function filters(): array
     {
-        return [];
+        return [
+            // Filter::boolean('code', 'code')
+        ];
     }
 
-    public function actions(Student $row): array
+    public function actions(AcademicPeriod $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.admissions.students', ['row' => $row->user])
+                ->bladeComponent('table-actions.academics.academic-periods', ['row' => $row])
         ];
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Livewire\DataTables\Admissions;
+namespace App\Livewire\DataTables\Academics;
 
-use App\Models\Admissions\Student;
+use App\Models\Academics\Course;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -16,7 +16,7 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class Students extends PowerGridComponent
+final class Courses extends PowerGridComponent
 {
     use WithExport;
 
@@ -25,7 +25,7 @@ final class Students extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            Exportable::make('students-export')
+            Exportable::make('courses-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -37,58 +37,33 @@ final class Students extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Student::query()->with(['user', 'program', 'level']);
+        return Course::query();
     }
 
     public function relationSearch(): array
     {
-        return [
-            'user' => [
-                'first_name',
-                'last_name',
-            ]
-        ];
+        return [];
     }
-
 
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('id')
-            ->add('user.first_name')
-            ->add('user.last_name')
-            ->add('program.name')
-            ->add('admission_year')
-            ->add('level.name');
+            ->add('code')
+            ->add('name');
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Student ID', 'id')
+            Column::make('Code', 'code')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('First Name', 'user.first_name')
+            Column::make('Name', 'name')
                 ->sortable()
                 ->searchable(),
-
-            Column::make('Last Name', 'user.last_name')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Program', 'program.name')
-                ->sortable(),
-
-            Column::make('Admission Year', 'admission_year')
-                ->sortable(),
-
-            Column::make('Year of Study', 'level.name')
-                ->sortable(),
-
 
             Column::action('Action')
-                ->visibleInExport(visible: false)
         ];
     }
 
@@ -97,11 +72,11 @@ final class Students extends PowerGridComponent
         return [];
     }
 
-    public function actions(Student $row): array
+    public function actions(Course $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.admissions.students', ['row' => $row->user])
+                ->bladeComponent('table-actions.academics.courses', ['row' => $row])
         ];
     }
 }

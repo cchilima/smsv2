@@ -18,8 +18,8 @@ class PrerequisiteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $prerequisiteRepo,$coursesRepo;
-    public function __construct(PrerequisiteRepository $prerequisiteRepo,CourseRepository $coursesRepo)
+    protected $prerequisiteRepo, $coursesRepo;
+    public function __construct(PrerequisiteRepository $prerequisiteRepo, CourseRepository $coursesRepo)
     {
         $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
         $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
@@ -32,8 +32,8 @@ class PrerequisiteController extends Controller
     {
         $courses['courses'] = $this->prerequisiteRepo->getAll();
         $courses['pcourses'] = $this->coursesRepo->getAll();
-        //dd($courses['courses']);
-        return view('pages.prerequisites.index',$courses);
+
+        return view('pages.prerequisites.index', $courses);
     }
 
     /**
@@ -79,7 +79,7 @@ class PrerequisiteController extends Controller
         $courses['pcourses'] = $this->coursesRepo->getAll();
         $courses['course'] = $this->prerequisiteRepo->findOne($id);
         //dd($courses);
-        return view('pages.prerequisites.edit',$courses);
+        return view('pages.prerequisites.edit', $courses);
     }
 
     /**
@@ -91,7 +91,7 @@ class PrerequisiteController extends Controller
         $data = $req->only(['course_id', 'prerequisite_course_id']);
 
         foreach ($data['prerequisite_course_id'] as $courseID) {
-            $this->prerequisiteRepo->updateOrInsert($id,$courseID);
+            $this->prerequisiteRepo->updateOrInsert($id, $courseID);
         }
         return Qs::jsonUpdateOk();
     }

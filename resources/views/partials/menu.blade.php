@@ -293,13 +293,18 @@
 
                                 <li class="nav-item">
                                     <a href="{{ route('students.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['students.create', 'students.edit']) ? 'active' : '' }}">
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['students.create']) ? 'active' : '' }}">
                                         <span>Admit student</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('search') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['search', 'students.edit']) ? 'active' : '' }}">
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['search']) ? 'active' : '' }}">
                                         <span>Student Information</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('students.list') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['students.list']) ? 'active' : '' }}">
+                                        <span>Student List</span></a>
                                 </li>
 
                             </ul>
