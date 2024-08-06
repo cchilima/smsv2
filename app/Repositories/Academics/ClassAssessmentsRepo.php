@@ -1504,4 +1504,71 @@ class ClassAssessmentsRepo
             'total' => $newTotal,
         ]);
     }
+    public function GetStudentExamGrades($id)
+    {
+        // Fetch students from the given user IDs
+        $students = Student::where('program_id', $id)->get();
+
+        // Create a map of user_id to student_id
+        $studentIds = $students->pluck('id')->toArray();
+
+        // Fetch grades for all the students
+        $grades = Grade::whereIn('student_id', $studentIds)
+            ->where('publication_status', 1)
+            ->with(['academicPeriods', 'student'])
+            ->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->selectRaw('SUM(total) as total_sum')
+            ->groupBy('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+            ->whereExists(function ($query) {
+                $query->select('id')
+                    ->from('grades')
+                    ->whereColumn('student_id', 'grades.student_id')
+                    ->where('publication_status', 1)
+                    ->where('assessment_type_id', 1);
+            })
+            ->orderBy('academic_period_id')
+            ->orderBy('course_code')
+            ->get();
+
+        $organizedResults = [];
+
+        foreach ($grades as $grade) {
+            $studentId = $grade->student_id;
+            $academicPeriodId = $grade->academic_period_id;
+            $pro = Student::find($studentId);
+
+            $course = [
+                'grade_id' => $grade->id,
+                'course_code' => $grade->course_code,
+                'course_title' => $grade->course_title,
+                'student_id' => $grade->student_id,
+                'total' => $grade->total_sum,
+                'grade' => $this->calculateGrade($grade->total_sum, $pro->program_id)
+            ];
+
+            if (!isset($organizedResults[$studentId])) {
+                $organizedResults[$studentId] = [
+                    'student_id' => $studentId,
+                    'grades_by_period' => []
+                ];
+            }
+
+            if (!isset($organizedResults[$studentId]['grades_by_period'][$academicPeriodId])) {
+                $organizedResults[$studentId]['grades_by_period'][$academicPeriodId] = [
+                    'academic_period_name' => $grade->academicPeriods->name,
+                    'academic_period_code' => $grade->academicPeriods->code,
+                    'academic_period_id' => $grade->academicPeriods->id,
+                    'academic_period_start_date' => $grade->academicPeriods->ac_start_date,
+                    'academic_period_end_date' => $grade->academicPeriods->ac_end_date,
+                    'comments' => $this->comments($studentId, $grade->academicPeriods->id, 1),
+                    'grades' => []
+                ];
+            }
+
+            $organizedResults[$studentId]['grades_by_period'][$academicPeriodId]['grades'][] = $course;
+        }
+
+        return $organizedResults;
+    }
+
 }

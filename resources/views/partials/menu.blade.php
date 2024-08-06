@@ -100,61 +100,61 @@
 
                                 <li class="nav-item">
                                     <a href="{{ route('schools.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['schools.index', 'schools.edit']) ? 'active' : '' }}">
-                                        <span>School</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['schools.index', 'schools.edit']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>School</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('departments.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['departments.index', 'departments.edit']) ? 'active' : '' }}">
-                                        <span>Departments</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['departments.index', 'departments.edit']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Departments</span></a>
                                 </li>
                                 {{-- Manage programs --}}
                                 <li class="nav-item">
                                     <a href="{{ route('programs.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['programs.index', 'programs.edit', 'programs.show']) ? 'active' : '' }}">
-                                        <span>Programs</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['programs.index', 'programs.edit', 'programs.show']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Programs</span></a>
                                 </li>
 
                                 {{-- Manage courses --}}
                                 <li class="nav-item">
                                     <a href="{{ route('courses.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['courses.index', 'courses.edit']) ? 'active' : '' }}">
-                                        <span>Courses</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['courses.index', 'courses.edit']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Courses</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('qualifications.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['qualifications.index', 'qualifications.edit']) ? 'active' : '' }}">
-                                        <span>Qualifications</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['qualifications.index', 'qualifications.edit']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Qualifications</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('levels.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['levels.index', 'levels.edit']) ? 'active' : '' }}">
-                                        <span>Course Levels</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['levels.index', 'levels.edit']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Course Levels</span></a>
                                 </li>
                                 {{-- Manage Study modes --}}
                                 <li class="nav-item">
                                     <a href="{{ route('study-modes.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['study-modes.index', 'study-modes.edit']) ? 'active' : '' }}">
-                                        <span>Study Modes</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['study-modes.index', 'study-modes.edit']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Study Modes</span></a>
                                 </li>
                                 {{-- Academic MANAGEMENT --}}
                                 <li class="nav-item">
                                     <a href="{{ route('period-types.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['period-types.index', 'period-types.edit']) ? 'active' : '' }}">
-                                        <span>Academic Period Types</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['period-types.index', 'period-types.edit']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Academic Period Types</span></a>
                                 </li>
                                 {{-- Manage Prere --}}
                                 <li class="nav-item">
                                     <a href="{{ route('prerequisites.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['prerequisites.index', 'prerequisites.edit']) ? 'active' : '' }}">
-                                        <span>Prerequisites</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['prerequisites.index', 'prerequisites.edit']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Prerequisites</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('intakes.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['intakes.index', 'intakes.edit']) ? 'active' : '' }}">
-                                        <span>Intake</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['intakes.index', 'intakes.edit']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Intake</span></a>
                                 </li>
                             </ul>
                         </li>
@@ -166,20 +166,20 @@
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Academic Period">
                                 <li class="nav-item">
                                     <a href="{{ route('academic-periods.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-management.index', 'academic-period-management.edit', 'academic-period-fees.edit', 'academic-periods.create', 'academic-periods.edit', 'academic-periods.index']) ? 'active' : '' }}">
-                                        <span>Academic period</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-management.index', 'academic-period-management.edit', 'academic-period-fees.edit', 'academic-periods.create', 'academic-periods.edit', 'academic-periods.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Academic period</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('academic-period-classes.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-classes.create', 'academic-period-classes.edit', 'academic-period-classes.index']) ? 'active' : '' }}">
-                                        <span>Academic period class</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-classes.create', 'academic-period-classes.edit', 'academic-period-classes.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Academic period class</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('enrollments.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.index']) ? 'active' : '' }}">
-                                        <span>Enrollments</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Enrollments</span></a>
                                 </li>
                             </ul>
                         </li>
@@ -193,8 +193,8 @@
 
                                 <li class="nav-item">
                                     <a href="{{ route('fees.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['fees.create', 'fees.edit', 'fees.index']) ? 'active' : '' }}">
-                                        <span>Fees</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['fees.create', 'fees.edit', 'fees.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Fees</span></a>
                                 </li>
                                 @if (true)
                                     <li
@@ -207,7 +207,8 @@
                                                     <a href="#"
                                                         class="nav-link {{ in_array(Route::currentRouteName(), ['revenue.analysis', 'invoices']) ? 'active' : '' }}">Revenue</a>
                                                     <ul class="nav nav-group-sub">
-                                                        <li class="nav-item"><a href="{{ route('revenue.analysis') }}"
+                                                        <li class="nav-item"><a
+                                                                href="{{ route('revenue.analysis') }}"
                                                                 class="nav-link {{ in_array(Route::currentRouteName(), ['revenue.analysis']) ? 'active' : '' }}">Revenue
                                                                 Analysis</a>
                                                         </li>
@@ -271,14 +272,14 @@
                                 @endif
                                 <li class="nav-item">
                                     <a href="{{ route('payment-methods.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['payment-methods.create', 'payment-methods.edit', 'payment-methods.index']) ? 'active' : '' }}">
-                                        <span>Payment Methods</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['payment-methods.create', 'payment-methods.edit', 'payment-methods.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Payment Methods</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('application.pending_collection') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['application.pending_collection']) ? 'active' : '' }}">
-                                        <span>Collect Application Payment</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['application.pending_collection']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Collect Application Payment</span></a>
                                 </li>
 
                             </ul>
@@ -293,18 +294,13 @@
 
                                 <li class="nav-item">
                                     <a href="{{ route('students.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['students.create', 'students.edit']) ? 'active' : '' }}">
-                                        <span>Admit student</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['students.create', 'students.edit']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Admit student</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('search') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['search', 'students.edit']) ? 'active' : '' }}">
-                                        <span>Student Information</span></a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('students.list') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['search', 'students.edit', 'students.list']) ? 'active' : '' }}">
-                                        <span>Student List</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['search', 'students.edit']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Student Information</span></a>
                                 </li>
 
                             </ul>
@@ -318,24 +314,24 @@
                             <ul class="nav nav-group-sub" data-submenu-title="New Application">
                                 <li class="nav-item">
                                     <a href="{{ route('start-application') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['applications.initiate']) ? 'active' : '' }}">
-                                        <span>New Student Application</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['applications.initiate']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>New Student Application</span></a>
                                 </li>
                             </ul>
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Admissions">
                                 <li class="nav-item">
                                     <a href="{{ route('application.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['applications.index']) ? 'active' : '' }}">
-                                        <span>Applications</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['applications.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Applications</span></a>
                                 </li>
                             </ul>
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Admissions">
                                 <li class="nav-item">
                                     <a href="{{ route('application.summary_reports') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['application.summary_reports']) ? 'active' : '' }}">
-                                        <span>Reports</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['application.summary_reports']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Reports</span></a>
                                 </li>
                             </ul>
                         </li>
@@ -350,32 +346,32 @@
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Profile">
                                 <li class="nav-item">
                                     <a href="{{ route('hostels.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['hostels.create', 'hostels.edit', 'hostels.index']) ? 'active' : '' }}">
-                                        <span>Hostels</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['hostels.create', 'hostels.edit', 'hostels.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Hostels</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('rooms.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['rooms.create', 'rooms.edit', 'rooms.index']) ? 'active' : '' }}">
-                                        <span>Rooms</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['rooms.create', 'rooms.edit', 'rooms.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Rooms</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('start-application') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['start-application']) ? 'active' : '' }}">
-                                        <span>Admit Student</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['start-application']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Admit Student</span></a>
                                 </li>
                                 <li class="nav-item">
 
                                     <a href="{{ route('bed-space.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['bed-space.create', 'bed-space.edit', 'bed-space.index']) ? 'active' : '' }}">
-                                        <span>Bed Spaces</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['bed-space.create', 'bed-space.edit', 'bed-space.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Bed Spaces</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('booking.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['booking.create', 'booking.edit', 'booking.index']) ? 'active' : '' }}">
-                                        <span>Bed Space Booking</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['booking.create', 'booking.edit', 'booking.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Bed Space Booking</span></a>
                                 </li>
 
                             </ul>
@@ -389,23 +385,23 @@
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Users">
                                 <li class="nav-item">
                                     <a href="{{ route('enrollments.reports') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.reports']) ? 'active' : '' }}">
-                                        <span>Enrollments</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.reports']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Enrollments</span></a>
 
                                 <li class="nav-item">
                                     <a href="{{ route('registers.reports') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['registers.reports']) ? 'active' : '' }}">
-                                        <span>Exam Registers</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['registers.reports']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Exam Registers</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('student.list.reports') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['student.list.reports']) ? 'active' : '' }}">
-                                        <span>Student List</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['student.list.reports']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Student List</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('audit.trail.reports') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['audit.trail.reports']) ? 'active' : '' }}">
-                                        <span>Audit Trail</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['audit.trail.reports']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Audit Trail</span></a>
                                 </li>
 
                             </ul>
@@ -419,37 +415,37 @@
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Profile">
                                 <li class="nav-item">
                                     <a href="{{ route('announcements.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['announcements.create', 'announcements.edit', 'announcements.index']) ? 'active' : '' }}">
-                                        <span>Announcements</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['announcements.create', 'announcements.edit', 'announcements.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Announcements</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('countries.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['countries.create', 'countries.edit', 'countries.index']) ? 'active' : '' }}">
-                                        <span>Countries</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['countries.create', 'countries.edit', 'countries.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Countries</span></a>
                                 </li>
                                 <li class="nav-item">
 
                                     <a href="{{ route('provinces.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['provinces.create', 'provinces.edit', 'provinces.index']) ? 'active' : '' }}">
-                                        <span>Provinces</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['provinces.create', 'provinces.edit', 'provinces.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Provinces</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('towns.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['towns.create', 'towns.edit', 'towns.index']) ? 'active' : '' }}">
-                                        <span>Towns</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['towns.create', 'towns.edit', 'towns.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Towns</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('marital-statuses.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}">
-                                        <span>Marital statuses</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Marital statuses</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('audits.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}">
-                                        <span>Audit Reports</span></a>
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}"><i
+                                            class="icon-fence"></i> <span>Audit Reports</span></a>
                                 </li>
 
                             </ul>
@@ -479,6 +475,7 @@
                             'myClassList',
                             'reports.index',
                             'getPramResultsLevel',
+                            'program-list',
                         ])
                             ? 'nav-item-expanded nav-item-open'
                             : '' }} ">
@@ -518,6 +515,33 @@
                                                             @foreach (\App\Repositories\Academics\AcademicPeriodRepository::getAllOpened('code') as $c)
                                                                 <li class="nav-item"><a
                                                                         href="{{ route('class-list', Qs::hash($c->id)) }}"
+                                                                        class="nav-link ">{{ $c->code }}</a>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+
+                                                    </li>
+                                                @endif
+
+                                            </ul>
+                                        </li>
+
+                                        <li
+                                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['program-list']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                                            <a href="#" class="nav-link"><span> View Student Program
+                                                    Results</span></a>
+                                            <ul class="nav nav-group-sub" data-submenu-title="Manage Students">
+                                                @if (true)
+                                                    <li
+                                                        class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['program-list']) ? 'nav-item-expanded nav-item-open' : '' }}">
+                                                        <a href="#"
+                                                            class="nav-link {{ in_array(Route::currentRouteName(), ['program-list']) ? 'active' : '' }}">Select
+                                                            Academic
+                                                            Period</a>
+                                                        <ul class="nav nav-group-sub">
+                                                            @foreach (\App\Repositories\Academics\AcademicPeriodRepository::getAllOpened('code') as $c)
+                                                                <li class="nav-item"><a
+                                                                        href="{{ route('program-list', Qs::hash($c->id)) }}"
                                                                         class="nav-link ">{{ $c->code }}</a>
                                                                 </li>
                                                             @endforeach
