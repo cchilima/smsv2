@@ -4,6 +4,7 @@ namespace App\Livewire\Applications;
 
 use Livewire\Component;
 use App\Models\Applications\Applicant;
+use Livewire\Attributes\Layout;
 use App\Repositories\Applications\ApplicantRepository;
 
 class MyApplications extends Component
@@ -35,6 +36,7 @@ class MyApplications extends Component
         return redirect()->route('application.complete_application', $application->id);
     }
 
+    #[Layout('components.layouts.administrator')]
     public function render()
     {
         return view('livewire.applications.my-applications', ['applications' => $this->applicantRepo->checkApplications($this->buildData())]);
