@@ -19,6 +19,11 @@ class ClassAssessment extends Model implements AuditableContract
     }
     public function grades()
     {
-        return $this->belongsTo(Grade::class, 'class_assessment_id','id');
+        return $this->belongsTo(Grade::class, 'class_assessment_id', 'id');
+    }
+
+    public function academicPeriodClass()
+    {
+        return $this->belongsTo(AcademicPeriodClass::class, 'academic_period_class_id');
     }
 }

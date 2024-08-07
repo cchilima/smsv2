@@ -99,4 +99,11 @@ class AcademicPeriodClassRepository
         $ids = ProgramCourses::whereIn('course_id', $courseIds)->distinct('program_id')->pluck('program_id');
         return program::whereIn('id', $ids)->get();
     }
+
+    public function getAcademicPeriodClassDataTableQuery()
+    {
+        return AcademicPeriodClass::with(['class_assessments.assessment_type', 'instructor', 'course', 'academicPeriod'])->whereHas('academicPeriod', function ($query) {
+            $query->whereDate('ac_end_date', '>=', now());
+        });
+    }
 }
