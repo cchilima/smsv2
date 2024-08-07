@@ -14,10 +14,12 @@ use App\Models\Academics\Grade;
 use App\Models\Academics\Program;
 use App\Models\Admissions\Student;
 use App\Models\Enrollments\Enrollment;
+use App\Repositories\Academics\AcademicPeriodClassRepository;
 use App\Repositories\Academics\AcademicPeriodRepository;
 use App\Repositories\Academics\AssessmentTypesRepo;
 use App\Repositories\Academics\ClassAssessmentsRepo;
 use App\Repositories\Academics\CourseLevelsRepository;
+use App\Repositories\Academics\CourseRepository;
 use App\Repositories\Academics\ProgramsRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,10 +32,11 @@ class ClassAssessmentsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $classaAsessmentRepo, $academic, $assessmentTypes, $programsRepo, $levels;
+    protected $classaAsessmentRepo, $academic, $assessmentTypes, $programsRepo, $levels,$periodClasses,$coursesRepo;
 
     public function __construct(ClassAssessmentsRepo $classaAsessmentRepo, AcademicPeriodRepository $academic, AssessmentTypesRepo $assessmentTypes,
-                                ProgramsRepository   $programsRepo, CourseLevelsRepository $levels)
+                                ProgramsRepository   $programsRepo, CourseLevelsRepository $levels,AcademicPeriodClassRepository $periodClasses,
+                                CourseRepository $courseRepository)
     {
 //        $this->middleware(TeamSA::class, ['except' => ['destroy','']]);
 //        $this->middleware(TeamSAT::class, ['except' => ['destroy','']]);
@@ -45,6 +48,8 @@ class ClassAssessmentsController extends Controller
         $this->assessmentTypes = $assessmentTypes;
         $this->programsRepo = $programsRepo;
         $this->levels = $levels;
+        $this->periodClasses = $periodClasses;
+        $this->courseRepository = $courseRepository;
     }
 
     public function index()
@@ -165,6 +170,10 @@ class ClassAssessmentsController extends Controller
         $apClasses = $this->academic->showClasses($id);
         //dd($apClasses);
         return view('pages.class_assessments.show_classes', compact('apClasses'));
+    }
+    public function getProgramResults($academic_id){
+        $programs =  $this->periodClasses->academicProgramStudents(Qs::decodeHash($academic_id));
+        return view('pages.class_assessments.results_program_list', compact('programs'));
     }
 
     public function StudentListResults($class, $assessid)
@@ -503,6 +512,40 @@ class ClassAssessmentsController extends Controller
         //$this->classaAsessmentRepo->update($id,$data);
         $this->classaAsessmentRepo->updatetotaGrade($id,$data['total']);
             return Qs::jsonStoreOk();
+    }
+    public function AddStudentResult(Request $request){
+        $student_id = Qs::decodeHash($request->input('id'));
+        $ac_id = Qs::decodeHash($request->input('ac_id'));
+        $assess_type_id = Qs::decodeHash($request->input('assess_type_id'));
+        $course_id = Qs::decodeHash($request->input('course_id'));
+        $course = $this->courseRepository->find($course_id);
+        $student = Student::find($student_id);
+        $total = $request->input('total');
+        $existingRow = Grade::where('student_id', $student_id)->where('assessment_type_id', $assess_type_id)->where('course_code', $course->code)->get()->first();
+
+        if ($existingRow) {
+            $existingRow->delete();
+        }
+        $create = Grade::create([
+            'academic_period_id' => $ac_id,
+            'student_id' => $student_id,
+            'total' => $total, // Total
+            'course_title' => $course->name,
+            'course_code' => $course->code,
+            'publication_status' => 0,
+            'assessment_type_id' => $assess_type_id,
+            'student_level_id' => $student->course_level_id,
+            'course_id' => $course->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        //dd($student_id);
+        return Qs::jsonStoreOk();
+
+    }
+    public function getStudentsProgramResults($id){
+        $results = $this->classaAsessmentRepo->GetStudentExamGrades($id);
+        dd($results);
     }
 
 }

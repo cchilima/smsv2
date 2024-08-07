@@ -20,7 +20,9 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-settings">
-                    <table class="table datatable-button-html5-columns">
+                    <livewire:datatables.settings.settings />
+
+                    {{-- <table class="table datatable-button-html5-columns">
                         <thead>
                             <tr>
                                 <th>S/N</th>
@@ -62,7 +64,7 @@
                                 </tr>
                             @endforeach
                         </tbody>
-                    </table>
+                    </table> --}}
                 </div>
 
                 {{-- <div class="tab-pane fade" id="new-setting">

@@ -31,7 +31,7 @@ class StudentController extends Controller
     protected $userRepo;
     protected $invoiceRepo;
     protected $userNextOfKinRepo, $enrollmentRepo, $classaAsessmentRepo;
-    protected $booking_repository,$bed_space_repository,$rooms_repository,$hostel_repository;
+    protected $booking_repository, $bed_space_repository, $rooms_repository, $hostel_repository;
 
     public function __construct(
         StudentRepository $studentRepo,
@@ -74,6 +74,11 @@ class StudentController extends Controller
         $students = $this->studentRepo->getAll();
 
         return view('pages.students.index', compact('students'), $dropdownData);
+    }
+
+    public function list()
+    {
+        return view('pages.students.list');
     }
 
     /**
@@ -119,7 +124,7 @@ class StudentController extends Controller
     public function store(Student $request)
     {
         try {
-            
+
             DB::beginTransaction();
 
             $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
@@ -162,11 +167,11 @@ class StudentController extends Controller
 
             DB::commit();
             return redirect(\route('students.index'));
-           //return Qs::goWithSuccess('students.index','stored successfully');
+            //return Qs::goWithSuccess('students.index','stored successfully');
         } catch (\Exception $e) {
             DB::rollBack();
             // Log the error or handle it accordingly
-           // return redirect(\route('students.index'));
+            // return redirect(\route('students.index'));
             return Qs::json('msg.create_failed => ' . $e->getMessage(), false);
         }
         //return Qs::jsonStoreOk();
@@ -367,30 +372,30 @@ class StudentController extends Controller
     }
 
     //student accommodation
-  public function getAppliedBedSpaces()
-  {
-      $id = Auth::user();
-      $student_id = \App\Models\Admissions\Student::where('user_id',$id->id)->first();
-      $data['hostel'] = $this->hostel_repository->getAll();
-      $data['open'] = $this->booking_repository->getOpenBookings();
-      $data['closed'] = $this->booking_repository->getClosedBookingsOne($student_id->id);
-      return view('pages.students.accommodation',$data);
-  }
-  public function applyBedSpace(Booking $request)
-  {
-      $data = $request->only(['student_id', 'bed_space_id']);
-      $data['booking_date'] = date('Y-m-d', strtotime(now()));
-      $data['expiration_date'] = date('Y-m-d', strtotime('+1 day', time()));
-      // 'student_id','bed_space_id','booking_date','expiration_date'
-      $dataB['is_available'] = 'false';
-      $data = $this->booking_repository->create($data);
-      $this->bed_space_repository->update($data['bed_space_id'],$dataB);
-      if ($data) {
-          return Qs::jsonStoreOk();
-      } else {
-          return Qs::jsonError(__('msg.create_failed'));
-      }
-  }
+    public function getAppliedBedSpaces()
+    {
+        $id = Auth::user();
+        $student_id = \App\Models\Admissions\Student::where('user_id', $id->id)->first();
+        $data['hostel'] = $this->hostel_repository->getAll();
+        $data['open'] = $this->booking_repository->getOpenBookings();
+        $data['closed'] = $this->booking_repository->getClosedBookingsOne($student_id->id);
+        return view('pages.students.accommodation', $data);
+    }
+    public function applyBedSpace(Booking $request)
+    {
+        $data = $request->only(['student_id', 'bed_space_id']);
+        $data['booking_date'] = date('Y-m-d', strtotime(now()));
+        $data['expiration_date'] = date('Y-m-d', strtotime('+1 day', time()));
+        // 'student_id','bed_space_id','booking_date','expiration_date'
+        $dataB['is_available'] = 'false';
+        $data = $this->booking_repository->create($data);
+        $this->bed_space_repository->update($data['bed_space_id'], $dataB);
+        if ($data) {
+            return Qs::jsonStoreOk();
+        } else {
+            return Qs::jsonError(__('msg.create_failed'));
+        }
+    }
 
     public
     function getRooms(string $id)
@@ -401,7 +406,7 @@ class StudentController extends Controller
     function getBedSpaces(string $ids)
     {
         $id = Auth::user();
-        $student_id = \App\Models\Admissions\Student::where('user_id',$id->id)->first();
+        $student_id = \App\Models\Admissions\Student::where('user_id', $id->id)->first();
         $data['students'] = $this->bed_space_repository->getActiveStudentOne($student_id->id);
         $data['spaces'] = $this->bed_space_repository->getAvailable($ids);
 
