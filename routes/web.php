@@ -71,6 +71,7 @@ Route::group(['prefix' => 'students'], function () {
 Route::group(['prefix' => 'assess'], function () {
     Route::get('/classes/{id}', [ClassAssessmentsController::class, 'getClasses'])->name('class-names');
     Route::post('/updateExams/{id}', [ClassAssessmentsController::class, 'UpdateTotalResultsExams'])->name('assessmentUpdate');
+    Route::get('/class-lists', [ClassAssessmentsController::class, 'getAssessmentClassLists'])->name('assessments.class-lists.index');
     Route::get('/class-list/{id}', [ClassAssessmentsController::class, 'getClassesToPublish'])->name('class-list');
     Route::get('/program-list/{id}', [ClassAssessmentsController::class, 'getProgramResults'])->name('program-list');
     Route::get('/program-result-list/{id}', [ClassAssessmentsController::class, 'getStudentsProgramResults'])->name('student.download.result.list');

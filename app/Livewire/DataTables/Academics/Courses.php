@@ -20,6 +20,8 @@ final class Courses extends PowerGridComponent
 {
     use WithExport;
 
+    public bool $deferLoading = true;
+
     public function setUp(): array
     {
         $this->showCheckBox();

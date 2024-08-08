@@ -21,6 +21,8 @@ class Base extends PowerGridComponent
 {
     use WithExport;
 
+    public bool $deferLoading = true;
+
     protected AcademicPeriodRepository $academicPeriodRepo;
 
     public function boot(): void
