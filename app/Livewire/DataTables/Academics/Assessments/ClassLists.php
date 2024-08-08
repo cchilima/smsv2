@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Livewire\DataTables\Academics;
+namespace App\Livewire\DataTables\Academics\Assessments;
 
-use App\Models\Academics\AcademicPeriod;
 use App\Models\Academics\AcademicPeriodClass;
 use App\Repositories\Academics\AcademicPeriodClassRepository;
 use App\Repositories\Academics\AcademicPeriodRepository;
-use App\Repositories\Academics\ClassAssessmentsRepo;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Blade;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Exportable;
@@ -21,9 +18,11 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class ClassAssessments extends PowerGridComponent
+final class ClassLists extends PowerGridComponent
 {
     use WithExport;
+
+    public bool $deferLoading = true;
 
     protected AcademicPeriodClassRepository $academicPeriodClassRepo;
     protected AcademicPeriodRepository $academicPeriodRepo;
@@ -32,7 +31,6 @@ final class ClassAssessments extends PowerGridComponent
     {
         $this->academicPeriodClassRepo = new AcademicPeriodClassRepository();
         $this->academicPeriodRepo = new AcademicPeriodRepository();
-        // config(['livewire-powergrid.filter' => 'outside']);
     }
 
     public function setUp(): array
@@ -40,7 +38,7 @@ final class ClassAssessments extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            Exportable::make('export')
+            Exportable::make('assessments-class-lists-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -52,14 +50,16 @@ final class ClassAssessments extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return $this->academicPeriodClassRepo->getAcademicPeriodClassDataTableQuery();
+        return $this->academicPeriodClassRepo->getAssessmentClassListDataTableQuery();
     }
 
     public function relationSearch(): array
     {
         return [
-            'course' => ['name', 'code'],
-            'academicPeriod' => 'name'
+            'course' => [
+                'name',
+                'code'
+            ]
         ];
     }
 
@@ -68,29 +68,32 @@ final class ClassAssessments extends PowerGridComponent
         return PowerGrid::fields()
             ->add('course.name')
             ->add('course.code')
-            ->add('assessmentDetails', function (AcademicPeriodClass $row) {
-                if ($row->class_assessments->count() > 0) {
-                    return Blade::render(
-                        '<x-table-fields.academics.class-assessments :row=$row />',
-                        ['row' => $row]
-                    );
-                }
-
-                return "No assessments";
+            ->add('instructor', function (AcademicPeriodClass $row) {
+                return $row->instructor->first_name . ' ' . $row->instructor->last_name;
             })
-            ->add('academicPeriod.name');
+            ->add('academicPeriod.name')
+            ->add('studentCount', function (AcademicPeriodClass $row) {
+                return $row->enrollments->count();
+            })
+            ->add('gradedStudentCount', function (AcademicPeriodClass $row) {
+                return $row->enrollments->filter(function ($enrollment) use ($row) {
+                    return $enrollment->student->grades->contains(function ($grade) use ($row) {
+                        return $grade->course_id === $row->course_id
+                            && $grade->academic_period_id === $row->academic_period_id;
+                    });
+                })->count();
+            });
     }
 
     public function columns(): array
     {
         return [
             Column::make('Course', 'course.name'),
-
             Column::make('Code', 'course.code'),
-
+            Column::make('Instructor', 'instructor'),
             Column::make('Academic Period', 'academicPeriod.name'),
-
-            Column::make('Assessment Details', 'assessmentDetails'),
+            Column::make('Students', 'studentCount'),
+            Column::make('Graded Students', 'gradedStudentCount'),
 
             Column::action('Action')
         ];
@@ -100,17 +103,16 @@ final class ClassAssessments extends PowerGridComponent
     {
         return [
             Filter::select('academicPeriod.name', 'academic_period_id')
-                ->dataSource($this->academicPeriodRepo->getAcadeperiodClassAssessments())
+                ->dataSource($this->academicPeriodRepo->getAllOpenedAc())
                 ->optionLabel('name')
                 ->optionValue('id'),
         ];
     }
-
     public function actions(AcademicPeriodClass $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.academics.class-assessments', ['row' => $row])
+                ->bladeComponent('table-actions.academics.assessments.class-lists', ['row' => $row])
         ];
     }
 }

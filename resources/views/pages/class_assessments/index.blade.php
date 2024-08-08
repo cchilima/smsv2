@@ -31,7 +31,7 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-class-assessments">
-                    <livewire:datatables.academics.class-assessments />
+                    <livewire:datatables.academics.assessments.class-assessments />
                 </div>
 
                 <div class="tab-pane fade" id="new-class-assessment">

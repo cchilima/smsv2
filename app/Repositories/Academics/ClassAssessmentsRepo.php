@@ -11,6 +11,8 @@ use App\Models\Academics\Grade;
 use App\Models\Academics\Program;
 use App\Models\Academics\ProgramCourses;
 use App\Models\Admissions\Student;
+use App\Models\Enrollments\Enrollment;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -88,6 +90,40 @@ class ClassAssessmentsRepo
             //   ->first();//->where('id', $class_id)
 
             //return AcademicPeriodClass::with('class_assessments.assessment_type','enrollments.user.student', 'academicPeriod', 'instructor', 'course')->find($id);
+        }
+    }
+
+    public function getClassAssessmentsDatatableQuery($class_id, $assess_id): Builder
+    {
+        $user = Auth::user();
+
+        if ($user->userType->title == 'instructor') {
+            return AcademicPeriodClass::where('id', $class_id)
+                ->whereHas('class_assessments', function ($query) use ($assess_id) {
+                    $query->where('assessment_type_id', $assess_id);
+                })
+                ->with('class_assessments.assessment_type', 'enrollments.student.user', 'enrollments.user.student', 'academicPeriod', 'instructor', 'course');
+        } else {
+
+            $ac = AcademicPeriodClass::find($class_id);
+
+            return Enrollment::with([
+                'class.academicPeriod',
+                'class.class_assessments.assessment_type',
+                'class.instructor',
+                'class.course',
+                'user',
+
+                'student.grades' => function ($query) use ($ac, $assess_id) {
+                    $query->where('course_id', $ac->course_id)
+                        ->where('assessment_type_id', $assess_id)
+                        ->where('academic_period_id', $ac->academic_period_id);
+                },
+
+                'class.class_assessments' => function ($query) use ($assess_id) {
+                    $query->where('assessment_type_id', $assess_id);
+                },
+            ])->where('academic_period_class_id', $class_id);
         }
     }
 

@@ -175,6 +175,12 @@ class ClassAssessmentsController extends Controller
         //dd($apClasses);
         return view('pages.class_assessments.show_classes', compact('apClasses'));
     }
+
+    public function getAssessmentClassLists()
+    {
+        return view('pages.class_assessments.class_lists');
+    }
+
     public function getProgramResults($academic_id)
     {
         $programs =  $this->periodClasses->academicProgramStudents(Qs::decodeHash($academic_id));
@@ -186,13 +192,11 @@ class ClassAssessmentsController extends Controller
         $class = Qs::decodeHash($class);
         $assessID = Qs::decodeHash($assessid);
 
-        //$assessID = Qs::decodeHash($assessid);
         $class_ass = $this->classaAsessmentRepo->getClassAssessments($class, $assessID);
-        //dd($class_ass);
 
         $open = $this->academic->getAllopen();
-        //dd($class_ass);
-        return view('pages.class_assessments.instructor_assessment.index', compact('class_ass', 'open'));
+
+        return view('pages.class_assessments.instructor_assessment.index', compact('class_ass', 'open', 'class', 'assessID'));
     }
 
     public function DownloadResultsTemplate(Request $request)

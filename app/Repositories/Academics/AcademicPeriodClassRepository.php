@@ -5,10 +5,12 @@ namespace App\Repositories\Academics;
 use App\Models\Academics\{AcademicPeriodClass, AcademicPeriod, AcademicPeriodFee, Course, Program, ProgramCourses};
 use App\Models\Admissions\Student;
 use App\Models\Users\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AcademicPeriodClassRepository
 {
+
     public function create($data)
     {
         return AcademicPeriodClass::create($data);
@@ -22,7 +24,6 @@ class AcademicPeriodClassRepository
     {
         return AcademicPeriodClass::where('academic_period_id', $id)->with('enrollments')->orderBy($order)->get();
     }
-
 
     public function update($id, $data)
     {
@@ -105,5 +106,26 @@ class AcademicPeriodClassRepository
         return AcademicPeriodClass::with(['class_assessments.assessment_type', 'instructor', 'course', 'academicPeriod'])->whereHas('academicPeriod', function ($query) {
             $query->whereDate('ac_end_date', '>=', now());
         });
+    }
+
+    public function getAssessmentClassListDataTableQuery()
+    {
+        $user = Auth::user();
+
+        if ($user->userType->title == 'instructor') {
+            // If the authenticated user is an instructor, only get academic period classes where the user is the instructor
+            return AcademicPeriodClass::with(['class_assessments.assessment_type', 'instructor', 'course', 'academicPeriod', 'enrollments'])->whereHas('instructor', function ($query) use ($user) {
+                $query->where('id', $user->id);
+            })
+                ->whereHas('academicPeriod', function ($query) {
+                    $query->whereDate('ac_end_date', '>=', now());
+                });
+        } else {
+            // Else get all academic period classes
+            return AcademicPeriodClass::with(['class_assessments.assessment_type', 'instructor', 'course', 'academicPeriod', 'enrollments'])
+                ->whereHas('academicPeriod', function ($query) {
+                    $query->whereDate('ac_end_date', '>=', now());
+                });
+        }
     }
 }

@@ -468,6 +468,7 @@
                             'classAssessments.show',
                             'classAssessments.store',
                             'classAssessments.create',
+                            'assessments.class-lists.index',
                             'import.process',
                             'getPublishPrograms',
                             'getPramResults',
@@ -496,6 +497,12 @@
                                             class="nav-link {{ Route::is('classAssessments.index') ? 'active' : '' }}">Assign
                                             CA To Class</a>
                                     </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ route('assessments.class-lists.index') }}"
+                                            class="nav-link {{ Route::is('assessments.class-lists.index') ? 'active' : '' }}">Enter
+                                            Student Results</a>
+                                    </li>
                                 @endif
 
                                 @if (true)
@@ -504,6 +511,7 @@
                                             class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['myClassStudentList', 'smyClassList', 'myClassList']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                                             <a href="#" class="nav-link"><span> Enter Student Results</span></a>
                                             <ul class="nav nav-group-sub" data-submenu-title="Manage Students">
+
                                                 @if (true)
                                                     <li
                                                         class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['myClassStudentList', 'smyClassList', 'myClassList']) ? 'nav-item-expanded nav-item-open' : '' }}">

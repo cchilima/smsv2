@@ -15,22 +15,23 @@ class Enrollment extends Model implements AuditableContract
 {
     use HasFactory, Auditable;
 
-    protected $fillable = ['user_id', 'academic_period_class_id','student_id'];
+    protected $fillable = ['academic_period_class_id', 'student_id'];
 
     public function class()
     {
         return $this->belongsTo(AcademicPeriodClass::class, 'academic_period_class_id', 'id');
-
     }
 
-    public function assesment() {
-        return $this->hasOne(ClassAssessment::class,'academic_period_class_id','academic_period_class_id');
+    public function assesment()
+    {
+        return $this->hasOne(ClassAssessment::class, 'academic_period_class_id', 'academic_period_class_id');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->hasOneThrough(User::class, Student::class, 'id', 'id', 'student_id', 'user_id');
     }
+
     public function student()
     {
         return $this->belongsTo(Student::class, 'student_id', 'id');
