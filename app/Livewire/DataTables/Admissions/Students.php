@@ -39,7 +39,7 @@ final class Students extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Student::query()->with(['user', 'program', 'level']);
+        return Student::query()->with(['user', 'program', 'level'])->orderBy('created_at', 'desc');
     }
 
     public function relationSearch(): array

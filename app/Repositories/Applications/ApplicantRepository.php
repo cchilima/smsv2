@@ -2,22 +2,19 @@
 
 namespace App\Repositories\Applications;
 
-use DB;
-use Illuminate\Support\Arr;
-use App\Models\Applications\Applicant;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Applications\Attachment;
 use App\Models\Applications\{ApplicantAttachment, ApplicantPayment};
-
-
+use App\Models\Applications\Applicant;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Arr;
+use DB;
 
 class ApplicantRepository
 {
-
     private function generateUniqueApplicantCode()
     {
         do {
-            $code = $this->generateMixedCaseCode(10); // Adjust the length as needed
+            $code = $this->generateMixedCaseCode(10);  // Adjust the length as needed
         } while (Applicant::where('applicant_code', $code)->exists());
 
         return $code;
@@ -36,28 +33,22 @@ class ApplicantRepository
 
     public function collectApplicantFee($data)
     {
-
         $amount = $data->amount;
         $method = $data->payment_method_id;
 
         try {
-            
             $applicant = Applicant::where('applicant_code', $data->applicant)->first();
             $updated = ApplicantPayment::create(['applicant_id' => $applicant->id, 'amount' => $amount, 'payment_method_id' => $method]);
 
-            if($updated){
+            if ($updated) {
                 $this->checkApplicationCompletion($applicant->id);
             }
-            
-            return true;
 
+            return true;
         } catch (\Throwable $th) {
             dd($th);
             return false;
         }
-
-       
-        
     }
 
     public function getAll()
@@ -106,12 +97,11 @@ class ApplicantRepository
             $application->update($data->toArray());
 
             // Check if you can make application as pending
-               $this->checkApplicationCompletion($application_id);
+            $this->checkApplicationCompletion($application_id);
 
             DB::commit();
 
             return $application_id;
-
         } catch (\Exception $e) {
             DB::rollback();
             return false;  // Returning false to indicate the update failed
@@ -126,9 +116,6 @@ class ApplicantRepository
             return Applicant::where('passport', $data['passport'])->get();
         }
     }
-
-
-
 
     public function checkApplicationCompletion($application_id)
     {
@@ -145,13 +132,12 @@ class ApplicantRepository
         $applicationNextOfKinArr = $applicationNextOfKin->toArray();
         $applicationArr = $application->toArray();
 
-        $applicationArr = array_merge($applicationArr, $applicationNextOfKinArr); 
+        $applicationArr = array_merge($applicationArr, $applicationNextOfKinArr);
 
         // Check if all mandatory fields are filled
         $fieldsToCheck = Arr::except($applicationArr, ['status', 'middle_name', 'period_type_id', 'application_date', 'nrc', 'passport', 'telephone']);
 
-
-        $allFieldsFilled = array_filter($fieldsToCheck, fn ($value) => $value === null);
+        $allFieldsFilled = array_filter($fieldsToCheck, fn($value) => $value === null);
 
         // Check if application has an attachments
         $hasAttachments = $application->attachment()->count() > 0;
@@ -165,9 +151,7 @@ class ApplicantRepository
             $application->save();
 
             return true;
-
-        } elseif(empty($allFieldsFilled) && $hasAttachments && $feePaid >= 150){
-           
+        } elseif (empty($allFieldsFilled) && $hasAttachments && $feePaid >= 150) {
             $application->status = 'complete';
             $application->save();
 
@@ -179,50 +163,42 @@ class ApplicantRepository
 
     public function uploadAttachment($document, $application_id)
     {
-
-
         if ($document) {
-
             $application = Applicant::find($application_id);
-        
+
             $exists = $application->attachment;
-        
+
             if (!$exists) {
-        
                 // Retrieve the uploaded file
-                $attachment = $document; //$request->file('attachment');
-        
+                $attachment = $document;  // $request->file('attachment');
+
                 // Generate a unique filename
                 $filename = time() . '.' . $attachment->getClientOriginalExtension();
-        
+
                 // Store the file in the storage disk
                 $path = $attachment->storeAs('uploads/attachments/applications', $filename, 'public');
-        
+
                 return $application->attachment()->create(['type' => 'Results', 'attachment' => $filename]);
-        
             } else {
-        
                 // Delete previous file using unlink
                 $previousFile = public_path('storage/uploads/attachments/applications/' . $application->attachment->attachment);
                 if (file_exists($previousFile)) {
                     unlink($previousFile);
                 }
-        
+
                 // Retrieve the uploaded file
-                $attachment = $document; //$request->file('attachment');
-        
+                $attachment = $document;  // $request->file('attachment');
+
                 // Generate a unique filename
                 $filename = time() . '.' . $attachment->getClientOriginalExtension();
-        
+
                 // Store the file in the storage disk
                 $path = $attachment->storeAs('uploads/attachments/applications', $filename, 'public');
-        
+
                 // Update the existing attachment record with the new file details
                 return $application->attachment()->update(['type' => 'Results', 'attachment' => $filename]);
             }
         }
-        
-
 
         return null;  // Return null if no file is uploaded
     }
@@ -241,83 +217,136 @@ class ApplicantRepository
         return Applicant::find($application_id);
     }
 
-    //applications count summary
+    // applications count summary
 
     // Method to get the count of not paid applicants
-    public function getNotPaidCount() {
+    public function getNotPaidCount()
+    {
         return Applicant::where('status', 'not_paid')
             ->count();
     }
 
     // Method to get the count of paid applicants
-    public function getPaidCount() {
+    public function getPaidCount()
+    {
         return Applicant::where('status', 'paid')
             ->count();
     }
 
     // Method to get the count of distinct programs
-    public function getProgramsCount() {
+    public function getProgramsCount()
+    {
         return Applicant::distinct('program_id')
             ->count('program_id');
     }
 
     // Method to get the count of female applicants
-    public function getGirlsCount() {
+    public function getGirlsCount()
+    {
         return Applicant::where('gender', 'female')
             ->count();
     }
 
     // Method to get the count of male applicants
-    public function getBoysCount() {
+    public function getBoysCount()
+    {
         return Applicant::where('gender', 'male')
             ->count();
     }
 
     // Method to get the count of declined applicants
-    public function getDeclinedCount() {
+    public function getDeclinedCount()
+    {
         return Applicant::where('status', 'declined')
             ->count();
     }
 
     // Method to get the count of completed applications
-    public function getCompletedCount() {
+    public function getCompletedCount()
+    {
         return Applicant::where('status', 'completed')
             ->count();
     }
 
     // Method to get the count of incomplete applications
-    public function getIncompleteCount() {
+    public function getIncompleteCount()
+    {
         return Applicant::where('status', 'incomplete')
             ->count();
     }
 
     // Method to get the count of processed applications
-    public function getProcessedCount() {
+    public function getProcessedCount()
+    {
         return Applicant::where('status', 'processed')
             ->count();
     }
 
     // Method to get the total count of applicants
-    public function getApplicantsCount() {
+    public function getApplicantsCount()
+    {
         return Applicant::whereDate('created_at', '>=', now())->count();
     }
 
     // Method to get the count of last five applications
-    public function getLastFiveAppsCount() {
+    public function getLastFiveAppsCount()
+    {
         return Applicant::orderBy('created_at', 'desc')
             ->take(5)
             ->count();
     }
-    public function getApplicationStatus($status) {
+
+    public function getApplicationStatus($status)
+    {
         return Applicant::where('status', $status)
             ->get();
     }
-    public function getGender($gender) {
+
+    public function getGender($gender)
+    {
         return Applicant::where('gender', $gender)
             ->get();
     }
-    public function getPaymentStatus($status) {
-        return Applicant::with('payment')->where('payment.amount', 150)
+
+    public function getPaymentStatus($status)
+    {
+        return Applicant::with('payment')
+            ->where('payment.amount', 150)
             ->get();
     }
+
+    public function checkProvisionalEligibility($application_id)
+    {
+        $application = $this->getApplication($application_id);
+        $grades = $application->grades;
+    
+        // Initialize counters and flags
+        $credit_count = 0;
+        $has_english = false;
+        $has_math = false;
+    
+        // Iterate through the grades
+        foreach ($grades as $grade) {
+            // Check if the grade is a credit or better
+            if ($grade->grade <= 6) {
+                $credit_count++;
+    
+                // Check for English Language and Mathematics
+                if (strtolower($grade->subject) == 'english language') {
+                    $has_english = true;
+                }
+                if (strtolower($grade->subject) == 'mathematics') {
+                    $has_math = true;
+                }
+            }
+        }
+    
+        // Check if the criteria are met
+        if ($credit_count >= 5 && $has_english && $has_math) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
 }
