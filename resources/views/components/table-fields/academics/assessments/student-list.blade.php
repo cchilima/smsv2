@@ -20,3 +20,15 @@
             onchange="EnterResults('{{ Qs::hash($row->student->id) }}','{{ $class_ass->class_assessments[0]->total }}',0)">
     @endif
 </div>
+
+<script>
+    document.addEventListener('livewire:init', function() {
+        Livewire.hook('morph.added', () => {
+            $('.edit-total-link').on('click', function() {
+                var row = $(this).closest('tr');
+                row.find('.display-mode').hide();
+                row.find('.edit-mode').show();
+            });
+        })
+    });
+</script>

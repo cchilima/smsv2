@@ -1,12 +1,12 @@
 @extends('layouts.master')
-@section('page_title', 'Manage Class Assessment')
+@section('page_title', 'Manage Class Assessments')
 @section('content')
     @php
         use App\Helpers\Qs;
     @endphp
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h6 class="card-title">Manage Class Assessment Exams Manager</h6>
+            <h6 class="card-title">Manage Class Assessments</h6>
             {!! Qs::getPanelOptions() !!}
         </div>
 
