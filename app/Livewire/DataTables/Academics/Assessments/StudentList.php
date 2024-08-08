@@ -74,9 +74,6 @@ final class StudentList extends PowerGridComponent
             })
             ->add('student_id')
             ->add('assesment.assessment_type.name')
-            ->add('instructor', function (Enrollment $row) {
-                return $row->class->instructor->first_name . ' ' . $row->class->instructor->last_name;
-            })
             ->add('class.academicPeriod.name')
             ->add('created_at');
     }
@@ -88,7 +85,6 @@ final class StudentList extends PowerGridComponent
             Column::make('Student', 'student'),
             Column::make('Student ID', 'student_id')->searchable(),
             Column::make('Assessment Type', 'assesment.assessment_type.name'),
-            Column::make('Instructor', 'instructor'),
             Column::make('Academic Period', 'class.academicPeriod.name'),
             Column::action('Enter Grade')
         ];
