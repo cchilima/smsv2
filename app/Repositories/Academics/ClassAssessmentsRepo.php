@@ -188,7 +188,7 @@ class ClassAssessmentsRepo
         $courseIdsWithGrades = Grade::where('academic_period_id', $id)
             ->distinct('course_id')
             ->pluck('course_id');
-        $studentIds = Grade::where('academic_period_id', $id)->whereNot('assessment_type_id', 1)
+        $studentIds = Grade::where('academic_period_id', $id)->where('assessment_type_id', 1)
             ->distinct('student_id')
             ->pluck('student_id');
 
@@ -592,7 +592,7 @@ class ClassAssessmentsRepo
                         'exam' => 'NE',
                         'ca' => 'NE',
                         'total_sum' => 'NE',
-                        'grade' => self::calculateGrade(10), // Assuming default grade calculation
+                        'grade' => self::calculateGrade(10,$student->program_id), // Assuming default grade calculation
                         'outof' => 'NE', //self::getClassAssessmentExams($enrollment->class->course->id, $aid),
                         'id' => 'NE', //self::getGradeID($aid, $enrollment->class->course->id, $studentId),
                     ];
@@ -766,7 +766,7 @@ class ClassAssessmentsRepo
                         'exam' => 'NE',
                         'ca' => 'NE',
                         'total_sum' => 'NE',
-                        'grade' => self::calculateGrade(0), // Assuming default grade calculation
+                        'grade' => self::calculateGrade(0,$student->program_id), // Assuming default grade calculation
                         'outof' => 'NE', //self::getClassAssessmentExams($enrollment->class->course->id, $aid),
                         'id' => 'NE', //self::getGradeID($aid, $enrollment->class->course->id, $studentId),
                     ];
