@@ -5,6 +5,7 @@ namespace App\Livewire\Applications;
 use DB;
 use Auth;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Applications\ApplicantRepository;
 
@@ -17,6 +18,7 @@ class CompletedApplication extends Component
 
     public $currentSection = 'application';
     public $application_id;
+    public $isEligibleForProvisonal = false;
 
 
     public function mount($application_id)
@@ -128,8 +130,11 @@ class CompletedApplication extends Component
         $this->currentSection = $section;
     }
 
+    #[Layout('components.layouts.administrator')]
     public function render()
     {
+        $this->isEligibleForProvisonal = $this->applicantRepo->checkProvisionalEligibility($this->application_id);
+        
         return view('livewire.applications.completed-application', ['application' => $this->applicantRepo->getApplication($this->application_id)]);
     }
 }

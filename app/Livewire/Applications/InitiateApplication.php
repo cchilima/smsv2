@@ -3,6 +3,7 @@
 namespace App\Livewire\Applications;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Repositories\Applications\ApplicantRepository;
 
 class InitiateApplication extends Component
@@ -53,6 +54,7 @@ class InitiateApplication extends Component
         }
     }    
 
+    #[Layout('components.layouts.administrator')]
     public function render()
     {
         return view('livewire.applications.initiate-application');

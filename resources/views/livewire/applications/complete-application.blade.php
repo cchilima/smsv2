@@ -435,5 +435,35 @@
 </div>
 
 @script
-    <script></script>
+    <script>
+        $wire.on('grade-added', () => {
+            M.toast({
+                html: 'grade uploaded successfully'
+            })
+        });
+
+        $wire.on('grade-failed', () => {
+            M.toast({
+                html: 'grade upload unsuccessful'
+            })
+        });
+
+        $wire.on('fill-all-fields', () => {
+            M.toast({
+                html: 'Please provide all required information.'
+            })
+        });
+
+        $wire.on('attachment-added', () => {
+            M.toast({
+                html: 'attachment uploaded successfully'
+            })
+        });
+
+        $wire.on('attachment-failed', () => {
+            M.toast({
+                html: 'attachment upload unsuccessful'
+            })
+        });
+    </script>
 @endscript

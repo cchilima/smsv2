@@ -6,6 +6,7 @@ use App\Models\Applications\Applicant;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Applications\ApplicantRepository;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use Livewire\WithFileUploads;
 
 class CompleteApplication extends Component
@@ -178,13 +179,13 @@ public function saveGrade()
 
             $this->reset(['subject', 'grade']);
 
-            session()->flash('success', 'Grade uploaded successfully');
+            $this->dispatch('grade-added');
         } else {
-            session()->flash('error', 'Please provide all required information.');
+            $this->dispatch('fill-all-fields');
         }
     } catch (\Throwable $th) {
-        dd($th);
-        session()->flash('error', 'Grade upload failed.');
+        $this->dispatch('grade-failed');
+
     }
 }
 
@@ -196,11 +197,14 @@ public function saveGrade()
         if (is_file($this->results)) {
             $this->applicantRepo->uploadAttachment($this->results, $this->applicant->id);
             $this->reset(['results']);
+            $this->dispatch('attachment-added');
+            
         } else {
             // Handle the case where $this->results is not a file
-            throw new Exception('The provided results are not a valid file.');
+            $this->dispatch('attachment-failed');
         }
     }
+
 
     public function updated($propertyName)
     {
@@ -212,6 +216,7 @@ public function saveGrade()
         $this->currentSection = $section;
     }
 
+    #[Layout('components.layouts.administrator')]
     public function render()
     {
         if ($this->country_id) {

@@ -1,3 +1,8 @@
+@php
+    use App\Helpers\Qs;
+@endphp
+
+
 <div class="container mt-10 mb-10">
     
     <ul class="custom-tabs align-left">
@@ -204,17 +209,27 @@
             </tr>
             <tr>
                 <td>Provisional letter</td>
+                @if($application->status != 'rejected')
                 <td>
                     @if($application->status == 'complete' || $application->status == 'accepted')
+
+                    @if($isEligibleForProvisonal)
                         <form action="{{ route('application.download_provisional') }}" method="GET">
                             @csrf @method('GET')
                             <input name="applicant_id" hidden type="text" value="{{ $application->id }}">
                             <button type="submit" class="btn btn-small black waves-effect waves-light rounded">Download</button>
                         </form>
                     @else
+                        Please visit our admissions team to guide you on next steps as you haven't meet the set candidate criteria for admission.
+                    @endif
+
+                    @else
                         Please complete the full application fee payment to download the provisional letter.
                     @endif
                 </td>
+                @else
+                    <td>NA</td>
+                @endif
             </tr>
         @else
             <tr>
@@ -228,13 +243,16 @@
 
 </div>
 
-
+@auth
+@if (Qs::userIsSuperAdmin() || Qs::userIsAdmin())
 
 @if($application->status !== 'rejected' && $application->status !== 'accepted' )
 
 @if($application->status == 'complete')
 <div class="white rounded-md z-depth-1 p-10 mt-4">
+@if($isEligibleForProvisonal)
     <a class="btn btn-small black rounded" wire:click="accept()">accept student</a>
+    @endif
     <a class="btn btn-small red rounded" wire:click="reject()">reject student</a>
 </div>
 @endif
@@ -246,9 +264,10 @@
 </div>
 
 @endif
-
+@endif
 
 @endif
+@endauth
 
 
 
