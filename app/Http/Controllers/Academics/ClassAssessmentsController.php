@@ -32,15 +32,20 @@ class ClassAssessmentsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $classaAsessmentRepo, $academic, $assessmentTypes, $programsRepo, $levels,$periodClasses,$coursesRepo;
+    protected $classaAsessmentRepo, $academic, $assessmentTypes, $programsRepo, $levels, $periodClasses, $coursesRepo;
 
-    public function __construct(ClassAssessmentsRepo $classaAsessmentRepo, AcademicPeriodRepository $academic, AssessmentTypesRepo $assessmentTypes,
-                                ProgramsRepository   $programsRepo, CourseLevelsRepository $levels,AcademicPeriodClassRepository $periodClasses,
-                                CourseRepository $courseRepository)
-    {
-//        $this->middleware(TeamSA::class, ['except' => ['destroy','']]);
-//        $this->middleware(TeamSAT::class, ['except' => ['destroy','']]);
-//        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
+    public function __construct(
+        ClassAssessmentsRepo $classaAsessmentRepo,
+        AcademicPeriodRepository $academic,
+        AssessmentTypesRepo $assessmentTypes,
+        ProgramsRepository   $programsRepo,
+        CourseLevelsRepository $levels,
+        AcademicPeriodClassRepository $periodClasses,
+        CourseRepository $courseRepository
+    ) {
+        //        $this->middleware(TeamSA::class, ['except' => ['destroy','']]);
+        //        $this->middleware(TeamSAT::class, ['except' => ['destroy','']]);
+        //        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
         $this->middleware(TeamSAT::class, ['only' => ['destroy',]]);
 
         $this->classaAsessmentRepo = $classaAsessmentRepo;
@@ -49,7 +54,7 @@ class ClassAssessmentsController extends Controller
         $this->programsRepo = $programsRepo;
         $this->levels = $levels;
         $this->periodClasses = $periodClasses;
-        $this->courseRepository = $courseRepository;
+        $this->coursesRepo = $courseRepository;
     }
 
     public function index()
@@ -60,7 +65,6 @@ class ClassAssessmentsController extends Controller
         $data['academicPeriodsArray'] = $this->academic->getAcadeperiodClassAssessments();
         //dd($data['academicPeriodsArray']);
         return view('pages.class_assessments.index', $data);
-
     }
 
     public
@@ -171,7 +175,14 @@ class ClassAssessmentsController extends Controller
         //dd($apClasses);
         return view('pages.class_assessments.show_classes', compact('apClasses'));
     }
-    public function getProgramResults($academic_id){
+
+    public function getAssessmentClassLists()
+    {
+        return view('pages.class_assessments.class_lists');
+    }
+
+    public function getProgramResults($academic_id)
+    {
         $programs =  $this->periodClasses->academicProgramStudents(Qs::decodeHash($academic_id));
         return view('pages.class_assessments.results_program_list', compact('programs'));
     }
@@ -181,13 +192,11 @@ class ClassAssessmentsController extends Controller
         $class = Qs::decodeHash($class);
         $assessID = Qs::decodeHash($assessid);
 
-        //$assessID = Qs::decodeHash($assessid);
         $class_ass = $this->classaAsessmentRepo->getClassAssessments($class, $assessID);
-        //dd($class_ass);
 
         $open = $this->academic->getAllopen();
-        //dd($class_ass);
-        return view('pages.class_assessments.instructor_assessment.index', compact('class_ass', 'open'));
+
+        return view('pages.class_assessments.instructor_assessment.index', compact('class_ass', 'open', 'class', 'assessID'));
     }
 
     public function DownloadResultsTemplate(Request $request)
@@ -220,7 +229,6 @@ class ClassAssessmentsController extends Controller
         ];
 
         return response()->json($response);
-
     }
 
     public function ProcessUploadedResults(Request $request)
@@ -264,7 +272,7 @@ class ClassAssessmentsController extends Controller
                 $aseesID = $row[7];
                 $total = $row[9];
                 $outof = $row[8];
-                $user = Student::find($studentID);//where('id', '=', $studentID)->get()->first();
+                $user = Student::find($studentID); //where('id', '=', $studentID)->get()->first();
                 if (!empty($user)) {
                     $program = $user->program_id;
                     $student_level = $user->course_level_id;
@@ -289,7 +297,7 @@ class ClassAssessmentsController extends Controller
                                 if ($course) {
                                     //dd($academicC == $academic && $titleC == $title && $code == $courseC && $aseesID == $AssessIDTemplateC && $total <= $assesTotal);
                                     if ($academicC == $academic && $titleC == $title && $code == $courseC && $aseesID == $AssessIDTemplateC && $total <= $assesTotal) {
-                                         $create = Grade::create([
+                                        $create = Grade::create([
                                             'academic_period_id' => $academicPeriodID,
                                             'student_id' => $studentID,
                                             'total' => $total, // Total
@@ -304,14 +312,12 @@ class ClassAssessmentsController extends Controller
                                         ]);
                                         //dd($create);
                                     }
-
                                 }
                             }
                         }
-                   }
+                    }
                 }
             }
-
         } catch (\Exception $e) {
             //return redirect()->route('dashboard')->with('error', 'Error importing data: ' . $e->getMessage());
             // dd($e->getMessage());
@@ -336,7 +342,7 @@ class ClassAssessmentsController extends Controller
 
         $programs = $this->classaAsessmentRepo->publishAvailablePrograms($id);
         //dd($programs);
-        return view('pages.class_assessments.edit', compact('programs','period'));
+        return view('pages.class_assessments.edit', compact('programs', 'period'));
     }
 
     public function GetProgramResultsLevelCas(Request $request)
@@ -366,28 +372,28 @@ class ClassAssessmentsController extends Controller
         $last_page = $request->input('last_page');
         $per_page = $request->input('per_page');
 
-//        $aid = Qs::decodeHash($aid);
-//        $pid = Qs::decodeHash($pid);
-//        $level = Qs::decodeHash($level);
-        $grades = $this->classaAsessmentRepo->getCaGradesLoad($level, $pid, $aid,$current_page,$last_page,$per_page);
+        //        $aid = Qs::decodeHash($aid);
+        //        $pid = Qs::decodeHash($pid);
+        //        $level = Qs::decodeHash($level);
+        $grades = $this->classaAsessmentRepo->getCaGradesLoad($level, $pid, $aid, $current_page, $last_page, $per_page);
         return response()->json($grades);
     }
     public function LoadMoreResults(Request $request)
     {
 
 
-      $aid = $request->input('academic');
+        $aid = $request->input('academic');
         $pid = $request->input('program');
         $level = $request->input('level');
-//        $aid = Qs::decodeHash($aid);
-//        $pid = Qs::decodeHash($pid);
-//        $level = Qs::decodeHash($level);
+        //        $aid = Qs::decodeHash($aid);
+        //        $pid = Qs::decodeHash($pid);
+        //        $level = Qs::decodeHash($level);
 
         $current_page = $request->input('current_page');
         $last_page = $request->input('last_page');
         $per_page = $request->input('per_page');
 
-        $grades = $this->classaAsessmentRepo->getGradesLoad($level, $pid, $aid,$current_page,$last_page,$per_page);
+        $grades = $this->classaAsessmentRepo->getGradesLoad($level, $pid, $aid, $current_page, $last_page, $per_page);
         //dd($level, $pid, $aid,$current_page,$last_page,$per_page);
         return response()->json($grades);
     }
@@ -407,7 +413,7 @@ class ClassAssessmentsController extends Controller
         $data['level'] = $this->levels->find($level);
         $data['students'] = $this->classaAsessmentRepo->total_students($level, $pid, $aid);
 
-        return view('pages.class_assessments.results_review_board', compact('grades'),$data);
+        return view('pages.class_assessments.results_review_board', compact('grades'), $data);
     }
     public
     function BoardofExaminersUpdateResults(Request $request)
@@ -417,10 +423,10 @@ class ClassAssessmentsController extends Controller
         $operation = $request->input('operation');
         $sOperation = ($operation == 1 ? '+' : '-');
         if (isset($requestData[0]['apid'])) {
-            $studentIDs = $this->classaAsessmentRepo->getStudentId($requestData[0]['code'],$requestData[0]['id'],$requestData[0]['apid']);
+            $studentIDs = $this->classaAsessmentRepo->getStudentId($requestData[0]['code'], $requestData[0]['id'], $requestData[0]['apid']);
             foreach ($studentIDs as $studentID) {
                 foreach ($requestData as $item) {
-                    $currentTotal = $this->classaAsessmentRepo->getGradeAll($item['id'],$item['code'],$item['apid'],$studentID);
+                    $currentTotal = $this->classaAsessmentRepo->getGradeAll($item['id'], $item['code'], $item['apid'], $studentID);
                     if ($sOperation == '+') {
                         $newTotal = $currentTotal + $item['total'];
                     } else {
@@ -431,7 +437,7 @@ class ClassAssessmentsController extends Controller
                         $newTotal = $item['outof'];
                     }
 
-                    $this->classaAsessmentRepo->UpdateGradeAll($item['id'],$item['code'],$item['apid'],$studentID,$newTotal);
+                    $this->classaAsessmentRepo->UpdateGradeAll($item['id'], $item['code'], $item['apid'], $studentID, $newTotal);
                 }
             }
             return Qs::json('Marks updated successfully', true);
@@ -458,28 +464,28 @@ class ClassAssessmentsController extends Controller
     {
         $class_id = $request->input('classID');
         $exam = $request->input('exam');
-        $data = $this->classaAsessmentRepo->getClassAssessmentCas($class_id,$exam);
+        $data = $this->classaAsessmentRepo->getClassAssessmentCas($class_id, $exam);
         return response()->json($data);
     }
     public
     function PublishProgramResults(Request $request)
-    {
-        ;
+    {;
         $student_id = $request->input('ids');
         $academicPeriodID = $request->input('academicPeriodID');
         $type = $request->input('type');
-        $this->classaAsessmentRepo->publishGrades($request->ids, $academicPeriodID,$type);
+        $this->classaAsessmentRepo->publishGrades($request->ids, $academicPeriodID, $type);
         return Qs::json('Marks updated successfully', true);
     }
-    public function PublishForAllStudents($ac,$type){
+    public function PublishForAllStudents($ac, $type)
+    {
 
-        $this->classaAsessmentRepo->publishGrades(null, $ac,$type);
+        $this->classaAsessmentRepo->publishGrades(null, $ac, $type);
 
-       // $id = Qs::decodeHash($ac);
+        // $id = Qs::decodeHash($ac);
         $period = $this->academic->find($ac);
         $programs = $this->classaAsessmentRepo->publishAvailableProgramsCas($ac);
         //dd($programs);
-        if ($type == 1){
+        if ($type == 1) {
             return view('pages.class_assessments.edit', compact('programs', 'period'));
         }
         return view('pages.cas.edit', compact('programs', 'period'));
@@ -492,7 +498,7 @@ class ClassAssessmentsController extends Controller
         $results = $this->classaAsessmentRepo->GetCaStudentGrades($user->id);
         $student = $this->classaAsessmentRepo->getStudentDetails($user->id);
         //dd($results);
-        return view('pages.students.exams.ca_results',compact('results','student'));
+        return view('pages.students.exams.ca_results', compact('results', 'student'));
     }
     public function MyResults()
     {
@@ -500,7 +506,7 @@ class ClassAssessmentsController extends Controller
         $results = $this->classaAsessmentRepo->GetExamGrades($user->id);
         $student = $this->classaAsessmentRepo->getStudentDetails($user->id);
         //dd($results);
-        return view('pages.students.exams.exam_results',compact('results','student'));
+        return view('pages.students.exams.exam_results', compact('results', 'student'));
     }
     public
     function PostStudentResults(Request $request)
@@ -510,15 +516,16 @@ class ClassAssessmentsController extends Controller
         //dd($id);
 
         //$this->classaAsessmentRepo->update($id,$data);
-        $this->classaAsessmentRepo->updatetotaGrade($id,$data['total']);
-            return Qs::jsonStoreOk();
+        $this->classaAsessmentRepo->updatetotaGrade($id, $data['total']);
+        return Qs::jsonStoreOk();
     }
-    public function AddStudentResult(Request $request){
+    public function AddStudentResult(Request $request)
+    {
         $student_id = Qs::decodeHash($request->input('id'));
         $ac_id = Qs::decodeHash($request->input('ac_id'));
         $assess_type_id = Qs::decodeHash($request->input('assess_type_id'));
         $course_id = Qs::decodeHash($request->input('course_id'));
-        $course = $this->courseRepository->find($course_id);
+        $course = $this->coursesRepo->find($course_id);
         $student = Student::find($student_id);
         $total = $request->input('total');
         $existingRow = Grade::where('student_id', $student_id)->where('assessment_type_id', $assess_type_id)->where('course_code', $course->code)->get()->first();
@@ -541,11 +548,10 @@ class ClassAssessmentsController extends Controller
         ]);
         //dd($student_id);
         return Qs::jsonStoreOk();
-
     }
-    public function getStudentsProgramResults($id){
+    public function getStudentsProgramResults($id)
+    {
         $results = $this->classaAsessmentRepo->GetStudentExamGrades($id);
         dd($results);
     }
-
 }

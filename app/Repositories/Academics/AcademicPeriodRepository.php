@@ -134,6 +134,10 @@ class AcademicPeriodRepository
     {
         return AcademicPeriod::whereDate('ac_end_date', '>=', now())->with('classes.class_assessments.assessment_type', 'classes.instructor', 'classes.course')->get();
     }
+    public function getClassAssessmentsQuery()
+    {
+        return AcademicPeriod::whereDate('ac_end_date', '>=', now())->with('classes.class_assessments.assessment_type', 'classes.instructor', 'classes.course');
+    }
     public static function getAllOpened($order = 'created_at')
     {
         $user = Auth::user();

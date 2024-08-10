@@ -37,8 +37,6 @@ class AcademicPeriodClass extends Model implements AuditableContract
 
     public function enrollments()
     {
-        return $this->hasMany(Enrollment::class, 'academic_period_class_id','id');
+        return $this->hasMany(Enrollment::class, 'academic_period_class_id', 'id');
     }
-
-
 }
