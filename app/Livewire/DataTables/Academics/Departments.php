@@ -3,6 +3,7 @@
 namespace App\Livewire\DataTables\Academics;
 
 use App\Models\Academics\Department;
+use App\Repositories\Academics\SchooolRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -20,7 +21,13 @@ final class Departments extends PowerGridComponent
 {
     use WithExport;
 
+    protected SchooolRepository $schoolRepo;
     public bool $deferLoading = true;
+
+    public function boot(): void
+    {
+        $this->schoolRepo = new SchooolRepository();
+    }
 
     public function setUp(): array
     {
@@ -73,7 +80,12 @@ final class Departments extends PowerGridComponent
 
     public function filters(): array
     {
-        return [];
+        return [
+            Filter::select('school', 'school_id')
+                ->dataSource($this->schoolRepo->getAll())
+                ->optionLabel('name')
+                ->optionValue('id'),
+        ];
     }
 
     public function actions(Department $row): array
