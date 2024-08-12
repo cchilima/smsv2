@@ -11,9 +11,11 @@ class HostelRepository
         return Hostel::create($data);
     }
 
-    public function getAll()
+    public function getAll($orderBy = 'hostel_name', $executeQuery = true)
     {
-        return Hostel::orderBy('hostel_name')->get();
+        $query = Hostel::orderBy($orderBy, 'asc');
+
+        return $executeQuery ? $query->get() : $query;
     }
 
     public function update($id, $data)
