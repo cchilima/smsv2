@@ -44,19 +44,17 @@ class AcademicPeriodRepository
         return AcademicPeriod::with('period_types')->whereDate('ac_end_date', '<', now())->orderByDesc($order);
     }
 
-    //ac_start_date
-    //ac_end_date
-
     public function update($id, $data)
     {
         return AcademicPeriod::find($id)->update($data);
     }
-    public function getAllopen($order = 'created_at')
+    public function getAllopen($order = 'created_at', $executeQuery = false)
     {
-        return AcademicPeriod::with('period_types', 'study_mode')
+        $query = AcademicPeriod::with('period_types', 'study_mode')
             ->whereDate('ac_end_date', '>=', now())
-            ->orderByDesc($order)
-            ->get();
+            ->orderByDesc($order);
+
+        $executeQuery ? $query->get() : $query;
     }
     public function getAcadeperiodClasses($id)
     {
