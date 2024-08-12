@@ -16,6 +16,8 @@
 
             <div class="tab-content">
                     <div class="tab-pane fade show active" id="all-types">
+                        <livewire:datatables.academics.academic-period-types/>  
+                        
                         <table class="table datatable-button-html5-columns">
                             <thead>
                             <tr>
