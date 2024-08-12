@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Livewire\Datatables\Academics\AcademicPeriods;
+namespace App\Livewire\DataTables\Accommodation;
 
-use App\Models\Academics\AcademicPeriod;
-use App\Repositories\Academics\AcademicPeriodRepository;
-use App\Repositories\Academics\PeriodTypeRepository;
+use App\Models\Accomodation\Hostel;
+use App\Repositories\Accommodation\HostelRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -18,20 +17,18 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-class Base extends PowerGridComponent
+final class Hostels extends PowerGridComponent
 {
     use WithExport;
 
     public bool $deferLoading = true;
-    public string $sortField = 'name';
+    public string $sortField = 'hostel_name';
 
-    protected AcademicPeriodRepository $academicPeriodRepo;
-    protected PeriodTypeRepository $periodTypeRepo;
+    protected HostelRepository $hostelRepo;
 
     public function boot(): void
     {
-        $this->academicPeriodRepo = new AcademicPeriodRepository();
-        $this->periodTypeRepo = new PeriodTypeRepository();
+        $this->hostelRepo = new HostelRepository();
     }
 
     public function setUp(): array
@@ -39,7 +36,7 @@ class Base extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            Exportable::make('academic-periods-export')
+            Exportable::make('hostels-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -49,6 +46,10 @@ class Base extends PowerGridComponent
         ];
     }
 
+    public function datasource(): Builder
+    {
+        return $this->hostelRepo->getAll('hostel_name', false);
+    }
 
     public function relationSearch(): array
     {
@@ -58,51 +59,37 @@ class Base extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('name')
-            ->add('code')
-            ->add('ac_start_date')
-            ->add('ac_end_date')
-            ->add('period_types.name');
+            ->add('hostel_name')
+            ->add('location');
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Name', 'name')
+            Column::make('Id', 'id'),
+            Column::make('Hostel name', 'hostel_name')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Code', 'code')
+            Column::make('Location', 'location')
                 ->sortable()
                 ->searchable(),
-
-            Column::make('Start Date', 'ac_start_date')
-                ->sortable(),
-
-            Column::make('End Date', 'ac_end_date')
-                ->sortable(),
-
-            Column::make('Period Type', 'period_types.name'),
 
             Column::action('Action')
+                ->visibleInExport(false)
         ];
     }
 
     public function filters(): array
     {
-        return [
-            Filter::select('period_types.name', 'period_type_id')
-                ->dataSource($this->periodTypeRepo->getAll())
-                ->optionLabel('name')
-                ->optionValue('id')
-        ];
+        return [];
     }
 
-    public function actions(AcademicPeriod $row): array
+    public function actions(Hostel $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.academics.academic-periods', ['row' => $row])
+                ->bladeComponent('table-actions.accommodation.hostels', ['row' => $row])
         ];
     }
 }

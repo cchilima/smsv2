@@ -183,8 +183,11 @@ class ClassAssessmentsController extends Controller
 
     public function getProgramResults($academic_id)
     {
-        $programs =  $this->periodClasses->academicProgramStudents(Qs::decodeHash($academic_id));
-        return view('pages.class_assessments.results_program_list', compact('programs'));
+        $academicPeriodId = Qs::decodeHash($academic_id);
+
+        $programs =  $this->periodClasses->academicProgramStudents($academicPeriodId);
+
+        return view('pages.class_assessments.results_program_list', compact('programs', 'academicPeriodId'));
     }
 
     public function StudentListResults($class, $assessid)

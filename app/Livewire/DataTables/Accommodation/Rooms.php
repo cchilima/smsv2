@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Livewire\Datatables\Academics\AcademicPeriods;
+namespace App\Livewire\DataTables\Accommodation;
 
-use App\Models\Academics\AcademicPeriod;
-use App\Repositories\Academics\AcademicPeriodRepository;
-use App\Repositories\Academics\PeriodTypeRepository;
+use App\Enums\Settings\GenderEnum;
+use App\Models\Accomodation\Room;
+use App\Repositories\Accommodation\HostelRepository;
+use App\Repositories\Accommodation\RoomRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -18,20 +19,20 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-class Base extends PowerGridComponent
+final class Rooms extends PowerGridComponent
 {
     use WithExport;
 
     public bool $deferLoading = true;
-    public string $sortField = 'name';
+    public string $sortField = 'room_number';
 
-    protected AcademicPeriodRepository $academicPeriodRepo;
-    protected PeriodTypeRepository $periodTypeRepo;
+    protected RoomRepository $roomRepo;
+    protected HostelRepository $hostelRepo;
 
     public function boot(): void
     {
-        $this->academicPeriodRepo = new AcademicPeriodRepository();
-        $this->periodTypeRepo = new PeriodTypeRepository();
+        $this->roomRepo = new RoomRepository();
+        $this->hostelRepo = new HostelRepository();
     }
 
     public function setUp(): array
@@ -39,7 +40,7 @@ class Base extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            Exportable::make('academic-periods-export')
+            Exportable::make('rooms-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -49,6 +50,10 @@ class Base extends PowerGridComponent
         ];
     }
 
+    public function datasource(): Builder
+    {
+        return $this->roomRepo->getAll(false);
+    }
 
     public function relationSearch(): array
     {
@@ -58,31 +63,29 @@ class Base extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('name')
-            ->add('code')
-            ->add('ac_start_date')
-            ->add('ac_end_date')
-            ->add('period_types.name');
+            ->add('hostel', function ($row) {
+                return $row->hostel->hostel_name;
+            })
+            ->add('room_number')
+            ->add('capacity')
+            ->add('gender');
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Name', 'name')
+            Column::make('Hostel', 'hostel'),
+            Column::make('Room Number', 'room_number')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Code', 'code')
+            Column::make('Capacity', 'capacity')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Start Date', 'ac_start_date')
-                ->sortable(),
-
-            Column::make('End Date', 'ac_end_date')
-                ->sortable(),
-
-            Column::make('Period Type', 'period_types.name'),
+            Column::make('Gender', 'gender')
+                ->sortable()
+                ->searchable(),
 
             Column::action('Action')
         ];
@@ -91,18 +94,23 @@ class Base extends PowerGridComponent
     public function filters(): array
     {
         return [
-            Filter::select('period_types.name', 'period_type_id')
-                ->dataSource($this->periodTypeRepo->getAll())
+            Filter::select('hostel', 'hostel_id')
+                ->dataSource($this->hostelRepo->getAll('hostel_name'))
+                ->optionLabel('hostel_name')
+                ->optionValue('id'),
+
+            Filter::enumSelect('gender', 'gender')
+                ->dataSource(GenderEnum::cases())
                 ->optionLabel('name')
-                ->optionValue('id')
+                ->optionValue('name'),
         ];
     }
 
-    public function actions(AcademicPeriod $row): array
+    public function actions(Room $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.academics.academic-periods', ['row' => $row])
+                ->bladeComponent('table-actions.accommodation.rooms', ['row' => $row])
         ];
     }
 }

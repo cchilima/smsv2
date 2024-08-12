@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Livewire\Datatables\Academics\AcademicPeriods;
+namespace App\Livewire\DataTables\Academics;
 
-use App\Models\Academics\AcademicPeriod;
-use App\Repositories\Academics\AcademicPeriodRepository;
-use App\Repositories\Academics\PeriodTypeRepository;
+use App\Models\Admissions\AcademicPeriodIntake;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -18,28 +16,19 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-class Base extends PowerGridComponent
+final class AcademicPeriodIntakes extends PowerGridComponent
 {
     use WithExport;
 
-    public bool $deferLoading = true;
     public string $sortField = 'name';
-
-    protected AcademicPeriodRepository $academicPeriodRepo;
-    protected PeriodTypeRepository $periodTypeRepo;
-
-    public function boot(): void
-    {
-        $this->academicPeriodRepo = new AcademicPeriodRepository();
-        $this->periodTypeRepo = new PeriodTypeRepository();
-    }
+    public bool $deferLoading = true;
 
     public function setUp(): array
     {
         $this->showCheckBox();
 
         return [
-            Exportable::make('academic-periods-export')
+            Exportable::make('academic-period-intakes-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -49,6 +38,10 @@ class Base extends PowerGridComponent
         ];
     }
 
+    public function datasource(): Builder
+    {
+        return AcademicPeriodIntake::query();
+    }
 
     public function relationSearch(): array
     {
@@ -58,11 +51,7 @@ class Base extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('name')
-            ->add('code')
-            ->add('ac_start_date')
-            ->add('ac_end_date')
-            ->add('period_types.name');
+            ->add('name');
     }
 
     public function columns(): array
@@ -72,37 +61,20 @@ class Base extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Code', 'code')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Start Date', 'ac_start_date')
-                ->sortable(),
-
-            Column::make('End Date', 'ac_end_date')
-                ->sortable(),
-
-            Column::make('Period Type', 'period_types.name'),
-
             Column::action('Action')
         ];
     }
 
     public function filters(): array
     {
-        return [
-            Filter::select('period_types.name', 'period_type_id')
-                ->dataSource($this->periodTypeRepo->getAll())
-                ->optionLabel('name')
-                ->optionValue('id')
-        ];
+        return [];
     }
 
-    public function actions(AcademicPeriod $row): array
+    public function actions(AcademicPeriodIntake $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.academics.academic-periods', ['row' => $row])
+                ->bladeComponent('table-actions.academics.academic-period-intakes', ['row' => $row])
         ];
     }
 }

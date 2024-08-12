@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Livewire\Datatables\Academics\AcademicPeriods;
+namespace App\Livewire\DataTables\Accounting;
 
-use App\Models\Academics\AcademicPeriod;
-use App\Repositories\Academics\AcademicPeriodRepository;
-use App\Repositories\Academics\PeriodTypeRepository;
+use App\Models\Accounting\PaymentMethod;
+use App\Repositories\Accounting\PaymentMethodRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -18,20 +17,18 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-class Base extends PowerGridComponent
+final class PaymentMethods extends PowerGridComponent
 {
     use WithExport;
 
-    public bool $deferLoading = true;
     public string $sortField = 'name';
+    public bool $deferLoading = true;
 
-    protected AcademicPeriodRepository $academicPeriodRepo;
-    protected PeriodTypeRepository $periodTypeRepo;
+    protected PaymentMethodRepository $paymentMethodRepo;
 
     public function boot(): void
     {
-        $this->academicPeriodRepo = new AcademicPeriodRepository();
-        $this->periodTypeRepo = new PeriodTypeRepository();
+        $this->paymentMethodRepo = new PaymentMethodRepository();
     }
 
     public function setUp(): array
@@ -39,7 +36,7 @@ class Base extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            Exportable::make('academic-periods-export')
+            Exportable::make('payment-methods-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -49,6 +46,10 @@ class Base extends PowerGridComponent
         ];
     }
 
+    public function datasource(): Builder
+    {
+        return PaymentMethod::query();
+    }
 
     public function relationSearch(): array
     {
@@ -58,11 +59,9 @@ class Base extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
+            ->add('id')
             ->add('name')
-            ->add('code')
-            ->add('ac_start_date')
-            ->add('ac_end_date')
-            ->add('period_types.name');
+            ->add('created_at');
     }
 
     public function columns(): array
@@ -72,37 +71,20 @@ class Base extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Code', 'code')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Start Date', 'ac_start_date')
-                ->sortable(),
-
-            Column::make('End Date', 'ac_end_date')
-                ->sortable(),
-
-            Column::make('Period Type', 'period_types.name'),
-
             Column::action('Action')
         ];
     }
 
     public function filters(): array
     {
-        return [
-            Filter::select('period_types.name', 'period_type_id')
-                ->dataSource($this->periodTypeRepo->getAll())
-                ->optionLabel('name')
-                ->optionValue('id')
-        ];
+        return [];
     }
 
-    public function actions(AcademicPeriod $row): array
+    public function actions(PaymentMethod $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.academics.academic-periods', ['row' => $row])
+                ->bladeComponent('table-actions.accounting.payment-methods', ['row' => $row])
         ];
     }
 }
