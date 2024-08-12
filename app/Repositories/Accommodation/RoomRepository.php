@@ -11,13 +11,15 @@ class RoomRepository
         return Room::create($data);
     }
 
-    public function getAll()
+    public function getAll($executeQuery = true)
     {
-        return Room::with('hostel')->get();
+        $query = Room::with('hostel');
+
+        return $executeQuery ? $query->get() : $query;
     }
     public function getSpecificRooms($id)
     {
-        return Room::where('hostel_id',$id)->get();
+        return Room::where('hostel_id', $id)->get();
     }
 
     public function update($id, $data)
