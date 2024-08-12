@@ -98,11 +98,16 @@ class ClassAssessmentsRepo
         $user = Auth::user();
 
         if ($user->userType->title == 'instructor') {
-            return AcademicPeriodClass::where('id', $class_id)
-                ->whereHas('class_assessments', function ($query) use ($assess_id) {
-                    $query->where('assessment_type_id', $assess_id);
-                })
-                ->with('class_assessments.assessment_type', 'enrollments.student.user', 'enrollments.user.student', 'academicPeriod', 'instructor', 'course');
+            return Enrollment::with([
+                'class.class_assessments.assessment_type',
+                'student',
+                'user',
+                'class.academicPeriod',
+                'class.instructor',
+                'class.course',
+            ])->whereHas('class.class_assessments', function ($query) use ($assess_id) {
+                $query->where('assessment_type_id', $assess_id);
+            });
         } else {
 
             $ac = AcademicPeriodClass::find($class_id);
@@ -628,7 +633,7 @@ class ClassAssessmentsRepo
                         'exam' => 'NE',
                         'ca' => 'NE',
                         'total_sum' => 'NE',
-                        'grade' => self::calculateGrade(10,$student->program_id), // Assuming default grade calculation
+                        'grade' => self::calculateGrade(10, $student->program_id), // Assuming default grade calculation
                         'outof' => 'NE', //self::getClassAssessmentExams($enrollment->class->course->id, $aid),
                         'id' => 'NE', //self::getGradeID($aid, $enrollment->class->course->id, $studentId),
                     ];
@@ -802,7 +807,7 @@ class ClassAssessmentsRepo
                         'exam' => 'NE',
                         'ca' => 'NE',
                         'total_sum' => 'NE',
-                        'grade' => self::calculateGrade(0,$student->program_id), // Assuming default grade calculation
+                        'grade' => self::calculateGrade(0, $student->program_id), // Assuming default grade calculation
                         'outof' => 'NE', //self::getClassAssessmentExams($enrollment->class->course->id, $aid),
                         'id' => 'NE', //self::getGradeID($aid, $enrollment->class->course->id, $studentId),
                     ];

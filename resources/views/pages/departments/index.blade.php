@@ -12,27 +12,31 @@
 
         <div class="card-body">
             <ul class="nav nav-tabs nav-tabs-highlight">
-                <li class="nav-item"><a href="#all-classes" class="nav-link active" data-toggle="tab">Manage Departments</a></li>
-                <li class="nav-item"><a href="#new-class" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i> Create New Department</a></li>
+                <li class="nav-item"><a href="#all-classes" class="nav-link active" data-toggle="tab">Manage Departments</a>
+                </li>
+                <li class="nav-item"><a href="#new-class" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
+                        Create New Department</a></li>
             </ul>
 
             <div class="tab-content">
-                    <div class="tab-pane fade show active" id="all-classes">
-                        <table class="table datatable-button-html5-columns">
-                            <thead>
+                <div class="tab-pane fade show active" id="all-classes">
+                    <livewire:datatables.academics.departments />
+
+                    <table class="table datatable-button-html5-columns">
+                        <thead>
                             <tr>
                                 <th>S/N</th>
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th>Action</th>
                             </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($departments as $d)
+                        </thead>
+                        <tbody>
+                            @foreach ($departments as $d)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $d->name }}</td>
-                                    <td>{{  Str::limit($d->description,20)}}</td>
+                                    <td>{{ Str::limit($d->description, 20) }}</td>
                                     <td class="text-center">
                                         <div class="list-icons">
                                             <div class="dropdown">
@@ -41,16 +45,22 @@
                                                 </a>
 
                                                 <div class="dropdown-menu dropdown-menu-left">
-                                                    @if(Qs::userIsTeamSA())
-                                                    <a href="{{ route('departments.edit', $d->id) }}" class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
-                                                   @endif
-                                                        @if(Qs::userIsTeamSA())
-                                                            <a href="{{ route('departments.show', $d->id) }}" class="dropdown-item"><i class="icon-eye"></i> Show</a>
-                                                        @endif
-                                                        @if(Qs::userIsSuperAdmin())
-                                                    <a id="{{ $d->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>
-                                                    <form method="post" id="item-delete-{{ $d->id }}" action="{{ route('departments.destroy', $d->id) }}" class="hidden">@csrf @method('delete')</form>
-                                                        @endif
+                                                    @if (Qs::userIsTeamSA())
+                                                        <a href="{{ route('departments.edit', $d->id) }}"
+                                                            class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
+                                                    @endif
+                                                    @if (Qs::userIsTeamSA())
+                                                        <a href="{{ route('departments.show', $d->id) }}"
+                                                            class="dropdown-item"><i class="icon-eye"></i> Show</a>
+                                                    @endif
+                                                    @if (Qs::userIsSuperAdmin())
+                                                        <a id="{{ $d->id }}" onclick="confirmDelete(this.id)"
+                                                            href="#" class="dropdown-item"><i class="icon-trash"></i>
+                                                            Delete</a>
+                                                        <form method="post" id="item-delete-{{ $d->id }}"
+                                                            action="{{ route('departments.destroy', $d->id) }}"
+                                                            class="hidden">@csrf @method('delete')</form>
+                                                    @endif
 
                                                 </div>
                                             </div>
@@ -58,22 +68,23 @@
                                     </td>
                                 </tr>
                             @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
+                        </tbody>
+                    </table>
+                </div>
 
                 <div class="tab-pane fade" id="new-class">
                     <div class="row">
                         <div class="col-md-6">
-                            <form class="ajax-store" method="post" action="{{ route('departments.store')  }}">
+                            <form class="ajax-store" method="post" action="{{ route('departments.store') }}">
                                 @csrf
 
                                 <div class="form-group row">
-                                    <label for="school_id" class="col-lg-3 col-form-label font-weight-semibold">School <span class="text-danger">*</span></label>
+                                    <label for="school_id" class="col-lg-3 col-form-label font-weight-semibold">School <span
+                                            class="text-danger">*</span></label>
                                     <div class="col-lg-9">
-                                        <select required data-placeholder="Select Class Type" class="form-control select" name="school_id" id="school_id">
-                                            @foreach($schools as $q)
+                                        <select required data-placeholder="Select Class Type" class="form-control select"
+                                            name="school_id" id="school_id">
+                                            @foreach ($schools as $q)
                                                 <option value="{{ $q->id }}">{{ $q->name }}</option>
                                             @endforeach
                                         </select>
@@ -81,29 +92,37 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Name <span class="text-danger">*</span></label>
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Name <span
+                                            class="text-danger">*</span></label>
                                     <div class="col-lg-9">
-                                        <input name="name" value="{{ old('name') }}" required type="text" class="form-control" placeholder="Name of Department">
+                                        <input name="name" value="{{ old('name') }}" required type="text"
+                                            class="form-control" placeholder="Name of Department">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Description <span class="text-danger">*</span></label>
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Description <span
+                                            class="text-danger">*</span></label>
                                     <div class="col-lg-9">
-                                        <input name="description" value="{{ old('description') }}" required type="text" class="form-control" placeholder="description">
+                                        <input name="description" value="{{ old('description') }}" required type="text"
+                                            class="form-control" placeholder="description">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Upload Department Photo:</label>
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Upload Department
+                                        Photo:</label>
                                     <div class="col-lg-9">
-                                    <input name="cover" accept="image/*" type="file" class="file-input" data-show-caption="false" data-show-upload="false" data-fouc>
-                                    <span class="form-text text-muted">Accepted Images: jpeg, png. Max file size 2Mb  </span>
+                                        <input name="cover" accept="image/*" type="file" class="file-input"
+                                            data-show-caption="false" data-show-upload="false" data-fouc>
+                                        <span class="form-text text-muted">Accepted Images: jpeg, png. Max file size 2Mb
+                                        </span>
                                     </div>
                                 </div>
 
                                 <div class="text-right">
-                                    <button id="ajax-btn" type="submit" class="btn btn-primary">Submit form <i class="icon-paperplane ml-2"></i></button>
+                                    <button id="ajax-btn" type="submit" class="btn btn-primary">Submit form <i
+                                            class="icon-paperplane ml-2"></i></button>
                                 </div>
                             </form>
                         </div>
@@ -113,6 +132,6 @@
         </div>
     </div>
 
-    {{--Class List Ends--}}
+    {{-- Class List Ends --}}
 
 @endsection
