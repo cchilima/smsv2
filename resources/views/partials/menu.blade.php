@@ -197,7 +197,22 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['credit.notes', 'student.list', 'creditors', 'aged.receivables', 'revenue.analysis', 'invoices', 'fees.create', 'fees.edit', 'fees.index']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
+                                'credit.notes',
+                                'student.list',
+                                'creditors',
+                                'aged.receivables',
+                                'revenue.analysis',
+                                'invoices',
+                                'fees.create',
+                                'fees.edit',
+                                'fees.index',
+                                'payment-methods.create',
+                                'payment-methods.edit',
+                                'payment-methods.index',
+                            ])
+                                ? 'nav-item-expanded nav-item-open'
+                                : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-cash3"></i> <span>
                                     Accounting</span></a>
 
