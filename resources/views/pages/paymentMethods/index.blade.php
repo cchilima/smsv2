@@ -22,6 +22,8 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-payment-methods">
+                    <livewire:datatables.accounting.payment-methods />
+
                     <table class="table datatable-button-html5-columns">
                         <thead>
                             <tr>

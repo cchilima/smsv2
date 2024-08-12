@@ -48,13 +48,13 @@ class AcademicPeriodRepository
     {
         return AcademicPeriod::find($id)->update($data);
     }
-    public function getAllopen($order = 'created_at', $executeQuery = false)
+    public function getAllopen($order = 'created_at', $executeQuery = true)
     {
         $query = AcademicPeriod::with('period_types', 'study_mode')
             ->whereDate('ac_end_date', '>=', now())
             ->orderByDesc($order);
 
-        $executeQuery ? $query->get() : $query;
+        return $executeQuery ? $query->get() : $query;
     }
     public function getAcadeperiodClasses($id)
     {

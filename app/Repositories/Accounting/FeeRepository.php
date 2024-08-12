@@ -11,11 +11,12 @@ class FeeRepository
         return Fee::create($data);
     }
 
-    public function getAll($order = 'name')
+    public function getAll($order = 'name', $executeQuery = true)
     {
-        return Fee::orderBy($order,'asc')->get();
-    }
+        $query = Fee::orderBy($order, 'asc');
 
+        return $executeQuery ? $query->get() : $query;
+    }
 
     public function update($id, $data)
     {
