@@ -386,11 +386,6 @@
                                 </li>
 
                                 <li class="nav-item">
-                                    <a href="{{ route('start-application') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['start-application']) ? 'active' : '' }}">
-                                        <span>Admit Student</span></a>
-                                </li>
-                                <li class="nav-item">
 
                                     <a href="{{ route('bed-space.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['bed-space.create', 'bed-space.edit', 'bed-space.index']) ? 'active' : '' }}">
