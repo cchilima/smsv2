@@ -3,9 +3,7 @@
 namespace App\Livewire\DataTables\Accommodation;
 
 use App\Models\Accomodation\Booking;
-use App\Repositories\Academics\StudentRegistrationRepository;
 use App\Repositories\Accommodation\BookingRepository;
-use App\Repositories\Accounting\StatementRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
