@@ -7,9 +7,11 @@ use App\Models\Residency\{Province, Town};
 
 class ProvinceRepository
 {
-    public function getAll()
+    public function getAll($executeQuery = true)
     {
-        return Province::all();
+        $query = Province::query();
+
+        return $executeQuery ? $query->get() : $query;
     }
 
     public function getTownsByProvince($provinceId)
