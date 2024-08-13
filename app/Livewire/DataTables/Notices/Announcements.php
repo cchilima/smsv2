@@ -51,7 +51,6 @@ final class Announcements extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('title')
-            ->add('description')
             ->add('addressed_to', function (Announcement $row) {
                 return $row->userType?->name ?? 'Everyone';
             })
@@ -65,10 +64,6 @@ final class Announcements extends PowerGridComponent
     {
         return [
             Column::make('Title', 'title')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Description', 'description')
                 ->sortable()
                 ->searchable(),
 
