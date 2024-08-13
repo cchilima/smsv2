@@ -122,11 +122,6 @@ final class Students extends PowerGridComponent
                 ->dataSource($this->levelRepo->getAll())
                 ->optionLabel('name')
                 ->optionValue('id'),
-
-            // Filter::select('academic_info.academic_period.name', 'academic_period_intake_id')
-            //     ->dataSource($this->academicPeriodRepo->getAll('name'))
-            //     ->optionLabel('name')
-            //     ->optionValue('id'),
         ];
     }
 

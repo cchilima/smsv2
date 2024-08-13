@@ -2,9 +2,10 @@
 
 namespace App\Livewire\DataTables\Residency;
 
-use App\Models\Residency\Province;
+use App\Models\Residency\Town;
 use App\Repositories\Residency\CountryRepository;
 use App\Repositories\Residency\ProvinceRepository;
+use App\Repositories\Residency\TownRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -18,18 +19,20 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class Provinces extends PowerGridComponent
+final class Towns extends PowerGridComponent
 {
     use WithExport;
 
     public bool $deferLoading = true;
     public string $sortField = 'name';
 
+    protected TownRepository $townRepo;
     protected ProvinceRepository $provinceRepo;
     protected CountryRepository $countryRepo;
 
     public function boot(): void
     {
+        $this->townRepo = new TownRepository();
         $this->provinceRepo = new ProvinceRepository();
         $this->countryRepo = new CountryRepository();
     }
@@ -39,7 +42,7 @@ final class Provinces extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            Exportable::make('provinces-export')
+            Exportable::make('towns-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -51,15 +54,13 @@ final class Provinces extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return $this->provinceRepo->getAll(false);
+        return $this->townRepo->getAll(false);
     }
 
     public function relationSearch(): array
     {
         return [
-            'country' => [
-                'country'
-            ]
+            'province.country' => 'country'
         ];
     }
 
@@ -67,8 +68,13 @@ final class Provinces extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('name')
+
+            ->add('province', function ($row) {
+                return $row->province?->name ?? 'Other';
+            })
+
             ->add('country', function ($row) {
-                return $row->country?->country ?? 'Other';
+                return $row->province?->country?->country ?? 'Other';
             });
     }
 
@@ -79,9 +85,11 @@ final class Provinces extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Country', 'country', 'country_id')
-                ->sortable(),
+            Column::make('Province', 'province', 'province_id'),
 
+            Column::make('Country', 'country'),
+
+            // TODO: Hide all action columns from export
             Column::action('Action')
         ];
     }
@@ -89,15 +97,14 @@ final class Provinces extends PowerGridComponent
     public function filters(): array
     {
         return [
-            Filter::select('country', 'country_id')
-                ->dataSource($this->countryRepo->getAll())
-                ->optionLabel('country')
-                ->optionValue('id')
+            Filter::select('province', 'province_id')
+                ->dataSource($this->provinceRepo->getAll())
+                ->optionLabel('name')
+                ->optionValue('id'),
         ];
     }
 
-
-    public function actions(Province $row): array
+    public function actions(Town $row): array
     {
         return [
             Button::add('actions')
