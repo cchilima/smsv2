@@ -26,14 +26,10 @@ final class Bookings extends PowerGridComponent
     public bool $deferLoading = true;
 
     protected BookingRepository $bookingRepo;
-    protected StatementRepository $statementRepo;
-    protected StudentRegistrationRepository $studentRegistrationRepo;
 
     public function boot(): void
     {
-        $this->statementRepo = new StatementRepository();
-        $this->studentRegistrationRepo = new StudentRegistrationRepository();
-        $this->bookingRepo = new BookingRepository($this->statementRepo, $this->studentRegistrationRepo);
+        $this->bookingRepo = app(BookingRepository::class);
     }
 
     public function setUp(): array
@@ -53,7 +49,7 @@ final class Bookings extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return $this->bookingRepo->getOpenBookings();
+        return $this->bookingRepo->getOpenBookings(false);
     }
 
     public function relationSearch(): array

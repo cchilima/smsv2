@@ -97,16 +97,4 @@ final class Announcements extends PowerGridComponent
                 ->bladeComponent('table-actions.notices.announcements', ['row' => $row])
         ];
     }
-
-    /*
-    public function actionRules($row): array
-    {
-       return [
-            // Hide button edit for ID 1
-            Rule::button('edit')
-                ->when(fn($row) => $row->id === 1)
-                ->hide(),
-        ];
-    }
-    */
 }
