@@ -50,19 +50,18 @@ class BookingRepository
 
     public function getOpenBookings($executeQuery = true)
     {
-        // return Booking::with('student','bedSpace')->get();
         $currentDateTime = Carbon::now();
 
-        return Booking::with('student', 'bedSpace')->whereHas('bedSpace', function ($query) use ($currentDateTime) {
+        $query = Booking::with('student', 'bedSpace')->whereHas('bedSpace', function ($query) use ($currentDateTime) {
             $query->where('is_available', '=', 'true');
         });
 
-        $executeQuery ? $query->get() : $query;
+        return $executeQuery ? $query->get() : $query;
     }
     public function getClosedBookings($executeQuery = true)
     {
         $currentDateTime = Carbon::now();
-        return Booking::with('student.user', 'bedSpace.room.hostel')
+        $query = Booking::with('student.user', 'bedSpace.room.hostel')
             ->whereHas('bedSpace', function ($query) use ($currentDateTime) {
                 $query->where('is_available', '=', 'false')
                     ->whereDate('expiration_date', '>=', $currentDateTime);
