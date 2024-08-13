@@ -7,9 +7,11 @@ use App\Models\Residency\{Town};
 class TownRepository
 {
 
-    public function getAll()
+    public function getAll($executeQuery = true)
     {
-        return Town::all();
+        $query = Town::query();
+
+        return $executeQuery ? $query->get() : $query;
     }
 
     public function create($data)

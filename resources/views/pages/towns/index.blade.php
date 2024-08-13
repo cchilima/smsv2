@@ -20,6 +20,8 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-towns">
+                    <livewire:datatables.residency.towns />
+
                     <table class="table datatable-button-html5-columns">
                         <thead>
                             <tr>
@@ -34,8 +36,8 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $town->name }}</td>
-                                    <td>{{ $town->province->country->country ?? 'Other' }}</td>
-                                    <td>{{ $town->province->name }}</td>
+                                    <td>{{ $town->province?->country?->country ?? 'Other' }}</td>
+                                    <td>{{ $town->province?->name ?? 'Other' }}</td>
                                     <td class="text-center">
                                         <div class="list-icons">
                                             <div class="dropdown">
