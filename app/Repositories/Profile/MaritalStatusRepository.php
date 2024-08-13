@@ -11,11 +11,12 @@ class MaritalStatusRepository
         return MaritalStatus::create($data);
     }
 
-    public function getAll($order = 'status')
+    public function getAll($order = 'status', $executeQuery = true)
     {
-        return MaritalStatus::orderBy($order,'asc')->get();
-    }
+        $query = MaritalStatus::orderBy($order, 'asc');
 
+        return $executeQuery ? $query->get() : $query;
+    }
 
     public function update($id, $data)
     {
