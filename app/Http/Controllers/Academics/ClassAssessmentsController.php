@@ -344,8 +344,8 @@ class ClassAssessmentsController extends Controller
         $period = $this->academic->find($id);
 
         $programs = $this->classaAsessmentRepo->publishAvailablePrograms($id);
-        //dd($programs);
-        return view('pages.class_assessments.edit', compact('programs', 'period'));
+
+        return view('pages.class_assessments.edit', compact('programs', 'period', 'id'));
     }
 
     public function GetProgramResultsLevelCas(Request $request)
@@ -361,9 +361,7 @@ class ClassAssessmentsController extends Controller
         $data['program_data'] = $this->programsRepo->findOne($pid);
         $data['level'] = $this->levels->find($level);
         $data['students'] = $this->classaAsessmentRepo->total_students($level, $pid, $aid);
-        //dd($grades);
 
-        //dd($grades);
         return view('pages.cas.results_review_board', compact('grades'), $data);
     }
     public function LoadMoreResultsCas(Request $request)

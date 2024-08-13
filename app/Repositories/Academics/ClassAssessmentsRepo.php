@@ -254,7 +254,10 @@ class ClassAssessmentsRepo
                 'status' => 1, // Default status is published (status 1)
                 'levels' => [],
             ];
-            $studentsCount = Student::whereIn('id', $studentIds)->where('program_id', $program->id)->distinct('id')->count();
+            $studentsCount = Student::whereIn('id', $studentIds)
+                ->where('program_id', $program->id)
+                ->distinct('id')
+                ->count();
 
             $programData['students'] += $studentsCount; // Add students count to total students for the program
 
@@ -295,9 +298,12 @@ class ClassAssessmentsRepo
                 }
             }
 
-            $organizedData[] = $programData;
+            // Only add the program to the array if it has students
+            if ($programData['students'] > 0) {
+                $organizedData[] = $programData;
+            }
         }
-        //dd($organizedData);
+
         return array_values($organizedData);
     }
 
@@ -333,7 +339,10 @@ class ClassAssessmentsRepo
                         )
                         ->groupBy('assessment_type_id', 'total', 'course_code', 'course_title', 'course_id', 'academic_period_id', 'student_id');
                 },
-                'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'
+                'program',
+                'user',
+                'level',
+                'enrollments.class.course.grades.assessment_type.class_assessment'
             ])->paginate(2, ['*'], 'page', 1);
 
         $organizedData = [
@@ -439,7 +448,10 @@ class ClassAssessmentsRepo
                         )
                         ->groupBy('assessment_type_id', 'total', 'course_code', 'course_title', 'course_id', 'academic_period_id', 'student_id');
                 },
-                'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'
+                'program',
+                'user',
+                'level',
+                'enrollments.class.course.grades.assessment_type.class_assessment'
             ])->paginate($per_page, ['*'], 'page', $current_page + 1);
 
         $organizedData = [
@@ -544,7 +556,10 @@ class ClassAssessmentsRepo
                         ->where('academic_period_id', $aid) // Ensure grades are for the specified academic period
                         ->groupBy('course_code', 'course_title', 'course_id', 'academic_period_id', 'student_id');
                 },
-                'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'
+                'program',
+                'user',
+                'level',
+                'enrollments.class.course.grades.assessment_type.class_assessment'
             ])->paginate(1, ['*'], 'page', 1);
 
         //start
@@ -577,7 +592,10 @@ class ClassAssessmentsRepo
                         )
                         ->groupBy('course_code', 'course_title', 'course_id', 'academic_period_id', 'student_id');
                 },
-                'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'
+                'program',
+                'user',
+                'level',
+                'enrollments.class.course.grades.assessment_type.class_assessment'
             ])->paginate(3, ['*'], 'page', 1);
 
         $organizedData = [
@@ -724,7 +742,10 @@ class ClassAssessmentsRepo
                         )
                         ->groupBy('course_code', 'course_title', 'course_id', 'academic_period_id', 'student_id');
                 },
-                'program', 'user', 'level', 'enrollments.class.course.grades.assessment_type.class_assessment'
+                'program',
+                'user',
+                'level',
+                'enrollments.class.course.grades.assessment_type.class_assessment'
             ])->paginate($per_page, ['*'], 'page', $current_page + 1);
 
         $organizedData = [
