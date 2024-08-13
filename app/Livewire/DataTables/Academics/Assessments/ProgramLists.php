@@ -2,8 +2,11 @@
 
 namespace App\Livewire\DataTables\Academics\Assessments;
 
+use App\Models\Academics\Department;
 use App\Models\Academics\Program;
 use App\Repositories\Academics\AcademicPeriodClassRepository;
+use App\Repositories\Academics\DepartmentsRepository;
+use App\Repositories\Academics\QualificationsRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -21,12 +24,18 @@ final class ProgramLists extends PowerGridComponent
 {
     use WithExport;
 
-    protected AcademicPeriodClassRepository $academicPeriodClassRepo;
     public $academicPeriodId;
+    public bool $deferLoading = true;
+
+    protected AcademicPeriodClassRepository $academicPeriodClassRepo;
+    protected DepartmentsRepository $departmentRepo;
+    protected QualificationsRepository $qualificationRepo;
 
     public function boot(): void
     {
         $this->academicPeriodClassRepo = new AcademicPeriodClassRepository();
+        $this->departmentRepo = new DepartmentsRepository();
+        $this->qualificationRepo = new QualificationsRepository();
     }
 
     public function setUp(): array
@@ -89,7 +98,19 @@ final class ProgramLists extends PowerGridComponent
 
     public function filters(): array
     {
-        return [];
+        return [
+            Filter::select('department.name', 'department_id')
+                ->dataSource($this->departmentRepo->getAll())
+                ->optionLabel('name')
+                ->optionValue('id'),
+
+            Filter::select('qualification.name', 'qualification_id')
+                ->dataSource($this->qualificationRepo->getAll())
+                ->optionLabel('name')
+                ->optionValue('id'),
+
+
+        ];
     }
 
     public function actions(Program $row): array
