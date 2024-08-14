@@ -10,7 +10,7 @@
 
         <div class="dropdown-menu dropdown-menu-left">
             @if (Qs::userIsTeamSA())
-                <a href="{{ route('booking.edit', $row->id) }}" class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
+                <a href="{{ route('booking.edit', $row->id) }}" class="dropdown-item"><i class="icon-pencil"></i>Edit</a>
             @endif
             @if (Qs::userIsSuperAdmin())
                 <a id="{{ $row->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i

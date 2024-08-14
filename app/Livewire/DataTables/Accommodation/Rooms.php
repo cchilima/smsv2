@@ -99,10 +99,13 @@ final class Rooms extends PowerGridComponent
                 ->optionLabel('hostel_name')
                 ->optionValue('id'),
 
-            Filter::enumSelect('gender', 'gender')
+            Filter::enumSelect('gender')
                 ->dataSource(GenderEnum::cases())
                 ->optionLabel('name')
                 ->optionValue('name'),
+
+            Filter::inputText('capacity')
+                ->operators(['is', 'is_not'])
         ];
     }
 
