@@ -180,7 +180,7 @@
                     <h6 class="card-title">Academic Information</h6>
                     {!! Qs::getPanelOptions() !!}
                 </div>
-                <div class="card-body collapse">
+                <div class="card-body show">
                     <ul class="nav nav-tabs nav-tabs-highlight">
                         <li class="nav-item">
                             <a href="#all-ac-programs" class="nav-link active" data-toggle="tab">
@@ -262,6 +262,10 @@
 
                         <div class="tab-pane fade" id="all-classes">
 
+                            @livewire('datatables.academics.academic-periods.classes', [
+                                'academicPeriodId' => $academicPeriod->id,
+                            ])
+
                             <table class="table datatable-button-html5-columns">
                                 <div class="d-flex justify-content-between">
                                     <div class="d-flex">
@@ -275,6 +279,7 @@
                                             class="dropdown-item"><i class="icon-add-to-list"></i> Add Class</a>
                                     </div>
                                 </div>
+
                                 <thead>
                                     <tr>
                                         <th>S/N</th>
@@ -340,7 +345,7 @@
                     <h6 class="card-title">Batch Invoicing</h6>
                     {!! Qs::getPanelOptions() !!}
                 </div>
-                <div class="card-body collapse">
+                <div class="card-body show">
                     <div class="tab-content">
 
                         <form class="ajax-store" method="post"

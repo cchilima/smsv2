@@ -2,7 +2,7 @@
 
 namespace App\Livewire\DataTables\Academics\AcademicPeriods;
 
-use App\Models\Academics\Program;
+use App\Models\Academics\AcademicPeriodClass;
 use App\Repositories\Academics\AcademicPeriodClassRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,13 +17,12 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class RunningPrograms extends PowerGridComponent
+final class Classes extends PowerGridComponent
 {
     use WithExport;
 
-    public string $sortField = 'name';
-    public bool $deferLoading = true;
     public string $academicPeriodId;
+    public bool $deferLoading = true;
 
     protected AcademicPeriodClassRepository $academicPeriodClassRepo;
 
@@ -37,7 +36,7 @@ final class RunningPrograms extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            Exportable::make('academic-period-running-programs-export')
+            Exportable::make('export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -49,7 +48,11 @@ final class RunningPrograms extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return $this->academicPeriodClassRepo->academicProgramStudents($this->academicPeriodId, false);
+        return $this->academicPeriodClassRepo->getAllAcClasses(
+            $this->academicPeriodId,
+            'academic_period_id',
+            false
+        );
     }
 
     public function relationSearch(): array
@@ -60,42 +63,36 @@ final class RunningPrograms extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('code')
-            ->add('name')
-            ->add('department.name')
-            ->add('qualification.name')
-            ->add('students_count');
+            ->add('id')
+            ->add('course.name')
+            ->add('course.code')
+
+            ->add('instructor', function ($row) {
+                return $row->instructor->first_name . ' ' . $row->instructor->last_name;
+            })
+
+            ->add('students', function ($row) {
+                return $row->enrollments->count();
+            });
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Code', 'code')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Name', 'name')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Qualification', 'qualification.name'),
-            Column::make('Department', 'department.name'),
-            Column::make('Students', 'students_count'),
+            Column::make('Code', 'course.code'),
+            Column::make('Course', 'course.name'),
+            Column::make('Instructor', 'instructor'),
+            Column::make('Students', 'students'),
 
             Column::action('Action')
         ];
     }
 
-    public function filters(): array
-    {
-        return [];
-    }
-
-    public function actions(Program $row): array
+    public function actions(AcademicPeriodClass $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.academics.academic-periods.running-programs', [
+                ->bladeComponent('table-actions.academics.academic-periods.classes', [
                     'row' => $row,
                     'academicPeriodId' => $this->academicPeriodId,
                 ])

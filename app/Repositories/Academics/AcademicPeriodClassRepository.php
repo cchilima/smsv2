@@ -20,9 +20,11 @@ class AcademicPeriodClassRepository
     {
         return AcademicPeriodClass::orderBy($order, 'desc')->get();
     }
-    public function getAllAcClasses($id, $order = 'academic_period_id')
+    public function getAllAcClasses($id, $order = 'academic_period_id', $executeQuery = true)
     {
-        return AcademicPeriodClass::where('academic_period_id', $id)->with('enrollments')->orderBy($order)->get();
+        $query = AcademicPeriodClass::where('academic_period_id', $id)->with('enrollments')->orderBy($order);
+
+        return $executeQuery ? $query->get() : $query;
     }
 
     public function update($id, $data)
