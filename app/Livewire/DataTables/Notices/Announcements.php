@@ -51,7 +51,6 @@ final class Announcements extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('title')
-            ->add('description')
             ->add('addressed_to', function (Announcement $row) {
                 return $row->userType?->name ?? 'Everyone';
             })
@@ -65,10 +64,6 @@ final class Announcements extends PowerGridComponent
     {
         return [
             Column::make('Title', 'title')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Description', 'description')
                 ->sortable()
                 ->searchable(),
 
@@ -102,16 +97,4 @@ final class Announcements extends PowerGridComponent
                 ->bladeComponent('table-actions.notices.announcements', ['row' => $row])
         ];
     }
-
-    /*
-    public function actionRules($row): array
-    {
-       return [
-            // Hide button edit for ID 1
-            Rule::button('edit')
-                ->when(fn($row) => $row->id === 1)
-                ->hide(),
-        ];
-    }
-    */
 }

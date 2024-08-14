@@ -3,6 +3,7 @@
 namespace App\Livewire\Datatables\Academics;
 
 use App\Models\Academics\AcademicPeriodClass;
+use App\Repositories\Academics\AcademicPeriodRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -21,6 +22,13 @@ final class AcademicPeriodClasses extends PowerGridComponent
     use WithExport;
 
     public bool $deferLoading = true;
+
+    protected AcademicPeriodRepository $academicPeriodRepo;
+
+    public function boot(): void
+    {
+        $this->academicPeriodRepo = new AcademicPeriodRepository();
+    }
 
     public function setUp(): array
     {
@@ -77,7 +85,12 @@ final class AcademicPeriodClasses extends PowerGridComponent
 
     public function filters(): array
     {
-        return [];
+        return [
+            Filter::select('academicPeriod.code', 'academic_period_id')
+                ->dataSource($this->academicPeriodRepo->getAll())
+                ->optionLabel('name')
+                ->optionValue('id')
+        ];
     }
 
     public function actions(AcademicPeriodClass $row): array

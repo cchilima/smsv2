@@ -4,6 +4,7 @@ namespace App\Livewire\Datatables\Academics\AcademicPeriods;
 
 use App\Models\Academics\AcademicPeriod;
 use App\Repositories\Academics\AcademicPeriodRepository;
+use App\Repositories\Academics\PeriodTypeRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -22,18 +23,20 @@ class Base extends PowerGridComponent
     use WithExport;
 
     public bool $deferLoading = true;
+    public string $sortField = 'name';
 
     protected AcademicPeriodRepository $academicPeriodRepo;
+    protected PeriodTypeRepository $periodTypeRepo;
 
     public function boot(): void
     {
         $this->academicPeriodRepo = new AcademicPeriodRepository();
+        $this->periodTypeRepo = new PeriodTypeRepository();
     }
 
     public function setUp(): array
     {
         $this->showCheckBox();
-        $this->sortBy('name');
 
         return [
             Exportable::make('academic-periods-export')
@@ -88,7 +91,10 @@ class Base extends PowerGridComponent
     public function filters(): array
     {
         return [
-            // Filter::boolean('code', 'code')
+            Filter::select('period_types.name', 'period_type_id')
+                ->dataSource($this->periodTypeRepo->getAll())
+                ->optionLabel('name')
+                ->optionValue('id')
         ];
     }
 

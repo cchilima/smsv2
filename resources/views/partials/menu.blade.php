@@ -160,20 +160,32 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['academic-period-management.index', 'academic-period-fees.edit', 'academic-period-management.edit', 'academic-periods.create', 'academic-periods.edit', 'academic-periods.index']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
+                                'academic-period-management.index',
+                                'academic-period-fees.edit',
+                                'academic-period-management.edit',
+                                'academic-periods.create',
+                                'academic-periods.edit',
+                                'academic-periods.index',
+                                'academic-period-classes.index',
+                                'academic-period-classes.edit',
+                                'academic-period-classes.create',
+                            ])
+                                ? 'nav-item-expanded nav-item-open'
+                                : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span>
                                     Academics</span></a>
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Academic Period">
                                 <li class="nav-item">
                                     <a href="{{ route('academic-periods.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-management.index', 'academic-period-management.edit', 'academic-period-fees.edit', 'academic-periods.create', 'academic-periods.edit', 'academic-periods.index']) ? 'active' : '' }}">
-                                        <span>Academic period</span></a>
+                                        <span>Academic Periods</span></a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{{ route('academic-period-classes.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-classes.create', 'academic-period-classes.edit', 'academic-period-classes.index']) ? 'active' : '' }}">
-                                        <span>Academic period class</span></a>
+                                        <span>Academic Period Classes</span></a>
                                 </li>
 
                                 <li class="nav-item">
@@ -185,7 +197,22 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['credit.notes', 'student.list', 'creditors', 'aged.receivables', 'revenue.analysis', 'invoices', 'fees.create', 'fees.edit', 'fees.index']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
+                                'credit.notes',
+                                'student.list',
+                                'creditors',
+                                'aged.receivables',
+                                'revenue.analysis',
+                                'invoices',
+                                'fees.create',
+                                'fees.edit',
+                                'fees.index',
+                                'payment-methods.create',
+                                'payment-methods.edit',
+                                'payment-methods.index',
+                            ])
+                                ? 'nav-item-expanded nav-item-open'
+                                : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-cash3"></i> <span>
                                     Accounting</span></a>
 
@@ -359,11 +386,6 @@
                                 </li>
 
                                 <li class="nav-item">
-                                    <a href="{{ route('start-application') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['start-application']) ? 'active' : '' }}">
-                                        <span>Admit Student</span></a>
-                                </li>
-                                <li class="nav-item">
 
                                     <a href="{{ route('bed-space.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['bed-space.create', 'bed-space.edit', 'bed-space.index']) ? 'active' : '' }}">
@@ -408,7 +430,21 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['announcements.index', 'marital-statuses.create', 'marital-statuses.edit', 'marital-statuses.index', 'countries.index', 'countries.edit', 'provinces.index', 'provinces.edit', 'towns.index', 'towns.edit']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
+                                'announcements.index',
+                                'marital-statuses.create',
+                                'marital-statuses.edit',
+                                'marital-statuses.index',
+                                'countries.index',
+                                'countries.edit',
+                                'provinces.index',
+                                'provinces.edit',
+                                'towns.index',
+                                'towns.edit',
+                                'audits.index',
+                            ])
+                                ? 'nav-item-expanded nav-item-open'
+                                : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-equalizer"></i> <span>
                                     Other</span></a>
 
@@ -444,7 +480,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('audits.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}">
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['audits.create', 'audits.edit', 'audits.index']) ? 'active' : '' }}">
                                         <span>Audit Reports</span></a>
                                 </li>
 

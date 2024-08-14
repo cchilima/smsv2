@@ -25,10 +25,11 @@ class StudentRepository
         return User::create($data);
     }
 
-    public function getAll()
+    public function getAll($executeQuery = true)
     {
-        // Student::lastest()->paginate(20);
-        return Student::orderBy('id', 'desc')->paginate(20)->reverse();
+        $query = Student::with(['user', 'program', 'level']);
+
+        return $executeQuery ? $query->get() : $query;
     }
 
     public function update($id, $data)
@@ -148,7 +149,6 @@ class StudentRepository
 
 
         return $subjects;
-
     }
 
 
@@ -165,7 +165,6 @@ class StudentRepository
 
 
         return $schools;
-
     }
 
     public function addStudentId($studentData)

@@ -25,11 +25,14 @@ class BookingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $booking_repository,$bed_space_repository,$rooms_repository,$hostel_repository,$invoiceRepo;
-    public function __construct(BookingRepository $booking_repository, BedSpaceRepository $bed_space_repository,
-                                RoomRepository $rooms_repository, HostelRepository $hostel_repository,
-                                InvoiceRepository $invoiceRepo)
-    {
+    protected $booking_repository, $bed_space_repository, $rooms_repository, $hostel_repository, $invoiceRepo;
+    public function __construct(
+        BookingRepository $booking_repository,
+        BedSpaceRepository $bed_space_repository,
+        RoomRepository $rooms_repository,
+        HostelRepository $hostel_repository,
+        InvoiceRepository $invoiceRepo
+    ) {
         //$this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
         //$this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
         $this->middleware(TeamSAT::class, ['only' => ['destroy',]]);
@@ -39,7 +42,6 @@ class BookingController extends Controller
         $this->rooms_repository = $rooms_repository;
         $this->hostel_repository = $hostel_repository;
         $this->invoiceRepo = $invoiceRepo;
-
     }
     public function index()
     {
@@ -47,7 +49,7 @@ class BookingController extends Controller
         $data['open'] = $this->booking_repository->getOpenBookings();
         $data['closed'] = $this->booking_repository->getClosedBookings();
         //dd($data);
-        return view('pages.booking.index',$data);
+        return view('pages.booking.index', $data);
     }
 
     /**
@@ -66,10 +68,10 @@ class BookingController extends Controller
         $data = $request->only(['student_id', 'bed_space_id']);
         $data['booking_date'] = date('Y-m-d', strtotime(now()));
         $data['expiration_date'] = date('Y-m-d', strtotime('+1 day', time()));
-       // 'student_id','bed_space_id','booking_date','expiration_date'
+        // 'student_id','bed_space_id','booking_date','expiration_date'
         $dataB['is_available'] = 'false';
         $data = $this->booking_repository->create($data);
-        $this->bed_space_repository->update($data['bed_space_id'],$dataB);
+        $this->bed_space_repository->update($data['bed_space_id'], $dataB);
         $this->booking_repository->invoiceStudent($data['student_id']);
         if ($data) {
             return Qs::jsonStoreOk();
@@ -93,7 +95,7 @@ class BookingController extends Controller
     {
         $booking = $this->booking_repository->find($id);
         $data['hostel'] = $this->hostel_repository->getAll();
-        return !is_null($booking) ? view('pages.booking.edit', $data,compact('booking'))
+        return !is_null($booking) ? view('pages.booking.edit', $data, compact('booking'))
             : Qs::goWithDanger('pages.hostels.index');
     }
 
@@ -108,9 +110,9 @@ class BookingController extends Controller
         $dataF['is_available'] = 'false';
         $current = $this->booking_repository->find($id);
         $dataB['is_available'] = 'true';
-        $this->bed_space_repository->update($current->bed_space_id,$dataB);
-        $update = $this->booking_repository->update($id,$data);
-        $this->bed_space_repository->update($data['bed_space_id'],$dataF);
+        $this->bed_space_repository->update($current->bed_space_id, $dataB);
+        $update = $this->booking_repository->update($id, $data);
+        $this->bed_space_repository->update($data['bed_space_id'], $dataF);
 
         if ($update) {
             return Qs::jsonStoreOk();
@@ -126,7 +128,7 @@ class BookingController extends Controller
     {
         $current = $this->booking_repository->find($id);
         $dataB['is_available'] = 'true';
-        $this->bed_space_repository->update($current->bed_space_id,$dataB);
+        $this->bed_space_repository->update($current->bed_space_id, $dataB);
         $this->booking_repository->find($id)->delete();
         return back()->with('flash_success', __('msg.delete_ok'));
     }
@@ -137,11 +139,11 @@ class BookingController extends Controller
         $studentIdsFromEnrollment = Enrollment::where('student_id', $student_id)
             ->first();
         //dd($request);
-        $ac = AcademicPeriodClass::where('id',$studentIdsFromEnrollment->academic_period_class_id)->first();
+        $ac = AcademicPeriodClass::where('id', $studentIdsFromEnrollment->academic_period_class_id)->first();
         // Get next academic period
         $aca = AcademicPeriod::find($ac->academic_period_id);
         $data['expiration_date'] = $aca->ac_end_date;
-        $data = $this->booking_repository->update($id,$data);
+        $data = $this->booking_repository->update($id, $data);
         if ($data) {
             return Qs::jsonStoreOk();
         } else {

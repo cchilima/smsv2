@@ -44,19 +44,17 @@ class AcademicPeriodRepository
         return AcademicPeriod::with('period_types')->whereDate('ac_end_date', '<', now())->orderByDesc($order);
     }
 
-    //ac_start_date
-    //ac_end_date
-
     public function update($id, $data)
     {
         return AcademicPeriod::find($id)->update($data);
     }
-    public function getAllopen($order = 'created_at')
+    public function getAllopen($order = 'created_at', $executeQuery = true)
     {
-        return AcademicPeriod::with('period_types', 'study_mode')
+        $query = AcademicPeriod::with('period_types', 'study_mode')
             ->whereDate('ac_end_date', '>=', now())
-            ->orderByDesc($order)
-            ->get();
+            ->orderByDesc($order);
+
+        return $executeQuery ? $query->get() : $query;
     }
     public function getAcadeperiodClasses($id)
     {
@@ -115,9 +113,12 @@ class AcademicPeriodRepository
         return AcademicPeriodFee::create($data);
     }
 
-    public function getAPFeeInformation($id)
+    public function getAPFeeInformation($id, bool $executeQuery = true)
     {
-        return AcademicPeriodFee::with('academic_period', 'fee')->where('academic_period_id', $id)->get();
+        $query = AcademicPeriodFee::with('academic_period', 'fee')
+            ->where('academic_period_id', $id);
+
+        return $executeQuery ? $query->get() : $query;
     }
 
     public function getOneAPFeeInformation($id)

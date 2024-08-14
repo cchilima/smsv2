@@ -52,7 +52,7 @@ final class Prerequisites extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('name')
-            // ->add('prerequisites.name');
+            ->add('code')
             ->add('prerequisites', function ($row) {
                 return Blade::render(
                     '<x-table-fields.academics.prerequisites :row=$row />',
@@ -64,6 +64,10 @@ final class Prerequisites extends PowerGridComponent
     public function columns(): array
     {
         return [
+            Column::make('Code', 'code')
+                ->searchable()
+                ->sortable(),
+
             Column::make('Course', 'name')
                 ->searchable()
                 ->sortable(),

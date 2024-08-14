@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 class BookingRepository
 {
     protected $statementRepo;
-    protected $registrationRepo,$booking_repository;
+    protected $registrationRepo, $booking_repository;
 
     public function __construct(StatementRepository $statementRepo, StudentRegistrationRepository $registrationRepo)
     {
@@ -48,29 +48,38 @@ class BookingRepository
         return Booking::find($id);
     }
 
-    public function getOpenBookings()
+    public function getOpenBookings($executeQuery = true)
     {
-       // return Booking::with('student','bedSpace')->get();
         $currentDateTime = Carbon::now();
-        return Booking::with('student','bedSpace')->whereHas('bedSpace', function ($query) use ($currentDateTime) {
-            $query->where('is_available','=','true');
-        })->get();
+
+        $query = Booking::with('student', 'bedSpace')->whereHas('bedSpace', function ($query) use ($currentDateTime) {
+            $query->where('is_available', '=', 'true');
+        });
+
+        return $executeQuery ? $query->get() : $query;
     }
-    public function getClosedBookings()
+    public function getClosedBookings($executeQuery = true)
     {
         $currentDateTime = Carbon::now();
-        return Booking::with('student.user','bedSpace.room.hostel')->whereHas('bedSpace', function ($query) use ($currentDateTime) {
-            $query->where('is_available','=','false')->whereDate('expiration_date', '>=', $currentDateTime);
-        })->get();
+        $query = Booking::with('student.user', 'bedSpace.room.hostel')
+            ->whereHas('bedSpace', function ($query) use ($currentDateTime) {
+                $query->where('is_available', '=', 'false')
+                    ->whereDate('expiration_date', '>=', $currentDateTime);
+            });
+
+        $executeQuery ? $query->get() : $query;
     }
     public function getClosedBookingsOne($student_id)
     {
         $currentDateTime = Carbon::now();
-        return Booking::with('student.user','bedSpace.room.hostel')->where('student_id','=',$student_id)->whereHas('bedSpace', function ($query) use ($currentDateTime) {
-            $query->where('is_available','=','false')->whereDate('expiration_date', '>=', $currentDateTime);
-        })->get();
+        return Booking::with('student.user', 'bedSpace.room.hostel')
+            ->where('student_id', '=', $student_id)
+            ->whereHas('bedSpace', function ($query) use ($currentDateTime) {
+                $query->where('is_available', '=', 'false')
+                    ->whereDate('expiration_date', '>=', $currentDateTime);
+            })->get();
     }
-    public function invoiceStudent( $student_id)
+    public function invoiceStudent($student_id)
     {
         DB::beginTransaction();
 
@@ -79,7 +88,7 @@ class BookingRepository
 
             $studentIdsFromEnrollment = Enrollment::where('student_id', $student_id)
                 ->first();
-            $ac = AcademicPeriodClass::where('id',$studentIdsFromEnrollment->academic_period_class_id)->first();
+            $ac = AcademicPeriodClass::where('id', $studentIdsFromEnrollment->academic_period_class_id)->first();
 
             // Get next academic period
             $periodInfo = AcademicPeriod::find($ac->academic_period_id);
@@ -105,8 +114,8 @@ class BookingRepository
 
         // Get universal fees (academic period fees with no associations)
         $universalFees = AcademicPeriodFee::whereHas('fee', function ($query) {
-                $query->where('type', 'accommodation');
-            })->where('academic_period_id',$periodInfo->id)
+            $query->where('type', 'accommodation');
+        })->where('academic_period_id', $periodInfo->id)
             ->get();
 
         // Create a new invoice
@@ -148,11 +157,12 @@ class BookingRepository
         // Remove any zero amount statements
         $this->statementRepo->removeZeroStatementAmounts();
     }
-    public function UpdateBookingStatus($student_id,$ac,$amount){
+    public function UpdateBookingStatus($student_id, $ac, $amount)
+    {
         //get amount for the accommodation
         $currentDateTime = Carbon::now();
-        $booking = Booking::with('student.user','bedSpace.room.hostel')->where('student_id','=',$student_id)->whereHas('bedSpace', function ($query) use ($currentDateTime) {
-            $query->where('is_available','=','false')->whereDate('expiration_date', '>=', $currentDateTime);
+        $booking = Booking::with('student.user', 'bedSpace.room.hostel')->where('student_id', '=', $student_id)->whereHas('bedSpace', function ($query) use ($currentDateTime) {
+            $query->where('is_available', '=', 'false')->whereDate('expiration_date', '>=', $currentDateTime);
         })->first();
         if ($booking) {
             $feeName = Fee::where('name', 'accommodation')->first();
@@ -164,10 +174,9 @@ class BookingRepository
                 if ($detail->amount <= $amount && $feeName->id == $detail->fee_id) {
                     $aca = AcademicPeriod::find($ac);
                     $data['expiration_date'] = $aca->ac_end_date;
-                    $update = $this->booking_repository->update($booking->id,$data);
+                    $update = $this->booking_repository->update($booking->id, $data);
                 }
             }
         }
     }
-
 }

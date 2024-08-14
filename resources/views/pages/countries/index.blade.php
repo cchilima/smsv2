@@ -20,6 +20,8 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-countries">
+                    <livewire:datatables.residency.countries />
+
                     <table class="table datatable-button-html5-columns">
                         <thead>
                             <tr>
