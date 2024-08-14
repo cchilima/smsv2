@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Livewire\DataTables\Notices;
+namespace App\Livewire\DataTables\Academics\AcademicPeriods;
 
-use App\Models\Notices\Announcement;
+use App\Models\Academics\AcademicPeriodFee;
+use App\Repositories\Academics\AcademicPeriodRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -16,18 +17,26 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class Announcements extends PowerGridComponent
+final class Fees extends PowerGridComponent
 {
     use WithExport;
 
+    public string $academicPeriodId;
     public bool $deferLoading = true;
+
+    protected AcademicPeriodRepository $academicPeriodRepo;
+
+    public function boot(): void
+    {
+        $this->academicPeriodRepo = new AcademicPeriodRepository();
+    }
 
     public function setUp(): array
     {
         $this->showCheckBox();
 
         return [
-            Exportable::make('announcements-export')
+            Exportable::make('academic-period-fees-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -39,7 +48,7 @@ final class Announcements extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Announcement::query();
+        return $this->academicPeriodRepo->getAPFeeInformation($this->academicPeriodId, false);
     }
 
     public function relationSearch(): array
@@ -50,28 +59,23 @@ final class Announcements extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('title')
-            ->add('addressed_to', function (Announcement $row) {
-                return $row->userType?->name ?? 'Everyone';
-            })
-            ->add('status', function (Announcement $row) {
-                return $row->archived ? 'Archived' : 'Active';
-            })
-            ->add('created_at');
+            ->add('amount')
+            ->add('fee.name')
+            ->add('status', function ($row) {
+                return $row->status ? 'Published' : 'Not Published';
+            });
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Title', 'title')
+            Column::make('Amount', 'amount')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Addressed To', 'addressed_to'),
+            Column::make('Fee', 'fee.name'),
 
-            Column::make('Status', 'status'),
-
-            Column::make('Date', 'created_at')
+            Column::make('Status', 'status')
                 ->sortable()
                 ->searchable(),
 
@@ -84,17 +88,11 @@ final class Announcements extends PowerGridComponent
         return [];
     }
 
-    #[\Livewire\Attributes\On('edit')]
-    public function edit($rowId): void
-    {
-        $this->js('alert(' . $rowId . ')');
-    }
-
-    public function actions(Announcement $row): array
+    public function actions(AcademicPeriodFee $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.notices.announcements', ['row' => $row])
+                ->bladeComponent('table-actions.academics.academic-periods.fees', ['row' => $row])
         ];
     }
 }

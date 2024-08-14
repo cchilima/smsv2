@@ -2,9 +2,9 @@
 
 namespace App\Livewire\DataTables\Accommodation;
 
-use App\Enums\Settings\GenderEnum;
-use App\Models\Accomodation\Room;
-use App\Repositories\Accommodation\HostelRepository;
+use App\Enums\Settings\TrueFalseEnum;
+use App\Models\Accomodation\BedSpace;
+use App\Repositories\Accommodation\BedSpaceRepository;
 use App\Repositories\Accommodation\RoomRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,20 +19,20 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class Rooms extends PowerGridComponent
+final class BedSpaces extends PowerGridComponent
 {
     use WithExport;
 
     public bool $deferLoading = true;
-    public string $sortField = 'room_number';
+    public string $sortField = 'bed_number';
 
+    protected BedSpaceRepository $bedSpaceRepo;
     protected RoomRepository $roomRepo;
-    protected HostelRepository $hostelRepo;
 
     public function boot(): void
     {
+        $this->bedSpaceRepo = new BedSpaceRepository();
         $this->roomRepo = new RoomRepository();
-        $this->hostelRepo = new HostelRepository();
     }
 
     public function setUp(): array
@@ -40,7 +40,7 @@ final class Rooms extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            Exportable::make('rooms-export')
+            Exportable::make('bed-spaces-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -52,7 +52,7 @@ final class Rooms extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return $this->roomRepo->getAll(false);
+        return $this->bedSpaceRepo->getAll(false);
     }
 
     public function relationSearch(): array
@@ -63,27 +63,24 @@ final class Rooms extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('hostel', function ($row) {
-                return $row->hostel->hostel_name;
+            ->add('room', function ($row) {
+                return $row->room->room_number;
             })
-            ->add('room_number')
-            ->add('capacity')
-            ->add('gender');
+            ->add('bed_number')
+            ->add('is_available', function ($row) {
+                return $row->is_available === 'true' ? 'Yes' : 'No';
+            });
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Hostel', 'hostel'),
-            Column::make('Room Number', 'room_number')
+            Column::make('Room', 'room'),
+            Column::make('Bed Space Number', 'bed_number')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Capacity', 'capacity')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Gender', 'gender')
+            Column::make('Is Available', 'is_available')
                 ->sortable()
                 ->searchable(),
 
@@ -94,26 +91,23 @@ final class Rooms extends PowerGridComponent
     public function filters(): array
     {
         return [
-            Filter::select('hostel', 'hostel_id')
-                ->dataSource($this->hostelRepo->getAll('hostel_name'))
-                ->optionLabel('hostel_name')
+            Filter::select('room', 'room_id')
+                ->dataSource($this->roomRepo->getAll())
+                ->optionLabel('room_number')
                 ->optionValue('id'),
 
-            Filter::enumSelect('gender')
-                ->dataSource(GenderEnum::cases())
+            Filter::enumSelect('is_available', 'is_available')
+                ->dataSource(TrueFalseEnum::cases())
                 ->optionLabel('name')
                 ->optionValue('name'),
-
-            Filter::inputText('capacity')
-                ->operators(['is', 'is_not'])
         ];
     }
 
-    public function actions(Room $row): array
+    public function actions(BedSpace $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.accommodation.rooms', ['row' => $row])
+                ->bladeComponent('table-actions.accommodation.bed-spaces', ['row' => $row])
         ];
     }
 }

@@ -1,12 +1,9 @@
 <?php
 
-namespace App\Livewire\DataTables\Academics\Assessments;
+namespace App\Livewire\DataTables\Academics;
 
-use App\Models\Academics\Department;
 use App\Models\Academics\Program;
-use App\Repositories\Academics\AcademicPeriodClassRepository;
 use App\Repositories\Academics\DepartmentsRepository;
-use App\Repositories\Academics\QualificationsRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -20,22 +17,19 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class ProgramLists extends PowerGridComponent
+final class DepartmentPrograms extends PowerGridComponent
 {
     use WithExport;
 
-    public $academicPeriodId;
+    public string $departmentId;
+    public string $sortField = 'name';
     public bool $deferLoading = true;
 
-    protected AcademicPeriodClassRepository $academicPeriodClassRepo;
     protected DepartmentsRepository $departmentRepo;
-    protected QualificationsRepository $qualificationRepo;
 
     public function boot(): void
     {
-        $this->academicPeriodClassRepo = new AcademicPeriodClassRepository();
         $this->departmentRepo = new DepartmentsRepository();
-        $this->qualificationRepo = new QualificationsRepository();
     }
 
     public function setUp(): array
@@ -43,7 +37,7 @@ final class ProgramLists extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            Exportable::make('export')
+            Exportable::make('department-programs-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -55,7 +49,7 @@ final class ProgramLists extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return $this->academicPeriodClassRepo->academicProgramStudents($this->academicPeriodId, false);
+        return $this->departmentRepo->getProgramsByDepartment($this->departmentId, false);
     }
 
     public function relationSearch(): array
@@ -66,50 +60,25 @@ final class ProgramLists extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('id')
             ->add('code')
             ->add('name')
-            ->add('department.name')
-            ->add('qualification.name')
-            ->add('students_count');
+            ->add('qualification.name');
     }
 
     public function columns(): array
     {
         return [
+            Column::make('Code', 'code')
+                ->sortable()
+                ->searchable(),
 
             Column::make('Name', 'name')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Code', 'code')
-                ->sortable()
-                ->searchable(),
-
             Column::make('Qualification', 'qualification.name'),
 
-            Column::make('Department', 'department.name'),
-
-            Column::make('Students', 'students_count'),
-
             Column::action('Action')
-        ];
-    }
-
-    public function filters(): array
-    {
-        return [
-            Filter::select('department.name', 'department_id')
-                ->dataSource($this->departmentRepo->getAll())
-                ->optionLabel('name')
-                ->optionValue('id'),
-
-            Filter::select('qualification.name', 'qualification_id')
-                ->dataSource($this->qualificationRepo->getAll())
-                ->optionLabel('name')
-                ->optionValue('id'),
-
-
         ];
     }
 
@@ -117,7 +86,7 @@ final class ProgramLists extends PowerGridComponent
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.academics.assessments.programs-list', ['row' => $row])
+                ->bladeComponent('table-actions.academics.assessments.department-programs', ['row' => $row])
         ];
     }
 }

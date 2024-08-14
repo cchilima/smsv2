@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Academics;
 
+use App\Models\Academics\CourseLevel;
 use App\Models\Academics\Program;
 use App\Models\Academics\ProgramCourses;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,7 @@ class ProgramsRepository
 
     public function getAll($order = 'name')
     {
-        return Program::with('department','qualification')->orderBy($order)->get();
+        return Program::with('department', 'qualification')->orderBy($order)->get();
     }
     public function update($id, $data)
     {
@@ -23,18 +24,19 @@ class ProgramsRepository
     }
     public function find($id)
     {
-        return Program::find($id)->with('department','qualification','courses')->get();
+        return Program::find($id)->with('department', 'qualification', 'courses')->get();
     }
     public function findOne($id)
     {
         return Program::find($id);
     }
-    public function findOneP($id){
+    public function findOneP($id)
+    {
 
         $programData = Program::with(['programCourses.courseLevel', 'programCourses.course'])
             ->find($id);
 
-// Organize the data into the desired format
+        // Organize the data into the desired format
         $organizedData = [];
 
         $organizedData = [
@@ -68,8 +70,9 @@ class ProgramsRepository
         return $organizedData;
     }
 
-    public function getAllWithCourse($id){
-        $programsData = Program::where('department_id', $id)->with(['department','qualification','programCourses.courseLevel', 'programCourses.course'])->get();
+    public function getAllWithCourse($id)
+    {
+        $programsData = Program::where('department_id', $id)->with(['department', 'qualification', 'programCourses.courseLevel', 'programCourses.course'])->get();
 
         $organizedData = [];
 
@@ -107,7 +110,24 @@ class ProgramsRepository
         }
 
         return $organizedData;
-
     }
 
+    public function getCoursesByProgram(string $programId, bool $executeQuery = true)
+    {
+        $query = ProgramCourses::with('courseLevel', 'course')
+            ->where('program_id', $programId);
+
+        return $executeQuery ? $query->get() : $query;
+    }
+
+    public function getCourseLevelsByProgram(string $programId, bool $executeQuery = true)
+    {
+        $query = CourseLevel::with('program')
+            ->whereHas('program', function ($query) use ($programId) {
+                $query->where('program_id', $programId);
+            })
+            ->orderBy('name');
+
+        return $executeQuery ? $query->get() : $query;
+    }
 }

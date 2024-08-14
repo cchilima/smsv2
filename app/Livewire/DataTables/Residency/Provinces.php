@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Livewire\DataTables\Notices;
+namespace App\Livewire\DataTables\Residency;
 
-use App\Models\Notices\Announcement;
+use App\Models\Residency\Province;
+use App\Repositories\Residency\CountryRepository;
+use App\Repositories\Residency\ProvinceRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -16,18 +18,28 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class Announcements extends PowerGridComponent
+final class Provinces extends PowerGridComponent
 {
     use WithExport;
 
     public bool $deferLoading = true;
+    public string $sortField = 'name';
+
+    protected ProvinceRepository $provinceRepo;
+    protected CountryRepository $countryRepo;
+
+    public function boot(): void
+    {
+        $this->provinceRepo = new ProvinceRepository();
+        $this->countryRepo = new CountryRepository();
+    }
 
     public function setUp(): array
     {
         $this->showCheckBox();
 
         return [
-            Exportable::make('announcements-export')
+            Exportable::make('provinces-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -39,41 +51,36 @@ final class Announcements extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Announcement::query();
+        return $this->provinceRepo->getAll(false);
     }
 
     public function relationSearch(): array
     {
-        return [];
+        return [
+            'country' => [
+                'country'
+            ]
+        ];
     }
 
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('title')
-            ->add('addressed_to', function (Announcement $row) {
-                return $row->userType?->name ?? 'Everyone';
-            })
-            ->add('status', function (Announcement $row) {
-                return $row->archived ? 'Archived' : 'Active';
-            })
-            ->add('created_at');
+            ->add('name')
+            ->add('country', function ($row) {
+                return $row->country?->country ?? 'Other';
+            });
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Title', 'title')
+            Column::make('Name', 'name')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Addressed To', 'addressed_to'),
-
-            Column::make('Status', 'status'),
-
-            Column::make('Date', 'created_at')
-                ->sortable()
-                ->searchable(),
+            Column::make('Country', 'country', 'country_id')
+                ->sortable(),
 
             Column::action('Action')
         ];
@@ -81,20 +88,20 @@ final class Announcements extends PowerGridComponent
 
     public function filters(): array
     {
-        return [];
+        return [
+            Filter::select('country', 'country_id')
+                ->dataSource($this->countryRepo->getAll())
+                ->optionLabel('country')
+                ->optionValue('id')
+        ];
     }
 
-    #[\Livewire\Attributes\On('edit')]
-    public function edit($rowId): void
-    {
-        $this->js('alert(' . $rowId . ')');
-    }
 
-    public function actions(Announcement $row): array
+    public function actions(Province $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.notices.announcements', ['row' => $row])
+                ->bladeComponent('table-actions.residency.provinces', ['row' => $row])
         ];
     }
 }

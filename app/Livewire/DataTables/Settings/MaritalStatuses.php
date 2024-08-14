@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Livewire\DataTables\Notices;
+namespace App\Livewire\DataTables\Settings;
 
-use App\Models\Notices\Announcement;
+use App\Models\Profile\MaritalStatus;
+use App\Repositories\Profile\MaritalStatusRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -16,18 +17,26 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class Announcements extends PowerGridComponent
+final class MaritalStatuses extends PowerGridComponent
 {
     use WithExport;
 
+    public string $sortField = 'status';
     public bool $deferLoading = true;
+
+    protected MaritalStatusRepository $maritalStatusRepo;
+
+    public function boot(): void
+    {
+        $this->maritalStatusRepo = new MaritalStatusRepository();
+    }
 
     public function setUp(): array
     {
         $this->showCheckBox();
 
         return [
-            Exportable::make('announcements-export')
+            Exportable::make('marital-statuses-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -39,62 +48,38 @@ final class Announcements extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Announcement::query();
-    }
-
-    public function relationSearch(): array
-    {
-        return [];
+        return $this->maritalStatusRepo->getAll('status', false);
     }
 
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('title')
-            ->add('addressed_to', function (Announcement $row) {
-                return $row->userType?->name ?? 'Everyone';
-            })
-            ->add('status', function (Announcement $row) {
-                return $row->archived ? 'Archived' : 'Active';
-            })
-            ->add('created_at');
+            ->add('status')
+            ->add('description');
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Title', 'title')
+            Column::make('Status', 'status')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Addressed To', 'addressed_to'),
-
-            Column::make('Status', 'status'),
-
-            Column::make('Date', 'created_at')
+            Column::make('Description', 'description')
                 ->sortable()
                 ->searchable(),
 
             Column::action('Action')
+                ->visibleInExport(false)
         ];
     }
 
-    public function filters(): array
-    {
-        return [];
-    }
 
-    #[\Livewire\Attributes\On('edit')]
-    public function edit($rowId): void
-    {
-        $this->js('alert(' . $rowId . ')');
-    }
-
-    public function actions(Announcement $row): array
+    public function actions(MaritalStatus $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.notices.announcements', ['row' => $row])
+                ->bladeComponent('table-actions.settings.marital-statuses', ['row' => $row])
         ];
     }
 }

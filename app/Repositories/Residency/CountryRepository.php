@@ -12,9 +12,11 @@ class CountryRepository
         return Country::find($countryId);
     }
 
-    public function getAll()
+    public function getAll($executeQuery = true)
     {
-        return Country::all();
+        $query = Country::query();
+
+        return $executeQuery ? $query->get() : $query;
     }
 
     public function getProvincesByCountry($countryId)

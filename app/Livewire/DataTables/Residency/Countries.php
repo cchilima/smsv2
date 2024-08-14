@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Livewire\DataTables\Accommodation;
+namespace App\Livewire\DataTables\Residency;
 
-use App\Enums\Settings\GenderEnum;
-use App\Models\Accomodation\Room;
-use App\Repositories\Accommodation\HostelRepository;
-use App\Repositories\Accommodation\RoomRepository;
+use App\Models\Residency\Country;
+use App\Repositories\Residency\CountryRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -19,20 +17,18 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class Rooms extends PowerGridComponent
+final class Countries extends PowerGridComponent
 {
     use WithExport;
 
+    public string $sortField = 'country';
     public bool $deferLoading = true;
-    public string $sortField = 'room_number';
 
-    protected RoomRepository $roomRepo;
-    protected HostelRepository $hostelRepo;
+    protected CountryRepository $countryRepo;
 
     public function boot(): void
     {
-        $this->roomRepo = new RoomRepository();
-        $this->hostelRepo = new HostelRepository();
+        $this->countryRepo = new CountryRepository();
     }
 
     public function setUp(): array
@@ -40,7 +36,7 @@ final class Rooms extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            Exportable::make('rooms-export')
+            Exportable::make('countries-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -52,7 +48,7 @@ final class Rooms extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return $this->roomRepo->getAll(false);
+        return $this->countryRepo->getAll(false);
     }
 
     public function relationSearch(): array
@@ -63,27 +59,33 @@ final class Rooms extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('hostel', function ($row) {
-                return $row->hostel->hostel_name;
-            })
-            ->add('room_number')
-            ->add('capacity')
-            ->add('gender');
+            ->add('country')
+            ->add('alpha_2_code')
+            ->add('alpha_3_code')
+            ->add('nationality')
+            ->add('dialing_code');
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Hostel', 'hostel'),
-            Column::make('Room Number', 'room_number')
+            Column::make('Country', 'country')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Capacity', 'capacity')
+            Column::make('Alpha 2 Code', 'alpha_2_code')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Gender', 'gender')
+            Column::make('Alpha 3 Code', 'alpha_3_code')
+                ->sortable()
+                ->searchable(),
+
+            Column::make('Nationality', 'nationality')
+                ->sortable()
+                ->searchable(),
+
+            Column::make('Dialing Code', 'dialing_code')
                 ->sortable()
                 ->searchable(),
 
@@ -93,27 +95,14 @@ final class Rooms extends PowerGridComponent
 
     public function filters(): array
     {
-        return [
-            Filter::select('hostel', 'hostel_id')
-                ->dataSource($this->hostelRepo->getAll('hostel_name'))
-                ->optionLabel('hostel_name')
-                ->optionValue('id'),
-
-            Filter::enumSelect('gender')
-                ->dataSource(GenderEnum::cases())
-                ->optionLabel('name')
-                ->optionValue('name'),
-
-            Filter::inputText('capacity')
-                ->operators(['is', 'is_not'])
-        ];
+        return [];
     }
 
-    public function actions(Room $row): array
+    public function actions(Country $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.accommodation.rooms', ['row' => $row])
+                ->bladeComponent('table-actions.residency.countries', ['row' => $row])
         ];
     }
 }

@@ -386,11 +386,6 @@
                                 </li>
 
                                 <li class="nav-item">
-                                    <a href="{{ route('start-application') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['start-application']) ? 'active' : '' }}">
-                                        <span>Admit Student</span></a>
-                                </li>
-                                <li class="nav-item">
 
                                     <a href="{{ route('bed-space.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['bed-space.create', 'bed-space.edit', 'bed-space.index']) ? 'active' : '' }}">
@@ -435,7 +430,21 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['announcements.index', 'marital-statuses.create', 'marital-statuses.edit', 'marital-statuses.index', 'countries.index', 'countries.edit', 'provinces.index', 'provinces.edit', 'towns.index', 'towns.edit']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
+                                'announcements.index',
+                                'marital-statuses.create',
+                                'marital-statuses.edit',
+                                'marital-statuses.index',
+                                'countries.index',
+                                'countries.edit',
+                                'provinces.index',
+                                'provinces.edit',
+                                'towns.index',
+                                'towns.edit',
+                                'audits.index',
+                            ])
+                                ? 'nav-item-expanded nav-item-open'
+                                : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-equalizer"></i> <span>
                                     Other</span></a>
 
@@ -471,7 +480,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('audits.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}">
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['audits.create', 'audits.edit', 'audits.index']) ? 'active' : '' }}">
                                         <span>Audit Reports</span></a>
                                 </li>
 

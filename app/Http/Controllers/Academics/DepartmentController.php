@@ -16,8 +16,8 @@ class DepartmentController extends Controller
     protected $department;
     public function __construct(DepartmentsRepository $department)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
 
         $this->department = $department;
@@ -26,7 +26,7 @@ class DepartmentController extends Controller
     {
         $departments['departments'] = $this->department->getAll();
         $departments['schools'] = $this->department->getSchools();
-        return view('pages.departments.index',$departments);
+        return view('pages.departments.index', $departments);
     }
 
     /**
@@ -43,18 +43,18 @@ class DepartmentController extends Controller
     public function store(Department $req)
     {
 
-        if($req->hasFile('cover')) {
-            $data = $req->only(['school_id','name', 'description','cover']);
+        if ($req->hasFile('cover')) {
+            $data = $req->only(['school_id', 'name', 'description', 'cover']);
             $logo = $req->file('cover');
             $f = Qs::getFileMetaData($logo);
-            $f['name'] = $data['name'].'logo.' . $f['ext'];
+            $f['name'] = $data['name'] . 'logo.' . $f['ext'];
             $f['path'] = $logo->storeAs(Qs::getPublicUploadPathDep(), $f['name']);
             $logo_path = asset('storage/depart/' . $f['name']);
             $data['cover'] = $logo_path;
             $data['slug'] = $data['name'];
             $this->department->create($data);
-        }else{
-            $data = $req->only(['school_id','name', 'description']);
+        } else {
+            $data = $req->only(['school_id', 'name', 'description']);
             $data['slug'] = $data['name'];
             $this->department->create($data);
         }
@@ -67,8 +67,10 @@ class DepartmentController extends Controller
      */
     public function show(string $id)
     {
-        $data['departments'] = $department = $this->department->find($id);
-        return !is_null($department ) ? view('pages.departments.show',$data)
+        $data['departmentId'] = $id;
+        $data['department'] = $department = $this->department->find($id);
+
+        return !is_null($department) ? view('pages.departments.show', $data)
             : Qs::goWithDanger('pages.departments.index');
     }
 
@@ -78,7 +80,7 @@ class DepartmentController extends Controller
     public function edit(string $id)
     {
         $data['departments'] = $department = $this->department->find($id);
-        return !is_null($department ) ? view('pages.academics.departments.edit',$data)
+        return !is_null($department) ? view('pages.academics.departments.edit', $data)
             : Qs::goWithDanger('pages.academics.departments.index');
     }
 
@@ -87,20 +89,20 @@ class DepartmentController extends Controller
      */
     public function update(DepartmentUpdate $req, string $id)
     {
-        if($req->hasFile('cover')) {
-            $data = $req->only(['name', 'description','cover','slug']);
+        if ($req->hasFile('cover')) {
+            $data = $req->only(['name', 'description', 'cover', 'slug']);
             $logo = $req->file('cover');
             $f = Qs::getFileMetaData($logo);
-            $f['name'] = $data['name'].'logo.' . $f['ext'];
+            $f['name'] = $data['name'] . 'logo.' . $f['ext'];
             $f['path'] = $logo->storeAs(Qs::getPublicUploadPathDep(), $f['name']);
             $logo_path = asset('storage/depart/' . $f['name']);
             $data['cover'] = $logo_path;
             $data['slug'] = $data['name'];
-            $this->department->update($id,$data);
-        }else{
-            $data = $req->only(['name', 'description','slug']);
+            $this->department->update($id, $data);
+        } else {
+            $data = $req->only(['name', 'description', 'slug']);
             $data['slug'] = $data['name'];
-            $this->department->update($id,$data);
+            $this->department->update($id, $data);
         }
 
         return Qs::jsonStoreOk();
