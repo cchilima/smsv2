@@ -196,7 +196,7 @@
 
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="all-ac-programs">
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between mb-2">
                                 <div class="d-flex">
                                     <a href="{{ route('student.program.list', ['ac' => $academicPeriod->id]) }}"
                                         class="dropdown-item"><i class="icon-file-download"></i> Download PDF</a>
@@ -261,25 +261,24 @@
                         </div>
 
                         <div class="tab-pane fade" id="all-classes">
+                            <div class="d-flex justify-content-between mb-2">
+                                <div class="d-flex">
+                                    <a href="{{ route('student.class.list', ['ac' => $academicPeriod->id]) }}"
+                                        class="dropdown-item"><i class="icon-file-download"></i> Download PDF </a>
+                                    <a href="{{ route('student.csv.class.list', ['ac' => $academicPeriod->id]) }}"
+                                        class="dropdown-item"><i class="icon-file-download"></i> Download Excel </a>
+                                </div>
+                                <div>
+                                    <a href="{{ route('student.class.list', ['ac' => $academicPeriod->id]) }}"
+                                        class="dropdown-item"><i class="icon-add-to-list"></i> Add Class</a>
+                                </div>
+                            </div>
 
                             @livewire('datatables.academics.academic-periods.classes', [
                                 'academicPeriodId' => $academicPeriod->id,
                             ])
 
                             <table class="table datatable-button-html5-columns">
-                                <div class="d-flex justify-content-between">
-                                    <div class="d-flex">
-                                        <a href="{{ route('student.class.list', ['ac' => $academicPeriod->id]) }}"
-                                            class="dropdown-item"><i class="icon-file-download"></i> Download PDF </a>
-                                        <a href="{{ route('student.csv.class.list', ['ac' => $academicPeriod->id]) }}"
-                                            class="dropdown-item"><i class="icon-file-download"></i> Download Excel </a>
-                                    </div>
-                                    <div>
-                                        <a href="{{ route('student.class.list', ['ac' => $academicPeriod->id]) }}"
-                                            class="dropdown-item"><i class="icon-add-to-list"></i> Add Class</a>
-                                    </div>
-                                </div>
-
                                 <thead>
                                     <tr>
                                         <th>S/N</th>
