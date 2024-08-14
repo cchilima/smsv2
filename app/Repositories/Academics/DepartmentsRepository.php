@@ -3,6 +3,7 @@
 namespace App\Repositories\Academics;
 
 use App\Models\Academics\Department;
+use App\Models\Academics\Program;
 use App\Models\Academics\School;
 
 class DepartmentsRepository
@@ -40,5 +41,13 @@ class DepartmentsRepository
     public function getSchools()
     {
         return School::get();
+    }
+
+    public function getProgramsByDepartment($departmentId, $executeQuery = true)
+    {
+        $query = Program::with(['qualification', 'department'])
+            ->where('department_id', $departmentId);
+
+        return $executeQuery ? $query->get() : $query;
     }
 }
