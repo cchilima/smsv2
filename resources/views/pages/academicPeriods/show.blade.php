@@ -183,19 +183,84 @@
                 <div class="card-body collapse">
                     <ul class="nav nav-tabs nav-tabs-highlight">
                         <li class="nav-item">
-                            <a href="#all-ac-programs" class="nav-link" data-toggle="tab">
-                                Running programs
+                            <a href="#all-ac-programs" class="nav-link active" data-toggle="tab">
+                                Running Programs
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#all-classes" class="nav-link active" data-toggle="tab">
-                                All classes
+                            <a href="#all-classes" class="nav-link" data-toggle="tab">
+                                All Classes
                             </a>
                         </li>
                     </ul>
 
                     <div class="tab-content">
-                        <div class="tab-pane fade show active" id="all-classes">
+                        <div class="tab-pane fade show active" id="all-ac-programs">
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex">
+                                    <a href="{{ route('student.program.list', ['ac' => $academicPeriod->id]) }}"
+                                        class="dropdown-item"><i class="icon-file-download"></i> Download PDF</a>
+                                    <a href="{{ route('student.program.list.csv', ['ac' => $academicPeriod->id]) }}"
+                                        class="dropdown-item"><i class="icon-file-download"></i> Download Excel</a>
+                                </div>
+                                <div>
+
+                                </div>
+                            </div>
+
+                            @livewire('datatables.academics.academicperiods.running-programs', [
+                                'academicPeriodId' => $academicPeriod->id,
+                            ])
+
+                            <table class="table datatable-button-html5-columns">
+                                <thead>
+                                    <tr>
+                                        <th>S/N</th>
+                                        <th>Program Code</th>
+                                        <th>Program Name</th>
+                                        <th>Qualification</th>
+                                        <th>Department</th>
+                                        <th>Students</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($programs as $p)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $p->code }}</td>
+                                            <td>{{ $p->name }}</td>
+                                            <td>{{ $p->qualification->name }}</td>
+                                            <td>{{ $p->department->name }}</td>
+                                            <td>{{ $p->students_count }}</td>
+
+                                            <td class="text-center">
+                                                <div class="list-icons">
+                                                    <div class="dropdown">
+                                                        <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                                            <i class="icon-menu9"></i>
+                                                        </a>
+
+                                                        <div class="dropdown-menu dropdown-menu-left">
+                                                            @if (Qs::userIsTeamSA())
+                                                                <a href="{{ route('student.one.program.list', ['ac' => $academicPeriod->id, 'pid' => $p->id]) }}"
+                                                                    class="dropdown-item"><i class="icon-paperplane"></i>
+                                                                    Download PDF List</a>
+                                                                <a href="{{ route('student.csv.one.program.list', ['ac' => $academicPeriod->id, 'pid' => $p->id]) }}"
+                                                                    class="dropdown-item"><i class="icon-paperplane"></i>
+                                                                    Download CSV List</a>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="tab-pane fade" id="all-classes">
 
                             <table class="table datatable-button-html5-columns">
                                 <div class="d-flex justify-content-between">
@@ -265,65 +330,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pane fade" id="all-ac-programs">
-                            <div class="d-flex justify-content-between">
-                                <div class="d-flex">
-                                    <a href="{{ route('student.program.list', ['ac' => $academicPeriod->id]) }}"
-                                        class="dropdown-item"><i class="icon-file-download"></i> Download PDF</a>
-                                    <a href="{{ route('student.program.list.csv', ['ac' => $academicPeriod->id]) }}"
-                                        class="dropdown-item"><i class="icon-file-download"></i> Download Excel</a>
-                                </div>
-                                <div>
 
-                                </div>
-                            </div>
-                            <table class="table datatable-button-html5-columns">
-                                <thead>
-                                    <tr>
-                                        <th>S/N</th>
-                                        <th>Program Code</th>
-                                        <th>Program Name</th>
-                                        <th>Qualification</th>
-                                        <th>Department</th>
-                                        <th>Students</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($programs as $p)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $p->code }}</td>
-                                            <td>{{ $p->name }}</td>
-                                            <td>{{ $p->qualification->name }}</td>
-                                            <td>{{ $p->department->name }}</td>
-                                            <td>{{ $p->students_count }}</td>
-
-                                            <td class="text-center">
-                                                <div class="list-icons">
-                                                    <div class="dropdown">
-                                                        <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                            <i class="icon-menu9"></i>
-                                                        </a>
-
-                                                        <div class="dropdown-menu dropdown-menu-left">
-                                                            @if (Qs::userIsTeamSA())
-                                                                <a href="{{ route('student.one.program.list', ['ac' => $academicPeriod->id, 'pid' => $p->id]) }}"
-                                                                    class="dropdown-item"><i class="icon-paperplane"></i>
-                                                                    Download PDF List</a>
-                                                                <a href="{{ route('student.csv.one.program.list', ['ac' => $academicPeriod->id, 'pid' => $p->id]) }}"
-                                                                    class="dropdown-item"><i class="icon-paperplane"></i>
-                                                                    Download CSV List</a>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
                 </div>
             </div>
