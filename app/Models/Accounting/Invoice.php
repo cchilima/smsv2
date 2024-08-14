@@ -4,11 +4,13 @@ namespace App\Models\Accounting;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Academics\AcademicPeriod;
 use App\Models\Admissions\Student;
+use App\Models\Users\User;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-use App\Models\Users\User;
+
 
 class Invoice extends Model implements AuditableContract
 {
@@ -35,5 +37,21 @@ class Invoice extends Model implements AuditableContract
     {
         return $this->belongsTo(Student::class);
     }
+
+    public function raisedBy()
+    {
+        return $this->belongsTo(User::class, 'raised_by', 'id');
+    }
+
+    public function period()
+    {
+        return $this->belongsTo(AcademicPeriod::class, 'academic_period_id');
+    }
+
+    public function creditNotes()
+    {
+        return $this->hasMany(CreditNote::class, 'invoice_id');
+    }
+
 
 }

@@ -105,4 +105,9 @@ class Student extends Model implements AuditableContract
     {
         return $this->hasMany(Enrollment::class, 'student_id','id');
     }
+
+    public function receiptsNonInvoiced()
+    {
+      return $this->hasMany(Receipt::class, 'student_id')->whereNull('invoice_id')->where('amount', '>', 0)->orderBy('created_at');
+    }
 }

@@ -39,6 +39,7 @@ use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Users\MyAccountController;
 use App\Http\Controllers\Users\StudentController as UsersStudentController;
 use App\Http\Controllers\Users\UserController;
+use App\Livewire\Accounting\{ViewInvoiceDetails};
 use App\Livewire\Applications\{InitiateApplication, CompleteApplication, CompletedApplication, MyApplications};
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -162,12 +163,15 @@ Route::group(['prefix' => 'accounts'], function () {
 // Student application routes
 /* Route::group(['prefix' => 'application'], function () { */
 
+// Application livewire routes
 
 Route::get('/my-applications/{id}', MyApplications::class)->name('application.my-applications');
 Route::get('/start-application', InitiateApplication::class)->name('start-application');
 Route::get('/application/step-2/{application_id}', CompleteApplication::class)->name('application.complete_application');
 Route::get('/application/{application_id}', CompletedApplication::class)->name('application.show');
 
+// Accounting livewire routes
+Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
 
 Route::get('/applications', [ApplicantController::class, 'index'])->name('application.index');
 //Route::get('/applications/initiate', [ApplicantController::class, 'initiate'])->name('application.initiate');

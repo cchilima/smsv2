@@ -21,6 +21,11 @@ class InvoiceRepository
         $this->registrationRepo = $registrationRepo;
     }
 
+    public function getInvoice($invoice_id)
+    {
+        return Invoice::find($invoice_id);
+    }
+
     private function getStudent($student_id)
     {
         return Student::find($student_id);
@@ -67,6 +72,7 @@ class InvoiceRepository
 
             DB::commit();
             return true;
+
         } catch (\Exception $e) {
             DB::rollback();
             dd($e);  // Or handle the exception as needed
@@ -114,6 +120,7 @@ class InvoiceRepository
 
             DB::commit();
             return true;
+
         } catch (\Exception $e) {
             DB::rollback();
             dd($e);
@@ -145,6 +152,7 @@ class InvoiceRepository
                 // Create an invoice based on previous fees
                 $this->createInvoiceFromPreviousFees($student, $periodInfo, $previousFees);
             }
+
         } else {
             if (!$exists) {
                 // Create an invoice based on current academic period fees
@@ -221,13 +229,17 @@ class InvoiceRepository
     private function createInvoiceFromCurrentPeriodFees($student, $periodInfo)
     {
         // Get academic fees associated with the student's program for the current academic period
-        $academicFees = DB::table('academic_period_fees')
+            $academicFees = DB::table('academic_period_fees')
             ->join('program_academic_period_fee', 'academic_period_fees.id', '=', 'program_academic_period_fee.academic_period_fee_id')
             ->join('programs', 'program_academic_period_fee.program_id', '=', 'programs.id')
+            ->join('fees', 'academic_period_fees.fee_id', '=', 'fees.id') // Join the fees table to access the fee types
             ->where('academic_period_fees.academic_period_id', $periodInfo->academic_period_id)
             ->where('programs.id', $student->program_id)
+            ->whereNotIn('fees.type', ['course repeat fee', 'accommodation fee']) // Exclude the undesired fee types
             ->select('academic_period_fees.*', 'programs.id as program_id')
             ->get();
+
+
 
             // Get universal fees (academic period fees with no associations)
             $universalFees = AcademicPeriodFee::doesntHave('programs')
@@ -311,6 +323,7 @@ class InvoiceRepository
             ->where('fees.type', 'recurring')
             ->where('academic_period_fees.academic_period_id', $academic_period_id)
             ->where('programs.id', $student->program_id)
+            ->whereNotIn('fees.type', ['course repeat fee', 'accommodation fee']) 
             ->select('academic_period_fees.*', 'programs.id as program_id')
             ->get();
 

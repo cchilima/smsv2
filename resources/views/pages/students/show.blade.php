@@ -539,7 +539,11 @@
                             <a href="#invoices" class="nav-link" data-toggle="tab">{{ 'Invoices' }}</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#statements" class="nav-link" data-toggle="tab">{{ 'Statements' }}</a>
+                            <a href="#statements" class="nav-link" data-toggle="tab">{{ 'Statements of Account' }}</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="#credit" class="nav-link" data-toggle="tab">{{ 'Credit Notes' }}</a>
                         </li>
                         <li class="nav-item">
                             <a href="#payment-history" class="nav-link" data-toggle="tab">{{ 'Payment History' }}</a>
@@ -663,6 +667,45 @@
 
                         </div>
 
+
+
+
+                        <div class="tab-pane fade show" id="credit">
+
+                        <table class="table table-bordered mb-3 mb-lg-4">
+                            <thead>
+                                <th>S/N</th>
+                                <th>Invoice No.</th>
+                                <th>Fee</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Issued by</th>
+                                <th>Date</th>
+                            </thead>
+                            <tbody>
+                            @foreach($student->invoices as $invoice)
+                            @foreach ($invoice->creditNotes as $key => $note)
+                                <tr>
+                                    <td>{{ ++$key }}</td>
+                                    <td>inv{{ $invoice->id}}</td>
+                                    <td>{{ $note->invoiceDetail->fee->name }}</td>
+                                    <td>{{ $note->amount }}</td>
+                                    <td>{{ $note->status }} Office</td>
+                                    <td>{{ $note->issuer->first_name }} {{ $note->issuer->last_name }}</td>
+                                    <td>{{ $note->created_at->format('d F Y') }}</td>
+                                </tr>
+                            @endforeach
+                            @endforeach
+
+                            </tbody>
+                            </table>
+
+
+                        </div>
+
+
+
+
                         <div class="tab-pane fade show" id="statements">
                             <div class="mb-2 d-flex justify-content-end">
                                 <form action="{{ route('student.export-statements', $student->id) }}" method="get">
@@ -674,165 +717,171 @@
                                 </form>
                             </div>
 
-                            @foreach ($student->invoices as $key => $invoice)
-                                <table class="table table-bordered mb-3 mb-lg-4">
-                                    <thead>
-                                        <th>#</th>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                        <th>Amount</th>
 
-                                    </thead>
-                                    <tbody>
 
-                                        <tr>
-                                            <h4 class="d-flex align-items-center justify-content-between">
-                                                <span>INV - {{ ++$key }}</span>
+                            <table class="table table-bordered mb-3 mb-lg-4">
+    <thead>
+        <th>#</th>
+        <th>Date</th>
+        <th>Reference</th>
+        <th>Description</th>
+        <th>Debit</th>
+        <th>Credit</th>
+        <th>Balance</th>
+    </thead>
+    <tbody>
+        @php
+            $balance = 0; // Initialize balance
+            $counter = 1; // Initialize a counter to maintain row numbers across invoices and receipts
 
-                                                <div class="d-flex align-items-center">
-                                                    <div class="">
-                                                        <form
-                                                            action="{{ route('student.download-statement', $invoice->id) }}"
-                                                            method="get">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-primary">
-                                                                <i class="icon-download4 lr-lg-2"></i>
-                                                                <span>PDF</span>
-                                                            </button>
-                                                        </form>
-                                                    </div>
+            // Merge invoices, credit notes, and non-invoiced receipts into one collection
+            $transactions = collect();
 
-                                                </div>
+            foreach ($student->invoices as $invoice) {
+                // Add the invoice as a debit transaction
+                $transactions->push([
+                    'type' => 'invoice',
+                    'date' => $invoice->created_at,
+                    'reference' => 'INV' . $invoice->id,
+                    'description' => 'Invoice',
+                    'debit' => $invoice->details->sum('amount'),
+                    'credit' => 0,
+                    'balance' => 0,
+                ]);
 
-                                            </h4>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td><b>Opening Balance</b></td>
-                                            <td>K {{ $invoice->details->sum('amount') }}</td>
-                                        </tr>
-                                        @foreach ($invoice->statements as $key => $statement)
-                                            <tr>
-                                                <td>{{ ++$key }}</td>
-                                                <td>{{ $statement->created_at->format('d F Y') }}</td>
-                                                <td>Payment</td>
-                                                <td>K {{ $statement->amount }}</td>
-                                            </tr>
-                                        @endforeach
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td><b>Closing Balance </b></td>
-                                            <td>K
-                                                {{ $invoice->details->sum('amount') - $invoice->statements->sum('amount') }}
-                                            </td>
-                                        </tr>
+                // Add associated receipts as credit transactions
+                foreach ($invoice->receipts as $receipt) {
+                    $transactions->push([
+                        'type' => 'receipt',
+                        'date' => $receipt->created_at,
+                        'reference' => 'RCT' . $receipt->id,
+                        'description' => 'Receipt',
+                        'debit' => 0,
+                        'credit' => $receipt->amount,
+                        'balance' => 0,
+                    ]);
+                }
 
-                                    </tbody>
-                                </table>
-                            @endforeach
+                // Add associated credit notes as credit transactions
+                foreach ($invoice->creditNotes as $creditNote) {
+                    $transactions->push([
+                        'type' => 'credit_note',
+                        'date' => $creditNote->created_at,
+                        'reference' => 'CN' . $creditNote->id,
+                        'description' => 'Credit Note',
+                        'debit' => 0,
+                        'credit' => $creditNote->amount,
+                        'balance' => 0,
+                    ]);
+                }
+            }
 
-                            <br>
+            // Add non-invoiced receipts to the collection
+            foreach ($student->receiptsNonInvoiced as $receipt) {
+                $transactions->push([
+                    'type' => 'receipt',
+                    'date' => $receipt->created_at,
+                    'reference' => 'RCT' . $receipt->id,
+                    'description' => 'Receipt',
+                    'debit' => 0,
+                    'credit' => $receipt->amount,
+                    'balance' => 0,
+                ]);
+            }
 
-                            @if ($student->statementsWithoutInvoice->sum('amount') > 0)
+            // Sort transactions by date
+            $transactions = $transactions->sortBy('date')->values();
+        @endphp
 
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <th>#</th>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                        <th>Amount</th>
+        {{-- Loop through the sorted transactions and display them --}}
+        @foreach ($transactions as $transaction)
+            @php
+                // Update balance
+                $balance += $transaction['debit'] - $transaction['credit'];
+            @endphp
+            <tr>
+                <td>{{ $counter++ }}</td>
+                <td>{{ $transaction['date']->format('d F Y') }}</td>
+                <td>{{ $transaction['reference'] }}</td>
+                <td>{{ $transaction['description'] }}</td>
+                <td>ZMW {{ number_format($transaction['debit'], 2) }}</td>
+                <td>ZMW {{ number_format($transaction['credit'], 2) }}</td>
+                <td>ZMW {{ number_format($balance, 2) }}</td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
 
-                                    </thead>
-                                    <tbody>
 
-                                        <tr>
-                                            <h4>Not Invoiced</h4>
-                                        </tr>
 
-                                        @foreach ($student->statementsWithoutInvoice as $key => $statement)
-                                            <tr>
-                                                <td>{{ ++$key }}</td>
-                                                <td>{{ $statement->created_at->format('d F Y') }}</td>
-                                                <td>Payment</td>
-                                                <td>K {{ $statement->amount }}</td>
-                                            </tr>
-                                        @endforeach
-
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td>Total</td>
-                                            <td>
-                                                - K {{ $student->statementsWithoutInvoice->sum('amount') }}.00
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-
-                            @endif
 
                         </div>
 
                         <div class="tab-pane fade show" id="invoices">
-                            <div class="mb-2 d-flex justify-content-end">
-                                <form action="{{ route('student.export-invoices', $student->id) }}" method="get">
-                                    @csrf
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="icon-download4 mr-1 lr-lg-2"></i>
-                                        <span>Export Invoices</span>
-                                    </button>
-                                </form>
-                            </div>
+                           
+                      
 
-                            @foreach ($student->invoices as $key => $invoice)
                                 <table class="table table-bordered mb-3 mb-lg-4">
                                     <thead>
-                                        <th>#</th>
-                                        <th>Fee type</th>
-                                        <th>Amount</th>
+                                        <th>Invoice #</th>
+                                        <th>Academic Period</th>
+                                        <th>Raised By</th>
+                                        <th>Date</th>
+                                        <th>Grand Total</th>
+                                        <th>Action</th>
                                     </thead>
                                     <tbody>
 
                                         <tr>
                                             <h4 class="d-flex align-items-center justify-content-between">
-                                                <span>INV - {{ ++$key }}</span>
+                                                <span>Invoices</span>
 
-                                                <div class="d-flex align-items-center">
-                                                    <div class="">
-                                                        <form
-                                                            action="{{ route('student.download-invoice', $invoice->id) }}"
-                                                            method="get">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-primary">
-                                                                <i class="icon-download4 mr-1 lr-lg-2"></i>
-                                                                <span>PDF</span>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-
+                                                <div class="mb-2 d-flex justify-content-end">
+                                                    <form action="{{ route('student.export-invoices', $student->id) }}" method="get">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="icon-download4 mr-1 lr-lg-2"></i>
+                                                            <span>Export Invoices</span>
+                                                        </button>
+                                                    </form>
                                                 </div>
+
+
 
                                             </h4>
                                         </tr>
-                                        @foreach ($invoice->details as $key => $detail)
+                                        @foreach ($student->invoices as $key => $invoice)
+
                                             <tr>
                                                 <td>{{ ++$key }}</td>
-                                                <td>{{ $detail->fee->name ?? '' }}</td>
-                                                <td>K {{ $detail->amount }}</td>
-                                            </tr>
-                                        @endforeach
-                                        <tr>
-                                            <td></td>
-                                            <td><b>Total</b></td>
-                                            <td>K {{ $invoice->details->sum('amount') }}</td>
-                                        </tr>
+                                                <td>{{$invoice->period->name}}</td>
+                                                <td>{{$invoice->raisedBy->first_name }} {{$invoice->raisedBy->last_name }}</td>
+                                                <td>{{ $invoice->created_at->format('F j, Y, g:i a') }}</td>
 
+                                                <td>ZMW {{ number_format($invoice->details->sum('amount'), 2, '.', ',') }}</td>
+                                                <td>
+                                                <div class="list-icons">
+                                                        <div class="dropdown">
+                                                            <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                                                <i class="icon-menu9"></i>
+                                                            </a>
+
+                                                            <div class="dropdown-menu dropdown-menu-left">
+                                                                @if (Qs::userIsTeamSA())
+                                                                    <a href="{{route('accounting.invoice_details',$invoice->id )}}" class="dropdown-item"><i class="icon-eye"></i>
+                                                                        view</a>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+
+                                            @endforeach
                                     </tbody>
                                 </table>
-                            @endforeach
+                          
 
                         </div>
 
@@ -842,6 +891,7 @@
                                 <thead>
                                     <th>#</th>
                                     <th>Date</th>
+                                    <th>Method</th>
                                     <th>Amount</th>
                                 </thead>
                                 <tbody>
@@ -849,7 +899,8 @@
                                         <tr>
                                             <td>{{ ++$key }}</td>
                                             <td>{{ $receipt->created_at->format('d F Y') }}</td>
-                                            <td>K {{ $receipt->amount }}</td>
+                                            <td>{{ $receipt->paymentMethod->name}}</td>
+                                            <td>ZMW {{ number_format($receipt->amount, 2, '.', ',') }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

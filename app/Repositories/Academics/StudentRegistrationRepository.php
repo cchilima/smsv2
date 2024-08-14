@@ -58,6 +58,7 @@ class StudentRegistrationRepository
             if ($currentAcademicPeriodId) {
                 // Step 7: Filter courses for the current academic period
                 $currentCourses = $this->getCurrentCourses($courses, $currentAcademicPeriodId);
+
                 // Step 8: Filter out courses based on unmet prerequisites
                 $filteredCourseIds = $this->filterCourses($currentCourses, $failedCoursesPrerequisites, $allPassedCourseIds);
 
@@ -320,18 +321,27 @@ class StudentRegistrationRepository
     private function paymentStanding($invoice_id)
     {
         $invoice = Invoice::find($invoice_id);
-
+    
         // Calculate the total receipted amount for the invoice
         $receipted_total_amount = $invoice->receipts->sum('amount');
-
+    
         // Calculate the total amount of the invoice
         $invoice_total_amount = $invoice->details->sum('amount');
-
+    
+        // Check for both zero cases
+        if ($invoice_total_amount == 0) {
+            if ($receipted_total_amount == 0) {
+                return 0; // or a special value like -1 to indicate both are zero
+            }
+            return 0; // Invoice amount is zero but receipted is not, or both are zero
+        }
+    
         // Calculate the percentage of payments against the invoice
         $percentage_paid = ($receipted_total_amount / $invoice_total_amount) * 100;
-
+    
         return $percentage_paid;
     }
+    
 
     private function getInvoice($student_id, $academic_period)
     {
