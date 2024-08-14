@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Livewire\Datatables\Academics;
+namespace App\Livewire\DataTables\Academics;
 
-use App\Models\Academics\Course;
+use App\Models\Academics\ProgramCourses as Courses;
+use App\Repositories\Academics\CourseLevelsRepository;
+use App\Repositories\Academics\ProgramsRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Blade;
@@ -17,18 +19,28 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class Prerequisites extends PowerGridComponent
+final class ProgramCourses extends PowerGridComponent
 {
     use WithExport;
 
+    public string $programId;
     public bool $deferLoading = true;
+
+    protected ProgramsRepository $programRepo;
+    protected CourseLevelsRepository $courseLevelRepo;
+
+    public function boot(): void
+    {
+        $this->programRepo = new ProgramsRepository();
+        $this->courseLevelRepo = new CourseLevelsRepository();
+    }
 
     public function setUp(): array
     {
         $this->showCheckBox();
 
         return [
-            Exportable::make('prerequisites-export')
+            Exportable::make('program-courses-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -40,23 +52,26 @@ final class Prerequisites extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Course::query();
+        return $this->programRepo->getCoursesByProgram($this->programId, false);
     }
 
     public function relationSearch(): array
     {
-        return [];
+        return [
+            'course' => 'name'
+        ];
     }
 
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('name')
-            ->add('code')
+            ->add('courseLevel.name')
+            ->add('course.name')
+            ->add('course.code')
             ->add('prerequisites', function ($row) {
                 return Blade::render(
                     '<x-table-fields.academics.prerequisites :row=$row />',
-                    ['row' => $row]
+                    ['row' => $row->course]
                 );
             });
     }
@@ -64,30 +79,20 @@ final class Prerequisites extends PowerGridComponent
     public function columns(): array
     {
         return [
-            Column::make('Code', 'code')
-                ->searchable()
-                ->sortable(),
-
-            Column::make('Course', 'name')
-                ->searchable()
-                ->sortable(),
-
+            Column::make('Course', 'course.name'),
+            Column::make('Code', 'course.code'),
+            Column::make('Course Level', 'courseLevel.name'),
             Column::make('Prerequisites', 'prerequisites'),
-
-            Column::action('Action')
         ];
     }
 
     public function filters(): array
     {
-        return [];
-    }
-
-    public function actions(Course $row): array
-    {
         return [
-            Button::add('actions')
-                ->bladeComponent('table-actions.academics.prerequisites', ['row' => $row])
+            Filter::select('courseLevel.name', 'course_level_id')
+                ->dataSource($this->programRepo->getCourseLevelsByProgram($this->programId))
+                ->optionLabel('name')
+                ->optionValue('id')
         ];
     }
 }

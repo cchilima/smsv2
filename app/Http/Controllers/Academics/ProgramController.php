@@ -21,14 +21,17 @@ class ProgramController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $programs,$depart,$qualification,$programCourse,$levels,$courses;
-    public function __construct(ProgramsRepository $programs,DepartmentsRepository $depat,
-                                QualificationsRepository $qualification,ProgramCoursesRepository $programCourse,
-                                CourseRepository $courses,CourseLevelsRepository $levels
-    )
-    {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+    protected $programs, $depart, $qualification, $programCourse, $levels, $courses;
+    public function __construct(
+        ProgramsRepository $programs,
+        DepartmentsRepository $depat,
+        QualificationsRepository $qualification,
+        ProgramCoursesRepository $programCourse,
+        CourseRepository $courses,
+        CourseLevelsRepository $levels
+    ) {
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->programs = $programs;
         $this->depart = $depat;
@@ -42,7 +45,7 @@ class ProgramController extends Controller
         $program['programs'] = $this->programs->getAll();
         $program['departments'] = $this->depart->getAll();
         $program['qualifications'] = $this->qualification->getAll();
-        return view('pages.programs.index',$program);
+        return view('pages.programs.index', $program);
     }
 
     /**
@@ -58,7 +61,7 @@ class ProgramController extends Controller
      */
     public function store(Program $req)
     {
-        $data = $req->only(['code', 'name','department_id','qualification_id','description']);
+        $data = $req->only(['code', 'name', 'department_id', 'qualification_id', 'description']);
         $data['slug'] = $data['code'];
         $this->programs->create($data);
 
@@ -71,16 +74,15 @@ class ProgramController extends Controller
     public function show(string $id)
     {
         $id = Qs::decodeHash($id);
-        $myprogram['withCourseLevels'] =$this->programs->findOneP($id);
-        //dd($myprogram['withCourseLevels']);
-        $myprogram['programs'] = $someprograms = $this->programs->find($id);
-        $myprogram['program'] = $someprograms = $this->programs->findOne($id);
-       // dd($myprogram['withCourseLevels']);
-        $myprogram['levels'] = $this->levels->getAll();
-        $myprogram['newcourses'] = $this->courses->getAll();
-        $myprogram['pcourses'] = [];
+        $data['programId'] = $id;
+        $data['withCourseLevels'] = $this->programs->findOneP($id);
+        $data['programs'] = $someprograms = $this->programs->find($id);
+        $data['program'] = $someprograms = $this->programs->findOne($id);
+        $data['levels'] = $this->levels->getAll();
+        $data['newcourses'] = $this->courses->getAll();
+        $data['pcourses'] = [];
 
-        return !is_null($someprograms) ? view('pages.programs.show',$myprogram)
+        return !is_null($someprograms) ? view('pages.programs.show', $data)
             : Qs::goWithDanger('pages.programs.index');
     }
 
@@ -102,8 +104,8 @@ class ProgramController extends Controller
      */
     public function update(ProgramUpdate $req, string $id)
     {
-        $data = $req->only(['code', 'name','department_id','qualification_id','description']);
-        $this->programs->update($id,$data);
+        $data = $req->only(['code', 'name', 'department_id', 'qualification_id', 'description']);
+        $this->programs->update($id, $data);
 
         return Qs::jsonStoreOk();
     }
