@@ -113,9 +113,12 @@ class AcademicPeriodRepository
         return AcademicPeriodFee::create($data);
     }
 
-    public function getAPFeeInformation($id)
+    public function getAPFeeInformation($id, bool $executeQuery = true)
     {
-        return AcademicPeriodFee::with('academic_period', 'fee')->where('academic_period_id', $id)->get();
+        $query = AcademicPeriodFee::with('academic_period', 'fee')
+            ->where('academic_period_id', $id);
+
+        return $executeQuery ? $query->get() : $query;
     }
 
     public function getOneAPFeeInformation($id)

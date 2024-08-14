@@ -30,11 +30,10 @@
                     <h6 class="card-title">General Information</h6>
                     {!! Qs::getPanelOptions() !!}
                 </div>
-                <div class="card-body collapse">
+                <div class="card-body show">
                     <ul class="nav nav-tabs nav-tabs-highlight">
-                        <li class="nav-item"><a href="#ac-info" class="nav-link active" data-toggle="tab">Some
-                                Information</a></li>
-                        <li class="nav-item"><a href="#all-periods" class="nav-link" data-toggle="tab">Information</a>
+                        <li class="nav-item"><a href="#ac-info" class="nav-link active" data-toggle="tab">Summary</a></li>
+                        <li class="nav-item"><a href="#all-periods" class="nav-link" data-toggle="tab">Details</a>
                         </li>
                         <li class="nav-item"><a href="#all-fees" class="nav-link" data-toggle="tab">Fees</a></li>
                     </ul>
@@ -133,7 +132,8 @@
                             @endif
                         </div>
                         <div class="tab-pane fade" id="all-fees">
-                            {{--                            <table class="table table-bordered table-hover table-striped datatable-button-html5-columns"> --}}
+                            <livewire:datatables.academics.academic-periods.fees :academicPeriodId="$academicPeriodId" />
+
                             <table class="table datatable-button-html5-columns table-bordered table-hover ">
                                 <thead>
                                     <tr>
