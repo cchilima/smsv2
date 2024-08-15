@@ -10,7 +10,7 @@
         </div>
 
         <div class="card-body">
-            <ul class="nav nav-tabs nav-tabs-highlight">
+            <ul wire:ignore class="nav nav-tabs nav-tabs-highlight">
                 <li class="nav-item"><a href="#all-statuses" class="nav-link active" data-toggle="tab">Manage Marital
                         Statuses</a></li>
                 <li class="nav-item"><a href="#new-status" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
@@ -18,11 +18,11 @@
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane fade show active" id="all-statuses">
+                <div wire:ignore.self class="tab-pane fade show active" id="all-statuses">
                     <livewire:datatables.settings.marital-statuses />
                 </div>
 
-                <div class="tab-pane fade" id="new-status">
+                <div wire:ignore.self class="tab-pane fade" id="new-status">
                     <div class="row">
                         <div class="col-md-6">
                             <form class="ajax-store mb-4" method="post" action="{{ route('marital-statuses.store') }}">
