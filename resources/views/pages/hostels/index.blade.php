@@ -20,50 +20,6 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-hostel">
                     <livewire:datatables.accommodation.hostels />
-
-                    <table class="table datatable-button-html5-columns">
-                        <thead>
-                            <tr>
-                                <th>S/N</th>
-                                <th>Status</th>
-                                <th>Description</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($hostels as $h)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $h->hostel_name }}</td>
-                                    <td>{{ $h->location }}</td>
-                                    <td class="text-center">
-                                        <div class="list-icons">
-                                            <div class="dropdown">
-                                                <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                    <i class="icon-menu9"></i>
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-left">
-                                                    @if (Qs::userIsTeamSA())
-                                                        <a href="{{ route('hostels.edit', $h->id) }}"
-                                                            class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
-                                                    @endif
-                                                    @if (Qs::userIsSuperAdmin())
-                                                        <a id="{{ $h->id }}" onclick="confirmDelete(this.id)"
-                                                            href="#" class="dropdown-item"><i class="icon-trash"></i>
-                                                            Delete</a>
-                                                        <form method="post" id="item-delete-{{ $h->id }}"
-                                                            action="{{ route('hostels.destroy', $h->id) }}" class="hidden">
-                                                            @csrf @method('delete')</form>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
                 </div>
 
                 <div class="tab-pane fade" id="new-hostel">

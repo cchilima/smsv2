@@ -66,7 +66,6 @@ final class Hostels extends PowerGridComponent
     public function columns(): array
     {
         return [
-            Column::make('Id', 'id'),
             Column::make('Hostel name', 'hostel_name')
                 ->sortable()
                 ->searchable(),

@@ -46,9 +46,6 @@ class BookingController extends Controller
     public function index()
     {
         $data['hostel'] = $this->hostel_repository->getAll();
-        $data['open'] = $this->booking_repository->getOpenBookings();
-        $data['closed'] = $this->booking_repository->getClosedBookings();
-        //dd($data);
         return view('pages.booking.index', $data);
     }
 

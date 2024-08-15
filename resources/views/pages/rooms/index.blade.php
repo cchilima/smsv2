@@ -20,54 +20,6 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-rooms">
                     <livewire:datatables.accommodation.rooms />
-
-                    <table class="table datatable-button-html5-columns">
-                        <thead>
-                            <tr>
-                                <th>S/N</th>
-                                <th>Room Number</th>
-                                <th>Hostel</th>
-                                <th>Capacity</th>
-                                <th>Gender</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($rooms as $room)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $room->room_number }}</td>
-                                    <td>{{ $room->hostel->hostel_name }}</td>
-                                    <td>{{ $room->capacity }}</td>
-                                    <td>{{ $room->gender }}</td>
-                                    <td class="text-center">
-                                        <div class="list-icons">
-                                            <div class="dropdown">
-                                                <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                    <i class="icon-menu9"></i>
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-left">
-                                                    @if (Qs::userIsTeamSA())
-                                                        <a href="{{ route('rooms.edit', $room->id) }}"
-                                                            class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
-                                                    @endif
-                                                    @if (Qs::userIsSuperAdmin())
-                                                        <a id="{{ $room->id }}" onclick="confirmDelete(this.id)"
-                                                            href="#" class="dropdown-item"><i class="icon-trash"></i>
-                                                            Delete</a>
-                                                        <form method="post" id="item-delete-{{ $room->id }}"
-                                                            action="{{ route('rooms.destroy', $room->id) }}" class="hidden">
-                                                            @csrf @method('delete')</form>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
                 </div>
 
                 <div class="tab-pane fade" id="new-rooms">

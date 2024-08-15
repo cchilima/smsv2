@@ -20,16 +20,14 @@ class HostelController extends Controller
 
     public function __construct(HostelRepository $hostel_repository)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->hostel_repository = $hostel_repository;
-
     }
     public function index()
     {
-        $hostels = $this->hostel_repository->getAll();
-        return view('pages.hostels.index',compact('hostels'));
+        return view('pages.hostels.index');
     }
 
     /**
@@ -80,7 +78,7 @@ class HostelController extends Controller
      */
     public function update(HostelUpdate $request, string $id)
     {
-        $data = $request->only(['hostel_name','location']);
+        $data = $request->only(['hostel_name', 'location']);
         $this->hostel_repository->update($id, $data);
         return Qs::jsonUpdateOk();
     }
