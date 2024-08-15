@@ -20,7 +20,7 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class ProgramLists extends PowerGridComponent
+final class ProgramList extends PowerGridComponent
 {
     use WithExport;
 
