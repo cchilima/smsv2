@@ -74,10 +74,8 @@ class ProgramController extends Controller
     {
         $id = Qs::decodeHash($id);
         $data['programId'] = $id;
-        $data['withCourseLevels'] = $this->programs->findOneP($id);
-        $data['programs'] = $someprograms = $this->programs->find($id);
         $data['program'] = $someprograms = $this->programs->findOne($id);
-        $data['levels'] = $this->levels->getAll();
+        $data['levels'] = $this->programs->getCourseLevelsByProgram($id);
         $data['newcourses'] = $this->courses->getAll();
         $data['pcourses'] = [];
 
