@@ -19,8 +19,8 @@ class FeeController extends Controller
 
     public function __construct(FeeRepository $fees)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->fees = $fees;
     }
@@ -30,8 +30,7 @@ class FeeController extends Controller
      */
     public function index()
     {
-        $fees['fees'] = $this->fees->getAll();
-        return view('pages.fees.index',$fees);
+        return view('pages.fees.index');
     }
 
     /**
@@ -47,14 +46,14 @@ class FeeController extends Controller
      */
     public function store(Fee $request)
     {
-        $data = $request->only(['name','type']);
+        $data = $request->only(['name', 'type']);
 
         $fee = $this->fees->create($data);
 
         if ($fee) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::json(false,'msg.create_failed');
+            return Qs::json(false, 'msg.create_failed');
         }
     }
 
