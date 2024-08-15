@@ -80,6 +80,7 @@
                                 'period-types.edit',
                                 'departments.index',
                                 'departments.edit',
+                                'departments.show',
                                 'programs.index',
                                 'programs.edit',
                                 'programs.show',
@@ -106,7 +107,7 @@
 
                                 <li class="nav-item">
                                     <a href="{{ route('departments.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['departments.index', 'departments.edit']) ? 'active' : '' }}">
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['departments.index', 'departments.edit', 'departments.show']) ? 'active' : '' }}">
                                         <span>Departments</span></a>
                                 </li>
                                 {{-- Manage programs --}}
