@@ -42,10 +42,9 @@ class ProgramController extends Controller
     }
     public function index()
     {
-        $program['programs'] = $this->programs->getAll();
-        $program['departments'] = $this->depart->getAll();
-        $program['qualifications'] = $this->qualification->getAll();
-        return view('pages.programs.index', $program);
+        $data['departments'] = $this->depart->getAll();
+        $data['qualifications'] = $this->qualification->getAll();
+        return view('pages.programs.index', $data);
     }
 
     /**

@@ -21,55 +21,6 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-classes">
                     <livewire:datatables.academics.departments />
-
-                    <table class="table datatable-button-html5-columns">
-                        <thead>
-                            <tr>
-                                <th>S/N</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($departments as $d)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $d->name }}</td>
-                                    <td>{{ Str::limit($d->description, 20) }}</td>
-                                    <td class="text-center">
-                                        <div class="list-icons">
-                                            <div class="dropdown">
-                                                <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                    <i class="icon-menu9"></i>
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-left">
-                                                    @if (Qs::userIsTeamSA())
-                                                        <a href="{{ route('departments.edit', $d->id) }}"
-                                                            class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
-                                                    @endif
-                                                    @if (Qs::userIsTeamSA())
-                                                        <a href="{{ route('departments.show', $d->id) }}"
-                                                            class="dropdown-item"><i class="icon-eye"></i> Show</a>
-                                                    @endif
-                                                    @if (Qs::userIsSuperAdmin())
-                                                        <a id="{{ $d->id }}" onclick="confirmDelete(this.id)"
-                                                            href="#" class="dropdown-item"><i class="icon-trash"></i>
-                                                            Delete</a>
-                                                        <form method="post" id="item-delete-{{ $d->id }}"
-                                                            action="{{ route('departments.destroy', $d->id) }}"
-                                                            class="hidden">@csrf @method('delete')</form>
-                                                    @endif
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
                 </div>
 
                 <div class="tab-pane fade" id="new-class">

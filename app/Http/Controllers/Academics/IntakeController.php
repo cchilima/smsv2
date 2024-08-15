@@ -19,15 +19,14 @@ class IntakeController extends Controller
     protected $intakes;
     public function __construct(IntakesRepository $intakes)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->intakes = $intakes;
     }
     public function index()
     {
-        $data['intakes'] = $this->intakes->getAll();
-        return view('pages.intakes.index',$data);
+        return view('pages.intakes.index');
     }
 
     /**
@@ -65,7 +64,7 @@ class IntakeController extends Controller
     {
         $data['intake'] = $intake = $this->intakes->find($id);
 
-        return !is_null($intake ) ? view('pages.intakes.edit', $data)
+        return !is_null($intake) ? view('pages.intakes.edit', $data)
             : Qs::goWithDanger('pages.intakes.index');
     }
 
