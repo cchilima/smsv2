@@ -25,8 +25,7 @@ class CountryController extends Controller
 
     public function index()
     {
-        $countries = $this->countryRepo->getAll();
-        return view('pages.countries.index', compact('countries'));
+        return view('pages.countries.index');
     }
 
     /**

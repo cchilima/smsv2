@@ -21,50 +21,6 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-statuses">
                     <livewire:datatables.settings.marital-statuses />
-
-                    <table class="table datatable-button-html5-columns">
-                        <thead>
-                            <tr>
-                                <th>S/N</th>
-                                <th>Status</th>
-                                <th>Description</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($statuses as $status)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $status->status }}</td>
-                                    <td>{{ $status->description }}</td>
-                                    <td class="text-center">
-                                        <div class="list-icons">
-                                            <div class="dropdown">
-                                                <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                    <i class="icon-menu9"></i>
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-left">
-                                                    @if (Qs::userIsTeamSA())
-                                                        <a href="{{ route('marital-statuses.edit', $status->id) }}"
-                                                            class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
-                                                    @endif
-                                                    @if (Qs::userIsSuperAdmin())
-                                                        <a id="{{ $status->id }}" onclick="confirmDelete(this.id)"
-                                                            href="#" class="dropdown-item"><i class="icon-trash"></i>
-                                                            Delete</a>
-                                                        <form method="post" id="item-delete-{{ $status->id }}"
-                                                            action="{{ route('marital-statuses.destroy', $status->id) }}"
-                                                            class="hidden">@csrf @method('delete')</form>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
                 </div>
 
                 <div class="tab-pane fade" id="new-status">

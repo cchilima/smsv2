@@ -33,10 +33,8 @@ class AnnouncementController extends Controller
      */
     public function index()
     {
-        $announcements['userTypes'] = $this->announcement->getUserTypes();
-        $announcements['announcements'] = $this->announcement->getAll();
-
-        return view('pages.announcements.index', $announcements);
+        $data['userTypes'] = $this->announcement->getUserTypes();
+        return view('pages.announcements.index', $data);
     }
 
     /**
