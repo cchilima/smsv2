@@ -1,4 +1,3 @@
-@extends('layouts.master')
 @section('page_title', 'Manage Marital Statuses')
 @section('content')
     @php
@@ -11,7 +10,7 @@
         </div>
 
         <div class="card-body">
-            <ul class="nav nav-tabs nav-tabs-highlight">
+            <ul wire:ignore class="nav nav-tabs nav-tabs-highlight">
                 <li class="nav-item"><a href="#all-statuses" class="nav-link active" data-toggle="tab">Manage Marital
                         Statuses</a></li>
                 <li class="nav-item"><a href="#new-status" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
@@ -19,14 +18,14 @@
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane fade show active" id="all-statuses">
+                <div wire:ignore.self class="tab-pane fade show active" id="all-statuses">
                     <livewire:datatables.settings.marital-statuses />
                 </div>
 
-                <div class="tab-pane fade" id="new-status">
+                <div wire:ignore.self class="tab-pane fade" id="new-status">
                     <div class="row">
                         <div class="col-md-6">
-                            <form class="ajax-store" method="post" action="{{ route('marital-statuses.store') }}">
+                            <form class="ajax-store mb-4" method="post" action="{{ route('marital-statuses.store') }}">
                                 @csrf
                                 <div class="form-group row">
                                     <label class="col-lg-3 col-form-label font-weight-semibold">Status <span
@@ -47,10 +46,16 @@
                                 </div>
 
                                 <div class="text-right">
-                                    <button id="ajax-btn" type="submit" class="btn btn-primary">Submit form
-                                        <i class="icon-paperplane ml-2"></i></button>
+                                    <button 
+                                    {{-- @click="$dispatch('pg:eventRefresh-MaritalStatusesTable')" --}}
+                                    wire:click="refreshTable('MaritalStatusesTable')"
+                                        id="ajax-btn" type="submit" class="btn btn-primary">Submit Form <i
+                                            class="icon-paperplane ml-2"></i></button>
                                 </div>
                             </form>
+
+                            {{-- <livewire:datatables.settings.marital-statuses /> --}}
+
                         </div>
                     </div>
                 </div>
@@ -59,4 +64,4 @@
     </div>
 
     {{-- Marital Status List Ends --}}
-@endsection
+    {{-- @endsection --}}

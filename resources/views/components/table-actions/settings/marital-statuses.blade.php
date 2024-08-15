@@ -17,7 +17,7 @@
                 <a id="{{ $row->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i
                         class="icon-trash"></i>
                     Delete</a>
-                <form method="post" id="item-delete-{{ $row->id }}"
+                <form @submit="$dispatch('marital-status-deleted')" method="post" id="item-delete-{{ $row->id }}"
                     action="{{ route('marital-statuses.destroy', $row->id) }}" class="hidden">@csrf @method('delete')
                 </form>
             @endif

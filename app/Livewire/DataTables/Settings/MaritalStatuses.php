@@ -2,6 +2,7 @@
 
 namespace App\Livewire\DataTables\Settings;
 
+use App\Helpers\Qs;
 use App\Models\Profile\MaritalStatus;
 use App\Repositories\Profile\MaritalStatusRepository;
 use Illuminate\Support\Carbon;
@@ -21,6 +22,7 @@ final class MaritalStatuses extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'MaritalStatusesTable';
     public string $sortField = 'status';
     public bool $deferLoading = true;
 
