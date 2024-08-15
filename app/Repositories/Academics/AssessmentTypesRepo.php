@@ -11,9 +11,10 @@ class AssessmentTypesRepo
         return AssessmentType::create($data);
     }
 
-    public function getAll($order = 'name')
+    public function getAll($order = 'name', bool $executeQuery = true)
     {
-        return AssessmentType::orderBy($order,'asc')->get();
+        $query = AssessmentType::orderBy($order, 'asc');
+        return $executeQuery ? $query->get() : $query;
     }
     public function getPeriodType($data)
     {
@@ -29,5 +30,4 @@ class AssessmentTypesRepo
     {
         return AssessmentType::find($id);
     }
-
 }
