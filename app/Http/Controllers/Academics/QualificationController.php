@@ -21,18 +21,6 @@ class QualificationController extends Controller
 
         $this->qualifications = $qualifications;
     }
-    public function index()
-    {
-        return view('pages.qualifications.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
