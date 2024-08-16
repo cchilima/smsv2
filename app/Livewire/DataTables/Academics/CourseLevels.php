@@ -20,6 +20,7 @@ final class CourseLevels extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'CourseLevels';
     public string $sortField = 'name';
     public bool $deferLoading = true;
 

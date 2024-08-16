@@ -23,6 +23,7 @@ final class ProgramCourses extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'ProgramCourses';
     public string $programId;
     public bool $deferLoading = true;
 

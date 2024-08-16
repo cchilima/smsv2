@@ -102,7 +102,7 @@
                                 <li class="nav-item">
                                     <a href="{{ route('schools.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['schools.index', 'schools.edit']) ? 'active' : '' }}">
-                                        <span>School</span></a>
+                                        <span>Schools</span></a>
                                 </li>
 
                                 <li class="nav-item">

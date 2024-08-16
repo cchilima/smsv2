@@ -21,6 +21,7 @@ final class AcademicPeriodClasses extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'AcademicPeriodClasses';
     public bool $deferLoading = true;
 
     protected AcademicPeriodRepository $academicPeriodRepo;

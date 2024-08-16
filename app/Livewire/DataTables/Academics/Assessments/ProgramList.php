@@ -24,6 +24,7 @@ final class ProgramList extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'AssessmentsProgramList';
     public $academicPeriodId;
     public bool $deferLoading = true;
 

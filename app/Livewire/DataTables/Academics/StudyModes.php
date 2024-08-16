@@ -20,6 +20,10 @@ final class StudyModes extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'StudyModes';
+    public bool $deferLoading = true;
+    public string $sortField = 'name';
+
     public function setUp(): array
     {
         $this->showCheckBox();

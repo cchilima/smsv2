@@ -23,6 +23,7 @@ final class StudentList extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'AssessmentsStudentList';
     public $class;
     public $assessID;
     public bool $deferLoading = true;

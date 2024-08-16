@@ -23,6 +23,7 @@ final class BedSpaces extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'BedSpaces';
     public bool $deferLoading = true;
     public string $sortField = 'bed_number';
 

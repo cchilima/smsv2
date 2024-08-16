@@ -19,7 +19,10 @@ use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 final class Schools extends PowerGridComponent
 {
     use WithExport;
+
+    public string $tableName = 'Schools';
     public bool $deferLoading = true;
+    public string $sortField = 'name';
 
     public function setUp(): array
     {

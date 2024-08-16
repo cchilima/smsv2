@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 final class OpenAcademicPeriods extends Base
 {
+    public string $tableName = 'OpenAcademicPeriods';
+
     public function datasource(): Builder
     {
         return $this->academicPeriodRepo->getAllOpenedQuery();

@@ -21,6 +21,7 @@ final class Fees extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'Fees';
     public bool $deferLoading = true;
     public string $sortField = 'name';
 

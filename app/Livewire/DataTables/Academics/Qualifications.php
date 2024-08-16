@@ -20,6 +20,10 @@ final class Qualifications extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'Qualifications';
+    public bool $deferLoading = true;
+    public string $sortField = 'name';
+
     public function setUp(): array
     {
         $this->showCheckBox();

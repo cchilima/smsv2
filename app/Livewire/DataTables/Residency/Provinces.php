@@ -22,6 +22,7 @@ final class Provinces extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'Provinces';
     public bool $deferLoading = true;
     public string $sortField = 'name';
 

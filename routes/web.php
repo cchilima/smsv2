@@ -41,6 +41,7 @@ use App\Http\Controllers\Users\StudentController as UsersStudentController;
 use App\Http\Controllers\Users\UserController;
 use App\Livewire\Accounting\{ViewInvoiceDetails};
 use App\Livewire\Applications\{InitiateApplication, CompleteApplication, CompletedApplication, MyApplications};
+use App\Livewire\Pages\Residency\Towns\Index as TownsIndex;
 use App\Livewire\Pages\Settings\MaritalStatuses\Index as MaritalStatusIndex;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -252,6 +253,7 @@ Route::resource('countries', CountryController::class);
 Route::get('/provinces/{provinceId}/towns', [ProvinceController::class, 'getTownsByProvince'])->name('towns.getTownsByProvince');
 Route::resource('provinces', ProvinceController::class);
 Route::resource('towns', TownController::class);
+Route::get('/towns', TownsIndex::class)->name('towns.index');
 
 // System Settings Routes
 Route::resource('settings', SettingsController::class);

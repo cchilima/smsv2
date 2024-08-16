@@ -24,6 +24,7 @@ final class Students extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'Students';
     public bool $deferLoading = true;
 
     protected StudentRepository $studentRepo;
