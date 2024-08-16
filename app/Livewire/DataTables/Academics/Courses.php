@@ -21,6 +21,7 @@ final class Courses extends PowerGridComponent
     use WithExport;
 
     public string $tableName = 'CoursesTable';
+    public string $sortField = 'name';
     public bool $deferLoading = true;
 
     public function setUp(): array

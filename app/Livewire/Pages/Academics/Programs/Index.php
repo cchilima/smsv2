@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Pages\Academics\Programs;
 
+use App\Http\Middleware\Custom\SuperAdmin;
+use App\Http\Middleware\Custom\TeamSA;
 use App\Repositories\Academics\DepartmentsRepository;
 use App\Repositories\Academics\QualificationsRepository;
 use App\Traits\CanRefreshDataTable;
@@ -19,6 +21,12 @@ class Index extends Component
     {
         $this->departmentRepo = new DepartmentsRepository();
         $this->qualificationRepo = new QualificationsRepository();
+    }
+
+    public function mount()
+    {
+        $this->middleware(TeamSA::class, ['except' => ['destroy']]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
     }
 
     #[Layout('components.layouts.app-bootstrap')]
