@@ -25,27 +25,14 @@ class SchoolController extends Controller
         $this->schoolRepo = $schoolRepo;
     }
 
-
-    public function index()
-    {
-        return view('pages.schools.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(School $req)
     {
-        //$data = $req->only(['name', 'description']);
-        $data = $req->only(['name', 'slug', 'description']);
+        $data = $req->only(['name', 'description']);
+        $data['slug'] = str()->slug($data['name']);
+
         $this->schoolRepo->create($data);
 
         return Qs::jsonStoreOk();
