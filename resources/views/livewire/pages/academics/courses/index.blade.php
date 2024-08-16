@@ -46,7 +46,7 @@
                             </div>
 
                             <div class="text-right">
-                                <button wire:click="refreshTable('Courses')" id="ajax-btn" type="submit"
+                                <button wire:click="refreshTable('CoursesTable')" id="ajax-btn" type="submit"
                                     class="btn btn-primary">Submit form <i class="icon-paperplane ml-2"></i></button>
                             </div>
                         </form>

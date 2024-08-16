@@ -25,18 +25,6 @@ class CourseLevelController extends Controller
 
         $this->courselevels = $courselevels;
     }
-    public function index()
-    {
-        return view('pages.levels.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
