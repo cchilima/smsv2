@@ -25,6 +25,7 @@ final class Departments extends PowerGridComponent
     protected SchooolRepository $schoolRepo;
     public bool $deferLoading = true;
 
+
     public function boot(): void
     {
         $this->schoolRepo = new SchooolRepository();
