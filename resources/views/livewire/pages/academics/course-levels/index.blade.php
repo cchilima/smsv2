@@ -12,19 +12,20 @@
 
     <div class="card-body">
         <ul wire:ignore class="nav nav-tabs nav-tabs-highlight">
-            <li class="nav-item"><a href="#all-coursel-levels" class="nav-link active" data-toggle="tab">Manage Courses
+            <li class="nav-item"><a href="#all-course-levels" class="nav-link active" data-toggle="tab">Manage Courses
                     Levels</a>
             </li>
-            <li class="nav-item"><a href="#new-class" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
+            <li class="nav-item"><a href="#new-course-level" class="nav-link" data-toggle="tab"><i
+                        class="icon-plus2"></i>
                     Create New Course Levels</a></li>
         </ul>
 
         <div class="tab-content">
-            <div wire:ignore.self class="tab-pane fade show active" id="all-coursel-levels">
+            <div wire:ignore.self class="tab-pane fade show active" id="all-course-levels">
                 <livewire:datatables.academics.course-levels />
             </div>
 
-            <div wire:ignore.self class="tab-pane fade" id="new-class">
+            <div wire:ignore.self class="tab-pane fade" id="new-course-level">
                 <div class="row">
                     <div class="col-md-6">
                         <form class="ajax-store" method="post" action="{{ route('levels.store') }}">
