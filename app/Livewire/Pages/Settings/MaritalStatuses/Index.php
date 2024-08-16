@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pages\MaritalStatuses;
+namespace App\Livewire\Pages\Settings\MaritalStatuses;
 
 use App\Traits\RefreshesDataTable;
 use Livewire\Attributes\Layout;
@@ -13,6 +13,6 @@ class Index extends Component
     #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
-        return view('livewire.pages.marital-statuses.index');
+        return view('livewire.pages.settings.marital-statuses.index');
     }
 }

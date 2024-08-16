@@ -41,7 +41,7 @@ use App\Http\Controllers\Users\StudentController as UsersStudentController;
 use App\Http\Controllers\Users\UserController;
 use App\Livewire\Accounting\{ViewInvoiceDetails};
 use App\Livewire\Applications\{InitiateApplication, CompleteApplication, CompletedApplication, MyApplications};
-use App\Livewire\Pages\MaritalStatuses\Index as MaritalStatusIndex;
+use App\Livewire\Pages\Settings\MaritalStatuses\Index as MaritalStatusIndex;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
