@@ -21,7 +21,7 @@ final class Prerequisites extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'Prerequisites';
+    public string $tableName = 'PrerequisitesTable';
     public bool $deferLoading = true;
 
     public function setUp(): array

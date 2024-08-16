@@ -22,7 +22,7 @@ final class Programs extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'Programs';
+    public string $tableName = 'ProgramsTable';
     protected DepartmentsRepository $departmentRepo;
     protected QualificationsRepository $qualificationRepo;
 

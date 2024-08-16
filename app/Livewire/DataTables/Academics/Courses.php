@@ -20,7 +20,7 @@ final class Courses extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'Courses';
+    public string $tableName = 'CoursesTable';
     public bool $deferLoading = true;
 
     public function setUp(): array

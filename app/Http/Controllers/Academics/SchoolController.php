@@ -10,6 +10,7 @@ use App\Http\Requests\Schools\School;
 use App\Http\Requests\Schools\SchoolUpdate;
 use App\Repositories\Academics\SchooolRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SchoolController extends Controller
 {
@@ -31,7 +32,9 @@ class SchoolController extends Controller
     public function store(School $req)
     {
         $data = $req->only(['name', 'description']);
-        $data['slug'] = str()->slug($data['name']);
+
+        $lowerCaseName = Str::lower($data['name']);
+        $data['slug'] = Str::slug(Str::after($lowerCaseName, 'school of '));
 
         $this->schoolRepo->create($data);
 

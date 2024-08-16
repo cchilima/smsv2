@@ -21,7 +21,7 @@ final class Hostels extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'Hostels';
+    public string $tableName = 'HostelsTable';
     public bool $deferLoading = true;
     public string $sortField = 'hostel_name';
 

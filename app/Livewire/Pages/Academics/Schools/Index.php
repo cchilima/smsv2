@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Pages\Academics\Schools;
 
-use App\Traits\RefreshesDataTable;
+use App\Traits\CanRefreshDataTable;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 class Index extends Component
 {
-    use RefreshesDataTable;
+    use CanRefreshDataTable;
 
     #[Layout('components.layouts.app-bootstrap')]
     public function render()

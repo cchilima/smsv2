@@ -3,13 +3,13 @@
 namespace App\Livewire\Pages\Residency\Towns;
 
 use App\Repositories\Residency\CountryRepository;
-use App\Traits\RefreshesDataTable;
+use App\Traits\CanRefreshDataTable;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 class Index extends Component
 {
-    use RefreshesDataTable;
+    use CanRefreshDataTable;
 
     protected CountryRepository $countryRepo;
 

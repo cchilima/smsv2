@@ -21,7 +21,7 @@ final class Classes extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'AcademicPeriodClasses';
+    public string $tableName = 'AcademicPeriodClassesTable';
     public string $academicPeriodId;
     public bool $deferLoading = true;
 

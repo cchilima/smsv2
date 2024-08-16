@@ -21,7 +21,7 @@ final class DepartmentPrograms extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'DepartmentPrograms';
+    public string $tableName = 'DepartmentProgramsTable';
     public string $departmentId;
     public string $sortField = 'name';
     public bool $deferLoading = true;

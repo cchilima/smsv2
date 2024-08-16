@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-trait RefreshesDataTable
+trait CanRefreshDataTable
 {
     public function refreshTable(string $tableName)
     {

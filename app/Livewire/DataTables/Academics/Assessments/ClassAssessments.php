@@ -25,7 +25,7 @@ final class ClassAssessments extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'ClassAssessments';
+    public string $tableName = 'ClassAssessmentsTable';
     public bool $deferLoading = true;
 
     protected AcademicPeriodClassRepository $academicPeriodClassRepo;
@@ -35,7 +35,6 @@ final class ClassAssessments extends PowerGridComponent
     {
         $this->academicPeriodClassRepo = new AcademicPeriodClassRepository();
         $this->academicPeriodRepo = new AcademicPeriodRepository();
-        // config(['livewire-powergrid.filter' => 'outside']);
     }
 
     public function setUp(): array

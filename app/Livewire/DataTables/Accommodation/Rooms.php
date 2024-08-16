@@ -23,7 +23,7 @@ final class Rooms extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'Rooms';
+    public string $tableName = 'RoomsTable';
     public bool $deferLoading = true;
     public string $sortField = 'room_number';
 

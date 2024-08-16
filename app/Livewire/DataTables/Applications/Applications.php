@@ -21,7 +21,7 @@ final class Applications extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'Applications';
+    public string $tableName = 'ApplicationsTable';
     public bool $deferLoading = true;
 
     public function setUp(): array

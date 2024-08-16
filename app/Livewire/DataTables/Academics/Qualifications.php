@@ -20,7 +20,7 @@ final class Qualifications extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'Qualifications';
+    public string $tableName = 'QualificationsTable';
     public bool $deferLoading = true;
     public string $sortField = 'name';
 

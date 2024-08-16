@@ -20,7 +20,7 @@ final class Audits extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'Audits';
+    public string $tableName = 'AuditsTable';
     public bool $deferLoading = true;
 
     public function setUp(): array

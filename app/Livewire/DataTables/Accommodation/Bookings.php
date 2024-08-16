@@ -21,7 +21,7 @@ final class Bookings extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'Bookings';
+    public string $tableName = 'BookingsTable';
     public bool $deferLoading = true;
 
     protected BookingRepository $bookingRepo;

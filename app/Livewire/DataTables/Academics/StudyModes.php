@@ -20,7 +20,7 @@ final class StudyModes extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'StudyModes';
+    public string $tableName = 'StudyModesTable';
     public bool $deferLoading = true;
     public string $sortField = 'name';
 

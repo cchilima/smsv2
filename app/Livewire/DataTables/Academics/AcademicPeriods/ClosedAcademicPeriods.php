@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 final class ClosedAcademicPeriods extends Base
 {
-    public string $tableName = 'ClosedAcademicPeriods';
+    public string $tableName = 'ClosedAcademicPeriodsTable';
 
     public function datasource(): Builder
     {

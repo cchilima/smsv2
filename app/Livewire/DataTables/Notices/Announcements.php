@@ -20,7 +20,7 @@ final class Announcements extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'Announcements';
+    public string $tableName = 'AnnouncementsTable';
     public bool $deferLoading = true;
 
     public function setUp(): array
