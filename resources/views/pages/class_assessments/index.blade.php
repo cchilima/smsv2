@@ -18,15 +18,6 @@
                 <li class="nav-item">
                     <a href="#new-class-assessment" class="nav-link" data-toggle="tab">Assign Assessment</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a href="#tab" class="nav-link dropdown-toggle" data-toggle="dropdown">Manage class Assessment</a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        @foreach ($academicPeriodsArray as $academicPeriod)
-                            <a href="#ut-{{ Qs::hash($academicPeriod->id) }}" class="dropdown-item"
-                                data-toggle="tab">{{ $academicPeriod->code }}s</a>
-                        @endforeach
-                    </div>
-                </li>
             </ul>
 
             <div class="tab-content">
@@ -101,95 +92,6 @@
                         </div>
                     </div>
                 </div>
-
-                @foreach ($academicPeriodsArray as $academicPeriod)
-                    <div class="tab-pane fade reloadThisDiv" id="ut-{{ Qs::hash($academicPeriod->id) }}">
-                        <table class="table datatable-button-html5-columns">
-                            <thead>
-                                <tr>
-                                    <th>S/N</th>
-                                    <th>Class Name</th>
-                                    <th>Class code</th>
-                                    <th>Assessment Details</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>course
-                                @foreach ($academicPeriod->classes as $classAssessment)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $classAssessment->course->name }}</td>
-                                        <td>{{ $classAssessment->course->code }}</td>
-                                        <td>
-                                            <table class="table table-bordered table-hover table-striped">
-                                                <tbody>
-                                                    <td>Assessment Type</td>
-                                                    <td>Total</td>
-                                                    <td>End date</td>
-                                                    @foreach ($classAssessment->class_assessments as $assessment)
-                                                        <tr>
-                                                            <td>{{ $assessment->assessment_type->name }}</td>
-                                                            <td>
-                                                                <span class="display-mode"
-                                                                    id="display-mode{{ Qs::hash($assessment->id) }}">{{ $assessment->total }}</span>
-                                                                <input type="text" class="edit-mode form-control"
-                                                                    id="class{{ Qs::hash($assessment->id) }}"
-                                                                    value="{{ $assessment->total }}"
-                                                                    style="display: none;"
-                                                                    onchange="updateExamResults('{{ Qs::hash($assessment->id) }}')">
-                                                            </td>
-                                                            <td>
-
-                                                                <span class="display-mode"
-                                                                    id="display-mode-enddate{{ Qs::hash($assessment->id) }}">{{ date('j F Y', strtotime($assessment->end_date)) }}</span>
-                                                                <input autocomplete="off" type="text"
-                                                                    class="edit-mode form-control date-pick"
-                                                                    id="enddate{{ Qs::hash($assessment->id) }}"
-                                                                    value="{{ $assessment->end_date }}"
-                                                                    style="display: none;"
-                                                                    onchange="updateExamResults('{{ Qs::hash($assessment->id) }}')">
-                                                            </td>
-
-                                                        </tr>
-                                                    @endforeach
-
-                                                </tbody>
-                                            </table>
-
-                                        </td>
-
-                                        <td class="text-center">
-                                            <div class="list-icons">
-                                                <div class="dropdown">
-                                                    <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                        <i class="icon-menu9"></i>
-                                                    </a>
-
-                                                    <div class="dropdown-menu dropdown-menu-left">
-
-                                                        <a href="#" class="dropdown-item edit-total-link"><i
-                                                                class="icon-pencil"></i> Edit</a>
-                                                        @if (Qs::userIsSuperAdmin())
-                                                            <a id="{{ Qs::hash($classAssessment['class_assessment_id']) }}"
-                                                                onclick="confirmDelete(this.id)" href="#"
-                                                                class="dropdown-item"><i class="icon-trash"></i>
-                                                                Delete</a>
-                                                            <form method="post"
-                                                                id="item-delete-{{ Qs::hash($classAssessment['class_assessment_id']) }}"
-                                                                action="{{ route('classAssessments.destroy', Qs::hash($classAssessment['class_assessment_id'])) }}"
-                                                                class="hidden">@csrf @method('delete')</form>
-                                                        @endif
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endforeach
 
             </div>
         </div>

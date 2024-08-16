@@ -41,6 +41,7 @@ use App\Http\Controllers\Users\StudentController as UsersStudentController;
 use App\Http\Controllers\Users\UserController;
 use App\Livewire\Accounting\{ViewInvoiceDetails};
 use App\Livewire\Applications\{InitiateApplication, CompleteApplication, CompletedApplication, MyApplications};
+use App\Livewire\Pages\MaritalStatuses\Index as MaritalStatusIndex;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -208,6 +209,7 @@ Route::resource('registration', StudentRegistrationController::class);
 
 Route::resource('fees', FeeController::class);
 Route::resource('marital-statuses', MaritalStatusController::class);
+Route::get('/marital-statuses', MaritalStatusIndex::class)->name('marital-statuses.index');
 Route::resource('students', StudentController::class);
 Route::resource('users', UserController::class);
 

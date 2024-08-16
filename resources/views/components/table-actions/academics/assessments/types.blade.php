@@ -10,17 +10,17 @@
 
         <div class="dropdown-menu dropdown-menu-left">
             @if (Qs::userIsTeamSA())
-                <a href="{{ route('marital-statuses.edit', $row->id) }}" class="dropdown-item"><i class="icon-pencil"></i>
+                <a href="{{ route('assessments.edit', $row->id) }}" class="dropdown-item"><i class="icon-pencil"></i>
                     Edit</a>
             @endif
             @if (Qs::userIsSuperAdmin())
                 <a id="{{ $row->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i
                         class="icon-trash"></i>
                     Delete</a>
-                <form @submit="$dispatch('marital-status-deleted')" method="post" id="item-delete-{{ $row->id }}"
-                    action="{{ route('marital-statuses.destroy', $row->id) }}" class="hidden">@csrf @method('delete')
-                </form>
+                <form method="post" id="item-delete-{{ $row->id }}"
+                    action="{{ route('assessments.destroy', $row->id) }}" class="hidden">@csrf @method('delete')</form>
             @endif
+
         </div>
     </div>
 </div>

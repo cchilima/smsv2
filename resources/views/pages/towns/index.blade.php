@@ -21,51 +21,6 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-towns">
                     <livewire:datatables.residency.towns />
-
-                    <table class="table datatable-button-html5-columns">
-                        <thead>
-                            <tr>
-                                <th>S/N</th>
-                                <th>Name</th>
-                                <th>Country</th>
-                                <th>Province</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($towns as $town)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $town->name }}</td>
-                                    <td>{{ $town->province?->country?->country ?? 'Other' }}</td>
-                                    <td>{{ $town->province?->name ?? 'Other' }}</td>
-                                    <td class="text-center">
-                                        <div class="list-icons">
-                                            <div class="dropdown">
-                                                <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                    <i class="icon-menu9"></i>
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-left">
-                                                    @if (Qs::userIsTeamSA())
-                                                        <a href="{{ route('towns.edit', $town->id) }}"
-                                                            class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
-                                                    @endif
-                                                    @if (Qs::userIsSuperAdmin())
-                                                        <a id="{{ $town->id }}" onclick="confirmDelete(this.id)"
-                                                            href="#" class="dropdown-item"><i class="icon-trash"></i>
-                                                            Delete</a>
-                                                        <form method="post" id="item-delete-{{ $town->id }}"
-                                                            action="{{ route('towns.destroy', $town->id) }}" class="hidden">
-                                                            @csrf @method('delete')</form>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
                 </div>
 
                 <div class="tab-pane fade" id="new-town">

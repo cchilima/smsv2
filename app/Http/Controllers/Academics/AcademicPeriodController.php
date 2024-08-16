@@ -77,19 +77,14 @@ class AcademicPeriodController extends Controller
      */
     public function show(string $id)
     {
-        $academicPeriod = $this->periods->find($id);
-        $academicPeriodId = $id;
+        $data['academicPeriodId'] = $id;
+        $data['academicPeriod'] = $this->periods->find($id);
+        $data['periodClasses'] = $this->periodClasses->getAllAcClasses($id);
+        $data['periods'] = $this->periods->getAPInformation($id);
+        $data['students'] = $this->periodClasses->academicPeriodStudents($id);
+        $data['programs'] = $this->periodClasses->academicProgramStudents($id);
 
-        $periodClasses = $this->periodClasses->getAllAcClasses($id);
-
-        $periods = $this->periods->getAPInformation($id);
-        $academic = $this->periods->findOne($id);
-        $studyModes = $this->periods->getStudyModes();
-        $students = $this->periodClasses->academicPeriodStudents($id);
-        $programs = $this->periodClasses->academicProgramStudents($id);
-        $feeInformation = $this->periods->getAPFeeInformation($id);
-
-        return  view('pages.academicPeriods.show', compact('academicPeriod', 'feeInformation', 'periods', 'periodClasses', 'programs', 'students', 'academicPeriodId'));
+        return  view('pages.academicPeriods.show', $data);
     }
 
     /**

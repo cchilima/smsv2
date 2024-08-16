@@ -31,10 +31,8 @@ class ProvinceController extends Controller
 
     public function index()
     {
-        $provinces = $this->provinceRepo->getAll();
-        $countries = $this->countryRepo->getAll();
-
-        return view('pages.provinces.index', compact(['provinces', 'countries']));
+        $data['countries'] = $this->countryRepo->getAll();
+        return view('pages.provinces.index', $data);
     }
 
     /**

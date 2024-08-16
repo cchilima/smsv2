@@ -20,50 +20,7 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-provinces">
-                    <livewire:datatables.residency.provinces/>
-                    
-                    <table class="table datatable-button-html5-columns">
-                        <thead>
-                            <tr>
-                                <th>S/N</th>
-                                <th>Name</th>
-                                <th>Country</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($provinces as $province)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $province->name }}</td>
-                                    <td>{{ $province->country->country ?? 'N/A' }}</td>
-                                    <td class="text-center">
-                                        <div class="list-icons">
-                                            <div class="dropdown">
-                                                <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                    <i class="icon-menu9"></i>
-                                                </a>
-
-                                                <div class="dropdown-menu dropdown-menu-left">
-                                                    @if (Qs::userIsTeamSA())
-                                                        <a href="{{ route('provinces.edit', $province->id) }}"
-                                                            class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
-                                                    @endif
-                                                    @if (Qs::userIsSuperAdmin())
-                                                        <a id="{{ $province->id }}" onclick="confirmDelete(this.id)"
-                                                            href="#" class="dropdown-item"><i class="icon-trash"></i>
-                                                            Delete</a>
-                                                        <form method="post" id="item-delete-{{ $province->id }}"
-                                                            action="{{ route('provinces.destroy', $province->id) }}"
-                                                            class="hidden">@csrf @method('delete')</form>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <livewire:datatables.residency.provinces />
                 </div>
 
                 <div class="tab-pane fade" id="new-province">

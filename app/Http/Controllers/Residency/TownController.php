@@ -34,10 +34,8 @@ class TownController extends Controller
 
     public function index()
     {
-        $countries = $this->countryRepo->getAll();
-        $towns = $this->townRepo->getAll();
-
-        return view('pages.towns.index', compact(['countries', 'towns']));
+        $data['countries'] = $this->countryRepo->getAll();
+        return view('pages.towns.index', $data);
     }
 
     /**

@@ -19,8 +19,8 @@ class StudyModeController extends Controller
     protected $studymode;
     public function __construct(StudyModeRepository $studymode)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->studymode = $studymode;
     }
@@ -28,8 +28,7 @@ class StudyModeController extends Controller
 
     public function index()
     {
-        $modes['modes'] = $this->studymode->getAll();
-        return view('pages.studymodes.index',$modes);
+        return view('pages.studymodes.index');
     }
 
     /**
@@ -67,7 +66,7 @@ class StudyModeController extends Controller
     {
         $mode['mode'] = $studymode = $this->studymode->find($id);
 
-        return !is_null($studymode ) ? view('pages.studymodes.edit', $mode)
+        return !is_null($studymode) ? view('pages.studymodes.edit', $mode)
             : Qs::goWithDanger('studymodes.index');
     }
 

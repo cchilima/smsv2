@@ -28,8 +28,7 @@ class SchoolController extends Controller
 
     public function index()
     {
-        $schools['schools'] = $this->schoolRepo->getAll();
-        return view('pages.schools.index', $schools);
+        return view('pages.schools.index');
     }
 
     /**

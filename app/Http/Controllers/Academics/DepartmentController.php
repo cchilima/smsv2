@@ -24,9 +24,8 @@ class DepartmentController extends Controller
     }
     public function index()
     {
-        $departments['departments'] = $this->department->getAll();
-        $departments['schools'] = $this->department->getSchools();
-        return view('pages.departments.index', $departments);
+        $data['schools'] = $this->department->getSchools();
+        return view('pages.departments.index', $data);
     }
 
     /**

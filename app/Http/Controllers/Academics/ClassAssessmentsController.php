@@ -62,8 +62,6 @@ class ClassAssessmentsController extends Controller
 
         $data['open'] = $this->academic->getAllopen();
         $data['assess'] = $this->assessmentTypes->getAll();
-        $data['academicPeriodsArray'] = $this->academic->getAcadeperiodClassAssessments();
-        //dd($data['academicPeriodsArray']);
         return view('pages.class_assessments.index', $data);
     }
 
@@ -172,7 +170,6 @@ class ClassAssessmentsController extends Controller
     {
         $id = Qs::decodeHash($academic_id);
         $apClasses = $this->academic->showClasses($id);
-        //dd($apClasses);
         return view('pages.class_assessments.show_classes', compact('apClasses'));
     }
 
@@ -184,10 +181,7 @@ class ClassAssessmentsController extends Controller
     public function getProgramResults($academic_id)
     {
         $academicPeriodId = Qs::decodeHash($academic_id);
-
-        $programs =  $this->periodClasses->academicProgramStudents($academicPeriodId);
-
-        return view('pages.class_assessments.results_program_list', compact('programs', 'academicPeriodId'));
+        return view('pages.class_assessments.results_program_list', compact('academicPeriodId'));
     }
 
     public function StudentListResults($class, $assessid)
@@ -199,7 +193,7 @@ class ClassAssessmentsController extends Controller
 
         $open = $this->academic->getAllopen();
 
-        return view('pages.class_assessments.instructor_assessment.index', compact('class_ass', 'open', 'class', 'assessID'));
+        return view('pages.class_assessments.instructor_assessment.index', compact('class_ass', 'class', 'assessID'));
     }
 
     public function DownloadResultsTemplate(Request $request)
@@ -343,9 +337,7 @@ class ClassAssessmentsController extends Controller
         $id = Qs::decodeHash($id);
         $period = $this->academic->find($id);
 
-        $programs = $this->classaAsessmentRepo->publishAvailablePrograms($id);
-
-        return view('pages.class_assessments.edit', compact('programs', 'period', 'id'));
+        return view('pages.class_assessments.edit', compact('id', 'period'));
     }
 
     public function GetProgramResultsLevelCas(Request $request)

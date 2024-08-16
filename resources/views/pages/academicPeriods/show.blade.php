@@ -134,34 +134,6 @@
                         <div class="tab-pane fade" id="all-fees">
                             <livewire:datatables.academics.academic-periods.fees :academicPeriodId="$academicPeriodId" />
 
-                            <table class="table datatable-button-html5-columns table-bordered table-hover ">
-                                <thead>
-                                    <tr>
-                                        <th>Fee Name</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($feeInformation as $fee)
-                                        <tr>
-                                            <td>{{ $fee->fee->name }}</td>
-                                            <td>{{ $fee->amount }}</td>
-                                            <td>{{ $fee->status == 1 ? 'published' : 'Not Published' }}</td>
-                                            <td>
-                                                <a href="{{ route('academic-period-fees.edit', Qs::hash($fee->id)) }}"
-                                                    class="dropdown-item"><i class="icon-pencil"></i></a>
-                                                @if ($fee->status == 0)
-                                                    <a href="{{ route('academic-period-fees.edit', Qs::hash($fee->id)) }}"
-                                                        class="dropdown-item"><i class="icon-eye"></i></a>
-                                                @endif
-
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
                             @if (!empty($periods->id))
                                 <div class="text-right">
                                     <a href="{{ route('academic-period-management.edit', Qs::hash($periods->id)) }}"
@@ -211,53 +183,6 @@
                             @livewire('datatables.academics.academicperiods.running-programs', [
                                 'academicPeriodId' => $academicPeriod->id,
                             ])
-
-                            <table class="table datatable-button-html5-columns">
-                                <thead>
-                                    <tr>
-                                        <th>S/N</th>
-                                        <th>Program Code</th>
-                                        <th>Program Name</th>
-                                        <th>Qualification</th>
-                                        <th>Department</th>
-                                        <th>Students</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($programs as $p)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $p->code }}</td>
-                                            <td>{{ $p->name }}</td>
-                                            <td>{{ $p->qualification->name }}</td>
-                                            <td>{{ $p->department->name }}</td>
-                                            <td>{{ $p->students_count }}</td>
-
-                                            <td class="text-center">
-                                                <div class="list-icons">
-                                                    <div class="dropdown">
-                                                        <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                            <i class="icon-menu9"></i>
-                                                        </a>
-
-                                                        <div class="dropdown-menu dropdown-menu-left">
-                                                            @if (Qs::userIsTeamSA())
-                                                                <a href="{{ route('student.one.program.list', ['ac' => $academicPeriod->id, 'pid' => $p->id]) }}"
-                                                                    class="dropdown-item"><i class="icon-paperplane"></i>
-                                                                    Download PDF List</a>
-                                                                <a href="{{ route('student.csv.one.program.list', ['ac' => $academicPeriod->id, 'pid' => $p->id]) }}"
-                                                                    class="dropdown-item"><i class="icon-paperplane"></i>
-                                                                    Download CSV List</a>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
                         </div>
 
                         <div class="tab-pane fade" id="all-classes">
@@ -278,61 +203,6 @@
                                 'academicPeriodId' => $academicPeriod->id,
                             ])
 
-                            <table class="table datatable-button-html5-columns">
-                                <thead>
-                                    <tr>
-                                        <th>S/N</th>
-                                        <th>Course</th>
-                                        <th>Students</th>
-                                        <th>Instructor</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($periodClasses as $period)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $period->course->code }}</td>
-                                            <td>{{ count($period->enrollments) }}</td>
-                                            <td>{{ $period->instructor->first_name }}</td>
-
-                                            <td class="text-center">
-                                                <div class="list-icons">
-                                                    <div class="dropdown">
-                                                        <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                            <i class="icon-menu9"></i>
-                                                        </a>
-
-                                                        <div class="dropdown-menu dropdown-menu-left">
-                                                            @if (Qs::userIsTeamSA())
-                                                                <a href="{{ route('academic-period-classes.edit', $period->id) }}"
-                                                                    class="dropdown-item"><i class="icon-pencil"></i>
-                                                                    Edit</a>
-                                                            @endif
-
-                                                            <a href="{{ route('student.one.class.list', ['classid' => $period->id, 'ac' => $academicPeriod->id]) }}"
-                                                                class="dropdown-item"><i class="icon-paperplane"></i>
-                                                                Download PDF List</a>
-                                                            <a href="{{ route('student.csv.one.class.list', ['classid' => $period->id, 'ac' => $academicPeriod->id]) }}"
-                                                                class="dropdown-item"><i class="icon-paperplane"></i>
-                                                                Download CSV List</a>
-                                                            @if (Qs::userIsSuperAdmin())
-                                                                <a id="{{ $period->id }}"
-                                                                    onclick="confirmDelete(this.id)" href="#"
-                                                                    class="dropdown-item"><i class="icon-trash"></i>
-                                                                    Delete</a>
-                                                                <form method="post" id="item-delete-{{ $period->id }}"
-                                                                    action="{{ route('academic-period-classes.destroy', $period->id) }}"
-                                                                    class="hidden">@csrf @method('delete')</form>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
                         </div>
 
                     </div>

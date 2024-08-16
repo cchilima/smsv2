@@ -25,8 +25,7 @@ class PaymentMethodController extends Controller
 
     public function index()
     {
-        $paymentMethods = $this->paymentMethodRepo->getAll();
-        return view('pages.paymentMethods.index', compact('paymentMethods'));
+        return view('pages.paymentMethods.index');
     }
 
     /**

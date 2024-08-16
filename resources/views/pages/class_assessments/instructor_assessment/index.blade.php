@@ -35,54 +35,6 @@
                         'class' => $class,
                         'assessID' => $assessID,
                     ])
-
-                    <table class="table datatable-button-html5-columns">
-                        <thead>
-                            <tr>
-                                <th>S/N</th>
-                                <th>Student Name</th>
-                                <th>Student ID</th>
-                                <th>Assessment Type</th>
-                                <th>Marks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            @foreach ($class_ass->enrollments as $enroll)
-                                <tr>
-                                    @if (isset($enroll->student))
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $enroll->student->user->first_name . ' ' . $enroll->student->user->last_name }}
-                                        </td>
-                                        <td>{{ $enroll->student->id }}</td>
-                                        <td>{{ $class_ass->class_assessments[0]->assessment_type->name }}</td>
-                                        <td class="edit-total-link">
-
-                                            @if (!empty($enroll->student->grades[0]))
-                                                <input type="hidden" id="gradeid{{ Qs::hash($enroll->student->id) }}"
-                                                    value="{{ $enroll->student->grades[0]->id }}">
-                                                <span class="display-mode"
-                                                    id="display-mode{{ Qs::hash($enroll->student->id) }}">{{ $enroll->student->grades[0]->total }}</span>
-                                                <input type="text" class="edit-mode form-control"
-                                                    id="class{{ Qs::hash($enroll->student->id) }}"
-                                                    value="{{ $enroll->student->grades[0]->total }}" style="display: none;"
-                                                    onchange="EnterResults('{{ Qs::hash($enroll->student->id) }}','{{ $class_ass->class_assessments[0]->total }}',1)">
-                                            @else
-                                                <input type="hidden" id="gradeid{{ Qs::hash($enroll->student->id) }}"
-                                                    value="0">
-                                                <span class="display-mode"
-                                                    id="display-mode{{ Qs::hash($enroll->student->id) }}">NE</span>
-                                                <input type="text" class="edit-mode form-control"
-                                                    id="class{{ Qs::hash($enroll->student->id) }}" value="0"
-                                                    style="display: none;"
-                                                    onchange="EnterResults('{{ Qs::hash($enroll->student->id) }}','{{ $class_ass->class_assessments[0]->total }}',0)">
-                                            @endif
-                                        </td>
-                                    @endif
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
                 </div>
                 <div class="tab-pane fade show " id="post-results">
                     <div class="row">

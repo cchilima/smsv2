@@ -42,10 +42,9 @@ class ProgramController extends Controller
     }
     public function index()
     {
-        $program['programs'] = $this->programs->getAll();
-        $program['departments'] = $this->depart->getAll();
-        $program['qualifications'] = $this->qualification->getAll();
-        return view('pages.programs.index', $program);
+        $data['departments'] = $this->depart->getAll();
+        $data['qualifications'] = $this->qualification->getAll();
+        return view('pages.programs.index', $data);
     }
 
     /**
@@ -75,10 +74,8 @@ class ProgramController extends Controller
     {
         $id = Qs::decodeHash($id);
         $data['programId'] = $id;
-        $data['withCourseLevels'] = $this->programs->findOneP($id);
-        $data['programs'] = $someprograms = $this->programs->find($id);
         $data['program'] = $someprograms = $this->programs->findOne($id);
-        $data['levels'] = $this->levels->getAll();
+        $data['levels'] = $this->programs->getCourseLevelsByProgram($id);
         $data['newcourses'] = $this->courses->getAll();
         $data['pcourses'] = [];
 

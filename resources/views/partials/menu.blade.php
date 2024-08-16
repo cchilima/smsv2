@@ -80,6 +80,7 @@
                                 'period-types.edit',
                                 'departments.index',
                                 'departments.edit',
+                                'departments.show',
                                 'programs.index',
                                 'programs.edit',
                                 'programs.show',
@@ -106,7 +107,7 @@
 
                                 <li class="nav-item">
                                     <a href="{{ route('departments.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['departments.index', 'departments.edit']) ? 'active' : '' }}">
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['departments.index', 'departments.edit', 'departments.show']) ? 'active' : '' }}">
                                         <span>Departments</span></a>
                                 </li>
                                 {{-- Manage programs --}}
@@ -476,7 +477,7 @@
                                 <li class="nav-item">
                                     <a href="{{ route('marital-statuses.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}">
-                                        <span>Marital statuses</span></a>
+                                        <span>Marital Statuses</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('audits.index') }}"
@@ -524,14 +525,14 @@
                                 @if (!Qs::userIsInstructor())
                                     <li class="nav-item">
                                         <a href="{{ route('assessments.index') }}"
-                                            class="nav-link {{ Route::is('assessments.index') ? 'active' : '' }}">Create
-                                            CA And Exam</a>
+                                            class="nav-link {{ Route::is('assessments.index') ? 'active' : '' }}">Assessment
+                                            Types</a>
                                     </li>
                                     {{-- Tabulation Sheet --}}
                                     <li class="nav-item">
                                         <a href="{{ route('classAssessments.index') }}"
-                                            class="nav-link {{ Route::is('classAssessments.index') ? 'active' : '' }}">Assign
-                                            CA To Class</a>
+                                            class="nav-link {{ Route::is('classAssessments.index') ? 'active' : '' }}">Class
+                                            Assessments</a>
                                     </li>
 
                                     <li class="nav-item">
@@ -543,7 +544,7 @@
 
                                 @if (true)
                                     @if (true)
-                                        <li
+                                        {{-- <li
                                             class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['myClassStudentList', 'smyClassList', 'myClassList']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                                             <a href="#" class="nav-link"><span> Enter Student Results</span></a>
                                             <ul class="nav nav-group-sub" data-submenu-title="Manage Students">
@@ -568,7 +569,7 @@
                                                 @endif
 
                                             </ul>
-                                        </li>
+                                        </li> --}}
 
                                         <li
                                             class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['program-list']) ? 'nav-item-expanded nav-item-open' : '' }} ">

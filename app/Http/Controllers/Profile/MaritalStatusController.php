@@ -15,22 +15,13 @@ class MaritalStatusController extends Controller
 {
 
     protected $maritalStatuses;
-    
+
     public function __construct(MaritalStatusRepository $maritalStatuses)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->maritalStatuses = $maritalStatuses;
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $statuses['statuses'] = $this->maritalStatuses->getAll();
-        return view('pages.maritalStatuses.index',$statuses);
     }
 
     /**
@@ -47,7 +38,7 @@ class MaritalStatusController extends Controller
     public function store(MaritalStatus $request)
     {
         $data = $request->only(['status', 'description']);
-        
+
         $maritalStatus = $this->maritalStatuses->create($data);
 
         if ($maritalStatus) {
@@ -58,31 +49,23 @@ class MaritalStatusController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
         $maritalStatus = $this->maritalStatuses->find($id);
-    
+
         return !is_null($maritalStatus) ? view('pages.maritalStatuses.edit', compact('maritalStatus'))
             : Qs::goWithDanger('pages.maritalStatuses.index');
     }
-    
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(MaritalStatusUpdate $request, string $id)
     {
-        $data = $request->only(['status','description']);
+        $data = $request->only(['status', 'description']);
         $this->maritalStatuses->update($id, $data);
         return Qs::jsonUpdateOk();
     }
