@@ -25,14 +25,6 @@ class MaritalStatusController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return view('pages.maritalStatuses.index');
-    }
-
-    /**
      * Show the form for creating a new resource.
      */
     public function create()
@@ -54,14 +46,6 @@ class MaritalStatusController extends Controller
         } else {
             return Qs::jsonError(__('msg.create_failed'));
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**

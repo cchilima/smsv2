@@ -477,7 +477,7 @@
                                 <li class="nav-item">
                                     <a href="{{ route('marital-statuses.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['maritalStatues.create', 'maritalStatues.edit', 'maritalStatues.index']) ? 'active' : '' }}">
-                                        <span>Marital statuses</span></a>
+                                        <span>Marital Statuses</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('audits.index') }}"
