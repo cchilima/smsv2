@@ -33,14 +33,6 @@ class TownController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(TownRequest $request)
@@ -53,14 +45,6 @@ class TownController extends Controller
         }
 
         return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Town $town)
-    {
-        //
     }
 
     /**
