@@ -16,12 +16,12 @@ use Illuminate\Http\Request;
 class AcademicPeriodClassController extends Controller
 {
 
-    protected $periodClasses,$academicPeriodRepository;
+    protected $periodClasses, $academicPeriodRepository;
 
-    public function __construct(AcademicPeriodClassRepository $periodClasses,AcademicPeriodRepository $academicPeriodRepository)
+    public function __construct(AcademicPeriodClassRepository $periodClasses, AcademicPeriodRepository $academicPeriodRepository)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->periodClasses = $periodClasses;
         $this->academicPeriodRepository = $academicPeriodRepository;
@@ -36,7 +36,7 @@ class AcademicPeriodClassController extends Controller
 
         $courses = $this->periodClasses->getCourses();
         $instructors = $this->periodClasses->getInstructors();
-        $academicPeriods = $this->academicPeriodRepository->getAllOpenedAc();;
+        $academicPeriods = $this->academicPeriodRepository->getAllOpenedAc();
 
         return view('pages.academicPeriodClasses.index', compact('periodClasses', 'courses', 'instructors', 'academicPeriods'));
     }
@@ -61,7 +61,7 @@ class AcademicPeriodClassController extends Controller
     {
 
         $data = $request->only(['instructor_id', 'course_id', 'academic_period_id']);
-        $data['key'] = rand(2,23);
+        $data['key'] = rand(2, 23);
 
 
         $periodClass = $this->periodClasses->create($data);
@@ -69,7 +69,7 @@ class AcademicPeriodClassController extends Controller
         if ($periodClass) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::json(false,'error to create message message');
+            return Qs::json(false, 'error to create message message');
         }
     }
 
@@ -91,7 +91,7 @@ class AcademicPeriodClassController extends Controller
         $courses = $this->periodClasses->getCourses();
         $instructors = $this->periodClasses->getInstructors();
 
-        return !is_null($instructors) ? view('pages.academicPeriodClasses.edit', compact('periodClass','courses','instructors'))
+        return !is_null($instructors) ? view('pages.academicPeriodClasses.edit', compact('periodClass', 'courses', 'instructors'))
             : Qs::goWithDanger('pages.academicPeriodClasses.index');
     }
 

@@ -56,7 +56,7 @@ final class AcademicPeriodClasses extends PowerGridComponent
         return [
             'course' => ['name'],
             'instructor' => ['first_name', 'last_name'],
-            'academicPeriod' => ['code'],
+            'academicPeriod' => ['name', 'code'],
         ];
     }
 
@@ -64,6 +64,7 @@ final class AcademicPeriodClasses extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('academicPeriod.code')
+            ->add('academicPeriod.name')
             ->add('course.name')
             ->add('instructor', function ($academicPeriodClass) {
                 return $academicPeriodClass->instructor->first_name . ' ' . $academicPeriodClass->instructor->last_name;
@@ -73,7 +74,10 @@ final class AcademicPeriodClasses extends PowerGridComponent
     public function columns(): array
     {
         return [
-            Column::make('Academic Period', 'academicPeriod.code')
+            Column::make('Academic Period Code', 'academicPeriod.code')
+                ->searchable(),
+
+            Column::make('Academic Period', 'academicPeriod.name')
                 ->searchable(),
 
             Column::make('Course', 'course.name')
