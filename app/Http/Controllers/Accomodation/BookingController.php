@@ -43,19 +43,6 @@ class BookingController extends Controller
         $this->hostel_repository = $hostel_repository;
         $this->invoiceRepo = $invoiceRepo;
     }
-    public function index()
-    {
-        $data['hostel'] = $this->hostel_repository->getAll();
-        return view('pages.booking.index', $data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -75,14 +62,6 @@ class BookingController extends Controller
         } else {
             return Qs::jsonError(__('msg.create_failed'));
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
