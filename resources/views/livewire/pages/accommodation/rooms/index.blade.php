@@ -22,7 +22,7 @@
                 <livewire:datatables.accommodation.rooms />
             </div>
 
-            <div wire:ignore.self class="tab-pane fade" id="new-rooms">
+            <div wire:ignore class="tab-pane fade" id="new-rooms">
                 <div class="row">
                     <div class="col-md-6">
                         <form class="ajax-store" method="post" action="{{ route('rooms.store') }}">
