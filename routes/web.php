@@ -56,9 +56,18 @@ use App\Livewire\Pages\Academics\Programs\Show as ShowProgram;
 use App\Livewire\Pages\Academics\Qualifications\Index as QualificationsIndex;
 use App\Livewire\Pages\Academics\Schools\Index as SchoolsIndex;
 use App\Livewire\Pages\Academics\StudyModes\Index as StudyModesIndex;
+use App\Livewire\Pages\Accommodation\Hostels\Index as HostelsIndex;
+use App\Livewire\Pages\Accommodation\Rooms\Index as RoomsIndex;
+use App\Livewire\Pages\Accommodation\Bookings\Index as BookingsIndex;
+use App\Livewire\Pages\Accommodation\BedSpaces\Index as BedSpacesIndex;
+use App\Livewire\Pages\Accounting\Fees\Index as FeesIndex;
+use App\Livewire\Pages\Accounting\PaymentMethods\Index as PaymentMethodsIndex;
+use App\Livewire\Pages\Admissions\Applications\Index as ApplicationsIndex;
 use App\Livewire\Pages\Notices\Announcements\Index as AnnouncementsIndex;
+use App\Livewire\Pages\Residency\Countries\Index as CountriesIndex;
+use App\Livewire\Pages\Residency\Provinces\Index as ProvincesIndex;
 use App\Livewire\Pages\Residency\Towns\Index as TownsIndex;
-use App\Livewire\Pages\Settings\MaritalStatuses\Index as MaritalStatusIndex;
+use App\Livewire\Pages\Settings\MaritalStatuses\Index as MaritalStatusesIndex;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -186,7 +195,7 @@ Route::get('/application/{application_id}', CompletedApplication::class)->name('
 // Accounting livewire routes
 Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
 
-Route::get('/applications', [ApplicantController::class, 'index'])->name('application.index');
+Route::get('/applications', ApplicationsIndex::class)->name('application.index');
 //Route::get('/applications/initiate', [ApplicantController::class, 'initiate'])->name('application.initiate');
 Route::post('/application/step-1', [ApplicantController::class, 'startApplication'])->name('application.start_application');
 //Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
@@ -208,7 +217,7 @@ Route::get('/courses', CoursesIndex::class)->name('courses.index');
 
 Route::get('/programs/{id}', ShowProgram::class)->name('programs.show');
 Route::get('/programs', ProgramsIndex::class)->name('programs.index');
-Route::resource('programs', ProgramController::class);
+Route::resource('programs', ProgramController::class)->except(['show', 'index']);
 
 Route::resource('study-modes', StudyModeController::class);
 Route::get('/study-modes', StudyModesIndex::class)->name('study-modes.index');
@@ -244,9 +253,13 @@ Route::resource('assessments', AssessmentsTypesController::class);
 Route::resource('registration', StudentRegistrationController::class);
 
 Route::resource('fees', FeeController::class);
+Route::get('/fees', FeesIndex::class)->name('fees.index');
+
+Route::resource('payment-methods', PaymentMethodController::class);
+Route::get('/payment-methods', PaymentMethodsIndex::class)->name('payment-methods.index');
 
 Route::resource('marital-statuses', MaritalStatusController::class);
-Route::get('/marital-statuses', MaritalStatusIndex::class)->name('marital-statuses.index');
+Route::get('/marital-statuses', MaritalStatusesIndex::class)->name('marital-statuses.index');
 
 Route::resource('students', StudentController::class);
 Route::resource('users', UserController::class);
@@ -261,11 +274,20 @@ Route::get('/academic-period-classes', AcademicPeriodClassesIndex::class)->name(
 Route::resource('academic-period-management', APManagementController::class);
 Route::resource('academic-period-fees', APFeesController::class);
 Route::resource('audits', AuditReportsController::class);
+
 // Accommodation Module
 Route::resource('hostels', HostelController::class);
+Route::get('/hostels', HostelsIndex::class)->name('hostels.index');
+
 Route::resource('rooms', RoomController::class);
-Route::resource('booking', BookingController::class);
-Route::resource('bed-space', BedSpaceController::class);
+Route::get('/rooms', RoomsIndex::class)->name('rooms.index');
+
+Route::resource('bookings', BookingController::class);
+Route::get('/bookings', BookingsIndex::class)->name('bookings.index');
+
+Route::resource('bed-spaces', BedSpaceController::class);
+Route::get('/bed-spaces', BedSpacesIndex::class)->name('bed-spaces.index');
+
 Route::get('/hostel-rooms/{id}', [BookingController::class, 'getRooms'])->name('hostel-rooms');
 Route::get('/room-bed-spaces/{id}', [BookingController::class, 'getBedSpaces'])->name('room-bed-space');
 Route::post('/accommodation-confirm/', [BookingController::class, 'ConfirmBooking'])->name('confirmation.booking');
@@ -291,16 +313,17 @@ Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('
 // Residency Routes
 Route::get('/countries/{countryId}/provinces/', [CountryController::class, 'getProvincesByCountry'])->name('provinces.getProvincesByCountry');
 Route::resource('countries', CountryController::class);
+Route::get('/countries', CountriesIndex::class)->name('countries.index');
+
 Route::get('/provinces/{provinceId}/towns', [ProvinceController::class, 'getTownsByProvince'])->name('towns.getTownsByProvince');
 Route::resource('provinces', ProvinceController::class);
+Route::get('/provinces', ProvincesIndex::class)->name('provinces.index');
+
 Route::resource('towns', TownController::class);
 Route::get('/towns', TownsIndex::class)->name('towns.index');
 
 // System Settings Routes
 Route::resource('settings', SettingsController::class);
-
-// Payment Methods Routes
-Route::resource('payment-methods', PaymentMethodController::class);
 
 // my account
 Route::group(['prefix' => 'my_account'], function () {

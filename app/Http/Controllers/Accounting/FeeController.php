@@ -26,22 +26,6 @@ class FeeController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return view('pages.fees.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('pages.fees.create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Fee $request)
@@ -55,14 +39,6 @@ class FeeController extends Controller
         } else {
             return Qs::json(false, 'msg.create_failed');
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**

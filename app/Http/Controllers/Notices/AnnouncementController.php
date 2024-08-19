@@ -27,24 +27,6 @@ class AnnouncementController extends Controller
         $this->announcement = $announcement;
     }
 
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $data['userTypes'] = $this->announcement->getUserTypes();
-        return view('pages.announcements.index', $data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -70,14 +52,6 @@ class AnnouncementController extends Controller
         }
 
         return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**

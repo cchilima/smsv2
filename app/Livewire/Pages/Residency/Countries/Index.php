@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Livewire\Pages\Residency\Towns;
+namespace App\Livewire\Pages\Residency\Countries;
 
 use App\Helpers\Qs;
-use App\Repositories\Residency\CountryRepository;
 use App\Traits\CanRefreshDataTable;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
@@ -13,13 +12,6 @@ class Index extends Component
 {
     use CanRefreshDataTable;
 
-    protected CountryRepository $countryRepo;
-
-    public function boot()
-    {
-        $this->countryRepo = new CountryRepository();
-    }
-
     public function mount()
     {
         Gate::allowIf(Qs::userIsTeamSA() || Qs::userIsSuperAdmin());
@@ -28,8 +20,6 @@ class Index extends Component
     #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
-        return view('livewire.pages.residency.towns.index', [
-            'countries' => $this->countryRepo->getAll(),
-        ]);
+        return view('livewire.pages.residency.countries.index');
     }
 }

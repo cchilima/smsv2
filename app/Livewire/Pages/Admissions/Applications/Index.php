@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Livewire\Pages\Notices\Announcements;
+namespace App\Livewire\Pages\Admissions\Applications;
 
 use App\Helpers\Qs;
-use App\Repositories\Users\UserRepository;
+use App\Repositories\Accounting\PaymentMethodRepository;
 use App\Traits\CanRefreshDataTable;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
@@ -13,11 +13,11 @@ class Index extends Component
 {
     use CanRefreshDataTable;
 
-    protected UserRepository $userRepo;
+    protected PaymentMethodRepository $paymentMethodRepo;
 
     public function boot()
     {
-        $this->userRepo = new UserRepository();
+        $this->paymentMethodRepo = new PaymentMethodRepository();
     }
 
     public function mount()
@@ -28,8 +28,8 @@ class Index extends Component
     #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
-        return view('livewire.pages.notices.announcements.index', [
-            'userTypes' => $this->userRepo->getUserTypes(),
+        return view('livewire.pages.admissions.applications.index', [
+            'paymentMethods' => $this->paymentMethodRepo->getAll()
         ]);
     }
 }

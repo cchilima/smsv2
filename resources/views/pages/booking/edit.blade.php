@@ -14,7 +14,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <form class="ajax-update" data-reload="#page-header" method="post"
-                          action="{{ route('booking.update', $booking->id) }}">
+                          action="{{ route('bookings.update', $booking->id) }}">
                         @csrf @method('PUT')
                         <div class="form-group row">
                             <label class="col-lg-3 col-form-label font-weight-semibold">Hostel Name <span

@@ -26,19 +26,6 @@ class BedSpaceController extends Controller
         $this->bed_space_repository = $bed_space_repository;
         $this->room_repository = $room_repository;
     }
-    public function index()
-    {
-        $data['rooms'] = $this->room_repository->getAll();
-        return view('pages.bedspace.index', $data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -56,14 +43,6 @@ class BedSpaceController extends Controller
         } else {
             return Qs::json('capacity is ' . $currentCapacity->capacity . ' and is less than ' . $bed_space, false);
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**

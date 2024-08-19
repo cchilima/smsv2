@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Livewire\Pages\Notices\Announcements;
+namespace App\Livewire\Pages\Residency\Provinces;
 
 use App\Helpers\Qs;
-use App\Repositories\Users\UserRepository;
+use App\Repositories\Residency\CountryRepository;
 use App\Traits\CanRefreshDataTable;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
@@ -13,23 +13,23 @@ class Index extends Component
 {
     use CanRefreshDataTable;
 
-    protected UserRepository $userRepo;
+    protected CountryRepository $countryRepo;
 
     public function boot()
     {
-        $this->userRepo = new UserRepository();
+        $this->countryRepo = new CountryRepository();
     }
 
     public function mount()
     {
-        Gate::allowIf(Qs::userIsTeamSAT() || Qs::userIsSuperAdmin());
+        Gate::allowIf(Qs::userIsTeamSA() || Qs::userIsSuperAdmin());
     }
 
     #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
-        return view('livewire.pages.notices.announcements.index', [
-            'userTypes' => $this->userRepo->getUserTypes(),
+        return view('livewire.pages.residency.provinces.index', [
+            'countries' => $this->countryRepo->getAll(),
         ]);
     }
 }

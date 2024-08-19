@@ -369,7 +369,7 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['hostels.create', 'hostels.edit', 'hostels.index', 'rooms.index', 'rooms.edit', 'booking.index', 'booking.edit', 'bed-space.index', 'bed-space.edit']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['hostels.create', 'hostels.edit', 'hostels.index', 'rooms.index', 'rooms.edit', 'bookings.index', 'bookings.edit', 'bed-spaces.index', 'bed-spaces.edit']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-office"></i> <span>
                                     Accommodation</span></a>
 
@@ -388,14 +388,14 @@
 
                                 <li class="nav-item">
 
-                                    <a href="{{ route('bed-space.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['bed-space.create', 'bed-space.edit', 'bed-space.index']) ? 'active' : '' }}">
+                                    <a href="{{ route('bed-spaces.index') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['bed-spaces.create', 'bed-spaces.edit', 'bed-spaces.index']) ? 'active' : '' }}">
                                         <span>Bed Spaces</span></a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a href="{{ route('booking.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['booking.create', 'booking.edit', 'booking.index']) ? 'active' : '' }}">
+                                    <a href="{{ route('bookings.index') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['bookings.create', 'bookings.edit', 'bookings.index']) ? 'active' : '' }}">
                                         <span>Bed Space Booking</span></a>
                                 </li>
 
