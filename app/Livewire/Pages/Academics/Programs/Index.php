@@ -25,8 +25,8 @@ class Index extends Component
 
     public function mount()
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy']]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
+        // $this->middleware(TeamSA::class, ['except' => ['destroy']]);
+        // $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
     }
 
     #[Layout('components.layouts.app-bootstrap')]
