@@ -68,7 +68,6 @@ use App\Livewire\Pages\Residency\Countries\Index as CountriesIndex;
 use App\Livewire\Pages\Residency\Provinces\Index as ProvincesIndex;
 use App\Livewire\Pages\Residency\Towns\Index as TownsIndex;
 use App\Livewire\Pages\Settings\MaritalStatuses\Index as MaritalStatusesIndex;
-use App\Livewire\Pages\Settings\Settings\Index as SettingsIndex;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -325,7 +324,6 @@ Route::get('/towns', TownsIndex::class)->name('towns.index');
 
 // System Settings Routes
 Route::resource('settings', SettingsController::class);
-Route::get('/settings', SettingsIndex::class)->name('settings.index');
 
 // my account
 Route::group(['prefix' => 'my_account'], function () {

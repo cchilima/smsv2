@@ -34,14 +34,6 @@ class SettingsController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(SettingRequest $request)
@@ -54,14 +46,6 @@ class SettingsController extends Controller
         }
 
         return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Setting $setting)
-    {
-        //
     }
 
     /**
