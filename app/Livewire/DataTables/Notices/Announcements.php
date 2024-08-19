@@ -26,6 +26,7 @@ final class Announcements extends PowerGridComponent
     public function setUp(): array
     {
         $this->showCheckBox();
+        $this->sortBy('created_at', 'desc');
 
         return [
             Exportable::make('announcements-export')
