@@ -23,19 +23,6 @@ class CountryController extends Controller
         $this->countryRepo = $countryRepo;
     }
 
-    public function index()
-    {
-        return view('pages.countries.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
