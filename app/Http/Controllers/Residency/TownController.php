@@ -32,22 +32,6 @@ class TownController extends Controller
         $this->townRepo = $townRepository;
     }
 
-    public function index()
-    {
-        $countries = $this->countryRepo->getAll();
-        $towns = $this->townRepo->getAll();
-
-        return view('pages.towns.index', compact(['countries', 'towns']));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -61,14 +45,6 @@ class TownController extends Controller
         }
 
         return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Town $town)
-    {
-        //
     }
 
     /**

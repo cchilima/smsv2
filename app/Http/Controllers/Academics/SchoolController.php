@@ -10,6 +10,7 @@ use App\Http\Requests\Schools\School;
 use App\Http\Requests\Schools\SchoolUpdate;
 use App\Repositories\Academics\SchooolRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SchoolController extends Controller
 {
@@ -25,28 +26,16 @@ class SchoolController extends Controller
         $this->schoolRepo = $schoolRepo;
     }
 
-
-    public function index()
-    {
-        $schools['schools'] = $this->schoolRepo->getAll();
-        return view('pages.schools.index', $schools);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(School $req)
     {
-        //$data = $req->only(['name', 'description']);
-        $data = $req->only(['name', 'slug', 'description']);
+        $data = $req->only(['name', 'description']);
+
+        $lowerCaseName = Str::lower($data['name']);
+        $data['slug'] = Str::slug(Str::after($lowerCaseName, 'school of '));
+
         $this->schoolRepo->create($data);
 
         return Qs::jsonStoreOk();

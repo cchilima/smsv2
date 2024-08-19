@@ -21,7 +21,9 @@ final class Settings extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'SettingsTable';
     public bool $deferLoading = true;
+    public string $sortField = 'type';
 
     public function setUp(): array
     {

@@ -40,21 +40,6 @@ class ProgramController extends Controller
         $this->levels = $levels;
         $this->courses = $courses;
     }
-    public function index()
-    {
-        $program['programs'] = $this->programs->getAll();
-        $program['departments'] = $this->depart->getAll();
-        $program['qualifications'] = $this->qualification->getAll();
-        return view('pages.programs.index', $program);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -67,25 +52,6 @@ class ProgramController extends Controller
 
         return Qs::jsonStoreOk();
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $id = Qs::decodeHash($id);
-        $data['programId'] = $id;
-        $data['withCourseLevels'] = $this->programs->findOneP($id);
-        $data['programs'] = $someprograms = $this->programs->find($id);
-        $data['program'] = $someprograms = $this->programs->findOne($id);
-        $data['levels'] = $this->levels->getAll();
-        $data['newcourses'] = $this->courses->getAll();
-        $data['pcourses'] = [];
-
-        return !is_null($someprograms) ? view('pages.programs.show', $data)
-            : Qs::goWithDanger('pages.programs.index');
-    }
-
 
     /**
      * Show the form for editing the specified resource.

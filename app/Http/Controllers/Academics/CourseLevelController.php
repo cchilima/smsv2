@@ -20,23 +20,10 @@ class CourseLevelController extends Controller
     protected $courselevels;
     public function __construct(CourseLevelsRepository $courselevels)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->courselevels = $courselevels;
-    }
-    public function index()
-    {
-        $data['levels'] = $this->courselevels->getAll();
-        return view('pages.levels.index',$data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -65,7 +52,7 @@ class CourseLevelController extends Controller
     {
         $data['levels'] = $courselevels = $this->courselevels->find($id);
 
-        return !is_null($courselevels ) ? view('pages.levels.edit', $data)
+        return !is_null($courselevels) ? view('pages.levels.edit', $data)
             : Qs::goWithDanger('pages.levels.index');
     }
 

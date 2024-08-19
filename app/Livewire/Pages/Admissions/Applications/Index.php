@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Livewire\Pages\Admissions\Applications;
+
+use App\Helpers\Qs;
+use App\Repositories\Accounting\PaymentMethodRepository;
+use App\Traits\CanRefreshDataTable;
+use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+
+class Index extends Component
+{
+    use CanRefreshDataTable;
+
+    protected PaymentMethodRepository $paymentMethodRepo;
+
+    public function boot()
+    {
+        $this->paymentMethodRepo = new PaymentMethodRepository();
+    }
+
+    public function mount()
+    {
+        Gate::allowIf(Qs::userIsTeamSAT() || Qs::userIsSuperAdmin());
+    }
+
+    #[Layout('components.layouts.app-bootstrap')]
+    public function render()
+    {
+        return view('livewire.pages.admissions.applications.index', [
+            'paymentMethods' => $this->paymentMethodRepo->getAll()
+        ]);
+    }
+}

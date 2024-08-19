@@ -45,61 +45,6 @@
                         </div>
                         <div class="tab-pane fade show" id="all-programs">
                             <livewire:datatables.academics.department-programs :departmentId="$departmentId" />
-
-                            <table class="table datatable-button-html5-columns">
-                                <thead>
-                                    <tr>
-                                        <th>S/N</th>
-                                        <th>Code</th>
-                                        <th>Name</th>
-                                        <th>Qualification</th>
-                                        <th>Description</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($department->programs as $p)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $p->code }}</td>
-                                            <td>{{ $p->name }}</td>
-                                            <td>{{ $p->qualification->name }}</td>
-                                            <td>{{ Str::limit($p->description, 20) }}</td>
-                                            <td class="text-center">
-                                                <div class="list-icons">
-                                                    <div class="dropdown">
-                                                        <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                            <i class="icon-menu9"></i>
-                                                        </a>
-
-                                                        <div class="dropdown-menu dropdown-menu-left">
-                                                            @if (Qs::userIsTeamSA())
-                                                                <a href="{{ route('programs.edit', $p->id) }}"
-                                                                    class="dropdown-item"><i class="icon-pencil"></i>
-                                                                    Edit</a>
-                                                            @endif
-                                                            @if (Qs::userIsTeamSA())
-                                                                <a href="{{ route('programs.show', Qs::hash($p->id)) }}"
-                                                                    class="dropdown-item"><i class="icon-eye"></i> Show</a>
-                                                            @endif
-                                                            @if (Qs::userIsSuperAdmin())
-                                                                <a id="{{ $p->id }}"
-                                                                    onclick="confirmDelete(this.id)" href="#"
-                                                                    class="dropdown-item"><i class="icon-trash"></i>
-                                                                    Delete</a>
-                                                                <form method="post" id="item-delete-{{ $p->id }}"
-                                                                    action="{{ route('programs.destroy', $p->id) }}"
-                                                                    class="hidden">@csrf @method('delete')</form>
-                                                            @endif
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
                         </div>
 
                     </div>

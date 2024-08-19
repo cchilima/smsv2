@@ -2,7 +2,6 @@
     use App\Helpers\Qs;
 @endphp
 
-
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -39,12 +38,11 @@
         }
     </style>
 
- @livewireStyles
+    @livewireStyles
 
 </head>
 
 <body>
-
 
     <!-- NAVBAR -->
     <header>
@@ -172,19 +170,6 @@
                             </li>
                         @endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
                         <li
                             class="white {{ in_array(Route::currentRouteName(), ['academic-period-management.index', 'academic-period-fees.edit', 'academic-period-management.edit', 'academic-periods.create', 'academic-periods.edit', 'academic-periods.index']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a class="collapsible-header waves-effect waves-blue primary white-text" href="#"
@@ -213,14 +198,6 @@
                                 </ul>
                             </div>
                         </li>
-
-
-
-
-
-
-
-
 
                         <li
                             class="white {{ in_array(Route::currentRouteName(), ['credit.notes', 'student.list', 'creditors', 'aged.receivables', 'revenue.analysis', 'invoices', 'fees.create', 'fees.edit', 'fees.index']) ? 'nav-item-expanded nav-item-open' : '' }}">
@@ -313,7 +290,6 @@
                             </div>
                         </li>
 
-
                         <!-- Students -->
                         <li
                             class="white {{ in_array(Route::currentRouteName(), ['search', 'students.create', 'students.edit']) ? 'nav-item-expanded nav-item-open' : '' }}">
@@ -363,7 +339,7 @@
 
                         <!-- Accommodation -->
                         <li
-                            class="white {{ in_array(Route::currentRouteName(), ['hostels.create', 'hostels.edit', 'hostels.index', 'rooms.index', 'rooms.edit', 'booking.index', 'booking.edit', 'bed-space.index', 'bed-space.edit']) ? 'nav-item-expanded nav-item-open' : '' }}">
+                            class="white {{ in_array(Route::currentRouteName(), ['hostels.create', 'hostels.edit', 'hostels.index', 'rooms.index', 'rooms.edit', 'bookings.index', 'bookings.edit', 'bed-spaces.index', 'bed-spaces.edit']) ? 'nav-item-expanded nav-item-open' : '' }}">
                             <a class="collapsible-header waves-effect waves-blue primary white-text" href="#"><i
                                     class="icon-office"></i> <span>Accommodation</span></a>
                             <div class="collapsible-body">
@@ -384,13 +360,13 @@
                                                 class="icon-fence"></i> <span>Admit Student</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('bed-space.index') }}"
-                                            class="waves-effect waves-blue primary white-text {{ in_array(Route::currentRouteName(), ['bed-space.create', 'bed-space.edit', 'bed-space.index']) ? 'active' : '' }}"><i
+                                        <a href="{{ route('bed-spaces.index') }}"
+                                            class="waves-effect waves-blue primary white-text {{ in_array(Route::currentRouteName(), ['bed-spaces.create', 'bed-spaces.edit', 'bed-spaces.index']) ? 'active' : '' }}"><i
                                                 class="icon-fence"></i> <span>Bed Spaces</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="{{ route('booking.index') }}"
-                                            class="waves-effect waves-blue primary white-text {{ in_array(Route::currentRouteName(), ['booking.create', 'booking.edit', 'booking.index']) ? 'active' : '' }}"><i
+                                        <a href="{{ route('bookings.index') }}"
+                                            class="waves-effect waves-blue primary white-text {{ in_array(Route::currentRouteName(), ['bookings.create', 'bookings.edit', 'bookings.index']) ? 'active' : '' }}"><i
                                                 class="icon-fence"></i> <span>Bed Space Booking</span></a>
                                     </li>
                                 </ul>
@@ -427,7 +403,6 @@
                                 </ul>
                             </div>
                         </li>
-
 
                         <!-- Other -->
                         <li
@@ -470,11 +445,6 @@
                             </div>
                         </li>
                     @endif
-
-
-
-
-
 
                     @if (Qs::userIsSuperAdmin() || Qs::userIsAdmin())
                         <li
@@ -597,7 +567,6 @@
                         </li>
                     @endif
 
-
                     {{-- Manage Account --}}
                     <li class="nav-item">
                         <a href="{{ route('my_account') }}"
@@ -618,27 +587,18 @@
                         </form>
                     </li>
 
-
-
-
-
                 </ul>
             </li>
 
-
-
-
         </ul>
     @endauth
-
 
     <main>
         {{ $slot }}
     </main>
 
-
-
     @livewireScripts
 
 </body>
+
 </html>

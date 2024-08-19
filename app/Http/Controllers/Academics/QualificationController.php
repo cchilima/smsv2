@@ -16,23 +16,10 @@ class QualificationController extends Controller
     protected $qualifications;
     public function __construct(QualificationsRepository $qualifications)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->qualifications = $qualifications;
-    }
-    public function index()
-    {
-        $data['qualification'] = $this->qualifications->getAll();
-        return view('pages.qualifications.index',$data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -62,7 +49,7 @@ class QualificationController extends Controller
     {
         $data['qualification'] = $qualifications = $this->qualifications->find($id);
 
-        return !is_null($qualifications ) ? view('pages.qualifications.edit', $data)
+        return !is_null($qualifications) ? view('pages.qualifications.edit', $data)
             : Qs::goWithDanger('pages.qualifications.index');
     }
 

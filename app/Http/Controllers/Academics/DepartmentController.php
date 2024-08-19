@@ -22,20 +22,6 @@ class DepartmentController extends Controller
 
         $this->department = $department;
     }
-    public function index()
-    {
-        $departments['departments'] = $this->department->getAll();
-        $departments['schools'] = $this->department->getSchools();
-        return view('pages.departments.index', $departments);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.

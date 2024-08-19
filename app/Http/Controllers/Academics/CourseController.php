@@ -25,19 +25,6 @@ class CourseController extends Controller
         $this->courses = $courses;
     }
 
-    public function index()
-    {
-        return view('pages.courses.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */

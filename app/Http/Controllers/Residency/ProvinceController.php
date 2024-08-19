@@ -29,22 +29,6 @@ class ProvinceController extends Controller
         $this->countryRepo = $countryRepository;
     }
 
-    public function index()
-    {
-        $provinces = $this->provinceRepo->getAll();
-        $countries = $this->countryRepo->getAll();
-
-        return view('pages.provinces.index', compact(['provinces', 'countries']));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -58,14 +42,6 @@ class ProvinceController extends Controller
         }
 
         return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Province $province)
-    {
-        //
     }
 
     /**

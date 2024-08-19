@@ -3,6 +3,7 @@
 namespace App\Livewire\Datatables\Academics;
 
 use App\Models\Academics\AcademicPeriodClass;
+use App\Repositories\Academics\AcademicPeriodClassRepository;
 use App\Repositories\Academics\AcademicPeriodRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,13 +22,16 @@ final class AcademicPeriodClasses extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'AcademicPeriodClassesTable';
     public bool $deferLoading = true;
 
     protected AcademicPeriodRepository $academicPeriodRepo;
+    protected AcademicPeriodClassRepository $academicPeriodClassRepo;
 
     public function boot(): void
     {
         $this->academicPeriodRepo = new AcademicPeriodRepository();
+        $this->academicPeriodClassRepo = new AcademicPeriodClassRepository();
     }
 
     public function setUp(): array
@@ -47,7 +51,7 @@ final class AcademicPeriodClasses extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return AcademicPeriodClass::query();
+        return $this->academicPeriodClassRepo->getAll('academic_period_id', false);
     }
 
     public function relationSearch(): array
@@ -55,7 +59,7 @@ final class AcademicPeriodClasses extends PowerGridComponent
         return [
             'course' => ['name'],
             'instructor' => ['first_name', 'last_name'],
-            'academicPeriod' => ['code'],
+            'academicPeriod' => ['name', 'code'],
         ];
     }
 
@@ -63,6 +67,7 @@ final class AcademicPeriodClasses extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('academicPeriod.code')
+            ->add('academicPeriod.name')
             ->add('course.name')
             ->add('instructor', function ($academicPeriodClass) {
                 return $academicPeriodClass->instructor->first_name . ' ' . $academicPeriodClass->instructor->last_name;
@@ -72,7 +77,10 @@ final class AcademicPeriodClasses extends PowerGridComponent
     public function columns(): array
     {
         return [
-            Column::make('Academic Period', 'academicPeriod.code')
+            Column::make('Academic Period Code', 'academicPeriod.code')
+                ->searchable(),
+
+            Column::make('Academic Period', 'academicPeriod.name')
                 ->searchable(),
 
             Column::make('Course', 'course.name')

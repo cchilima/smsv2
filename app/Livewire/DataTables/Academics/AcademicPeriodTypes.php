@@ -20,6 +20,7 @@ final class AcademicPeriodTypes extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'AcademicPeriodTypesTable';
     public string $sortField = 'name';
     public bool $deferLoading = true;
 

@@ -16,9 +16,11 @@ class AcademicPeriodClassRepository
         return AcademicPeriodClass::create($data);
     }
 
-    public function getAll($order = 'academic_period_id')
+    public function getAll($order = 'academic_period_id', $executeQuery = true)
     {
-        return AcademicPeriodClass::orderBy($order, 'desc')->get();
+        $query =  AcademicPeriodClass::orderBy($order, 'desc');
+
+        return $executeQuery ? $query->get() : $query;
     }
     public function getAllAcClasses($id, $order = 'academic_period_id', $executeQuery = true)
     {

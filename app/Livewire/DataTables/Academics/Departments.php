@@ -21,8 +21,10 @@ final class Departments extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'DepartmentsTable';
     protected SchooolRepository $schoolRepo;
     public bool $deferLoading = true;
+
 
     public function boot(): void
     {

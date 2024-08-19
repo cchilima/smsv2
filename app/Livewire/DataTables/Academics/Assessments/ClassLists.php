@@ -22,6 +22,7 @@ final class ClassLists extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'AssessmentsClassListsTable';
     public bool $deferLoading = true;
 
     protected AcademicPeriodClassRepository $academicPeriodClassRepo;

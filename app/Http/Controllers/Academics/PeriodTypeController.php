@@ -19,25 +19,11 @@ class PeriodTypeController extends Controller
     protected $periodTypes;
     public function __construct(PeriodTypeRepository $periodTypes)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
 
         $this->periodTypes = $periodTypes;
-    }
-
-    public function index()
-    {
-        $types['type'] = $this->periodTypes->getAll();
-        return view('pages.academicperiodtypes.index',$types);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -67,7 +53,7 @@ class PeriodTypeController extends Controller
     {
         $type['type'] = $periodtypes = $this->periodTypes->find($id);
 
-        return !is_null($periodtypes ) ? view('pages.academicperiodtypes.edit', $type)
+        return !is_null($periodtypes) ? view('pages.academicperiodtypes.edit', $type)
             : Qs::goWithDanger('pages.academicperiodtypes.index');
     }
 

@@ -19,7 +19,10 @@ use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 final class Schools extends PowerGridComponent
 {
     use WithExport;
+
+    public string $tableName = 'SchoolsTable';
     public bool $deferLoading = true;
+    public string $sortField = 'name';
 
     public function setUp(): array
     {
@@ -50,6 +53,7 @@ final class Schools extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('name')
+            ->add('slug')
             ->add('description');
     }
 
@@ -57,6 +61,10 @@ final class Schools extends PowerGridComponent
     {
         return [
             Column::make('Name', 'name')
+                ->sortable()
+                ->searchable(),
+
+            Column::make('Slug', 'slug')
                 ->sortable()
                 ->searchable(),
 

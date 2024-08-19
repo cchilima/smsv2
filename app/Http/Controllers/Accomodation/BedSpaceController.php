@@ -17,29 +17,14 @@ class BedSpaceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $bed_space_repository,$room_repository;
-    public function __construct( BedSpaceRepository $bed_space_repository,RoomRepository $room_repository)
+    protected $bed_space_repository, $room_repository;
+    public function __construct(BedSpaceRepository $bed_space_repository, RoomRepository $room_repository)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->bed_space_repository = $bed_space_repository;
         $this->room_repository = $room_repository;
-
-    }
-    public function index()
-    {
-        $data['bed_space'] = $this->bed_space_repository->getAll();
-        $data['rooms'] = $this->room_repository->getAll();
-        return view('pages.bedspace.index',$data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -47,25 +32,17 @@ class BedSpaceController extends Controller
      */
     public function store(BedSpace $request)
     {
-        $data = $request->only(['room_id','bed_number','is_available']);
+        $data = $request->only(['room_id', 'bed_number', 'is_available']);
 
         $currentCapacity = $this->room_repository->find($data['room_id']);
         $bed_space = $this->bed_space_repository->capacity($data['room_id']);
 
-        if ($currentCapacity->capacity>=$bed_space) {
+        if ($currentCapacity->capacity >= $bed_space) {
             $hostel = $this->bed_space_repository->create($data);
             return Qs::jsonStoreOk();
         } else {
-            return Qs::json('capacity is '.$currentCapacity->capacity.' and is less than '.$bed_space,false);
+            return Qs::json('capacity is ' . $currentCapacity->capacity . ' and is less than ' . $bed_space, false);
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -75,7 +52,7 @@ class BedSpaceController extends Controller
     {
         $bed_space = $this->bed_space_repository->find($id);
         $data['rooms'] = $this->room_repository->getAll();
-        return !is_null($bed_space) ? view('pages.bedspace.edit', $data,compact('bed_space'))
+        return !is_null($bed_space) ? view('pages.bedspace.edit', $data, compact('bed_space'))
             : Qs::goWithDanger('pages.bedspace.index');
     }
 
@@ -84,7 +61,7 @@ class BedSpaceController extends Controller
      */
     public function update(BedSpaceUpdate $request, string $id)
     {
-        $data = $request->only(['room_id','bed_number','is_available']);
+        $data = $request->only(['room_id', 'bed_number', 'is_available']);
         $this->bed_space_repository->update($id, $data);
         return Qs::jsonUpdateOk();
     }
