@@ -2,8 +2,10 @@
 
 namespace App\Repositories\Applications;
 
-use App\Http\Requests\Applications\Attachment;
 use App\Models\Applications\{ApplicantAttachment, ApplicantPayment};
+use App\Http\Requests\Applications\Attachment;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ApplicationReceived;
 use App\Models\Applications\Applicant;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
@@ -37,18 +39,50 @@ class ApplicantRepository
         $method = $data->payment_method_id;
 
         try {
+
+            DB::beginTransaction();
+            
             $applicant = Applicant::where('applicant_code', $data->applicant)->first();
             $updated = ApplicantPayment::create(['applicant_id' => $applicant->id, 'amount' => $amount, 'payment_method_id' => $method]);
 
+            DB::commit();
+
             if ($updated) {
+
                 $this->checkApplicationCompletion($applicant->id);
+                $this->fullApplicationReceived($applicant->id);
             }
 
             return true;
+
         } catch (\Throwable $th) {
-            dd($th);
+
+            DB::rollback();
             return false;
         }
+    }
+
+    private function fullApplicationReceived($application_id)
+    {
+
+       try {
+        
+            $application = $this->getApplication($application_id);
+
+            if($application->payment->sum('amount') >= 150){
+
+                // queue the email for applicant
+                Mail::to($application->email)->bcc(['stembo@zut.edu.zm'])->queue(new ApplicationReceived($application, 'applicant'));
+
+                // queue the email for admissions admissions@zut.edu.zm
+                Mail::to('stembo@zut.edu.zm')->bcc(['stembo@zut.edu.zm'])->queue(new ApplicationReceived($application, 'admissions'));
+
+                return true;
+          }
+
+       } catch (\Throwable $th) {
+            return false;
+       }        
     }
 
     public function getAll()
@@ -120,7 +154,7 @@ class ApplicantRepository
     public function checkApplicationCompletion($application_id)
     {
         // Find the application
-        $application = Applicant::find($application_id);
+        $application = $this->getApplication($application_id);
 
         $applicationNextOfKin = $application->nextOfKin;
 

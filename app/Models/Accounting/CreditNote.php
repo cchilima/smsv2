@@ -10,7 +10,7 @@ class CreditNote extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['invoice_id','invoice_detail_id', 'amount', 'status', 'issued_by', 'authorizers'];
+    protected $fillable = ['invoice_id', 'reason', 'invoice_detail_id', 'amount', 'status', 'issued_by', 'authorizers'];
 
 
     public function invoiceDetail()

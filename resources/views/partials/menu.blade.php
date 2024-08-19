@@ -230,6 +230,12 @@
                                         <span>Payment Methods</span></a>
                                 </li>
 
+                                <li class="nav-item">
+                                    <a href="{{ route('accounting.approve_credit_notes') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['payment-methods.create', 'payment-methods.edit', 'payment-methods.index']) ? 'active' : '' }}">
+                                        <span>Approve Credit Notes</span></a>
+                                </li>
+
                                 @if (true)
                                     <li
                                         class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['credit.notes', 'student.list', 'creditors', 'aged.receivables', 'revenue.analysis', 'invoices']) ? 'nav-item-expanded nav-item-open' : '' }} ">

@@ -4,8 +4,10 @@ namespace App\Livewire\Applications;
 
 use DB;
 use Auth;
+use App\Mail\ApplicationVerdit;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Mail;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Applications\ApplicantRepository;
 
@@ -34,12 +36,19 @@ class CompletedApplication extends Component
 
     public function reject()
     {
-
+        // get application
         $applicantObj = $this->applicantRepo->getApplication($this->application_id);
 
         // Update application status
         $applicantObj->update(['status' => 'rejected']);
 
+        // action
+        $action_status = 'rejected';
+
+         // queue the email
+         Mail::to($applicantObj->email)->bcc(['stembo@zut.edu.zm'])->queue(new ApplicationVerdit($applicantObj, $action_status));
+
+        // give feedback
         $this->dispatch('rejected');
     }
 
@@ -113,9 +122,14 @@ class CompletedApplication extends Component
             // Update application status
             $applicantObj->update(['status' => 'accepted']);
 
+            // action
+            $action_status = 'accepted';
+
+            // queue the email
+            Mail::to($applicantObj->email)->bcc(['stembo@zut.edu.zm'])->queue(new ApplicationVerdit($applicantObj, $action_status));
+
             $this->dispatch('accepted');
 
-    
         } catch (\Throwable $th) {
             dd($th);
             DB::rollback();

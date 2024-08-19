@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('credit_notes', function (Blueprint $table) {
             $table->id();
             $table->decimal('amount', 10, 2);
+            $table->longText('reason');
             $table->string('authorizers')->nullable();
             $table->enum('status', ['Director Finance', 'Executive Director'])->default('Director Finance'); 
             $table->foreignId('issued_by')->constrained('users')->onDelete('restrict');

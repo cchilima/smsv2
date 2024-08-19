@@ -1,8 +1,10 @@
+<div class="container mt-10">
+
 @php
     use App\Helpers\Qs;
 @endphp
 
-<div class="container mt-10">
+
     <div>
 
         <ul class="custom-tabs align-left">
@@ -16,18 +18,12 @@
             </li>
         </ul>
 
-
         @if ($currentSection == 'details')
-
             <div class="mt-4">
-
-
                 @if (count($creditNoteItems) > 0)
                     <a class="btn btn-small rounded-md primary mb-5 right" wire:click.prevent="raise()"
-                        wire:confirm="Are you sure you want to create credit note?"> raise credit note<i
+                        wire:confirm="Are you sure you want to create credit note?"> Raise Credit Note<i
                             class="material-icons right">edit_note</i> </a>
-
-                    <a>
                 @endif
 
                 <form action="{{ route('student.download-invoice', $invoice->id) }}" method="get">
@@ -37,15 +33,17 @@
                         PDF
                     </button>
                 </form>
-                </a>
 
+                <div class="white z-depth-1 rounded mt-4 mb-10">
 
+                    <div class="p-10">
+                        <div class="input-field">
+                            <textarea id="credit_note_reason" wire:model.live="creditNoteReason" class="materialize-textarea"></textarea>
+                            <label class="active" for="credit_note_reason">Enter credit note reason before marking</label>
+                        </div>
+                    </div>
 
-
-                <div class="white z-depth-1 rounded mt-4">
-
-
-                    <table class="table centered">
+                    <table class="responsive-table centered">
                         <thead>
                             <tr>
                                 <th>S/N</th>
@@ -63,9 +61,9 @@
                                     <td>ZMW {{ $detail->amount }}</td>
                                     <td>{{ $detail->created_at->format('d F Y') }}</td>
                                     <td>
-                                        <p wire:ignore>
+                                        <p >
                                             <label>
-                                                <input wire:model="checkedItems"
+                                                <input @if($creditNoteReason == '') disabled  @endif wire:model="checkedItems"
                                                     wire:click="addItem({{ $detail->id }},{{ $detail->amount }})"
                                                     type="checkbox" class="filled-in" value="{{ $detail->id }}" />
                                                 <span></span>
@@ -75,27 +73,49 @@
                                 </tr>
                             @endforeach
                         </tbody>
-
                     </table>
-
                 </div>
+
+                @if(count($creditNoteItems)>0)
+
+                <div class="white z-depth-1 rounded mt-4">
+
+
+                <table class="table centered">
+                    <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Amount</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($creditNoteItems as $key => $item)
+                            <tr>
+                                <td>CN{{ ++$key }}</td>
+                                <td>ZMW {{ $item['amount'] }}</td>
+                                <td>{{ $item['reason'] }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                </div>
+
+                @endif
+
 
             </div>
         @else
             <div class="mt-4">
-
-
-                <b class="flow-text light-deca">invoice credit notes</b>
-
-
+                <b class="flow-text light-deca">Invoice Credit Notes</b>
                 <div class="white z-depth-1 rounded mt-4">
-
-                    <table class="table centered">
+                    <table class="responsive-table centered">
                         <thead>
                             <tr>
                                 <th>S/N</th>
                                 <th>Fee</th>
                                 <th>Amount</th>
+                                <th>Reason</th>
                                 <th>Status</th>
                                 <th>Issued by</th>
                                 <th>Date</th>
@@ -106,7 +126,8 @@
                                 <tr>
                                     <td>{{ ++$key }}</td>
                                     <td>{{ $note->invoiceDetail->fee->name }}</td>
-                                    <td>{{ $note->amount }}</td>
+                                    <td>ZMW {{ $note->amount }}</td>
+                                    <td><p class="truncate">{{$note->reason}}</p></td>
                                     <td>{{ $note->status }}</td>
                                     <td>{{ $note->issuer->first_name }} {{ $note->issuer->last_name }}</td>
                                     <td>{{ $note->created_at->format('d F Y') }}</td>
@@ -114,14 +135,13 @@
                             @endforeach
                         </tbody>
                     </table>
-
                 </div>
             </div>
-
         @endif
 
     </div>
-</div>
+
+
 
 
 @script
@@ -143,5 +163,13 @@
                 html: 'credit note creation unsuccessful'
             })
         });
+
+        $wire.on('give-reason', () => {
+            M.toast({
+                html: 'please specify reason'
+            })
+        });
     </script>
 @endscript
+
+</div>
