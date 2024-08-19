@@ -233,7 +233,7 @@
 
                                 <li class="nav-item">
                                     <a href="{{ route('accounting.approve_credit_notes') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['payment-methods.create', 'payment-methods.edit', 'payment-methods.index']) ? 'active' : '' }}">
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['accounting.approve_credit_notes']) ? 'active' : '' }}">
                                         <span>Approve Credit Notes</span></a>
                                 </li>
 

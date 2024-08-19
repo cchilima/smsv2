@@ -39,7 +39,7 @@ use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Users\MyAccountController;
 use App\Http\Controllers\Users\StudentController as UsersStudentController;
 use App\Http\Controllers\Users\UserController;
-use App\Livewire\Accounting\{ViewInvoiceDetails};
+use App\Livewire\Accounting\{ViewInvoiceDetails, ApproveCreditNotes};
 use App\Livewire\Applications\{InitiateApplication, CompleteApplication, CompletedApplication, MyApplications};
 
 // Reactive Livewire Pages
@@ -194,6 +194,7 @@ Route::get('/application/{application_id}', CompletedApplication::class)->name('
 
 // Accounting livewire routes
 Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
+Route::get('/approve-credit-notes', ApproveCreditNotes::class)->name('accounting.approve_credit_notes');
 
 Route::get('/applications', ApplicationsIndex::class)->name('application.index');
 //Route::get('/applications/initiate', [ApplicantController::class, 'initiate'])->name('application.initiate');
