@@ -28,22 +28,6 @@ class AcademicPeriodController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $data['open'] = $this->periods->getAllOpenedAc();
-        $data['closed'] = $this->periods->getAllClosed();
-        $data['periods'] = $this->periods->getAll();
-        $data['periodTypes'] = $this->periods->getPeriodTypes();
-        $data['studyModes'] = $this->periods->getStudyModes();
-        $data['intakes'] = $this->periods->getIntakes();
-
-        return view('pages.academicPeriods.index', $data);
-    }
-
-
-    /**
      * Show the form for creating a new resource.
      */
     public function create()
