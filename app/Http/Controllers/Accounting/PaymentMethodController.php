@@ -23,19 +23,6 @@ class PaymentMethodController extends Controller
         $this->paymentMethodRepo = $paymentMethodRepo;
     }
 
-    public function index()
-    {
-        return view('pages.paymentMethods.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -50,14 +37,6 @@ class PaymentMethodController extends Controller
         }
 
         return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(PaymentMethod $paymentMethod)
-    {
-        //
     }
 
     /**
