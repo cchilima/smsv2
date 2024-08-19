@@ -21,6 +21,7 @@ final class PaymentMethods extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'PaymentMethodsTable';
     public string $sortField = 'name';
     public bool $deferLoading = true;
 

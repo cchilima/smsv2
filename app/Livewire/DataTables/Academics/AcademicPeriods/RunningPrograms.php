@@ -21,6 +21,7 @@ final class RunningPrograms extends PowerGridComponent
 {
     use WithExport;
 
+    public string $tableName = 'AcademicPeriodRunningProgramsTable';
     public string $sortField = 'name';
     public bool $deferLoading = true;
     public string $academicPeriodId;

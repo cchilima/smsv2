@@ -22,9 +22,9 @@ class Prerequisite extends FormRequest
     public function rules(): array
     {
         return [
-                'course_id' => 'required|integer|exists:courses,id',
-                'prerequisite_course_id' => 'required|array',
-                'prerequisite_course_id.*' => 'exists:courses,id',
+            'course_id' => 'required|integer|exists:courses,id',
+            'prerequisite_course_id' => 'required|array',
+            'prerequisite_course_id.*' => 'exists:courses,id',
         ];
     }
 }

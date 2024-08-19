@@ -19,6 +19,7 @@ use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 
 final class Types extends PowerGridComponent
 {
+    public string $tableName = 'AssessmentTypesTable';
     public bool $deferLoading = true;
     public string $sortField = 'name';
 

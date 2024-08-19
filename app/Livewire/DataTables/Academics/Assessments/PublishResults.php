@@ -17,6 +17,7 @@ use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 
 final class PublishResults extends PowerGridComponent
 {
+    public string $tableName = 'PublishResultsTable';
     public string $academicPeriodId;
     public bool $deferLoading = true;
     public string $sortField = 'name';

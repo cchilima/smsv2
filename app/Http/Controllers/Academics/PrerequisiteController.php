@@ -28,22 +28,6 @@ class PrerequisiteController extends Controller
         $this->coursesRepo = $coursesRepo;
     }
 
-    public function index()
-    {
-        $courses['courses'] = $this->prerequisiteRepo->getAll();
-        $courses['pcourses'] = $this->coursesRepo->getAll();
-
-        return view('pages.prerequisites.index', $courses);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */

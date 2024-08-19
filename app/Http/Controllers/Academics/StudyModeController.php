@@ -25,20 +25,6 @@ class StudyModeController extends Controller
         $this->studymode = $studymode;
     }
 
-
-    public function index()
-    {
-        return view('pages.studymodes.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */

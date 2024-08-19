@@ -32,12 +32,6 @@ class TownController extends Controller
         $this->townRepo = $townRepository;
     }
 
-    public function index()
-    {
-        $data['countries'] = $this->countryRepo->getAll();
-        return view('pages.towns.index', $data);
-    }
-
     /**
      * Show the form for creating a new resource.
      */

@@ -41,19 +41,31 @@ use App\Http\Controllers\Users\StudentController as UsersStudentController;
 use App\Http\Controllers\Users\UserController;
 use App\Livewire\Accounting\{ViewInvoiceDetails};
 use App\Livewire\Applications\{InitiateApplication, CompleteApplication, CompletedApplication, MyApplications};
-use App\Livewire\Pages\MaritalStatuses\Index as MaritalStatusIndex;
+
+// Reactive Livewire Pages
+use App\Livewire\Pages\Academics\AcademicPeriods\Index as AcademicPeriodsIndex;
+use App\Livewire\Pages\Academics\AcademicPeriodClasses\Index as AcademicPeriodClassesIndex;
+use App\Livewire\Pages\Academics\AcademicPeriodTypes\Index as AcademicPeriodTypesIndex;
+use App\Livewire\Pages\Academics\Courses\Index as CoursesIndex;
+use App\Livewire\Pages\Academics\CourseLevels\Index as CourseLevelsIndex;
+use App\Livewire\Pages\Academics\Departments\Index as DepartmentsIndex;
+use App\Livewire\Pages\Academics\Intakes\Index as IntakesIndex;
+use App\Livewire\Pages\Academics\Prerequisites\Index as PrerequisitesIndex;
+use App\Livewire\Pages\Academics\Programs\Index as ProgramsIndex;
+use App\Livewire\Pages\Academics\Programs\Show as ShowProgram;
+use App\Livewire\Pages\Academics\Qualifications\Index as QualificationsIndex;
+use App\Livewire\Pages\Academics\Schools\Index as SchoolsIndex;
+use App\Livewire\Pages\Academics\StudyModes\Index as StudyModesIndex;
+use App\Livewire\Pages\Notices\Announcements\Index as AnnouncementsIndex;
+use App\Livewire\Pages\Residency\Towns\Index as TownsIndex;
+use App\Livewire\Pages\Settings\MaritalStatuses\Index as MaritalStatusIndex;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
-
-
-
-
-
-
 
 Route::get('announcement/{announcement_id}', [AnnouncementController::class, 'ShowAnnouncement'])->name('announcement.fullview');
 Route::post('announcement/{announcement_id}/dismiss', [AnnouncementController::class, 'dismissAnnouncement'])->name('announcement.dismiss');
@@ -192,30 +204,60 @@ Route::get('/applications/{status}/{id}', [ApplicantController::class, 'Applicat
 /* }); */
 
 Route::resource('courses', CourseController::class);
+Route::get('/courses', CoursesIndex::class)->name('courses.index');
+
+Route::get('/programs/{id}', ShowProgram::class)->name('programs.show');
+Route::get('/programs', ProgramsIndex::class)->name('programs.index');
 Route::resource('programs', ProgramController::class);
+
 Route::resource('study-modes', StudyModeController::class);
+Route::get('/study-modes', StudyModesIndex::class)->name('study-modes.index');
+
 Route::resource('period-types', PeriodTypeController::class);
+Route::get('/period-types', AcademicPeriodTypesIndex::class)->name('period-types.index');
+
 Route::resource('departments', DepartmentController::class);
+Route::get('/departments', DepartmentsIndex::class)->name('departments.index');
+
 Route::resource('announcements', AnnouncementController::class);
+Route::get('/announcements', AnnouncementsIndex::class)->name('announcements.index');
+
 Route::resource('qualifications', QualificationController::class);
+Route::get('/qualifications', QualificationsIndex::class)->name('qualifications.index');
+
 Route::resource('levels', CourseLevelController::class);
+Route::get('/levels', CourseLevelsIndex::class)->name('levels.index');
+
 Route::resource('intakes', IntakeController::class);
+Route::get('/intakes', IntakesIndex::class)->name('intakes.index');
+
 Route::resource('schools', SchoolController::class);
+Route::get('/schools', SchoolsIndex::class)->name('schools.index');
+
 Route::resource('prerequisites', PrerequisiteController::class);
+Route::get('/prerequisites', PrerequisitesIndex::class)->name('prerequisites.index');
+
 Route::resource('program-courses', ProgramCoursesController::class);
+
 Route::resource('classAssessments', ClassAssessmentsController::class);
 Route::resource('assessments', AssessmentsTypesController::class);
 Route::resource('registration', StudentRegistrationController::class);
 
 Route::resource('fees', FeeController::class);
+
 Route::resource('marital-statuses', MaritalStatusController::class);
 Route::get('/marital-statuses', MaritalStatusIndex::class)->name('marital-statuses.index');
+
 Route::resource('students', StudentController::class);
 Route::resource('users', UserController::class);
 
 // Academic Period Routes
 Route::resource('academic-periods', AcademicPeriodController::class);
+Route::get('/academic-periods', AcademicPeriodsIndex::class)->name('academic-periods.index');
+
 Route::resource('academic-period-classes', AcademicPeriodClassController::class);
+Route::get('/academic-period-classes', AcademicPeriodClassesIndex::class)->name('academic-period-classes.index');
+
 Route::resource('academic-period-management', APManagementController::class);
 Route::resource('academic-period-fees', APFeesController::class);
 Route::resource('audits', AuditReportsController::class);
@@ -252,6 +294,7 @@ Route::resource('countries', CountryController::class);
 Route::get('/provinces/{provinceId}/towns', [ProvinceController::class, 'getTownsByProvince'])->name('towns.getTownsByProvince');
 Route::resource('provinces', ProvinceController::class);
 Route::resource('towns', TownController::class);
+Route::get('/towns', TownsIndex::class)->name('towns.index');
 
 // System Settings Routes
 Route::resource('settings', SettingsController::class);
