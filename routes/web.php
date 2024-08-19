@@ -52,6 +52,7 @@ use App\Livewire\Pages\Academics\Departments\Index as DepartmentsIndex;
 use App\Livewire\Pages\Academics\Intakes\Index as IntakesIndex;
 use App\Livewire\Pages\Academics\Prerequisites\Index as PrerequisitesIndex;
 use App\Livewire\Pages\Academics\Programs\Index as ProgramsIndex;
+use App\Livewire\Pages\Academics\Programs\Show as ShowProgram;
 use App\Livewire\Pages\Academics\Qualifications\Index as QualificationsIndex;
 use App\Livewire\Pages\Academics\Schools\Index as SchoolsIndex;
 use App\Livewire\Pages\Academics\StudyModes\Index as StudyModesIndex;
@@ -205,8 +206,9 @@ Route::get('/applications/{status}/{id}', [ApplicantController::class, 'Applicat
 Route::resource('courses', CourseController::class);
 Route::get('/courses', CoursesIndex::class)->name('courses.index');
 
-Route::resource('programs', ProgramController::class);
+Route::get('/programs/{id}', ShowProgram::class)->name('programs.show');
 Route::get('/programs', ProgramsIndex::class)->name('programs.index');
+Route::resource('programs', ProgramController::class);
 
 Route::resource('study-modes', StudyModeController::class);
 Route::get('/study-modes', StudyModesIndex::class)->name('study-modes.index');
