@@ -196,7 +196,7 @@ Route::get('/application/{application_id}', CompletedApplication::class)->name('
 // Accounting livewire routes
 Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
 
-Route::get('/applications', ApplicationsIndex::class)->name('applications.index');
+Route::get('/applications', ApplicationsIndex::class)->name('application.index');
 //Route::get('/applications/initiate', [ApplicantController::class, 'initiate'])->name('application.initiate');
 Route::post('/application/step-1', [ApplicantController::class, 'startApplication'])->name('application.start_application');
 //Route::get('/application/step-2/{application_id}', [ApplicantController::class, 'completeApplication'])->name('application.complete_application');
