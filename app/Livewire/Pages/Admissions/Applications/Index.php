@@ -17,12 +17,12 @@ class Index extends Component
 
     public function boot()
     {
-        $this->paymentMethodRepo = new PaymentMethodRepository();
+        $this->paymentMethodRepo = app(PaymentMethodRepository::class);
     }
 
     public function mount()
     {
-        Gate::allowIf(Qs::userIsTeamSAT() || Qs::userIsSuperAdmin());
+        Gate::allowIf(Qs::userIsAdministrative());
     }
 
     #[Layout('components.layouts.app-bootstrap')]

@@ -285,6 +285,7 @@ class StudentController extends Controller
     public function studentShow($id)
     {
         $data['student'] = $this->studentRepo->getStudentInfor($id);
+        $data['studentId'] = $data['student']->id;
         $data['countries'] = $this->studentRepo->getCountries();
         $data['programs'] = $this->studentRepo->getPrograms();
         $data['towns'] = $this->studentRepo->getTowns();
@@ -312,11 +313,7 @@ class StudentController extends Controller
         $data['caresults'] = $this->classaAsessmentRepo->GetCaStudentGrades($id);
 
         $data['percentage'] = $this->invoiceRepo->paymentPercentage($student->student->id);
-        // dd($data['enrollments']);
 
-        // dd($data['results']);
-
-        // 'student','countries','programs','towns','provinces','course_levels','periodIntakes','studyModes','periodTypes','relationships','maritalStatuses'
         return view('pages.students.show', $data);
     }
 

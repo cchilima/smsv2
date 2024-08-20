@@ -6,6 +6,7 @@ use App\Helpers\Qs;
 use App\Repositories\Academics\CourseRepository;
 use App\Repositories\Academics\ProgramsRepository;
 use App\Traits\CanRefreshDataTable;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -20,12 +21,14 @@ class Show extends Component
 
     public function boot()
     {
-        $this->programRepo = new ProgramsRepository();
-        $this->courseRepo = new CourseRepository();
+        $this->programRepo = app(ProgramsRepository::class);
+        $this->courseRepo = app(CourseRepository::class);
     }
 
     public function mount(string $id)
     {
+        Gate::allowIf(Qs::userIsTeamSA());
+
         $id = Qs::decodeHash($id);
         $this->data['programId'] = $id;
         $this->data['program'] = $this->programRepo->findOne($id);
