@@ -17,7 +17,7 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-settings">
-                    <livewire:datatables.admissions.students />
+                    <livewire:datatables.admissions.students.students />
                 </div>
             </div>
         </div>

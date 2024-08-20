@@ -818,70 +818,27 @@
                         </div>
 
                         <div class="tab-pane fade show" id="invoices">
-                           
-                      
+                            
+                            <div>
+                                <h4 class="d-flex align-items-center justify-content-between">
+                                    <span>Invoices</span>
 
-                                <table class="table table-bordered mb-3 mb-lg-4">
-                                    <thead>
-                                        <th>Invoice #</th>
-                                        <th>Academic Period</th>
-                                        <th>Raised By</th>
-                                        <th>Date</th>
-                                        <th>Grand Total</th>
-                                        <th>Action</th>
-                                    </thead>
-                                    <tbody>
-
-                                        <tr>
-                                            <h4 class="d-flex align-items-center justify-content-between">
-                                                <span>Invoices</span>
-
-                                                <div class="mb-2 d-flex justify-content-end">
-                                                    <form action="{{ route('student.export-invoices', $student->id) }}" method="get">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-primary">
-                                                            <i class="icon-download4 mr-1 lr-lg-2"></i>
-                                                            <span>Export Invoices</span>
-                                                        </button>
-                                                    </form>
-                                                </div>
+                                    <div class="mb-2 d-flex justify-content-end">
+                                        <form action="{{ route('student.export-invoices', $student->id) }}" method="get">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="icon-download4 mr-1 lr-lg-2"></i>
+                                                <span>Export Invoices</span>
+                                            </button>
+                                        </form>
+                                    </div>
 
 
 
-                                            </h4>
-                                        </tr>
-                                        @foreach ($student->invoices as $key => $invoice)
-
-                                            <tr>
-                                                <td>{{ ++$key }}</td>
-                                                <td>{{$invoice->period->name}}</td>
-                                                <td>{{$invoice->raisedBy->first_name }} {{$invoice->raisedBy->last_name }}</td>
-                                                <td>{{ $invoice->created_at->format('F j, Y, g:i a') }}</td>
-
-                                                <td>ZMW {{ number_format($invoice->details->sum('amount'), 2, '.', ',') }}</td>
-                                                <td>
-                                                <div class="list-icons">
-                                                        <div class="dropdown">
-                                                            <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                                <i class="icon-menu9"></i>
-                                                            </a>
-
-                                                            <div class="dropdown-menu dropdown-menu-left">
-                                                                @if (Qs::userIsTeamSA())
-                                                                    <a href="{{route('accounting.invoice_details',$invoice->id )}}" class="dropdown-item"><i class="icon-eye"></i>
-                                                                        view</a>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-                                            </tr>
-
-                                            @endforeach
-                                    </tbody>
-                                </table>
-                          
+                                </h4>
+                            </div>
+                            
+                            <livewire:datatables.admissions.students.invoices :studentId="$studentId" />
 
                         </div>
 
