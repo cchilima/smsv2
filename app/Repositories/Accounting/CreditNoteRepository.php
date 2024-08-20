@@ -7,6 +7,16 @@ use App\Models\Accounting\{CreditNote};
 
 class CreditNoteRepository
 {
+
+    public function getCreditNotes($approver)
+    {
+        if($approver == 'ed'){
+
+        } elseif($approver == 'dif'){
+            
+        }
+    }
+
     public function raiseCreditNote($credit_note_items)
     {
         try {
