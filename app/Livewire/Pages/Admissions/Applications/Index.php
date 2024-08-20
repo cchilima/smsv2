@@ -22,7 +22,7 @@ class Index extends Component
 
     public function mount()
     {
-        Gate::allowIf(Qs::userIsTeamSAT() || Qs::userIsSuperAdmin());
+        Gate::allowIf(Qs::userIsAdministrative());
     }
 
     #[Layout('components.layouts.app-bootstrap')]

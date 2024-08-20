@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Pages\Academics\Departments;
 
+use App\Helpers\Qs;
 use App\Repositories\Academics\SchooolRepository;
 use App\Traits\CanRefreshDataTable;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -16,6 +18,11 @@ class Index extends Component
     public function boot()
     {
         $this->schoolRepo = new SchooolRepository();
+    }
+
+    public function mount()
+    {
+        Gate::allowIf(Qs::userIsTeamSA());
     }
 
     #[Layout('components.layouts.app-bootstrap')]
