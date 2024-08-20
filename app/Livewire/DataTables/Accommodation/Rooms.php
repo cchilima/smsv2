@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Accommodation;
+namespace App\Livewire\Datatables\Accommodation;
 
 use App\Enums\Settings\GenderEnum;
 use App\Models\Accomodation\Room;
@@ -32,8 +32,8 @@ final class Rooms extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->roomRepo = new RoomRepository();
-        $this->hostelRepo = new HostelRepository();
+        $this->roomRepo = app(RoomRepository::class);
+        $this->hostelRepo = app(HostelRepository::class);
     }
 
     public function setUp(): array

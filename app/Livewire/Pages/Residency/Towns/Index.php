@@ -17,12 +17,12 @@ class Index extends Component
 
     public function boot()
     {
-        $this->countryRepo = new CountryRepository();
+        $this->countryRepo = app(CountryRepository::class);
     }
 
     public function mount()
     {
-        Gate::allowIf(Qs::userIsTeamSA() || Qs::userIsSuperAdmin());
+        Gate::allowIf(Qs::userIsTeamSA());
     }
 
     #[Layout('components.layouts.app-bootstrap')]

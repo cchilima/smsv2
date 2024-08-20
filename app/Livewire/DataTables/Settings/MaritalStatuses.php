@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Settings;
+namespace App\Livewire\Datatables\Settings;
 
 use App\Helpers\Qs;
 use App\Models\Profile\MaritalStatus;
@@ -30,7 +30,7 @@ final class MaritalStatuses extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->maritalStatusRepo = new MaritalStatusRepository();
+        $this->maritalStatusRepo = app(MaritalStatusRepository::class);
     }
 
     public function setUp(): array

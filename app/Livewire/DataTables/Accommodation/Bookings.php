@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Accommodation;
+namespace App\Livewire\Datatables\Accommodation;
 
 use App\Models\Accomodation\Booking;
 use App\Repositories\Accommodation\BookingRepository;

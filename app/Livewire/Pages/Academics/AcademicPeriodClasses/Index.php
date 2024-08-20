@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Pages\Academics\AcademicPeriodClasses;
 
+use App\Helpers\Qs;
 use App\Repositories\Academics\AcademicPeriodClassRepository;
 use App\Repositories\Academics\AcademicPeriodRepository;
 use App\Traits\CanRefreshDataTable;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -19,12 +21,14 @@ class Index extends Component
 
     public function boot()
     {
-        $this->academicPeriodClassRepo = new AcademicPeriodClassRepository();
-        $this->academicPeriodRepository = new AcademicPeriodRepository();
+        $this->academicPeriodClassRepo = app(AcademicPeriodClassRepository::class);
+        $this->academicPeriodRepository = app(AcademicPeriodRepository::class);
     }
 
     public function mount()
     {
+        Gate::allowIf(Qs::userIsTeamSA());
+
         $this->data['periodClasses'] = $this->academicPeriodClassRepo->getAll();
         $this->data['courses'] = $this->academicPeriodClassRepo->getCourses();
         $this->data['instructors'] = $this->academicPeriodClassRepo->getInstructors();

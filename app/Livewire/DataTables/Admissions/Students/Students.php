@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Admissions;
+namespace App\Livewire\Datatables\Admissions\Students;
 
 use App\Models\Admissions\Student;
 use App\Repositories\Academics\AcademicPeriodRepository;
@@ -34,10 +34,10 @@ final class Students extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->studentRepo = new StudentRepository();
-        $this->programRepo = new ProgramsRepository();
-        $this->levelRepo = new CourseLevelsRepository();
-        $this->academicPeriodRepo = new AcademicPeriodRepository();
+        $this->studentRepo = app(StudentRepository::class);
+        $this->programRepo = app(ProgramsRepository::class);
+        $this->levelRepo = app(CourseLevelsRepository::class);
+        $this->academicPeriodRepo = app(AcademicPeriodRepository::class);
     }
 
     public function setUp(): array

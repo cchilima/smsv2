@@ -30,8 +30,8 @@ final class AcademicPeriodClasses extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->academicPeriodRepo = new AcademicPeriodRepository();
-        $this->academicPeriodClassRepo = new AcademicPeriodClassRepository();
+        $this->academicPeriodRepo = app(AcademicPeriodRepository::class);
+        $this->academicPeriodClassRepo = app(AcademicPeriodClassRepository::class);
     }
 
     public function setUp(): array

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Residency;
+namespace App\Livewire\Datatables\Residency;
 
 use App\Models\Residency\Town;
 use App\Repositories\Residency\CountryRepository;
@@ -33,9 +33,9 @@ final class Towns extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->townRepo = new TownRepository();
-        $this->provinceRepo = new ProvinceRepository();
-        $this->countryRepo = new CountryRepository();
+        $this->townRepo = app(TownRepository::class);
+        $this->provinceRepo = app(ProvinceRepository::class);
+        $this->countryRepo = app(CountryRepository::class);
     }
 
     public function setUp(): array

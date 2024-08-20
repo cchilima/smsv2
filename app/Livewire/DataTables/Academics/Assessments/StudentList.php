@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Academics\Assessments;
+namespace App\Livewire\Datatables\Academics\Assessments;
 
 use App\Models\Academics\AcademicPeriodClass;
 use App\Models\Enrollments\Enrollment;
@@ -34,7 +34,7 @@ final class StudentList extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->classaAsessmentRepo = new ClassAssessmentsRepo();
+        $this->classaAsessmentRepo = app(ClassAssessmentsRepo::class);
     }
 
     public function setUp(): array

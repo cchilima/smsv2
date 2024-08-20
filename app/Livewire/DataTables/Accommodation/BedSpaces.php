@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Accommodation;
+namespace App\Livewire\Datatables\Accommodation;
 
 use App\Enums\Settings\TrueFalseEnum;
 use App\Models\Accomodation\BedSpace;
@@ -32,8 +32,8 @@ final class BedSpaces extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->bedSpaceRepo = new BedSpaceRepository();
-        $this->roomRepo = new RoomRepository();
+        $this->bedSpaceRepo = app(BedSpaceRepository::class);
+        $this->roomRepo = app(RoomRepository::class);
     }
 
     public function setUp(): array

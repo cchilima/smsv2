@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Academics\Assessments;
+namespace App\Livewire\Datatables\Academics\Assessments;
 
 use App\Repositories\Academics\ClassAssessmentsRepo;
 use Illuminate\Support\Carbon;
@@ -26,7 +26,7 @@ final class PublishResults extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->classaAsessmentRepo = new ClassAssessmentsRepo();
+        $this->classaAsessmentRepo = app(ClassAssessmentsRepo::class);
     }
 
     public function datasource(): ?Collection

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Academics\AcademicPeriods;
+namespace App\Livewire\Datatables\Academics\AcademicPeriods;
 
 use App\Models\Academics\AcademicPeriodFee;
 use App\Repositories\Academics\AcademicPeriodRepository;
@@ -28,7 +28,7 @@ final class Fees extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->academicPeriodRepo = new AcademicPeriodRepository();
+        $this->academicPeriodRepo = app(AcademicPeriodRepository::class);
     }
 
     public function setUp(): array

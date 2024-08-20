@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Accounting;
+namespace App\Livewire\Datatables\Accounting;
 
 use App\Models\Accounting\PaymentMethod;
 use App\Repositories\Accounting\PaymentMethodRepository;
@@ -29,7 +29,7 @@ final class PaymentMethods extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->paymentMethodRepo = new PaymentMethodRepository();
+        $this->paymentMethodRepo = app(PaymentMethodRepository::class);
     }
 
     public function setUp(): array

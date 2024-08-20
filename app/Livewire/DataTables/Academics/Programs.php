@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Academics;
+namespace App\Livewire\Datatables\Academics;
 
 use App\Models\Academics\Program;
 use App\Repositories\Academics\DepartmentsRepository;
@@ -31,8 +31,8 @@ final class Programs extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->departmentRepo = new DepartmentsRepository();
-        $this->qualificationRepo = new QualificationsRepository();
+        $this->departmentRepo = app(DepartmentsRepository::class);
+        $this->qualificationRepo = app(QualificationsRepository::class);
     }
 
     public function setUp(): array

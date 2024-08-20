@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Reports;
+namespace App\Livewire\Datatables\Reports;
 
 use OwenIt\Auditing\Models\Audit;
 use Illuminate\Support\Carbon;

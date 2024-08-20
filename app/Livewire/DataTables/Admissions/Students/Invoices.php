@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Livewire\Datatables\Notices;
+namespace App\Livewire\Datatables\Admissions\Students;
 
-use App\Models\Notices\Announcement;
+use App\Models\Accounting\Invoice;
+use App\Repositories\Admissions\StudentRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -16,12 +17,20 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class Announcements extends PowerGridComponent
+final class Invoices extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'AnnouncementsTable';
+    public string $studentId;
+    public string $tableName = 'StudentInvoicesTable';
     public bool $deferLoading = true;
+
+    protected StudentRepository $studentRepo;
+
+    public function boot(): void
+    {
+        $this->studentRepo = app(StudentRepository::class);
+    }
 
     public function setUp(): array
     {
@@ -29,7 +38,7 @@ final class Announcements extends PowerGridComponent
         $this->sortBy('created_at', 'desc');
 
         return [
-            Exportable::make('announcements-export')
+            Exportable::make('student-invoices-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -41,7 +50,7 @@ final class Announcements extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Announcement::query();
+        return $this->studentRepo->getInvoicesByStudent($this->studentId, false);
     }
 
     public function relationSearch(): array
@@ -52,30 +61,32 @@ final class Announcements extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('title')
-            ->add('addressed_to', function (Announcement $row) {
-                return $row->userType?->name ?? 'Everyone';
+            ->add('id')
+            ->add('raised_by', function ($row) {
+                $user = $row->raisedBy;
+                return $user->first_name . ' ' . $user->last_name;
             })
-            ->add('status', function (Announcement $row) {
-                return $row->archived ? 'Archived' : 'Active';
+            ->add('period.name')
+            ->add('total', function ($row) {
+                return number_format($row->details->sum('amount'), 2, '.', ',');
             })
-            ->add('created_at');
+            ->add('created_at_formatted', function ($row) {
+                return $row->created_at->format('F j Y, H:i');
+            });
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Title', 'title')
-                ->sortable()
-                ->searchable(),
+            Column::make('Invoice ID', 'id'),
+            Column::make('Raised By', 'raised_by'),
 
-            Column::make('Addressed To', 'addressed_to'),
+            Column::make('Academic Period', 'period.name'),
 
-            Column::make('Status', 'status'),
+            Column::make('Total', 'total'),
 
-            Column::make('Date', 'created_at')
-                ->sortable()
-                ->searchable(),
+            Column::make('Created At', 'created_at_formatted')
+                ->sortable(),
 
             Column::action('Action')
         ];
@@ -86,17 +97,11 @@ final class Announcements extends PowerGridComponent
         return [];
     }
 
-    #[\Livewire\Attributes\On('edit')]
-    public function edit($rowId): void
-    {
-        $this->js('alert(' . $rowId . ')');
-    }
-
-    public function actions(Announcement $row): array
+    public function actions(Invoice $row): array
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.notices.announcements', ['row' => $row])
+                ->bladeComponent('table-actions.admissions.student-invoices', ['row' => $row])
         ];
     }
 }

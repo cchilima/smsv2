@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Academics\Assessments;
+namespace App\Livewire\Datatables\Academics\Assessments;
 
 use App\Models\Academics\AcademicPeriodClass;
 use App\Repositories\Academics\AcademicPeriodClassRepository;
@@ -25,13 +25,13 @@ final class ClassLists extends PowerGridComponent
     public string $tableName = 'AssessmentsClassListsTable';
     public bool $deferLoading = true;
 
-    protected AcademicPeriodClassRepository $academicPeriodClassRepo;
     protected AcademicPeriodRepository $academicPeriodRepo;
+    protected AcademicPeriodClassRepository $academicPeriodClassRepo;
 
     public function boot(): void
     {
-        $this->academicPeriodClassRepo = new AcademicPeriodClassRepository();
-        $this->academicPeriodRepo = new AcademicPeriodRepository();
+        $this->academicPeriodRepo = app(AcademicPeriodRepository::class);
+        $this->academicPeriodClassRepo = app(AcademicPeriodClassRepository::class);
     }
 
     public function setUp(): array

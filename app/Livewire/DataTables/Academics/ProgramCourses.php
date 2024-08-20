@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Academics;
+namespace App\Livewire\Datatables\Academics;
 
 use App\Models\Academics\ProgramCourses as Courses;
 use App\Repositories\Academics\CourseLevelsRepository;
@@ -32,8 +32,8 @@ final class ProgramCourses extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->programRepo = new ProgramsRepository();
-        $this->courseLevelRepo = new CourseLevelsRepository();
+        $this->programRepo = app(ProgramsRepository::class);
+        $this->courseLevelRepo = app(CourseLevelsRepository::class);
     }
 
     public function setUp(): array

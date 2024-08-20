@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Accounting;
+namespace App\Livewire\Datatables\Accounting;
 
 use App\Models\Accounting\Fee;
 use App\Repositories\Accounting\FeeRepository;
@@ -29,7 +29,7 @@ final class Fees extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->feeRepo = new FeeRepository();
+        $this->feeRepo = app(FeeRepository::class);
     }
 
     public function setUp(): array

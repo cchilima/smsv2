@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Accommodation;
+namespace App\Livewire\Datatables\Accommodation;
 
 use App\Models\Accomodation\Hostel;
 use App\Repositories\Accommodation\HostelRepository;
@@ -29,7 +29,7 @@ final class Hostels extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->hostelRepo = new HostelRepository();
+        $this->hostelRepo = app(HostelRepository::class);
     }
 
     public function setUp(): array
