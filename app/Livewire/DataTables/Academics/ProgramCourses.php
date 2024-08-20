@@ -32,8 +32,8 @@ final class ProgramCourses extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->programRepo = new ProgramsRepository();
-        $this->courseLevelRepo = new CourseLevelsRepository();
+        $this->programRepo = app(ProgramsRepository::class);
+        $this->courseLevelRepo = app(CourseLevelsRepository::class);
     }
 
     public function setUp(): array

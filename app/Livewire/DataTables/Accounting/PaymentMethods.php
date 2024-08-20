@@ -29,7 +29,7 @@ final class PaymentMethods extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->paymentMethodRepo = new PaymentMethodRepository();
+        $this->paymentMethodRepo = app(PaymentMethodRepository::class);
     }
 
     public function setUp(): array

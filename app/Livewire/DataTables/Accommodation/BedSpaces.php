@@ -32,8 +32,8 @@ final class BedSpaces extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->bedSpaceRepo = new BedSpaceRepository();
-        $this->roomRepo = new RoomRepository();
+        $this->bedSpaceRepo = app(BedSpaceRepository::class);
+        $this->roomRepo = app(RoomRepository::class);
     }
 
     public function setUp(): array

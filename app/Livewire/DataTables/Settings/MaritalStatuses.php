@@ -30,7 +30,7 @@ final class MaritalStatuses extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->maritalStatusRepo = new MaritalStatusRepository();
+        $this->maritalStatusRepo = app(MaritalStatusRepository::class);
     }
 
     public function setUp(): array

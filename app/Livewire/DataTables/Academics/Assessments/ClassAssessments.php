@@ -33,8 +33,8 @@ final class ClassAssessments extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->academicPeriodClassRepo = new AcademicPeriodClassRepository();
-        $this->academicPeriodRepo = new AcademicPeriodRepository();
+        $this->academicPeriodClassRepo = app(AcademicPeriodClassRepository::class);
+        $this->academicPeriodRepo = app(AcademicPeriodRepository::class);
     }
 
     public function setUp(): array

@@ -30,7 +30,7 @@ final class DepartmentPrograms extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->departmentRepo = new DepartmentsRepository();
+        $this->departmentRepo = app(DepartmentsRepository::class);
     }
 
     public function setUp(): array

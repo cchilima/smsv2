@@ -34,9 +34,9 @@ final class ProgramList extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->academicPeriodClassRepo = new AcademicPeriodClassRepository();
-        $this->departmentRepo = new DepartmentsRepository();
-        $this->qualificationRepo = new QualificationsRepository();
+        $this->academicPeriodClassRepo = app(AcademicPeriodClassRepository::class);
+        $this->departmentRepo = app(DepartmentsRepository::class);
+        $this->qualificationRepo = app(QualificationsRepository::class);
     }
 
     public function setUp(): array

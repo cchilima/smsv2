@@ -28,7 +28,7 @@ final class Fees extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->academicPeriodRepo = new AcademicPeriodRepository();
+        $this->academicPeriodRepo = app(AcademicPeriodRepository::class);
     }
 
     public function setUp(): array

@@ -29,7 +29,7 @@ final class Fees extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->feeRepo = new FeeRepository();
+        $this->feeRepo = app(FeeRepository::class);
     }
 
     public function setUp(): array

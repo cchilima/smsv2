@@ -32,8 +32,8 @@ final class Rooms extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->roomRepo = new RoomRepository();
-        $this->hostelRepo = new HostelRepository();
+        $this->roomRepo = app(RoomRepository::class);
+        $this->hostelRepo = app(HostelRepository::class);
     }
 
     public function setUp(): array

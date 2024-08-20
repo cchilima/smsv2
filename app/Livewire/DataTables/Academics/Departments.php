@@ -28,7 +28,7 @@ final class Departments extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->schoolRepo = new SchooolRepository();
+        $this->schoolRepo = app(SchooolRepository::class);
     }
 
     public function setUp(): array

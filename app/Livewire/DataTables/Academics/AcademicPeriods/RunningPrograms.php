@@ -30,7 +30,7 @@ final class RunningPrograms extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->academicPeriodClassRepo = new AcademicPeriodClassRepository();
+        $this->academicPeriodClassRepo = app(AcademicPeriodClassRepository::class);
     }
 
     public function setUp(): array

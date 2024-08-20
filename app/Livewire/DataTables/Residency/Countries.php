@@ -29,7 +29,7 @@ final class Countries extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->countryRepo = new CountryRepository();
+        $this->countryRepo = app(CountryRepository::class);
     }
 
     public function setUp(): array

@@ -21,8 +21,8 @@ class Index extends Component
 
     public function boot()
     {
-        $this->departmentRepo = new DepartmentsRepository();
-        $this->qualificationRepo = new QualificationsRepository();
+        $this->departmentRepo = app(DepartmentsRepository::class);
+        $this->qualificationRepo = app(QualificationsRepository::class);
     }
 
     public function mount()

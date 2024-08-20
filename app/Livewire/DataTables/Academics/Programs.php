@@ -31,8 +31,8 @@ final class Programs extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->departmentRepo = new DepartmentsRepository();
-        $this->qualificationRepo = new QualificationsRepository();
+        $this->departmentRepo = app(DepartmentsRepository::class);
+        $this->qualificationRepo = app(QualificationsRepository::class);
     }
 
     public function setUp(): array

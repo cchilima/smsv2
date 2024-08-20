@@ -17,7 +17,7 @@ class Index extends Component
 
     public function boot()
     {
-        $this->paymentMethodRepo = new PaymentMethodRepository();
+        $this->paymentMethodRepo = app(PaymentMethodRepository::class);
     }
 
     public function mount()

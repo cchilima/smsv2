@@ -27,7 +27,7 @@ final class Types extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->assessmentTypeRepo = new AssessmentTypesRepo();
+        $this->assessmentTypeRepo = app(AssessmentTypesRepo::class);
     }
 
     public function setUp(): array

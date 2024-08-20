@@ -21,8 +21,8 @@ class Index extends Component
 
     public function boot()
     {
-        $this->academicPeriodClassRepo = new AcademicPeriodClassRepository();
-        $this->academicPeriodRepository = new AcademicPeriodRepository();
+        $this->academicPeriodClassRepo = app(AcademicPeriodClassRepository::class);
+        $this->academicPeriodRepository = app(AcademicPeriodRepository::class);
     }
 
     public function mount()

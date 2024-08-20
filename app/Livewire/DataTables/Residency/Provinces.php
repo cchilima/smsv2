@@ -31,8 +31,8 @@ final class Provinces extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->provinceRepo = new ProvinceRepository();
-        $this->countryRepo = new CountryRepository();
+        $this->provinceRepo = app(ProvinceRepository::class);
+        $this->countryRepo = app(CountryRepository::class);
     }
 
     public function setUp(): array

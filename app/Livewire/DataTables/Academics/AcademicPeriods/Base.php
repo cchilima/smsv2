@@ -30,8 +30,8 @@ class Base extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->academicPeriodRepo = new AcademicPeriodRepository();
-        $this->periodTypeRepo = new PeriodTypeRepository();
+        $this->academicPeriodRepo = app(AcademicPeriodRepository::class);
+        $this->periodTypeRepo = app(PeriodTypeRepository::class);
     }
 
     public function setUp(): array

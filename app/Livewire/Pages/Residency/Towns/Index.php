@@ -17,7 +17,7 @@ class Index extends Component
 
     public function boot()
     {
-        $this->countryRepo = new CountryRepository();
+        $this->countryRepo = app(CountryRepository::class);
     }
 
     public function mount()

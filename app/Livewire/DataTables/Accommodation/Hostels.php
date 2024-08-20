@@ -29,7 +29,7 @@ final class Hostels extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->hostelRepo = new HostelRepository();
+        $this->hostelRepo = app(HostelRepository::class);
     }
 
     public function setUp(): array

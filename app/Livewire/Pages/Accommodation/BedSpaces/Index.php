@@ -17,7 +17,7 @@ class Index extends Component
 
     public function boot()
     {
-        $this->roomRepo = new RoomRepository();
+        $this->roomRepo = app(RoomRepository::class);
     }
 
     public function mount()

@@ -26,7 +26,7 @@ final class PublishResults extends PowerGridComponent
 
     public function boot(): void
     {
-        $this->classaAsessmentRepo = new ClassAssessmentsRepo();
+        $this->classaAsessmentRepo = app(ClassAssessmentsRepo::class);
     }
 
     public function datasource(): ?Collection

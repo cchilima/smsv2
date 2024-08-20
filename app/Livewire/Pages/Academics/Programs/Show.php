@@ -21,8 +21,8 @@ class Show extends Component
 
     public function boot()
     {
-        $this->programRepo = new ProgramsRepository();
-        $this->courseRepo = new CourseRepository();
+        $this->programRepo = app(ProgramsRepository::class);
+        $this->courseRepo = app(CourseRepository::class);
     }
 
     public function mount(string $id)
