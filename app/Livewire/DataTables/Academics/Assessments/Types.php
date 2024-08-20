@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Academics\Assessments;
+namespace App\Livewire\Datatables\Academics\Assessments;
 
 use App\Models\Academics\AssessmentType;
 use App\Repositories\Academics\AssessmentTypesRepo;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Academics;
+namespace App\Livewire\Datatables\Academics;
 
 use App\Models\Academics\Program;
 use App\Repositories\Academics\DepartmentsRepository;

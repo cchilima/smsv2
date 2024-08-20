@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Academics\Assessments;
+namespace App\Livewire\Datatables\Academics\Assessments;
 
 use App\Models\Academics\AcademicPeriod;
 use App\Models\Academics\AcademicPeriodClass;

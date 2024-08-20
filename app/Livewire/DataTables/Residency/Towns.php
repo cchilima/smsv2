@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Residency;
+namespace App\Livewire\Datatables\Residency;
 
 use App\Models\Residency\Town;
 use App\Repositories\Residency\CountryRepository;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Notices;
+namespace App\Livewire\Datatables\Notices;
 
 use App\Models\Notices\Announcement;
 use Illuminate\Support\Carbon;

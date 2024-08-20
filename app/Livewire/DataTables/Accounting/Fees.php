@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Accounting;
+namespace App\Livewire\Datatables\Accounting;
 
 use App\Models\Accounting\Fee;
 use App\Repositories\Accounting\FeeRepository;

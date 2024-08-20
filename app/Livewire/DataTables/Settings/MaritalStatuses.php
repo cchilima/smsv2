@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\DataTables\Settings;
+namespace App\Livewire\Datatables\Settings;
 
 use App\Helpers\Qs;
 use App\Models\Profile\MaritalStatus;
