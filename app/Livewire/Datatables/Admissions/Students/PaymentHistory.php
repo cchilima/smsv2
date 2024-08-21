@@ -38,7 +38,7 @@ final class PaymentHistory extends PowerGridComponent
         $this->sortBy('created_at', 'desc');
 
         return [
-            Exportable::make('export')
+            Exportable::make('student-payment-history-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Footer::make()
@@ -83,10 +83,5 @@ final class PaymentHistory extends PowerGridComponent
             Column::make('Date', 'date', 'created_at')
                 ->sortable(),
         ];
-    }
-
-    public function filters(): array
-    {
-        return [];
     }
 }
