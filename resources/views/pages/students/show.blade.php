@@ -31,14 +31,14 @@
 
         </div>
         <div class="col-md-9">
-            <div class="card card-collapsed">
+            <div class="card">
                 <div class="card-header header-elements-inline">
                     <h6 class="card-title">Student General Information</h6>
                     {!! Qs::getPanelOptions() !!}
                 </div>
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-tabs-highlight">
-                        <li class="nav-item">
+                        <li class="nav-item active">
                             <a href="#account-info" class="nav-link active" data-toggle="tab">Academic Information</a>
                         </li>
                         <li class="nav-item">
@@ -667,44 +667,37 @@
 
                         </div>
 
-
-
-
                         <div class="tab-pane fade show" id="credit">
 
-                        <table class="table table-bordered mb-3 mb-lg-4">
-                            <thead>
-                                <th>S/N</th>
-                                <th>Invoice No.</th>
-                                <th>Fee</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Issued by</th>
-                                <th>Date</th>
-                            </thead>
-                            <tbody>
-                            @foreach($student->invoices as $invoice)
-                            @foreach ($invoice->creditNotes as $key => $note)
-                                <tr>
-                                    <td>{{ ++$key }}</td>
-                                    <td>inv{{ $invoice->id}}</td>
-                                    <td>{{ $note->invoiceDetail->fee->name }}</td>
-                                    <td>{{ $note->amount }}</td>
-                                    <td>{{ $note->status }} Office</td>
-                                    <td>{{ $note->issuer->first_name }} {{ $note->issuer->last_name }}</td>
-                                    <td>{{ $note->created_at->format('d F Y') }}</td>
-                                </tr>
-                            @endforeach
-                            @endforeach
+                            <table class="table table-bordered mb-3 mb-lg-4">
+                                <thead>
+                                    <th>S/N</th>
+                                    <th>Invoice No.</th>
+                                    <th>Fee</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Issued by</th>
+                                    <th>Date</th>
+                                </thead>
+                                <tbody>
+                                    @foreach ($student->invoices as $invoice)
+                                        @foreach ($invoice->creditNotes as $key => $note)
+                                            <tr>
+                                                <td>{{ ++$key }}</td>
+                                                <td>inv{{ $invoice->id }}</td>
+                                                <td>{{ $note->invoiceDetail->fee->name }}</td>
+                                                <td>{{ $note->amount }}</td>
+                                                <td>{{ $note->status }} Office</td>
+                                                <td>{{ $note->issuer->first_name }} {{ $note->issuer->last_name }}</td>
+                                                <td>{{ $note->created_at->format('d F Y') }}</td>
+                                            </tr>
+                                        @endforeach
+                                    @endforeach
 
-                            </tbody>
+                                </tbody>
                             </table>
 
-
                         </div>
-
-
-
 
                         <div class="tab-pane fade show" id="statements">
                             <div class="mb-2 d-flex justify-content-end">
@@ -717,114 +710,19 @@
                                 </form>
                             </div>
 
-
-
-                            <table class="table table-bordered mb-3 mb-lg-4">
-    <thead>
-        <th>#</th>
-        <th>Date</th>
-        <th>Reference</th>
-        <th>Description</th>
-        <th>Debit</th>
-        <th>Credit</th>
-        <th>Balance</th>
-    </thead>
-    <tbody>
-        @php
-            $balance = 0; // Initialize balance
-            $counter = 1; // Initialize a counter to maintain row numbers across invoices and receipts
-
-            // Merge invoices, credit notes, and non-invoiced receipts into one collection
-            $transactions = collect();
-
-            foreach ($student->invoices as $invoice) {
-                // Add the invoice as a debit transaction
-                $transactions->push([
-                    'type' => 'invoice',
-                    'date' => $invoice->created_at,
-                    'reference' => 'INV' . $invoice->id,
-                    'description' => 'Invoice',
-                    'debit' => $invoice->details->sum('amount'),
-                    'credit' => 0,
-                    'balance' => 0,
-                ]);
-
-                // Add associated receipts as credit transactions
-                foreach ($invoice->receipts as $receipt) {
-                    $transactions->push([
-                        'type' => 'receipt',
-                        'date' => $receipt->created_at,
-                        'reference' => 'RCT' . $receipt->id,
-                        'description' => 'Receipt',
-                        'debit' => 0,
-                        'credit' => $receipt->amount,
-                        'balance' => 0,
-                    ]);
-                }
-
-                // Add associated credit notes as credit transactions
-                foreach ($invoice->creditNotes as $creditNote) {
-                    $transactions->push([
-                        'type' => 'credit_note',
-                        'date' => $creditNote->created_at,
-                        'reference' => 'CN' . $creditNote->id,
-                        'description' => 'Credit Note',
-                        'debit' => 0,
-                        'credit' => $creditNote->amount,
-                        'balance' => 0,
-                    ]);
-                }
-            }
-
-            // Add non-invoiced receipts to the collection
-            foreach ($student->receiptsNonInvoiced as $receipt) {
-                $transactions->push([
-                    'type' => 'receipt',
-                    'date' => $receipt->created_at,
-                    'reference' => 'RCT' . $receipt->id,
-                    'description' => 'Receipt',
-                    'debit' => 0,
-                    'credit' => $receipt->amount,
-                    'balance' => 0,
-                ]);
-            }
-
-            // Sort transactions by date
-            $transactions = $transactions->sortBy('date')->values();
-        @endphp
-
-        {{-- Loop through the sorted transactions and display them --}}
-        @foreach ($transactions as $transaction)
-            @php
-                // Update balance
-                $balance += $transaction['debit'] - $transaction['credit'];
-            @endphp
-            <tr>
-                <td>{{ $counter++ }}</td>
-                <td>{{ $transaction['date']->format('d F Y') }}</td>
-                <td>{{ $transaction['reference'] }}</td>
-                <td>{{ $transaction['description'] }}</td>
-                <td>ZMW {{ number_format($transaction['debit'], 2) }}</td>
-                <td>ZMW {{ number_format($transaction['credit'], 2) }}</td>
-                <td>ZMW {{ number_format($balance, 2) }}</td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
-
-
-
+                            <livewire:datatables.admissions.students.statements :student="$student" />
 
                         </div>
 
                         <div class="tab-pane fade show" id="invoices">
-                            
+
                             <div>
                                 <h4 class="d-flex align-items-center justify-content-between">
                                     <span>Invoices</span>
 
                                     <div class="mb-2 d-flex justify-content-end">
-                                        <form action="{{ route('student.export-invoices', $student->id) }}" method="get">
+                                        <form action="{{ route('student.export-invoices', $student->id) }}"
+                                            method="get">
                                             @csrf
                                             <button type="submit" class="btn btn-primary">
                                                 <i class="icon-download4 mr-1 lr-lg-2"></i>
@@ -833,35 +731,15 @@
                                         </form>
                                     </div>
 
-
-
                                 </h4>
                             </div>
-                            
+
                             <livewire:datatables.admissions.students.invoices :studentId="$studentId" />
 
                         </div>
 
                         <div class="tab-pane fade show" id="payment-history">
-
-                            <table class="table table-bordered">
-                                <thead>
-                                    <th>#</th>
-                                    <th>Date</th>
-                                    <th>Method</th>
-                                    <th>Amount</th>
-                                </thead>
-                                <tbody>
-                                    @foreach ($student->receipts as $key => $receipt)
-                                        <tr>
-                                            <td>{{ ++$key }}</td>
-                                            <td>{{ $receipt->created_at->format('d F Y') }}</td>
-                                            <td>{{ $receipt->paymentMethod->name}}</td>
-                                            <td>ZMW {{ number_format($receipt->amount, 2, '.', ',') }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            <livewire:datatables.admissions.students.payment-history :studentId="$studentId" />
                         </div>
 
                     </div>
