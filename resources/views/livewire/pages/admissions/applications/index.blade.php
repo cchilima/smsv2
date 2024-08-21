@@ -23,7 +23,7 @@
                 <livewire:datatables.admissions.applications />
             </div>
 
-            <div wire:ignore.self class="tab-pane fade show" id="collect-payment">
+            <div wire:ignore class="tab-pane fade show" id="collect-payment">
                 <form class="ajax-store" method="post" action="{{ route('application.collect_fee') }}">
                     @csrf
 
@@ -50,8 +50,8 @@
                         </select>
                     </div>
                     <div class="text-left">
-                        <button wire:click="refreshTable('ApplicationsTable')" id="ajax-btn" type="submit"
-                            class="btn btn-primary">Submit <i class="icon-paperplane ml-2"></i></button>
+                        <button wire:click.debounce.1000ms="refreshTable('ApplicationsTable')" id="ajax-btn"
+                            type="submit" class="btn btn-primary">Submit <i class="icon-paperplane ml-2"></i></button>
                     </div>
                 </form>
 

@@ -114,8 +114,8 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <button wire:click="refreshTable('ProgramCoursesTable')" id="ajax-btn"
-                                            type="submit" class="btn btn-primary">Submit form <i
+                                        <button wire:click.debounce.1000ms="refreshTable('ProgramCoursesTable')"
+                                            id="ajax-btn" type="submit" class="btn btn-primary">Submit form <i
                                                 class="icon-paperplane ml-2"></i></button>
                                     </div>
                                 </form>
@@ -160,8 +160,8 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <button wire:click="refreshTable('ProgramCoursesTable')" id="ajax-btn"
-                                            type="submit" class="btn btn-primary">Submit form <i
+                                        <button wire:click.debounce.1000ms="refreshTable('ProgramCoursesTable')"
+                                            id="ajax-btn" type="submit" class="btn btn-primary">Submit form <i
                                                 class="icon-paperplane ml-2"></i></button>
                                     </div>
                                 </form>

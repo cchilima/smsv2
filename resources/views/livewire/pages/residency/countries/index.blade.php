@@ -23,7 +23,7 @@
                 <livewire:datatables.residency.countries />
             </div>
 
-            <div wire:ignore.self class="tab-pane fade" id="new-country">
+            <div wire:ignore class="tab-pane fade" id="new-country">
                 <div class="row">
                     <div class="col-md-6">
                         <form class="ajax-store" method="post" action="{{ route('countries.store') }}">
@@ -74,8 +74,9 @@
                             </div>
 
                             <div class="text-right">
-                                <button wire:click="refreshTable('CountriesTable')" id="ajax-btn" type="submit"
-                                    class="btn btn-primary">Submit form <i class="icon-paperplane ml-2"></i></button>
+                                <button wire:click.debounce.1000ms="refreshTable('CountriesTable')" id="ajax-btn"
+                                    type="submit" class="btn btn-primary">Submit form <i
+                                        class="icon-paperplane ml-2"></i></button>
                             </div>
                         </form>
                     </div>

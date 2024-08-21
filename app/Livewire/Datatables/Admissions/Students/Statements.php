@@ -99,7 +99,7 @@ final class Statements extends PowerGridComponent
     public function setUp(): array
     {
         $this->showCheckBox();
-        $this->sortBy('date');
+        $this->sortBy('date', 'desc');
 
         return [
             Footer::make()

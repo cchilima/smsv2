@@ -19,11 +19,11 @@
         </ul>
 
         <div class="tab-content">
-            <div wire:ignore class="tab-pane fade show active" id="all-classes">
+            <div wire:ignore.self class="tab-pane fade show active" id="all-classes">
                 <livewire:datatables.notices.announcements />
             </div>
 
-            <div wire:ignore.self class="tab-pane fade" id="new-class">
+            <div wire:ignore class="tab-pane fade" id="new-class">
                 <div class="row">
                     <div class="col-md-10">
                         <form class="ajax-store" method="post" action="{{ route('announcements.store') }}">
@@ -72,8 +72,9 @@
                             </div>
 
                             <div class="text-right">
-                                <button wire:click="refreshTable('AnnouncementsTable')" id="ajax-btn" type="submit"
-                                    class="btn btn-primary">Submit form <i class="icon-paperplane ml-2"></i></button>
+                                <button wire:click.debounce.1000ms="refreshTable('AnnouncementsTable')" id="ajax-btn"
+                                    type="submit" class="btn btn-primary">Submit form <i
+                                        class="icon-paperplane ml-2"></i></button>
                             </div>
                         </form>
                     </div>

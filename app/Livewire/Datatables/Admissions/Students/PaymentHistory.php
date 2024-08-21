@@ -22,7 +22,7 @@ final class PaymentHistory extends PowerGridComponent
     use WithExport;
 
     public string $studentId;
-    public string $tableName = 'StudentReceiptsTable';
+    public string $tableName = 'StudentPaymentHistoryTable';
     public bool $deferLoading = true;
 
     protected ReceiptRepository $receiptRepo;

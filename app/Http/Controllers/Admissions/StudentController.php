@@ -282,40 +282,40 @@ class StudentController extends Controller
     }
 
     // student management controller
-    public function studentShow($id)
-    {
-        $data['student'] = $this->studentRepo->getStudentInfor($id);
-        $data['studentId'] = $data['student']->id;
-        $data['countries'] = $this->studentRepo->getCountries();
-        $data['programs'] = $this->studentRepo->getPrograms();
-        $data['towns'] = $this->studentRepo->getTowns();
-        $data['provinces'] = $this->studentRepo->getProvinces();
-        $data['course_levels'] = $this->studentRepo->getCourseLevels();
-        $data['periodIntakes'] = $this->studentRepo->getIntakes();
-        $data['studyModes'] = $this->studentRepo->getStudyModes();
-        $data['periodTypes'] = $this->studentRepo->getPeriodTypes();
-        $data['relationships'] = $this->studentRepo->getRelationships();
-        $data['maritalStatuses'] = $this->studentRepo->getMaritalStatuses();
-        $data['paymentMethods'] = $this->studentRepo->getPaymentMethods();
-        $data['fees'] = $this->studentRepo->getFees($id);
+    // public function studentShow($id)
+    // {
+    //     $data['student'] = $this->studentRepo->getStudentInfor($id);
+    //     $data['studentId'] = $data['student']->id;
+    //     $data['countries'] = $this->studentRepo->getCountries();
+    //     $data['programs'] = $this->studentRepo->getPrograms();
+    //     $data['towns'] = $this->studentRepo->getTowns();
+    //     $data['provinces'] = $this->studentRepo->getProvinces();
+    //     $data['course_levels'] = $this->studentRepo->getCourseLevels();
+    //     $data['periodIntakes'] = $this->studentRepo->getIntakes();
+    //     $data['studyModes'] = $this->studentRepo->getStudyModes();
+    //     $data['periodTypes'] = $this->studentRepo->getPeriodTypes();
+    //     $data['relationships'] = $this->studentRepo->getRelationships();
+    //     $data['maritalStatuses'] = $this->studentRepo->getMaritalStatuses();
+    //     $data['paymentMethods'] = $this->studentRepo->getPaymentMethods();
+    //     $data['fees'] = $this->studentRepo->getFees($id);
 
-        // Find student
-        $student = $this->studentRepo->findUser($id);
+    //     // Find student
+    //     $student = $this->studentRepo->findUser($id);
 
-        $x = $this->studentRepo->getStudentInfor($id);
+    //     $x = $this->studentRepo->getStudentInfor($id);
 
-        $data['courses'] = $this->registrationRepo->getAll($student->student->id);
-        $data['isRegistered'] = $this->registrationRepo->getRegistrationStatus($student->student->id);
-        $data['isWithinRegistrationPeriod'] = $this->registrationRepo->checkIfWithinRegistrationPeriod($student->student->id);
-        $data['isInvoiced'] = $this->registrationRepo->checkIfInvoiced($student->student->id);
-        $data['enrollments'] = $this->enrollmentRepo->getEnrollments($student->student->id);
-        $data['results'] = $this->classaAsessmentRepo->GetExamGrades($id);
-        $data['caresults'] = $this->classaAsessmentRepo->GetCaStudentGrades($id);
+    //     $data['courses'] = $this->registrationRepo->getAll($student->student->id);
+    //     $data['isRegistered'] = $this->registrationRepo->getRegistrationStatus($student->student->id);
+    //     $data['isWithinRegistrationPeriod'] = $this->registrationRepo->checkIfWithinRegistrationPeriod($student->student->id);
+    //     $data['isInvoiced'] = $this->registrationRepo->checkIfInvoiced($student->student->id);
+    //     $data['enrollments'] = $this->enrollmentRepo->getEnrollments($student->student->id);
+    //     $data['results'] = $this->classaAsessmentRepo->GetExamGrades($id);
+    //     $data['caresults'] = $this->classaAsessmentRepo->GetCaStudentGrades($id);
 
-        $data['percentage'] = $this->invoiceRepo->paymentPercentage($student->student->id);
+    //     $data['percentage'] = $this->invoiceRepo->paymentPercentage($student->student->id);
 
-        return view('pages.students.show', $data);
-    }
+    //     return view('pages.students.show', $data);
+    // }
 
     public function resetAccountPassword(ResetPasswordInfo $request)
     {

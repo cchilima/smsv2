@@ -19,7 +19,7 @@
                 <livewire:datatables.academics.academic-period-types />
             </div>
 
-            <div wire:ignore.self class="tab-pane fade" id="new-type">
+            <div wire:ignore class="tab-pane fade" id="new-type">
 
                 <div class="row">
                     <div class="col-md-6">
@@ -43,8 +43,8 @@
                             </div>
 
                             <div class="text-right">
-                                <button wire:click="refreshTable('AcademicPeriodTypesTable')" id="ajax-btn"
-                                    type="submit" class="btn btn-primary">Submit form <i
+                                <button wire:click.debounce.1000ms="refreshTable('AcademicPeriodTypesTable')"
+                                    id="ajax-btn" type="submit" class="btn btn-primary">Submit form <i
                                         class="icon-paperplane ml-2"></i></button>
                             </div>
                         </form>

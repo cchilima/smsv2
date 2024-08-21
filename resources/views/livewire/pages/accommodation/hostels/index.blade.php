@@ -21,7 +21,7 @@
                 <livewire:datatables.accommodation.hostels />
             </div>
 
-            <div wire:ignore.self class="tab-pane fade" id="new-hostel">
+            <div wire:ignore class="tab-pane fade" id="new-hostel">
                 <div class="row">
                     <div class="col-md-6">
                         <form class="ajax-store" method="post" action="{{ route('hostels.store') }}">
@@ -45,8 +45,9 @@
                             </div>
 
                             <div class="text-right">
-                                <button wire:click="refreshTable('HostelsTable')" id="ajax-btn" type="submit"
-                                    class="btn btn-primary">Submit form <i class="icon-paperplane ml-2"></i></button>
+                                <button wire:click.debounce.1000ms="refreshTable('HostelsTable')" id="ajax-btn"
+                                    type="submit" class="btn btn-primary">Submit form <i
+                                        class="icon-paperplane ml-2"></i></button>
                             </div>
                         </form>
                     </div>
