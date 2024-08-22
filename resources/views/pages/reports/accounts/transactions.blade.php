@@ -12,7 +12,7 @@
         <div class="card-body">
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-classes">
-                    <div class="row mt-0 mb-1">
+                    <div class="row mt-0 mb-4">
                         <div class="col-md-12">
                             <form class="ajax-store-test" method="post" action="{{ route('transaction-results') }}">
                                 @csrf

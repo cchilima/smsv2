@@ -40,6 +40,13 @@ class AccountReportsController extends Controller
         return $this->renderAccountingReportView('Transactions Report', 'pages.reports.accounts.transactions');
     }
 
+    private function generateDateSeparatorText($fromDate, $toDate)
+    {
+        if (!$fromDate && $toDate) return 'Up to ';
+        if ($fromDate && !$toDate) return ' onwards';
+        if ($fromDate && $toDate) return  ' to ';
+    }
+
     /**
      * Render an accounting report view
      * 
@@ -50,19 +57,25 @@ class AccountReportsController extends Controller
      */
     private function renderAccountingReportView($pageTitle = "Report", $viewPath, $data = [])
     {
-        $datesSet = !empty(request('from_date') && !empty(request('to_date')));
+        $datesSet = !empty(request('from_date')) || !empty(request('to_date'));
 
         if ($datesSet) {
+            $fromDate = request('from_date');
+            $toDate = request('to_date');
+
             $data['datesSet'] = $datesSet;
 
-            $data['fromDate'] = Carbon::parse(request('from_date'))->format('Y-m-d');
-            $data['toDate'] = Carbon::parse(request('to_date'))->format('Y-m-d');
+            // If dates are not set, set them to empty strings
+            $data['fromDate'] = $fromDate ? Carbon::parse($fromDate)->format('Y-m-d') : '';
+            $data['toDate'] = $toDate ? Carbon::parse($toDate)->format('Y-m-d') : '';
 
+            // Create and format the page title
             $data['pageTitle'] = sprintf(
-                '%s (%s to %s)',
+                '%s (%s%s%s)',
                 $pageTitle,
-                Carbon::parse($data['fromDate'])->format('d M Y'),
-                Carbon::parse($data['toDate'])->format('d M Y')
+                $fromDate ? Carbon::parse($fromDate)->format('d M Y') : '',
+                $this->generateDateSeparatorText($fromDate, $toDate),
+                $toDate ? Carbon::parse($toDate)->format('d M Y') : ''
             );
 
             return view($viewPath, $data);

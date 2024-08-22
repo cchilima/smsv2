@@ -10,6 +10,22 @@ use Carbon\Carbon;
 class AccountsReportsRepository
 {
     /**
+     * Get all the records from a given date range
+     * 
+     * @param string $from_date Start date for the query
+     * @param string $to_date End date for the query
+     * @param \Illuminate\Database\Eloquent\Builder $query The query to run
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function getAllFromDateRange($from_date, $to_date, $query)
+    {
+        if ($from_date) $query = $query->whereDate('created_at', '>=', $from_date);
+        if ($to_date) $query = $query->whereDate('created_at', '<=', $to_date);
+
+        return $query;
+    }
+
+    /**
      * Get all invoices for a given date range
      *
      * @param  string  $from_date Start date for the query
@@ -19,9 +35,8 @@ class AccountsReportsRepository
      */
     public function RevenueAnalysis($from_date, $to_date, $executeQuery = true)
     {
-        $query = Invoice::with('student.user', 'student.program', 'details.fee')
-            ->whereDate('created_at', '>=', $from_date)
-            ->whereDate('created_at', '<=', $to_date);
+        $query = Invoice::with('student.user', 'student.program', 'details.fee');
+        $query = $this->getAllFromDateRange($from_date, $to_date, $query);
 
         return $executeQuery ? $query->get() : $query;
     }
@@ -52,9 +67,8 @@ class AccountsReportsRepository
      */
     public function Transactions($from_date, $to_date, $executeQuery = true)
     {
-        $query = Receipt::with('student.user', 'student.program', 'paymentMethod')
-            ->whereDate('created_at', '>=', $from_date)
-            ->whereDate('created_at', '<=', $to_date);
+        $query = Receipt::with('student.user', 'student.program', 'paymentMethod');
+        $query = $this->getAllFromDateRange($from_date, $to_date, $query);
 
         return $executeQuery ? $query->get() : $query;
     }
@@ -66,14 +80,17 @@ class AccountsReportsRepository
         //        $students = Student::with(['invoices.details' => function ($query) {
         //            $query->whereDate('created_at', '<=', Carbon::now());
         //        }, 'receipts'])->get();
+
         $students = Student::with(['invoices.details' => function ($query) use ($to_date) {
             $query->whereDate('created_at', '<=', $to_date);
         }, 'receipts', 'user', 'program', 'study_mode', 'level'])->get();
+
         $results = [];
 
         foreach ($students as $student) {
             // Calculate total invoice amount
             $totalInvoiceAmount = 0;
+
             foreach ($student->invoices as $invoice) {
                 $totalInvoiceAmount += $invoice->details->sum('amount');
             }
@@ -95,6 +112,7 @@ class AccountsReportsRepository
             if (!$totalInvoiceAmount > 0) {
                 $totalInvoiceAmount = $totalReceiptAmount;
             }
+
             $paymentPercentage = $totalReceiptAmount > 0 ? ($totalReceiptAmount / $totalInvoiceAmount) * 100 : 0;
             $formattedDays = $this->formatDaysSinceLastReceipt($daysSinceLastReceipt);
             // Build the result array
