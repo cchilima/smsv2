@@ -25,7 +25,7 @@ final class InvoicesSummary extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'InvoicesSummaryTable';
+    public string $tableName = 'InvoicesSummaryReportTable';
     public bool $deferLoading = true;
 
     public string $fromDate;
@@ -48,7 +48,7 @@ final class InvoicesSummary extends PowerGridComponent
         $this->sortBy('created_at', 'desc');
 
         return [
-            Exportable::make('export')
+            Exportable::make('invoiced-summary-report-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -77,7 +77,7 @@ final class InvoicesSummary extends PowerGridComponent
             ->add('id')
             ->add('student_id')
 
-            ->add('studentName', function ($row) {
+            ->add('student', function ($row) {
                 return $row->student->user->first_name . ' ' . $row->student->user->last_name;
             })
 
@@ -101,7 +101,7 @@ final class InvoicesSummary extends PowerGridComponent
 
             Column::make('Student ID', 'student_id'),
 
-            Column::make('Student', 'studentName'),
+            Column::make('Student', 'student'),
 
             Column::make('Program', 'program.code'),
 

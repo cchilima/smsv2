@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Livewire\Datatables\Reports\Accounting\Revenue;
+namespace App\Livewire\Datatables\Reports\Accounting\Receivables;
 
-use App\Models\Accounting\Invoice;
-use App\Repositories\Academics\AcademicPeriodRepository;
+use App\Models\Accounting\Receipt;
 use App\Repositories\Academics\ProgramsRepository;
+use App\Repositories\Accounting\PaymentMethodRepository;
 use App\Repositories\Reports\Accounts\AccountsReportsRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Number;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Exportable;
@@ -20,25 +20,25 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class RevenueAnalysis extends PowerGridComponent
+final class Transactions extends PowerGridComponent
 {
     use WithExport;
 
-    public string $tableName = 'RevenueAnalysisReportTable';
+    public string $tableName = 'TransactionsReportTable';
     public bool $deferLoading = true;
 
     public string $fromDate;
     public string $toDate;
 
-    protected ProgramsRepository $programRepo;
-    protected AcademicPeriodRepository $academicPeriodRepo;
     protected AccountsReportsRepository $accountsReportsRepo;
+    protected PaymentMethodRepository $paymentMethodRepo;
+    protected ProgramsRepository $programRepo;
 
     public function boot(): void
     {
-        $this->programRepo = app(ProgramsRepository::class);
-        $this->academicPeriodRepo = app(AcademicPeriodRepository::class);
         $this->accountsReportsRepo = app(AccountsReportsRepository::class);
+        $this->paymentMethodRepo = app(PaymentMethodRepository::class);
+        $this->programRepo = app(ProgramsRepository::class);
     }
 
     public function setUp(): array
@@ -47,7 +47,7 @@ final class RevenueAnalysis extends PowerGridComponent
         $this->sortBy('created_at', 'desc');
 
         return [
-            Exportable::make('revenue-analysis-report-export')
+            Exportable::make('transactions-report-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -59,14 +59,21 @@ final class RevenueAnalysis extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return $this->accountsReportsRepo->RevenueAnalysis($this->fromDate, $this->toDate, false);
+        return $this->accountsReportsRepo->Transactions($this->fromDate, $this->toDate, false);
     }
 
     public function relationSearch(): array
     {
         return [
-            'program' => ['name', 'code'],
-            'period' => ['name', 'code'],
+            'student.user' => [
+                'first_name',
+                'last_name'
+            ],
+
+            'student.program' => [
+                'code',
+                'name',
+            ]
         ];
     }
 
@@ -75,19 +82,19 @@ final class RevenueAnalysis extends PowerGridComponent
         return PowerGrid::fields()
             ->add('id')
             ->add('student_id')
+            ->add('student.program.code')
 
-            ->add('studentName', function ($row) {
+            ->add('student', function ($row) {
                 return $row->student->user->first_name . ' ' . $row->student->user->last_name;
             })
 
-            ->add('program.code')
-            ->add('period.name')
-
-            ->add('details', function ($row) {
-                return Blade::render('components.table-fields.reports.accounting.revenue-analysis', ['row' => $row]);
+            ->add('amount', function ($row) {
+                return Number::format($row->amount, 2);
             })
 
-            ->add('date', function ($row) {
+            ->add('paymentMethod.name')
+
+            ->add('created_at', function ($row) {
                 return Carbon::parse($row->created_at)->format('d M Y, H:i');
             });
     }
@@ -95,19 +102,20 @@ final class RevenueAnalysis extends PowerGridComponent
     public function columns(): array
     {
         return [
-            Column::make('Invoide ID', 'id'),
+            Column::make('Receipt ID', 'id'),
 
-            Column::make('Student ID', 'student_id'),
+            Column::make('Student ID', 'student_id')
+                ->sortable(),
 
-            Column::make('Student', 'studentName'),
+            Column::make('Student', 'student'),
+            Column::make('Program', 'student.program.code'),
 
-            Column::make('Program', 'program.code'),
+            Column::make('Amount', 'amount')
+                ->sortable(),
 
-            Column::make('Academic Period', 'period.name'),
+            Column::make('Payment Method', 'paymentMethod.name'),
 
-            Column::make('Details', 'details'),
-
-            Column::make('Date', 'date', 'created_at')
+            Column::make('Created at', 'created_at')
                 ->sortable(),
         ];
     }
@@ -115,13 +123,9 @@ final class RevenueAnalysis extends PowerGridComponent
     public function filters(): array
     {
         return [
-            Filter::inputText('program.code')
-                ->operators(['is'])
-                ->filterRelation('program', 'code'),
-
-            Filter::select('period.name', 'academic_period_id')
-                ->dataSource($this->academicPeriodRepo->getAll())
-                ->optionLabel('code')
+            Filter::select('paymentMethod.name', 'payment_method_id')
+                ->dataSource($this->paymentMethodRepo->getAll())
+                ->optionLabel('name')
                 ->optionValue('id'),
         ];
     }

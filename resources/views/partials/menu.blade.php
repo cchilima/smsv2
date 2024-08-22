@@ -203,10 +203,13 @@
                                 'student.list',
                                 'creditors',
                                 'aged.receivables',
+                                'transactions',
+                                'transaction-results',
                                 'revenue.analysis',
                                 'revenue-revenue-result',
                                 'invoices',
                                 'invoices-results',
+                                'failed.transaction',
                                 'fees.create',
                                 'fees.edit',
                                 'fees.index',
@@ -241,7 +244,21 @@
 
                                 @if (true)
                                     <li
-                                        class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['credit.notes', 'student.list', 'creditors', 'aged.receivables', 'revenue.analysis', 'revenue-revenue-result', 'invoices', 'invoices-results']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                                        class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
+                                            'credit.notes',
+                                            'student.list',
+                                            'creditors',
+                                            'aged.receivables',
+                                            'revenue.analysis',
+                                            'revenue-revenue-result',
+                                            'invoices',
+                                            'invoices-results',
+                                            'transactions',
+                                            'transaction-results',
+                                            'failed.transaction',
+                                        ])
+                                            ? 'nav-item-expanded nav-item-open'
+                                            : '' }} ">
                                         <a href="#" class="nav-link">Reports</a>
                                         <ul class="nav nav-group-sub" data-submenu-title="Manage Students">
                                             @if (true)
@@ -263,7 +280,7 @@
                                             @endif
                                             @if (true)
                                                 <li
-                                                    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['transactions', 'credit.notes', 'aged.receivables']) ? 'nav-item-expanded nav-item-open' : '' }}">
+                                                    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['transactions', 'transaction-results', 'failed.transaction', 'credit.notes', 'aged.receivables']) ? 'nav-item-expanded nav-item-open' : '' }}">
                                                     <a href="#"
                                                         class="nav-link {{ in_array(Route::currentRouteName(), ['transactions', 'aged.receivables', 'failed.transaction']) ? 'active' : '' }}">
                                                         Receivables</a>

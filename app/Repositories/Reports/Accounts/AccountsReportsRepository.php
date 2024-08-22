@@ -42,15 +42,23 @@ class AccountsReportsRepository
         return  $executeQuery ? $query->get() : $query;
     }
 
-    public function Transactions($from_date, $to_date, $method)
+    /**
+     * Get all transactions for a given date range
+     *
+     * @param  string  $from_date Start date for the query
+     * @param  string  $to_date End date for the query
+     * @param  bool  $executeQuery Whether to execute the query or return the builder
+     * @return \Illuminate\Database\Eloquent\Collection | \Illuminate\Database\Eloquent\Builder
+     */
+    public function Transactions($from_date, $to_date, $executeQuery = true)
     {
-        return Receipt::with('student.user', 'student.program', 'paymentMethod')
+        $query = Receipt::with('student.user', 'student.program', 'paymentMethod')
             ->whereDate('created_at', '>=', $from_date)
-            ->whereDate('created_at', '<=', $to_date)
-            ->where('payment_method_id', '=', $method)
-            ->get();
-        //return Invoice::with('student.user','student.program','details.fee')->whereDate('created_at','>=',$from_date)->whereDate('created_at','<=',$to_date)->get();
+            ->whereDate('created_at', '<=', $to_date);
+
+        return $executeQuery ? $query->get() : $query;
     }
+
     public function Aged_Receivables($to_date)
     {
         //        return Student::with('invoices','receipts')
