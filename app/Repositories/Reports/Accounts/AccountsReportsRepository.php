@@ -12,9 +12,9 @@ class AccountsReportsRepository
     /**
      * Get all invoices for a given date range
      *
-     * @param  string  $from_date
-     * @param  string  $to_date
-     * @param  bool  $executeQuery
+     * @param  string  $from_date Start date for the query
+     * @param  string  $to_date End date for the query
+     * @param  bool  $executeQuery Whether to execute the query or return the builder
      * @return \Illuminate\Database\Eloquent\Collection | \Illuminate\Database\Eloquent\Builder
      */
     public function RevenueAnalysis($from_date, $to_date, $executeQuery = true)
@@ -26,21 +26,22 @@ class AccountsReportsRepository
         return $executeQuery ? $query->get() : $query;
     }
 
-    public function RevenueAnalysisSummary($from_date, $to_date)
+    /**
+     * Get all invoices and their total amounts for a given date range
+     *
+     * @param  string  $from_date Start date for the query
+     * @param  string  $to_date End date for the query
+     * @param  bool  $executeQuery Whether to execute the query or return the builder
+     * @return \Illuminate\Database\Eloquent\Collection | \Illuminate\Database\Eloquent\Builder
+     */
+    public function RevenueAnalysisSummary($from_date, $to_date, $executeQuery = true)
     {
-        return Invoice::with('student.user', 'student.program', 'details.fee')
-            ->whereDate('created_at', '>=', $from_date)
-            ->whereDate('created_at', '<=', $to_date)
-            ->get()
-            ->map(function ($invoice) {
-                $totalAmount = $invoice->details->sum('amount');
-                return [
-                    'invoice' => $invoice,
-                    'totalAmount' => $totalAmount,
-                ];
-            });
-        //return Invoice::with('student.user','student.program','details.fee')->whereDate('created_at','>=',$from_date)->whereDate('created_at','<=',$to_date)->get();
+        $query = $this->RevenueAnalysis($from_date, $to_date, false)
+            ->withSum('details', 'amount');
+
+        return  $executeQuery ? $query->get() : $query;
     }
+
     public function Transactions($from_date, $to_date, $method)
     {
         return Receipt::with('student.user', 'student.program', 'paymentMethod')

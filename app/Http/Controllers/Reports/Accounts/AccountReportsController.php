@@ -80,6 +80,16 @@ class AccountReportsController extends Controller
 
     public function RevenueAnalysis(Request $request)
     {
+        return $this->renderReportView($request, 'pages.reports.accounts.revenue_analysis');
+    }
+
+    public function invoices(Request $request)
+    {
+        return $this->renderReportView($request, 'pages.reports.accounts.invoices');
+    }
+
+    private function renderReportView(Request $request, $viewPath)
+    {
         $datesSet = !empty($request['from_date']) && !empty($request['to_date']);
         $pageTitle = 'Revenue Analysis Report';
 
@@ -91,25 +101,12 @@ class AccountReportsController extends Controller
 
             $pageTitle = 'Revenue Analysis Report (' . $fromDateFormatted . ' to ' . $toDateFormatted . ')';
 
-            return view('pages.reports.accounts.revenue_analysis', compact('datesSet', 'fromDate', 'toDate', 'pageTitle'));
+            return view($viewPath, compact('datesSet', 'fromDate', 'toDate', 'pageTitle'));
         }
 
-        return view('pages.reports.accounts.revenue_analysis', compact('datesSet', 'pageTitle'));
+        return view($viewPath, compact('datesSet', 'pageTitle'));
     }
 
-    public function invoices(Request $request)
-    {
-
-        if (isset($request['from_date']) && !$request['from_date'] == '' && isset($request['to_date']) && !$request['to_date'] == '') {
-            $revenue['revenue_analysis'] = $this->revenue_analysis->RevenueAnalysisSummary(date('Y-m-d', strtotime($request['from_date'])), date('Y-m-d', strtotime($request['to_date'])));
-
-            // dd($revenue);
-            return view('pages.reports.accounts.invoices', $revenue);
-        } else {
-            return view('pages.reports.accounts.invoices');
-        }
-        //return view('pages.reports.accounts.invoices');
-    }
     public function Transactions(Request $request)
     {
 
