@@ -38,7 +38,7 @@
                     </div>
 
                     @if ($datesSet)
-                        @livewire('datatables.reports.accounting.revenue-analysis', [
+                        @livewire('datatables.reports.accounting.revenue.revenue-analysis', [
                             'fromDate' => $fromDate,
                             'toDate' => $toDate,
                         ])

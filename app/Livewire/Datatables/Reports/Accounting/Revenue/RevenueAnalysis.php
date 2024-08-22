@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Datatables\Reports\Accounting;
+namespace App\Livewire\Datatables\Reports\Accounting\Revenue;
 
 use App\Models\Accounting\Invoice;
 use App\Repositories\Academics\AcademicPeriodRepository;
