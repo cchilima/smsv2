@@ -11,6 +11,7 @@ use App\Repositories\Accounting\PaymentMethodRepository;
 use App\Repositories\Reports\Accounts\AccountsReportsRepository;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class AccountReportsController extends Controller
 {
@@ -50,17 +51,19 @@ class AccountReportsController extends Controller
     private function renderAccountingReportView($pageTitle = "Report", $viewPath, $data = [])
     {
         $datesSet = !empty(request('from_date') && !empty(request('to_date')));
-        $pageTitle = $pageTitle;
 
         if ($datesSet) {
             $data['datesSet'] = $datesSet;
-            $data['fromDate'] = date('Y-m-d', strtotime(request('from_date')));
-            $data['toDate'] = date('Y-m-d', strtotime(request('to_date')));
 
-            $fromDateFormatted = date('d M Y', strtotime($data['fromDate']));
-            $toDateFormatted = date('d M Y', strtotime($data['toDate']));
+            $data['fromDate'] = Carbon::parse(request('from_date'))->format('Y-m-d');
+            $data['toDate'] = Carbon::parse(request('to_date'))->format('Y-m-d');
 
-            $data['pageTitle'] = $pageTitle . ' (' . $fromDateFormatted . ' to ' . $toDateFormatted . ')';
+            $data['pageTitle'] = sprintf(
+                '%s (%s to %s)',
+                $pageTitle,
+                Carbon::parse($data['fromDate'])->format('d M Y'),
+                Carbon::parse($data['toDate'])->format('d M Y')
+            );
 
             return view($viewPath, $data);
         }
