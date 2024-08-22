@@ -80,28 +80,39 @@ class AccountReportsController extends Controller
 
     public function RevenueAnalysis(Request $request)
     {
-        return $this->renderReportView($request, 'pages.reports.accounts.revenue_analysis');
+        return $this->renderAccountingReportView($request, 'Revenue Analysis Report', 'pages.reports.accounts.revenue_analysis');
     }
 
     public function invoices(Request $request)
     {
-        return $this->renderReportView($request, 'pages.reports.accounts.invoices');
+        return $this->renderAccountingReportView($request, 'Invoices Summary Report', 'pages.reports.accounts.invoices');
     }
 
-    private function renderReportView(Request $request, $viewPath)
+    /**
+     * Render the report view
+     * 
+     * @param Request $request
+     * @param string $pageTitle The title of the page
+     * @param string $viewPath The path to the Blade view
+     * @param array $data The data to pass to the view
+     * @return \Illuminate\Contracts\View\View
+     */
+    private function renderAccountingReportView(Request $request, $pageTitle = "Report", $viewPath, $data = [])
     {
         $datesSet = !empty($request['from_date']) && !empty($request['to_date']);
-        $pageTitle = 'Revenue Analysis Report';
+        $pageTitle = $pageTitle;
 
         if ($datesSet) {
-            $fromDate = date('Y-m-d', strtotime($request['from_date']));
-            $toDate = date('Y-m-d', strtotime($request['to_date']));
-            $fromDateFormatted = date('d M Y', strtotime($fromDate));
-            $toDateFormatted = date('d M Y', strtotime($toDate));
+            $data['datesSet'] = $datesSet;
+            $data['fromDate'] = date('Y-m-d', strtotime($request['from_date']));
+            $data['toDate'] = date('Y-m-d', strtotime($request['to_date']));
 
-            $pageTitle = 'Revenue Analysis Report (' . $fromDateFormatted . ' to ' . $toDateFormatted . ')';
+            $fromDateFormatted = date('d M Y', strtotime($data['fromDate']));
+            $toDateFormatted = date('d M Y', strtotime($data['fromDate']));
 
-            return view($viewPath, compact('datesSet', 'fromDate', 'toDate', 'pageTitle'));
+            $data['pageTitle'] = $pageTitle . ' (' . $fromDateFormatted . ' to ' . $toDateFormatted . ')';
+
+            return view($viewPath, $data);
         }
 
         return view($viewPath, compact('datesSet', 'pageTitle'));
