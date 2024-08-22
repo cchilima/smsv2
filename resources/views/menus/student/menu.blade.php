@@ -67,6 +67,6 @@
     <a href="/registration"
         class="nav-link {{ in_array(Route::currentRouteName(), ['registration.index']) ? 'active' : '' }}"><i
             class="icon-clipboard2">
-        </i> <span>Registration</span>
+        </i> <span>My Registration</span>
     </a>
 </li>
