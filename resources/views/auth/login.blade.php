@@ -43,13 +43,13 @@
                             </div>
 
                             <div class="form-group d-flex align-items-center">
-                                <div class="form-check mb-0">
-                                    <label class="form-check-label">
-                                        <input type="checkbox" name="remember" class="form-input-styled"
-                                            {{ old('remember') ? 'checked' : '' }} data-fouc>
-                                        Remember
-                                    </label>
-                                </div>
+{{--                                <div class="form-check mb-0">--}}
+{{--                                    <label class="form-check-label">--}}
+{{--                                        <input type="checkbox" name="remember" class="form-input-styled"--}}
+{{--                                            {{ old('remember') ? 'checked' : '' }} data-fouc>--}}
+{{--                                        Remember--}}
+{{--                                    </label>--}}
+{{--                                </div>--}}
 
                                 <a href="{{ route('password.request') }}" class="ml-auto">Forgot password?</a>
                             </div>
