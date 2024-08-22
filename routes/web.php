@@ -63,6 +63,7 @@ use App\Livewire\Pages\Accommodation\BedSpaces\Index as BedSpacesIndex;
 use App\Livewire\Pages\Accounting\Fees\Index as FeesIndex;
 use App\Livewire\Pages\Accounting\PaymentMethods\Index as PaymentMethodsIndex;
 use App\Livewire\Pages\Admissions\Applications\Index as ApplicationsIndex;
+use App\Livewire\Pages\Admissions\Students\Show as ShowStudent;
 use App\Livewire\Pages\Notices\Announcements\Index as AnnouncementsIndex;
 use App\Livewire\Pages\Residency\Countries\Index as CountriesIndex;
 use App\Livewire\Pages\Residency\Provinces\Index as ProvincesIndex;
@@ -89,7 +90,8 @@ Route::group(['prefix' => 'students'], function () {
     Route::get('/search', [StudentController::class, 'search'])->name('search');
     Route::post('/search', [StudentController::class, 'search'])->name('students.lists');
     Route::get('/list', [StudentController::class, 'list'])->name('students.list');
-    Route::get('/profile/{id}', [StudentController::class, 'studentShow'])->name('show.student');
+    // Route::get('/profile/{id}', [StudentController::class, 'studentShow'])->name('show.student');
+    Route::get('/profile/{userId}', ShowStudent::class)->name('show.student');
 });
 Route::group(['prefix' => 'assess'], function () {
     Route::get('/classes/{id}', [ClassAssessmentsController::class, 'getClasses'])->name('class-names');

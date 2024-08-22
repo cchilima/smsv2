@@ -23,7 +23,7 @@
                 <livewire:datatables.settings.marital-statuses />
             </div>
 
-            <div wire:ignore.self class="tab-pane fade" id="new-status">
+            <div wire:ignore class="tab-pane fade" id="new-status">
                 <div class="row">
                     <div class="col-md-6">
                         <form class="ajax-store mb-4" method="post" action="{{ route('marital-statuses.store') }}">
@@ -48,10 +48,9 @@
                             </div>
 
                             <div class="text-right">
-                                <button 
-                                {{-- @click="$dispatch('pg:eventRefresh-MaritalStatusesTable')" --}} 
-                                wire:click="refreshTable('MaritalStatusesTable')"
-                                    id="ajax-btn" type="submit" class="btn btn-primary">Submit Form <i
+                                <button {{-- @click="$dispatch('pg:eventRefresh-MaritalStatusesTable')" --}}
+                                    wire:click.debounce.1000ms="refreshTable('MaritalStatusesTable')" id="ajax-btn"
+                                    type="submit" class="btn btn-primary">Submit Form <i
                                         class="icon-paperplane ml-2"></i></button>
                             </div>
                         </form>

@@ -4,7 +4,7 @@ namespace App\Repositories\Accounting;
 
 use App\Models\Academics\{AcademicPeriodClass, AcademicPeriodFee, AcademicPeriod};
 use App\Repositories\Academics\{StudentRegistrationRepository};
-use App\Models\Accounting\{Invoice, InvoiceDetail};
+use App\Models\Accounting\{Invoice, InvoiceDetail, Receipt};
 use App\Models\Enrollments\Enrollment;
 use App\Models\Admissions\Student;
 use Auth;
@@ -72,7 +72,6 @@ class InvoiceRepository
 
             DB::commit();
             return true;
-
         } catch (\Exception $e) {
             DB::rollback();
             dd($e);  // Or handle the exception as needed
@@ -120,7 +119,6 @@ class InvoiceRepository
 
             DB::commit();
             return true;
-
         } catch (\Exception $e) {
             DB::rollback();
             dd($e);
@@ -152,7 +150,6 @@ class InvoiceRepository
                 // Create an invoice based on previous fees
                 $this->createInvoiceFromPreviousFees($student, $periodInfo, $previousFees);
             }
-
         } else {
             if (!$exists) {
                 // Create an invoice based on current academic period fees
@@ -229,7 +226,7 @@ class InvoiceRepository
     private function createInvoiceFromCurrentPeriodFees($student, $periodInfo)
     {
         // Get academic fees associated with the student's program for the current academic period
-            $academicFees = DB::table('academic_period_fees')
+        $academicFees = DB::table('academic_period_fees')
             ->join('program_academic_period_fee', 'academic_period_fees.id', '=', 'program_academic_period_fee.academic_period_fee_id')
             ->join('programs', 'program_academic_period_fee.program_id', '=', 'programs.id')
             ->join('fees', 'academic_period_fees.fee_id', '=', 'fees.id') // Join the fees table to access the fee types
@@ -241,8 +238,8 @@ class InvoiceRepository
 
 
 
-            // Get universal fees (academic period fees with no associations)
-            $universalFees = AcademicPeriodFee::doesntHave('programs')
+        // Get universal fees (academic period fees with no associations)
+        $universalFees = AcademicPeriodFee::doesntHave('programs')
             ->whereHas('fee', function ($query) {
                 $query->whereNotIn('type', ['course repeat fee', 'accommodation fee']);
             })
@@ -323,7 +320,7 @@ class InvoiceRepository
             ->where('fees.type', 'recurring')
             ->where('academic_period_fees.academic_period_id', $academic_period_id)
             ->where('programs.id', $student->program_id)
-            ->whereNotIn('fees.type', ['course repeat fee', 'accommodation fee']) 
+            ->whereNotIn('fees.type', ['course repeat fee', 'accommodation fee'])
             ->select('academic_period_fees.*', 'programs.id as program_id')
             ->get();
 
@@ -350,21 +347,32 @@ class InvoiceRepository
     {
         $accumulative_total = 0;
         $accumulative_payments = 0;
-    
+
         $student = $this->getStudent($student_id);
-    
+
         foreach ($student->invoices as $key => $invoice) {
             $accumulative_total += $invoice->details->sum('amount');
             $accumulative_payments += $invoice->statements->sum('amount');
         }
-    
+
         // Safeguard against division by zero
         if ($accumulative_total == 0) {
             return 0; // or you can choose another appropriate value or action
         }
-    
+
         return (($accumulative_payments / $accumulative_total) * 100);
     }
-    
 
+    /**
+     * Get all non-invoiced receipts for a given student.
+     *
+     * @param  int  $studentId The ID of the student.
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getInvoicesByStudent($studentId)
+    {
+        return Invoice::with(['receipts', 'creditNotes'])
+            ->where('student_id', $studentId)
+            ->get();
+    }
 }
