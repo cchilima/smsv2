@@ -329,7 +329,7 @@
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Students">
 
-                                <li class="nav-item">
+                                {{-- <li class="nav-item">
                                     <a href="{{ route('students.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['students.create']) ? 'active' : '' }}">
                                         <span>Admit student</span></a>
@@ -338,7 +338,7 @@
                                     <a href="{{ route('search') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['search']) ? 'active' : '' }}">
                                         <span>Student Information</span></a>
-                                </li>
+                                </li> --}}
                                 <li class="nav-item">
                                     <a href="{{ route('students.list') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['students.list']) ? 'active' : '' }}">

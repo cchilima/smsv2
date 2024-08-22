@@ -18,7 +18,7 @@
                             <a href="#status" class="nav-link active" data-toggle="tab">{{ 'My Applications' }}</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#new" class="nav-link" data-toggle="tab">{{ 'Status' }}</a>
+                            <a href="#new" class="nav-link" data-toggle="tab">{{ 'Apply for Accommodation' }}</a>
                         </li>
                     </ul>
 

@@ -22,7 +22,7 @@
                 <livewire:datatables.academics.study-modes />
             </div>
 
-            <div wire:ignore.self class="tab-pane fade" id="new-mode">
+            <div wire:ignore class="tab-pane fade" id="new-mode">
 
                 <div class="row">
                     <div class="col-md-6">
@@ -46,8 +46,9 @@
                             </div>
 
                             <div class="text-right">
-                                <button wire:click="refreshTable('StudyModesTable')" id="ajax-btn" type="submit"
-                                    class="btn btn-primary">Submit form <i class="icon-paperplane ml-2"></i></button>
+                                <button wire:click.debounce.1000ms="refreshTable('StudyModesTable')" id="ajax-btn"
+                                    type="submit" class="btn btn-primary">Submit form <i
+                                        class="icon-paperplane ml-2"></i></button>
                             </div>
                         </form>
                     </div>
