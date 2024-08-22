@@ -73,16 +73,13 @@ use App\Livewire\Pages\Settings\MaritalStatuses\Index as MaritalStatusesIndex;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', function () { return redirect()->route('login');});
+Route::get('/staff-login', function () { return view('auth.staff_login');})->name('staff');
 
 Route::get('announcement/{announcement_id}', [AnnouncementController::class, 'ShowAnnouncement'])->name('announcement.fullview');
 Route::post('announcement/{announcement_id}/dismiss', [AnnouncementController::class, 'dismissAnnouncement'])->name('announcement.dismiss');
 
-Route::get('/staff-login', function () {
-    return view('auth.staff_login');
-})->name('staff');
+
 
 Auth::routes(['register' => false]);
 Route::get('/home', [HomeController::class, 'index'])->name('home');

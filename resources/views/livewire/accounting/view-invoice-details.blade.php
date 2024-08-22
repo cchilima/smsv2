@@ -122,7 +122,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($invoice->creditNotes as $key => $note)
+                            @foreach ($invoice->ApprovedCreditNotes as $key => $note)
                                 <tr>
                                     <td>{{ ++$key }}</td>
                                     <td>{{ $note->invoiceDetail->fee->name }}</td>

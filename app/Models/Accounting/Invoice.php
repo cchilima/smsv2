@@ -58,4 +58,9 @@ class Invoice extends Model implements AuditableContract
     {
         return $this->hasMany(CreditNote::class, 'invoice_id');
     }
+
+    public function approvedCreditNotes()
+    {
+        return $this->hasMany(CreditNote::class, 'invoice_id')->where('authorizers', 'DIF,ED');
+    }
 }

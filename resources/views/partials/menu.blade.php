@@ -60,7 +60,7 @@
                 </li>
 
                 {{-- Academics --}}
-                @if (Qs::userIsSuperAdmin() || Qs::userIsAdmin())
+                @if (Qs::userIsSuperAdmin() || Qs::userIsAdmin() || Qs::userIsDIF() || Qs::userIsED())
 
                     {{-- Administrative --}}
 
@@ -236,11 +236,13 @@
                                         <span>Payment Methods</span></a>
                                 </li>
 
+                                @if ( Qs::userIsDIF() || Qs::userIsED())
                                 <li class="nav-item">
                                     <a href="{{ route('accounting.approve_credit_notes') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['accounting.approve_credit_notes']) ? 'active' : '' }}">
                                         <span>Approve Credit Notes</span></a>
                                 </li>
+                                @endif
 
                                 @if (true)
                                     <li

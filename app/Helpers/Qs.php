@@ -177,7 +177,7 @@ class Qs
 
     public static function getStudentData($remove = [])
     {
-        $data = ['programID', 'intakeID', 'studymodeID', 'level_id', 'typeID','paymentPlanID'];
+        $data = ['programID', 'intakeID', 'studymodeID', 'level_id', 'typeID', 'paymentPlanID'];
 
         return $remove ? array_values(array_diff($data, $remove)) : $data;
 
@@ -192,6 +192,16 @@ class Qs
     public static function userIsSuperAdmin()
     {
         return self::getUserType() == 'super_admin';
+    }
+
+    public static function userIsDIF()
+    {
+        return self::getUserType() == 'director finance';
+    }
+
+    public static function userIsED()
+    {
+        return self::getUserType() == 'executive director';
     }
 
     public static function userIsStudent()
