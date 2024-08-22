@@ -13,6 +13,11 @@ class CreditNote extends Model
     protected $fillable = ['invoice_id', 'reason', 'invoice_detail_id', 'amount', 'status', 'issued_by', 'authorizers'];
 
 
+    public function invoice()
+    {
+        return $this->belongsTo(invoice::class, 'invoice_id');
+    }
+
     public function invoiceDetail()
     {
         return $this->belongsTo(invoiceDetail::class, 'invoice_detail_id');
