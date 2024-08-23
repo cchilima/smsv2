@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Datatables\Reports\Accounting\Receivables;
+namespace App\Livewire\Datatables\Reports\Accounting\General;
 
 use App\Repositories\Reports\Accounts\AccountsReportsRepository;
 use Illuminate\Support\Carbon;
@@ -13,18 +13,16 @@ use PowerComponents\LivewirePowerGrid\Exportable;
 use PowerComponents\LivewirePowerGrid\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
-use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class AgedReceivables extends PowerGridComponent
+final class StudentList extends PowerGridComponent
 {
-    use WithExport;
+    protected AccountsReportsRepository $accountsReportsRepo;
 
-    public string $tableName = 'AgedReceivablesReportTable';
+    public string $tableName = 'StudentListReportTable';
     public bool $deferLoading = true;
 
+    public string $fromDate;
     public string $toDate;
-
-    protected AccountsReportsRepository $accountsReportsRepo;
 
     public function boot(): void
     {
@@ -33,7 +31,7 @@ final class AgedReceivables extends PowerGridComponent
 
     public function datasource(): ?Collection
     {
-        return collect($this->accountsReportsRepo->Aged_Receivables($this->toDate));
+        return collect($this->accountsReportsRepo->StudentList($this->fromDate, $this->toDate));
     }
 
     public function setUp(): array
@@ -42,7 +40,7 @@ final class AgedReceivables extends PowerGridComponent
         $this->sortBy('id', 'desc');
 
         return [
-            Exportable::make('aged-receivables-report-export')
+            Exportable::make('accounting-student-list-export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             Header::make()->showSearchInput(),
@@ -60,10 +58,9 @@ final class AgedReceivables extends PowerGridComponent
             ->add('study_mode')
             ->add('program')
             ->add('level')
-            ->add('last_receipt_days')
+            ->add('gender')
             ->add('payment_percentage', fn($entry) => Number::format((int)$entry->payment_percentage, 2) . '%')
-            ->add('balance', fn($entry) => Number::format((int)$entry->balance, 2))
-            ->add('formatted_days');
+            ->add('balance', fn($entry) => Number::format((int)$entry->balance, 2));
     }
 
     public function columns(): array
@@ -87,13 +84,13 @@ final class AgedReceivables extends PowerGridComponent
             Column::make('Level', 'level')
                 ->sortable(),
 
+            Column::make('Gender', 'gender')
+                ->sortable(),
+
             Column::make('Payment %', 'payment_percentage')
                 ->sortable(),
 
             Column::make('Balance', 'balance')
-                ->sortable(),
-
-            Column::make('Days Aging', 'formatted_days', 'last_receipt_days')
                 ->sortable(),
         ];
     }

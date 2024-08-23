@@ -6,19 +6,20 @@ use App\Models\Accounting\Invoice;
 use App\Models\Accounting\Receipt;
 use App\Models\Admissions\Student;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class AccountsReportsRepository
 {
     /**
-     * Get all the records from a given date range
+     * Get a query for all records in a given date range
      * 
      * @param string $from_date Start date for the query
      * @param string $to_date End date for the query
      * @param \Illuminate\Database\Eloquent\Builder $query The query to run
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function getAllFromDateRange($from_date, $to_date, $query)
+    private function queryAllFromDateRange($from_date, $to_date, $query): Builder
     {
         if ($from_date) $query = $query->whereDate('created_at', '>=', $from_date);
         if ($to_date) $query = $query->whereDate('created_at', '<=', $to_date);
@@ -37,7 +38,7 @@ class AccountsReportsRepository
     public function RevenueAnalysis($from_date, $to_date, $executeQuery = true)
     {
         $query = Invoice::with('student.user', 'student.program', 'details.fee');
-        $query = $this->getAllFromDateRange($from_date, $to_date, $query);
+        $query = $this->queryAllFromDateRange($from_date, $to_date, $query);
 
         return $executeQuery ? $query->get() : $query;
     }
@@ -69,18 +70,13 @@ class AccountsReportsRepository
     public function Transactions($from_date, $to_date, $executeQuery = true)
     {
         $query = Receipt::with('student.user', 'student.program', 'paymentMethod');
-        $query = $this->getAllFromDateRange($from_date, $to_date, $query);
+        $query = $this->queryAllFromDateRange($from_date, $to_date, $query);
 
         return $executeQuery ? $query->get() : $query;
     }
 
     /**
-     * Get all aged receivables students up to a given date.
-     *
-     * This method retrieves all students along with their associated invoices, receipts,
-     * and other related data. It calculates the total invoice amount, total receipt amount,
-     * and balance for each student. It also determines the number of days since the last receipt
-     * and calculates the payment percentage based on the total invoice and receipt amounts.
+     * Get all aged receivables for students up to a given date.
      *
      * @param string $to_date The date up to which invoices should be retrieved.
      * @return array An array of results containing student information, balance, payment percentage,
@@ -141,53 +137,69 @@ class AccountsReportsRepository
         return $results;
     }
 
+    /**
+     * Retrieve the financial details for students within a specified date range.
+     *
+     * @param string $from_date The start date for filtering students based on their creation date.
+     * @param string $to_date The end date for filtering students based on their creation date.
+     * @return array An array of results containing student information, balance, payment percentage,
+     *               program, gender, and other related details.
+     */
+
     public function StudentList($from_date, $to_date)
     {
-        $students = Student::with(['invoices.details', 'receipts', 'user', 'program', 'study_mode', 'level'])
-            ->whereDate('created_at', '>=', $from_date)
-            ->whereDate('created_at', '<=', $to_date)
-            ->get();
+        $query = Student::with([
+            'user:id,first_name,last_name,gender',
+            'program:id,name',
+            'study_mode:id,name',
+            'level:id,name'
+        ]);
+
+        $students = $this->queryAllFromDateRange($from_date, $to_date, $query)
+            ->withCount([
+                'invoices as total_invoice_amount' => function ($query) {
+                    $query->join('invoice_details', 'invoices.id', '=', 'invoice_details.invoice_id')
+                        ->select(DB::raw('SUM(invoice_details.amount)'));
+                },
+                'receipts as total_receipt_amount' => function ($query) {
+                    $query->select(DB::raw('SUM(amount)'));
+                },
+                'receipts as last_receipt_at' => function ($query) {
+                    $query->select(DB::raw('MAX(receipts.created_at)'));
+                }
+            ])->get();
+
         $results = [];
 
         foreach ($students as $student) {
-            // Calculate total invoice amount
-            $totalInvoiceAmount = 0;
-            foreach ($student->invoices as $invoice) {
-                $totalInvoiceAmount += $invoice->details->sum('amount');
-            }
-
-            // Calculate total receipt amount
-            $totalReceiptAmount = $student->receipts->sum('amount');
+            $totalInvoiceAmount = $student->total_invoice_amount ?? 0;
+            $totalReceiptAmount = $student->total_receipt_amount ?? 0;
 
             // Calculate balance
             $balance = $totalInvoiceAmount - $totalReceiptAmount;
 
-            // Find the last receipt
-            $lastReceipt = $student->receipts->sortByDesc('created_at')->first();
-
             // Calculate days since last receipt
-            $daysSinceLastReceipt = $lastReceipt ? $lastReceipt->created_at->diffInDays(Carbon::now()) : null;
+            $daysSinceLastReceipt = $student->last_receipt_at ? Carbon::parse($student->last_receipt_at)->diffInDays(Carbon::now()) : null;
 
             // Calculate payment percentage
-            if (!$totalInvoiceAmount > 0) {
-                $totalInvoiceAmount = $totalReceiptAmount;
-            }
-            $paymentPercentage = $totalReceiptAmount > 0 ? ($totalReceiptAmount / $totalInvoiceAmount) * 100 : 0;
+            $paymentPercentage = $totalInvoiceAmount > 0 ? ($totalReceiptAmount / $totalInvoiceAmount) * 100 : 0;
+
+            // Build the result array
             $results[] = [
-                'student_id' => $student->id,
+                'id' => $student->id,
                 'name' => $student->user->first_name . ' ' . $student->user->last_name,
                 'study_mode' => $student->study_mode->name,
                 'level' => $student->level->name,
-                'program' => $student->user->gender,
+                'program' => $student->program->name,  // Corrected the field to 'program->name'
                 'gender' => $student->user->gender,
                 'payment_percentage' => $paymentPercentage,
                 'balance' => $balance
             ];
         }
-        return $results;
 
-        //return Invoice::with('student.user','student.program','details.fee')->whereDate('created_at','>=',$from_date)->whereDate('created_at','<=',$to_date)->get();
+        return $results;
     }
+
     function formatDaysSinceLastReceipt($days)
     {
         if (!$days) {

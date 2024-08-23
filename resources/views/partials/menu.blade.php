@@ -201,6 +201,7 @@
                             class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
                                 'credit.notes',
                                 'student.list',
+                                'student.list.post',
                                 'creditors',
                                 'aged.receivables',
                                 'transactions',
@@ -236,12 +237,12 @@
                                         <span>Payment Methods</span></a>
                                 </li>
 
-                                @if ( Qs::userIsDIF() || Qs::userIsED())
-                                <li class="nav-item">
-                                    <a href="{{ route('accounting.approve_credit_notes') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['accounting.approve_credit_notes']) ? 'active' : '' }}">
-                                        <span>Approve Credit Notes</span></a>
-                                </li>
+                                @if (Qs::userIsDIF() || Qs::userIsED())
+                                    <li class="nav-item">
+                                        <a href="{{ route('accounting.approve_credit_notes') }}"
+                                            class="nav-link {{ in_array(Route::currentRouteName(), ['accounting.approve_credit_notes']) ? 'active' : '' }}">
+                                            <span>Approve Credit Notes</span></a>
+                                    </li>
                                 @endif
 
                                 @if (true)
@@ -249,6 +250,7 @@
                                         class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
                                             'credit.notes',
                                             'student.list',
+                                            'student.list.post',
                                             'creditors',
                                             'aged.receivables',
                                             'revenue.analysis',
@@ -309,12 +311,12 @@
                                             @endif
                                             @if (true)
                                                 <li
-                                                    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['credit.notes', 'student.list']) ? 'nav-item-expanded nav-item-open' : '' }}">
+                                                    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['credit.notes', 'student.list', 'student.list.post']) ? 'nav-item-expanded nav-item-open' : '' }}">
                                                     <a href="#"
                                                         class="nav-link {{ in_array(Route::currentRouteName(), ['student.list', 'credit.notes']) ? 'active' : '' }}">General</a>
                                                     <ul class="nav nav-group-sub">
                                                         <li class="nav-item"><a href="{{ route('student.list') }}"
-                                                                class="nav-link  {{ in_array(Route::currentRouteName(), ['student.list']) ? 'active' : '' }}">Student
+                                                                class="nav-link  {{ in_array(Route::currentRouteName(), ['student.list', 'student.list.post']) ? 'active' : '' }}">Student
                                                                 List</a>
                                                         </li>
                                                         <li class="nav-item"><a href="#"

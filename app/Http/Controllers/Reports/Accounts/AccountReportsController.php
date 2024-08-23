@@ -45,6 +45,11 @@ class AccountReportsController extends Controller
         return $this->renderAccountingReportView('Aged Receivables Report', 'pages.reports.accounts.aged_receivables');
     }
 
+    public function StudentList(): View
+    {
+        return $this->renderAccountingReportView('Student List Report', 'pages.reports.accounts.student_list');
+    }
+
     /**
      * Render an accounting report view
      * 
@@ -90,19 +95,5 @@ class AccountReportsController extends Controller
     public function CreditNotes()
     {
         return view('pages.reports.accounts.credit_notes');
-    }
-    public function StudentList(Request $request)
-    {
-
-        if (isset($request['from_date']) && !$request['from_date'] == '' && isset($request['to_date']) && !$request['to_date'] == '') {
-
-            $revenue['student_list'] = $this->revenue_analysis->StudentList(date('Y-m-d', strtotime($request['from_date'])), date('Y-m-d', strtotime($request['to_date'])));
-            /// dd($revenue['student_list']);
-            return view('pages.reports.accounts.student_list', $revenue);
-        } else {
-            return view('pages.reports.accounts.student_list');
-        }
-
-        // return view('pages.reports.accounts.student_list');
     }
 }
