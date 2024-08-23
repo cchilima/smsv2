@@ -43,12 +43,16 @@ class StudentRegistrationRepository
 
         // Check if there is a next academic period
         if ($nextAcademicPeriod) {
+            
             // Step 5: Get the student's history for closed academic periods
             $history = $this->getStudentHistory($student->id, $closedAcademicPeriods);
+
             // Step 6: Get prerequisites for failed courses
             $failedCoursesPrerequisites = $this->getFailedCoursesPrerequisites($history);
+
             // Get all failed course IDs
             $allFailedCourseIds = $this->getAllFailedCourseIds($history);
+
             // Get all passed course IDs
             $allPassedCourseIds = $this->getAllPassedCourseIds($history);
 

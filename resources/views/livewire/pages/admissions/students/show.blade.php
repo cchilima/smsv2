@@ -1489,7 +1489,7 @@
                         </tbody>
                     </table>
 
-                    @if ($isWithinRegistrationPeriod)
+                   {{-- @if ($isWithinRegistrationPeriod) --}}
                         @if (!$isRegistered)
                             <form action="{{ route('enrollments.store') }}" method="post">
                                 @csrf
@@ -1498,7 +1498,7 @@
                                 </button>
                             </form>
                         @endif
-                    @endif
+                        {{-- @endif --}}
                 </div>
             @else
                 <div class="container ">

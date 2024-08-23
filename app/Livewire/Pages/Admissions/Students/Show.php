@@ -58,11 +58,9 @@ class Show extends Component
 
         $this->data['courses'] = $this->studentRegistrationRepo->getAll($student->student->id);
 
-        $this->data['isRegistered'] = $this->studentRegistrationRepo
-            ->getRegistrationStatus($student->student->id);
+        $this->data['isRegistered'] = $this->studentRegistrationRepo->getRegistrationStatus($student->student->id);
 
-        $this->data['isWithinRegistrationPeriod'] = $this->studentRegistrationRepo
-            ->checkIfWithinRegistrationPeriod($student->student->id);
+        $this->data['isWithinRegistrationPeriod'] = $this->studentRegistrationRepo->checkIfWithinRegistrationPeriod($student->student->id);
 
         $this->data['isInvoiced'] = $this->studentRegistrationRepo->checkIfInvoiced($student->student->id);
         $this->data['enrollments'] = $this->enrollmentRepo->getEnrollments($student->student->id);
