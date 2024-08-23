@@ -22,7 +22,7 @@
                 <livewire:datatables.academics.qualifications />
             </div>
 
-            <div wire:ignore.self class="tab-pane fade" id="new-class">
+            <div wire:ignore class="tab-pane fade" id="new-class">
                 <div class="row">
                     <div class="col-md-6">
                         <form class="ajax-store" method="post" action="{{ route('qualifications.store') }}">
@@ -43,8 +43,8 @@
                                 </div>
                             </div>
                             <div class="text-right">
-                                <button wire:click="refreshTable('QualificationsTable')" id="ajax-btn" type="submit"
-                                    class="btn btn-primary">
+                                <button wire:click.debounce.1000ms="refreshTable('QualificationsTable')" id="ajax-btn"
+                                    type="submit" class="btn btn-primary">
                                     Submit form <i class="icon-paperplane ml-2"></i>
                                 </button>
                             </div>

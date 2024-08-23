@@ -60,7 +60,7 @@
                 </li>
 
                 {{-- Academics --}}
-                @if (Qs::userIsSuperAdmin() || Qs::userIsAdmin())
+                @if (Qs::userIsSuperAdmin() || Qs::userIsAdmin() || Qs::userIsDIF() || Qs::userIsED())
 
                     {{-- Administrative --}}
 
@@ -201,10 +201,16 @@
                             class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
                                 'credit.notes',
                                 'student.list',
+                                'student.list.post',
                                 'creditors',
                                 'aged.receivables',
+                                'transactions',
+                                'transaction-results',
                                 'revenue.analysis',
+                                'revenue-revenue-result',
                                 'invoices',
+                                'invoices-results',
+                                'failed.transaction',
                                 'fees.create',
                                 'fees.edit',
                                 'fees.index',
@@ -231,29 +237,46 @@
                                         <span>Payment Methods</span></a>
                                 </li>
 
-                                <li class="nav-item">
-                                    <a href="{{ route('accounting.approve_credit_notes') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['accounting.approve_credit_notes']) ? 'active' : '' }}">
-                                        <span>Approve Credit Notes</span></a>
-                                </li>
+                                @if (Qs::userIsDIF() || Qs::userIsED())
+                                    <li class="nav-item">
+                                        <a href="{{ route('accounting.approve_credit_notes') }}"
+                                            class="nav-link {{ in_array(Route::currentRouteName(), ['accounting.approve_credit_notes']) ? 'active' : '' }}">
+                                            <span>Approve Credit Notes</span></a>
+                                    </li>
+                                @endif
 
                                 @if (true)
                                     <li
-                                        class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['credit.notes', 'student.list', 'creditors', 'aged.receivables', 'revenue.analysis', 'invoices']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                                        class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
+                                            'credit.notes',
+                                            'student.list',
+                                            'student.list.post',
+                                            'creditors',
+                                            'aged.receivables',
+                                            'revenue.analysis',
+                                            'revenue-revenue-result',
+                                            'invoices',
+                                            'invoices-results',
+                                            'transactions',
+                                            'transaction-results',
+                                            'failed.transaction',
+                                        ])
+                                            ? 'nav-item-expanded nav-item-open'
+                                            : '' }} ">
                                         <a href="#" class="nav-link">Reports</a>
                                         <ul class="nav nav-group-sub" data-submenu-title="Manage Students">
                                             @if (true)
                                                 <li
-                                                    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['revenue.analysis', 'invoices']) ? 'nav-item-expanded nav-item-open' : '' }}">
+                                                    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['revenue.analysis', 'revenue-revenue-result', 'invoices', 'invoices-results']) ? 'nav-item-expanded nav-item-open' : '' }}">
                                                     <a href="#"
-                                                        class="nav-link {{ in_array(Route::currentRouteName(), ['revenue.analysis', 'invoices']) ? 'active' : '' }}">Revenue</a>
+                                                        class="nav-link {{ in_array(Route::currentRouteName(), ['revenue.analysis', 'revenue-revenue-result']) ? 'active' : '' }}">Revenue</a>
                                                     <ul class="nav nav-group-sub">
                                                         <li class="nav-item"><a href="{{ route('revenue.analysis') }}"
-                                                                class="nav-link {{ in_array(Route::currentRouteName(), ['revenue.analysis']) ? 'active' : '' }}">Revenue
+                                                                class="nav-link {{ in_array(Route::currentRouteName(), ['revenue.analysis', 'revenue-revenue-result']) ? 'active' : '' }}">Revenue
                                                                 Analysis</a>
                                                         </li>
                                                         <li class="nav-item"><a href="{{ route('invoices') }}"
-                                                                class="nav-link {{ in_array(Route::currentRouteName(), ['invoices']) ? 'active' : '' }}">Invoices</a>
+                                                                class="nav-link {{ in_array(Route::currentRouteName(), ['invoices', 'invoices-results']) ? 'active' : '' }}">Invoices</a>
                                                         </li>
                                                     </ul>
 
@@ -261,7 +284,7 @@
                                             @endif
                                             @if (true)
                                                 <li
-                                                    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['transactions', 'credit.notes', 'aged.receivables']) ? 'nav-item-expanded nav-item-open' : '' }}">
+                                                    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['transactions', 'transaction-results', 'failed.transaction', 'credit.notes', 'aged.receivables']) ? 'nav-item-expanded nav-item-open' : '' }}">
                                                     <a href="#"
                                                         class="nav-link {{ in_array(Route::currentRouteName(), ['transactions', 'aged.receivables', 'failed.transaction']) ? 'active' : '' }}">
                                                         Receivables</a>
@@ -288,12 +311,12 @@
                                             @endif
                                             @if (true)
                                                 <li
-                                                    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['credit.notes', 'student.list']) ? 'nav-item-expanded nav-item-open' : '' }}">
+                                                    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['credit.notes', 'student.list', 'student.list.post']) ? 'nav-item-expanded nav-item-open' : '' }}">
                                                     <a href="#"
                                                         class="nav-link {{ in_array(Route::currentRouteName(), ['student.list', 'credit.notes']) ? 'active' : '' }}">General</a>
                                                     <ul class="nav nav-group-sub">
                                                         <li class="nav-item"><a href="{{ route('student.list') }}"
-                                                                class="nav-link  {{ in_array(Route::currentRouteName(), ['student.list']) ? 'active' : '' }}">Student
+                                                                class="nav-link  {{ in_array(Route::currentRouteName(), ['student.list', 'student.list.post']) ? 'active' : '' }}">Student
                                                                 List</a>
                                                         </li>
                                                         <li class="nav-item"><a href="#"
@@ -327,7 +350,7 @@
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Students">
 
-                                <li class="nav-item">
+                                {{-- <li class="nav-item">
                                     <a href="{{ route('students.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['students.create']) ? 'active' : '' }}">
                                         <span>Admit student</span></a>
@@ -336,7 +359,7 @@
                                     <a href="{{ route('search') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['search']) ? 'active' : '' }}">
                                         <span>Student Information</span></a>
-                                </li>
+                                </li> --}}
                                 <li class="nav-item">
                                     <a href="{{ route('students.list') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['students.list']) ? 'active' : '' }}">

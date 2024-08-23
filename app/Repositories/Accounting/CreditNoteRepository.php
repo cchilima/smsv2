@@ -7,12 +7,34 @@ use App\Models\Accounting\{CreditNote};
 
 class CreditNoteRepository
 {
+    public function approveCreditNote($credit_note_id, $approver)
+    {
+        $credit_note = $this->getCreditNote($credit_note_id);
+
+        if($approver == 'ED') {
+
+           return $credit_note->update(['authorizers' => 'DIF,ED', 'status' => 'Authorized']) ;
+            
+        } else { 
+
+          return $credit_note->update(['authorizers' => 'DIF', 'status' => 'Executive Director']);
+        }
+    }
+
+    public function getCreditNote($credit_note_id)
+    {
+        return CreditNote::find($credit_note_id);
+    }
 
     public function getCreditNotes($approver)
     {
-        if($approver == 'ed'){
+        if($approver == 'ED'){
 
-        } elseif($approver == 'dif'){
+           return CreditNote::where('authorizers', 'DIF')->get();
+
+        } elseif($approver == 'DIF'){
+
+           return CreditNote::whereNull('authorizers')->get();
             
         }
     }

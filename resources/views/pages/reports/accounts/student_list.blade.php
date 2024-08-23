@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('page_title', 'Student List')
+@section('page_title', $pageTitle)
 @section('content')
     @php
         use App\Helpers\Qs;
@@ -12,59 +12,36 @@
         <div class="card-body">
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="all-classes">
-                    <div class="row mt-0 mb-1">
+                    <div class="row mt-0 mb-4">
                         <div class="col-md-12">
-                            <form class="ajax-store-test" method="post" action="{{ route('student.list.post')  }}">
+                            <form class="ajax-store-test" method="post" action="{{ route('student.list.post') }}">
                                 @csrf
                                 <div class="form-group row">
-                                    <div class="col-md-4"> From
-                                        <input name="from_date" type="text" class="form-control date-pick" placeholder="Date">
+                                    <div class="col-md-6"> From
+                                        <input name="from_date" type="text" class="form-control date-pick"
+                                            placeholder="Date">
                                     </div>
-                                    <div class="col-md-4"> To
-                                        <input name="to_date" type="text" class="form-control date-pick" placeholder="Date">
+                                    <div class="col-md-6"> To
+                                        <input name="to_date" type="text" class="form-control date-pick"
+                                            placeholder="Date">
                                     </div>
                                 </div>
                                 <div class="col-md">
                                     <div class="text-right">
-                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Search <i class="icon-paperplane"></i></button>
+                                        <button id="ajax-btn" type="submit" class="btn btn-primary">Search <i
+                                                class="icon-paperplane"></i></button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    @if(isset($student_list))
-                        <table class="table datatable-button-html5-columns">
-                            <thead>
-                            <tr>
-                                <th>Names</th>
-                                <th>Student ID</th>
-                                <th>Study Mode</th>
-                                <th>Program</th>
-                                <th>Level</th>
-                                <th>gender</th>
-                                <th>Percentage</th>
-                                <th>Balance</th>
-                            </tr>
-                            </thead>
-                            <tbody>
 
-                            @foreach($student_list as $u)
-                                <tr>
-                                    <td>{{ $u['name']  }}</td>
-                                    <td>{{ $u['student_id'] }}</td>
-                                    <td>{{ $u['study_mode'] }}</td>
-                                    <td>{{ $u['program'] }}</td>
-                                    <td>{{ $u['level'] }}</td>
-                                    <td>{{ $u['gender'] }}</td>
-                                    <td>{{ $u['payment_percentage'] }}</td>
-                                    <td>{{ $u['balance'] }}</td>
-                                </tr>
-                            @endforeach
-
-                            </tbody>
-                        </table>
+                    @if ($datesSet)
+                        @livewire('datatables.reports.accounting.general.student-list', [
+                            'fromDate' => $fromDate,
+                            'toDate' => $toDate,
+                        ])
                     @endif
-
                 </div>
             </div>
         </div>

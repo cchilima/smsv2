@@ -59,6 +59,11 @@
                                         class="icon-circle-right2 ml-2"></i></button>
                             </div>
 
+                            <div class="form-group">
+                                <a href="{{ route('login') }}" class="btn btn-light btn-block"> Sign as Student <i
+                                        class="icon-circle-right2 ml-2"></i></a>
+                            </div>
+
                             {{-- <div class="form-group">
                                 <a href="#" class="btn btn-light btn-block"><i class="icon-home"></i> Back to Home</a>
                             </div> --}}

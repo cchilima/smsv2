@@ -63,6 +63,7 @@ use App\Livewire\Pages\Accommodation\BedSpaces\Index as BedSpacesIndex;
 use App\Livewire\Pages\Accounting\Fees\Index as FeesIndex;
 use App\Livewire\Pages\Accounting\PaymentMethods\Index as PaymentMethodsIndex;
 use App\Livewire\Pages\Admissions\Applications\Index as ApplicationsIndex;
+use App\Livewire\Pages\Admissions\Students\Show as ShowStudent;
 use App\Livewire\Pages\Notices\Announcements\Index as AnnouncementsIndex;
 use App\Livewire\Pages\Residency\Countries\Index as CountriesIndex;
 use App\Livewire\Pages\Residency\Provinces\Index as ProvincesIndex;
@@ -72,16 +73,13 @@ use App\Livewire\Pages\Settings\MaritalStatuses\Index as MaritalStatusesIndex;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', function () { return redirect()->route('login');});
+Route::get('/staff-login', function () { return view('auth.staff_login');})->name('staff');
 
 Route::get('announcement/{announcement_id}', [AnnouncementController::class, 'ShowAnnouncement'])->name('announcement.fullview');
 Route::post('announcement/{announcement_id}/dismiss', [AnnouncementController::class, 'dismissAnnouncement'])->name('announcement.dismiss');
 
-Route::get('/staff-login', function () {
-    return view('auth.staff_login');
-})->name('staff');
+
 
 Auth::routes(['register' => false]);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -89,7 +87,8 @@ Route::group(['prefix' => 'students'], function () {
     Route::get('/search', [StudentController::class, 'search'])->name('search');
     Route::post('/search', [StudentController::class, 'search'])->name('students.lists');
     Route::get('/list', [StudentController::class, 'list'])->name('students.list');
-    Route::get('/profile/{id}', [StudentController::class, 'studentShow'])->name('show.student');
+    // Route::get('/profile/{id}', [StudentController::class, 'studentShow'])->name('show.student');
+    Route::get('/profile/{userId}', ShowStudent::class)->name('show.student');
 });
 Route::group(['prefix' => 'assess'], function () {
     Route::get('/classes/{id}', [ClassAssessmentsController::class, 'getClasses'])->name('class-names');
