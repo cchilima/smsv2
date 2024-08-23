@@ -71,13 +71,13 @@ final class Students extends PowerGridComponent
         ];
     }
 
-
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
             ->add('id')
             ->add('user.first_name')
             ->add('user.last_name')
+            ->add('program.code')
             ->add('program.name')
             ->add('admission_year')
             ->add('level.name')
@@ -95,13 +95,13 @@ final class Students extends PowerGridComponent
 
             Column::make('Last Name', 'user.last_name'),
 
-            Column::make('Program', 'program.name'),
+            Column::make('Program Code', 'program.code'),
+
+            Column::make('Program Name', 'program.name'),
 
             Column::make('Admission Year', 'admission_year'),
 
             Column::make('Year of Study', 'level.name'),
-
-            // Column::make('Academic Period', 'academic_info.academic_period.name'),
 
             Column::action('Action')
                 ->visibleInExport(visible: false)
@@ -111,9 +111,9 @@ final class Students extends PowerGridComponent
     public function filters(): array
     {
         return [
-            Filter::select('program.name', 'program_id')
+            Filter::select('program.code', 'program_id')
                 ->dataSource($this->programRepo->getAll())
-                ->optionLabel('name')
+                ->optionLabel('code')
                 ->optionValue('id'),
 
             Filter::inputText('admission_year', 'admission_year')
