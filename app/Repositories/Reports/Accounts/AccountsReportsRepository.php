@@ -6,6 +6,7 @@ use App\Models\Accounting\Invoice;
 use App\Models\Accounting\Receipt;
 use App\Models\Admissions\Student;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AccountsReportsRepository
 {
@@ -87,38 +88,40 @@ class AccountsReportsRepository
      */
     public function Aged_Receivables($to_date)
     {
-        $students = Student::with(['invoices.details' => function ($query) use ($to_date) {
-            $query->whereDate('created_at', '<=', $to_date);
-        }, 'receipts', 'user', 'program', 'study_mode', 'level'])->get();
+        $students = Student::with([
+            'user:id,first_name,last_name',
+            'program:id,name',
+            'study_mode:id,name',
+            'level:id,name'
+        ])->withCount([
+            'invoices as total_invoice_amount' => function ($query) use ($to_date) {
+                $query->whereDate('invoices.created_at', '<=', $to_date)
+                    ->join('invoice_details', 'invoices.id', '=', 'invoice_details.invoice_id')
+                    ->select(DB::raw('SUM(invoice_details.amount)'));
+            },
+            'receipts as total_receipt_amount' => function ($query) {
+                $query->select(DB::raw('SUM(amount)'));
+            },
+            'receipts as last_receipt_at' => function ($query) {
+                $query->select(DB::raw('MAX(receipts.created_at)'));
+            }
+        ])->get();
 
         $results = [];
 
         foreach ($students as $student) {
-            // Calculate total invoice amount
-            $totalInvoiceAmount = 0;
-
-            foreach ($student->invoices as $invoice) {
-                $totalInvoiceAmount += $invoice->details->sum('amount');
-            }
-
-            // Calculate total receipt amount
-            $totalReceiptAmount = $student->receipts->sum('amount');
+            $totalInvoiceAmount = $student->total_invoice_amount ?? 0;
+            $totalReceiptAmount = $student->total_receipt_amount ?? 0;
 
             // Calculate balance
             $balance = $totalInvoiceAmount - $totalReceiptAmount;
 
-            // Find the last receipt
-            $lastReceipt = $student->receipts->sortByDesc('created_at')->first();
-
             // Calculate days since last receipt
-            $daysSinceLastReceipt = $lastReceipt ? $lastReceipt->created_at->diffInDays(Carbon::now()) : null;
+            $daysSinceLastReceipt = $student->last_receipt_at ? Carbon::parse($student->last_receipt_at)->diffInDays(Carbon::now()) : null;
 
             // Calculate payment percentage
-            if (!$totalInvoiceAmount > 0) {
-                $totalInvoiceAmount = $totalReceiptAmount;
-            }
+            $paymentPercentage = $totalInvoiceAmount > 0 ? ($totalReceiptAmount / $totalInvoiceAmount) * 100 : 0;
 
-            $paymentPercentage = $totalReceiptAmount > 0 ? ($totalReceiptAmount / $totalInvoiceAmount) * 100 : 0;
             $formattedDays = $this->formatDaysSinceLastReceipt($daysSinceLastReceipt);
 
             // Build the result array

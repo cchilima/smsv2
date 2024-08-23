@@ -23,7 +23,6 @@ final class AgedReceivables extends PowerGridComponent
 
     public string $tableName = 'AgedReceivablesReportTable';
     public bool $deferLoading = true;
-    public string $loadingComponent = 'components.ui-elements.table-loader';
 
     public string $toDate;
 
@@ -69,8 +68,8 @@ final class AgedReceivables extends PowerGridComponent
             ->add('program')
             ->add('level')
             ->add('last_receipt_days')
-            ->add('payment_percentage', fn($entry) => Number::format($entry->payment_percentage, 2) . '%')
-            ->add('balance', fn($entry) => Number::format($entry->balance, 2))
+            ->add('payment_percentage', fn($entry) => Number::format((int)$entry->payment_percentage, 2) . '%')
+            ->add('balance', fn($entry) => Number::format((int)$entry->balance, 2))
             ->add('formatted_days');
     }
 
