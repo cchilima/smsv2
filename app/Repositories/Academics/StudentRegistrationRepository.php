@@ -73,7 +73,7 @@ class StudentRegistrationRepository
 
     private function checkIfInvoiceV1Support($student_id)
     {
-        $student = getStudent($student_id);
+        $student = $this->getStudent($student_id);
     
         // enrollments is a relationship, use '->latest()->first()' to get the most recent enrollment
         $enrollment = $student->enrollments()->latest()->first();
@@ -328,8 +328,10 @@ class StudentRegistrationRepository
             $academicInfo = $this->getAcademicInfo($student_id);
 
             if ($academicInfo) {
+                
                 $invoice = $this->getInvoice($student_id, $academicInfo->academic_period_id);
                 if($invoice) { return true; } else { return false; }
+
             } else { return false; }
 
         } else { return true; }
