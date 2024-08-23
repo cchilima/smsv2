@@ -43,7 +43,6 @@ class StudentRegistrationRepository
 
         // Check if there is a next academic period
         if ($nextAcademicPeriod) {
-            
             // Step 5: Get the student's history for closed academic periods
             $history = $this->getStudentHistory($student->id, $closedAcademicPeriods);
 
@@ -71,6 +70,25 @@ class StudentRegistrationRepository
             }
         }
     }
+
+    private function checkIfInvoiceV1Support($student_id)
+    {
+        $student = getStudent($student_id);
+    
+        // enrollments is a relationship, use '->latest()->first()' to get the most recent enrollment
+        $enrollment = $student->enrollments()->latest()->first();
+    
+        if (!$enrollment) {
+            return false; 
+        }
+    
+        $exists = Invoice::where('student_id', $student_id)
+            ->where('academic_period_id', $enrollment->class->academic_period_id)
+            ->exists();
+    
+        return $exists;
+    }
+    
 
     private function getStudentById($student_id)
     {
@@ -230,13 +248,7 @@ class StudentRegistrationRepository
 
     public function getAcademicInfo($student_id = null)
     {
-        if ($student_id) {
-            // incase request from management
-            $student = $this->getStudent($student_id);
-        } else {
-            // incase request from student
-            $student = $this->getStudent();
-        }
+        $student_id ? $student = $this->getStudent($student_id) : $student = $this->getStudent();
 
         $academicInfo = $this->openAcademicPeriod($student);
 
@@ -250,7 +262,8 @@ class StudentRegistrationRepository
         // Get next available academic period
         $nextAcademicPeriod = AcademicPeriodInformation::with('academic_period')
             ->whereHas('academic_period', function ($query) use ($currentDate) {
-                $query->whereDate('ac_start_date', '<=', $currentDate)
+                $query
+                    ->whereDate('ac_start_date', '<=', $currentDate)
                     ->whereDate('ac_end_date', '>=', $currentDate);
             })
             ->where('study_mode_id', $student->study_mode_id)
@@ -307,45 +320,46 @@ class StudentRegistrationRepository
 
     public function checkIfInvoiced($student_id)
     {
-        $academicInfo = $this->getAcademicInfo($student_id);
+        // check if invoiced as per SMS v1 support
+        $invoiced = $this->checkIfInvoiceV1Support($student_id);
 
-        if ($academicInfo) {
-            $invoice = $this->getInvoice($student_id, $academicInfo->academic_period_id);
+        if(!$invoiced){
 
-            if ($invoice) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
+            $academicInfo = $this->getAcademicInfo($student_id);
+
+            if ($academicInfo) {
+                $invoice = $this->getInvoice($student_id, $academicInfo->academic_period_id);
+                if($invoice) { return true; } else { return false; }
+            } else { return false; }
+
+        } else { return true; }
+
     }
 
     private function paymentStanding($invoice_id)
     {
         $invoice = Invoice::find($invoice_id);
-    
+
         // Calculate the total receipted amount for the invoice
         $receipted_total_amount = $invoice->receipts->sum('amount');
-    
+
         // Calculate the total amount of the invoice
         $invoice_total_amount = $invoice->details->sum('amount');
-    
+
         // Check for both zero cases
         if ($invoice_total_amount == 0) {
+
             if ($receipted_total_amount == 0) {
-                return 0; // or a special value like -1 to indicate both are zero
+                return 0;  // or a special value like -1 to indicate both are zero
             }
-            return 0; // Invoice amount is zero but receipted is not, or both are zero
+            return 0;  // Invoice amount is zero but receipted is not, or both are zero
         }
-    
+
         // Calculate the percentage of payments against the invoice
         $percentage_paid = ($receipted_total_amount / $invoice_total_amount) * 100;
-    
+
         return $percentage_paid;
     }
-    
 
     private function getInvoice($student_id, $academic_period)
     {
