@@ -3,13 +3,16 @@
 namespace App\Repositories\Users;
 
 use App\Http\Requests\Users\User;
+use Illuminate\Http\UploadedFile;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 
 
 class UserPersonalInfoRepository
 {
-    public function uploadPassportPhoto($path)
+    public function uploadPassportPhotos() {}
+
+    public function uploadPassportPhoto(UploadedFile $fileObject, $userId)
     {
         $dir_rel = 'app/public/uploads/passport-photos/';
         $dir = storage_path($dir_rel);
@@ -21,25 +24,25 @@ class UserPersonalInfoRepository
 
         // create new image manager and object
         $imageManager = new ImageManager(new Driver());
-        $image = $imageManager->read($path->getRealPath());
+        $image = $imageManager->read($fileObject->getRealPath());
 
-        // construct unique image name
-        $imageName = time() . '-' . $path->getClientOriginalName();
+        // TODO: Convert to JPG and compress
+        // TODO: Delete any existing files with the same name
+        // TODO: Show validation errors on front-end
 
-        // save to storage path
-        $image->save($dir . '/' . $imageName, 100, 'jpg');
+        // Save to storage path
+        $image->save($dir . '/' . $userId . $fileObject->getClientOriginalExtension());
+
 
         // Return generated path
-        return str_replace('app/public', 'storage', $dir_rel) . $imageName;
+        return str_replace('app/public', 'storage', $dir_rel) . $userId;
     }
 
-    public function deletePassportPhoto($path)
+    public function deletePassportPhoto($path): bool
     {
         $file = storage_path($path);
 
-        if (file_exists($file)) {
-            unlink($file);
-        }
+        return file_exists($file) ? unlink($file) : false;
     }
 
     public function destroy($userId)

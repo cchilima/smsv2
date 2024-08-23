@@ -10,8 +10,8 @@
 @endif
 
 <div class="row">
-    <div class="col-md-3 text-center">
-        <div class="card">
+    <div class="col-md-3">
+        <div class="card text-center">
             <div class="card-body p-4">
 
                 @php
@@ -25,6 +25,29 @@
                 <br>
                 <h3 class="mt-3">{{ $student->user->first_name . ' ' . $student->user->last_name }}</h3>
                 <h6 class="mt-1">{{ $student->id }}</h6>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body p-4">
+                <form class="ajax-update" data-reload="#page-header" method="post"
+                    action="{{ route('students.update', $student->user->id) }}">
+                    @csrf
+                    @method('PUT')
+
+                    <h6 class="card-title">Update Student Photo:</h6>
+
+                    <div class="form-group">
+                        <input value="{{ $student->user->userPersonalInfo?->passport_photo_path }}" accept="image/*"
+                            type="file" name="passport_photo_path" class="form-input-styled">
+                        <span class="form-text text-muted">JPEG or PNG. 2MB Max</span>
+                    </div>
+
+                    <div class="text-left">
+                        <button type="submit" class="btn btn-primary">Update <i class="icon-pencil ml-2"></i></button>
+                    </div>
+                </form>
+
             </div>
         </div>
 
@@ -146,8 +169,9 @@
                             </tbody>
                         </table>
                         <div class="text-right mb-1 mt-4">
-                            <button id="ajax-btn" type="button" onclick="manageAcademicInfor('{{ $student->id }}')"
-                                class="btn btn-primary">Update Information <i class="icon-pencil ml-2"></i>
+                            <button id="ajax-btn" type="button"
+                                onclick="manageAcademicInfor('{{ $student->id }}')" class="btn btn-primary">Update
+                                Information <i class="icon-pencil ml-2"></i>
                             </button>
                         </div>
                     </div>
@@ -584,8 +608,8 @@
                             <input name="student_id" type="hidden" value="{{ $student->id }}">
 
                             <div class="form-group text-left">
-                                <button wire:click.debounce.1000ms="refreshTable('StudentInvoicesTable')" id="ajax-btn"
-                                    type="submit" class="btn btn-primary">Invoice Student <i
+                                <button wire:click.debounce.1000ms="refreshTable('StudentInvoicesTable')"
+                                    id="ajax-btn" type="submit" class="btn btn-primary">Invoice Student <i
                                         class="icon-paperplane ml-2"></i></button>
                             </div>
                         </form>
@@ -660,9 +684,11 @@
                                 </div>
 
                                 <div class="text-left">
-                                    <button wire:click.debounce.1000ms="refreshTables([ 'StudentPaymentHistoryTable'
-                                        , 'StudentStatementsTable' ])" id="ajax-btn" type="submit"
-                                        class="btn btn-primary">Submit <i class="icon-paperplane ml-2"></i></button>
+                                    <button
+                                        wire:click.debounce.1000ms="refreshTables([ 'StudentPaymentHistoryTable'
+                                        , 'StudentStatementsTable' ])"
+                                        id="ajax-btn" type="submit" class="btn btn-primary">Submit <i
+                                            class="icon-paperplane ml-2"></i></button>
                                 </div>
                             </form>
                         @endif
@@ -1035,15 +1061,17 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        {{-- <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="d-block">Upload Passport Photo:</label>
-                                                <input value="{{ old('photo') }}" accept="image/*" type="file"
-                                                    name="photo" class="form-input-styled" data-fouc>
+                                                <input
+                                                    value="{{ $student->user->userPersonalInfo?->passport_photo_path }}"
+                                                    accept="image/*" type="file" name="passport_photo_path"
+                                                    class="form-input-styled" data-fouc>
                                                 <span class="form-text text-muted">Accepted Images: jpeg, png. Max file
                                                     size 2Mb</span>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
 
                                     <div class="text-left">
