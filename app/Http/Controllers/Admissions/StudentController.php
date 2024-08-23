@@ -149,7 +149,7 @@ class StudentController extends Controller
 
             // Upload passport photo
             if ($passportPhotoObject) {
-                $personalData['passport_photo_path'] = $this->userPersonalInfoRepo->uploadPassportPhoto($passportPhotoObject);
+                $personalData['passport_photo_path'] = $this->userPersonalInfoRepo->uploadPassportPhoto($passportPhotoObject, $user->id);
             }
 
             // Create personal info record
