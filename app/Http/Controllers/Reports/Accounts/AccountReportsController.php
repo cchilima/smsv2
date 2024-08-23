@@ -40,11 +40,9 @@ class AccountReportsController extends Controller
         return $this->renderAccountingReportView('Transactions Report', 'pages.reports.accounts.transactions');
     }
 
-    private function generateDateSeparatorText($fromDate, $toDate)
+    public function AgedReceivables(): View
     {
-        if (!$fromDate && $toDate) return 'Up to ';
-        if ($fromDate && !$toDate) return ' onwards';
-        if ($fromDate && $toDate) return  ' to ';
+        return $this->renderAccountingReportView('Aged Receivables Report', 'pages.reports.accounts.aged_receivables');
     }
 
     /**
@@ -74,7 +72,7 @@ class AccountReportsController extends Controller
                 '%s (%s%s%s)',
                 $pageTitle,
                 $fromDate ? Carbon::parse($fromDate)->format('d M Y') : '',
-                $this->generateDateSeparatorText($fromDate, $toDate),
+                $fromDate && $toDate ? ' to ' : ($fromDate ? ' onwards' : 'Up to '),
                 $toDate ? Carbon::parse($toDate)->format('d M Y') : ''
             );
 
@@ -87,20 +85,6 @@ class AccountReportsController extends Controller
     public function FailedPayments()
     {
         return view('pages.reports.accounts.failed_transactions');
-    }
-
-    public function AgedReceivables(Request $request)
-    {
-
-        if (isset($request['to_date']) && !$request['to_date'] == '') {
-
-            $revenue['age_analysis'] = $this->revenue_analysis->Aged_Receivables(date('Y-m-d', strtotime($request['to_date'])));
-            //dd($revenue['transactions']);
-            return view('pages.reports.accounts.aged_receivables', $revenue);
-        } else {
-            return view('pages.reports.accounts.aged_receivables');
-        }
-        //return view('pages.reports.accounts.aged_receivables');
     }
 
     public function CreditNotes()
