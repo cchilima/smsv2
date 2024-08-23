@@ -26,7 +26,7 @@ class StudentRegistrationController extends Controller
     {
         // $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
         // $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
-        $this->middleware(TeamSAT::class, ['only' => ['destroy',]]);
+        $this->middleware(TeamSAT::class, ['except' => ['destroy',]]);
 
         $this->registrationRepo = $registrationRepo;
     }
