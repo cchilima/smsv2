@@ -5,6 +5,7 @@ namespace App\Models\Accounting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Academics\AcademicPeriod;
+use App\Models\Academics\Program;
 use App\Models\Admissions\Student;
 use App\Models\Users\User;
 use OwenIt\Auditing\Auditable;
@@ -25,7 +26,7 @@ class Invoice extends Model implements AuditableContract
 
     public function statements()
     {
-        return $this->hasMany(Statement::class, 'invoice_id')->where('amount', '>' , 0);
+        return $this->hasMany(Statement::class, 'invoice_id')->where('amount', '>', 0);
     }
 
     public function receipts()
@@ -36,6 +37,11 @@ class Invoice extends Model implements AuditableContract
     public function student()
     {
         return $this->belongsTo(Student::class);
+    }
+
+    public function program()
+    {
+        return $this->hasOneThrough(Program::class, Student::class, 'id', 'id', 'student_id', 'program_id');
     }
 
     public function raisedBy()
@@ -57,6 +63,4 @@ class Invoice extends Model implements AuditableContract
     {
         return $this->hasMany(CreditNote::class, 'invoice_id')->where('authorizers', 'DIF,ED');
     }
-
-
 }

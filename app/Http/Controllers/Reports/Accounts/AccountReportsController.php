@@ -9,12 +9,14 @@ use App\Http\Middleware\Custom\TeamSAT;
 use App\Repositories\Accounting\InvoiceRepository;
 use App\Repositories\Accounting\PaymentMethodRepository;
 use App\Repositories\Reports\Accounts\AccountsReportsRepository;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class AccountReportsController extends Controller
 {
-    protected $revenue_analysis,$payment_methods;
-    public function __construct(AccountsReportsRepository $revenue_analysis,PaymentMethodRepository $payment_methods)
+    protected $revenue_analysis, $payment_methods;
+    public function __construct(AccountsReportsRepository $revenue_analysis, PaymentMethodRepository $payment_methods)
     {
         //$this->middleware(TeamSA::class, ['except' => ['destroy',]]);
         //$this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
@@ -22,130 +24,76 @@ class AccountReportsController extends Controller
         $this->revenue_analysis = $revenue_analysis;
         $this->payment_methods = $payment_methods;
     }
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+
+    public function RevenueAnalysis(): View
     {
-        //
+        return $this->renderAccountingReportView('Revenue Analysis Report', 'pages.reports.accounts.revenue_analysis');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function invoices(): View
     {
-        //
+        return $this->renderAccountingReportView('Invoices Summary Report', 'pages.reports.accounts.invoices');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function Transactions(): View
     {
-        //
+        return $this->renderAccountingReportView('Transactions Report', 'pages.reports.accounts.transactions');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function AgedReceivables(): View
     {
-        //
+        return $this->renderAccountingReportView('Aged Receivables Report', 'pages.reports.accounts.aged_receivables');
+    }
+
+    public function StudentList(): View
+    {
+        return $this->renderAccountingReportView('Student List Report', 'pages.reports.accounts.student_list');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Render an accounting report view
+     * 
+     * @param string $pageTitle The title of the page
+     * @param string $viewPath The path to the Blade view
+     * @param array $data The data to pass to the view
+     * @return \Illuminate\Contracts\View\View
      */
-    public function edit(string $id)
+    private function renderAccountingReportView($pageTitle = "Report", $viewPath, $data = [])
     {
-        //
-    }
+        $datesSet = !empty(request('from_date')) || !empty(request('to_date'));
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if ($datesSet) {
+            $fromDate = request('from_date');
+            $toDate = request('to_date');
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-    public function RevenueAnalysis(Request $request){
+            $data['datesSet'] = $datesSet;
 
-        if (isset($request['from_date']) && !$request['from_date'] == '' && isset($request['to_date']) && !$request['to_date'] == '') {
-//            $from_date = $request['from_date'];
-//            $to_date = $request['to_date'];
-//            $from_date = date('Y-m-d', strtotime($request['from_date']));
-//            $to_date = date('Y-m-d', strtotime($request['to_date']));
-            $revenue['revenue_analysis'] = $this->revenue_analysis->RevenueAnalysis(date('Y-m-d', strtotime($request['from_date'])),date('Y-m-d', strtotime($request['to_date'])));
-            return view('pages.reports.accounts.revenue_analysis',$revenue);
-        } else {
-            return view('pages.reports.accounts.revenue_analysis');
-        }
-    }
+            // If dates are not set, set them to empty strings
+            $data['fromDate'] = $fromDate ? Carbon::parse($fromDate)->format('Y-m-d') : '';
+            $data['toDate'] = $toDate ? Carbon::parse($toDate)->format('Y-m-d') : '';
 
-    public function invoices(Request $request){
+            // Create and format the page title
+            $data['pageTitle'] = sprintf(
+                '%s (%s%s%s)',
+                $pageTitle,
+                $fromDate ? Carbon::parse($fromDate)->format('d M Y') : '',
+                $fromDate && $toDate ? ' to ' : ($fromDate ? ' onwards' : 'Up to '),
+                $toDate ? Carbon::parse($toDate)->format('d M Y') : ''
+            );
 
-        if (isset($request['from_date']) && !$request['from_date'] == '' && isset($request['to_date']) && !$request['to_date'] == '') {
-            $revenue['revenue_analysis'] = $this->revenue_analysis->RevenueAnalysisSummary(date('Y-m-d', strtotime($request['from_date'])),date('Y-m-d', strtotime($request['to_date'])));
-
-           // dd($revenue);
-            return view('pages.reports.accounts.invoices',$revenue);
-        } else {
-            return view('pages.reports.accounts.invoices');
-        }
-        //return view('pages.reports.accounts.invoices');
-    }
-    public function Transactions(Request $request){
-
-        if (isset($request['from_date']) && !$request['from_date'] == '' && isset($request['to_date']) && !$request['to_date'] == '' && isset($request['payment_method']) && !$request['payment_method'] == '') {
-            $revenue['transactions'] = $this->revenue_analysis->Transactions(date('Y-m-d', strtotime($request['from_date'])),date('Y-m-d', strtotime($request['to_date'])),$request['payment_method']);
-            $revenue['payment_methods'] = $this->payment_methods->getAll();
-            return view('pages.reports.accounts.transactions',$revenue);
-        } else {
-            $payment_methods = $this->payment_methods->getAll();
-            //dd($payment_methods);
-            return view('pages.reports.accounts.transactions',compact('payment_methods'));
-           // return view('pages.reports.accounts.invoices');
+            return view($viewPath, $data);
         }
 
+        return view($viewPath, compact('datesSet', 'pageTitle'));
     }
-    public function FailedPayments(){
+
+    public function FailedPayments()
+    {
         return view('pages.reports.accounts.failed_transactions');
     }
-    public function AgedReceivables(Request $request){
 
-        if (isset($request['to_date']) && !$request['to_date'] == '') {
-
-            $revenue['age_analysis'] = $this->revenue_analysis->Aged_Receivables(date('Y-m-d', strtotime($request['to_date'])));
-            //dd($revenue['transactions']);
-            return view('pages.reports.accounts.aged_receivables',$revenue);
-        } else {
-            return view('pages.reports.accounts.aged_receivables');
-        }
-        //return view('pages.reports.accounts.aged_receivables');
-    }
-    public function CreditNotes(){
+    public function CreditNotes()
+    {
         return view('pages.reports.accounts.credit_notes');
-    }
-    public function StudentList(Request $request){
-
-        if (isset($request['from_date']) && !$request['from_date'] == '' && isset($request['to_date']) && !$request['to_date'] == '') {
-
-            $revenue['student_list'] = $this->revenue_analysis->StudentList(date('Y-m-d', strtotime($request['from_date'])),date('Y-m-d', strtotime($request['to_date'])));
-           /// dd($revenue['student_list']);
-            return view('pages.reports.accounts.student_list',$revenue);
-        } else {
-            return view('pages.reports.accounts.student_list');
-        }
-
-       // return view('pages.reports.accounts.student_list');
     }
 }
