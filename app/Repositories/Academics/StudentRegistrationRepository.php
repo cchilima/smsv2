@@ -81,12 +81,37 @@ class StudentRegistrationRepository
         if (!$enrollment) {
             return false; 
         }
+
+        $is_open = $this->openAcademicPeriodV1Support($enrollment->class->academic_period_id);
     
-        $exists = Invoice::where('student_id', $student_id)
+        if($is_open){
+
+            $exists = Invoice::where('student_id', $student_id)
             ->where('academic_period_id', $enrollment->class->academic_period_id)
             ->exists();
-    
-        return $exists;
+
+            return $exists;
+
+        } else { return false; }
+
+    }
+
+
+    private function openAcademicPeriodV1Support($academic_period_id)
+    {
+        $currentDate = date('Y-m-d');
+
+        // Get next available academic period
+        $academicPeriodExists = AcademicPeriodInformation::with('academic_period')
+            ->whereHas('academic_period', function ($query) use ($currentDate) {
+                $query
+                    ->whereDate('ac_start_date', '<=', $currentDate)
+                    ->whereDate('ac_end_date', '>=', $currentDate);
+            })
+            ->where('academic_period_id', $academic_period_id)
+            ->exists();
+
+        return $academicPeriodExists;
     }
     
 
@@ -328,7 +353,7 @@ class StudentRegistrationRepository
             $academicInfo = $this->getAcademicInfo($student_id);
 
             if ($academicInfo) {
-                
+
                 $invoice = $this->getInvoice($student_id, $academicInfo->academic_period_id);
                 if($invoice) { return true; } else { return false; }
 
