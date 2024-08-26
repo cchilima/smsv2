@@ -7,6 +7,7 @@ use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Users\UserPersonalInfoRepository;
 use App\Traits\CanRefreshDataTable;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -30,7 +31,7 @@ class Photos extends Component
     // TODO: Fix validation and error handling
     public function uploadPhotos()
     {
-        $this->validate();
+        // $this->validate();
 
         try {
             if (!empty($this->photos)) {
@@ -67,11 +68,13 @@ class Photos extends Component
                         return 'Upload failed - invalid student ID: ' . $photo;
                     })->toArray();
 
-                    return Qs::displayError($errorsInvalidId);
+                    // return Qs::displayError($errorsInvalidId);
                 }
 
-                return Qs::jsonStoreOk();
+                // return Qs::jsonStoreOk();
             }
+        } catch (ValidationException $e) {
+            dd($e);
         } catch (\Throwable $th) {
             dd($th);
         }

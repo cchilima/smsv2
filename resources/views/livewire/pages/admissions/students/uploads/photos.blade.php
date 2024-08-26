@@ -29,7 +29,7 @@
 
             <div wire:ignore class="tab-pane fade show" id="upload-photos">
 
-                <form class="ajax-update" wire:submit="uploadPhotos()">
+                <form wire:submit="uploadPhotos()">
                     <x-filepond::upload wire:model="photos" required="true" multiple="true" max-files="10"
                         label-idle="Drag & drop or <span class='filepond--label-action'>browse.</span> up to 10 photos  " />
 
