@@ -229,6 +229,7 @@ class StudentController extends Controller
             } elseif ($request->program_id) {
                 $studentData = $request->validate($academicInfoRequest->rules());
             } elseif ($request->passport_photo_path) {
+                // Validate passport photo for photo update operations
                 $personalData = $request->validate([
                     'passport_photo_path' => $personalInfoRequest->rules()['passport_photo_path']
                 ]);

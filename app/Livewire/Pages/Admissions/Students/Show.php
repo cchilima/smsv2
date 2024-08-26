@@ -12,10 +12,11 @@ use App\Traits\CanRefreshDataTable;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Show extends Component
 {
-    use CanRefreshDataTable;
+    use CanRefreshDataTable, WithFileUploads;
 
     public $data;
 
@@ -40,6 +41,10 @@ class Show extends Component
 
         $this->data['student'] = $this->studentRepo->getStudentInfor($userId);
         $this->data['studentId'] = $this->data['student']->id;
+
+        $this->data['passport_photo_path'] = $this->data['student']->user->userPersonalInfo?->passport_photo_path
+            ?? 'images/default-avatar.png';
+
         $this->data['countries'] = $this->studentRepo->getCountries();
         $this->data['programs'] = $this->studentRepo->getPrograms();
         $this->data['towns'] = $this->studentRepo->getTowns();

@@ -5,6 +5,7 @@ namespace App\Repositories\Users;
 use App\Http\Requests\Users\User;
 use Illuminate\Http\UploadedFile;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 use Intervention\Image\ImageManager;
 
 
@@ -22,20 +23,24 @@ class UserPersonalInfoRepository
             mkdir($dir, 0777, true);
         }
 
-        // create new image manager and object
+        // create new image manager and image instance
         $imageManager = new ImageManager(new Driver());
         $image = $imageManager->read($fileObject->getRealPath());
+
+        // Resize and encode image to JPG
+        $resizedImage = $image->scaleDown(height: 500);
+        $encodedImage = $resizedImage->encode(new JpegEncoder(quality: 50));
+        $fileName = $userId . '.jpg';
 
         // TODO: Convert to JPG and compress
         // TODO: Delete any existing files with the same name
         // TODO: Show validation errors on front-end
 
         // Save to storage path
-        $image->save($dir . '/' . $userId . $fileObject->getClientOriginalExtension());
-
+        $encodedImage->save($dir . '/' . $fileName);
 
         // Return generated path
-        return str_replace('app/public', 'storage', $dir_rel) . $userId;
+        return str_replace('app/public', 'storage', $dir_rel) . $fileName;
     }
 
     public function deletePassportPhoto($path): bool

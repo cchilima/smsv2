@@ -20,8 +20,8 @@
                         : asset($student->user->userPersonalInfo?->passport_photo_path);
                 @endphp
 
-                <img style="aspect-ratio: 1/1" src="{{ $passportPhotoUrl }}" alt="photo"
-                    class="rounded-circle object-fit-cover w-100 h-100">
+                <img style="aspect-ratio: 1/1; object-fit: cover" src="{{ $passportPhotoUrl }}" alt="photo"
+                    class="rounded-circle w-100 h-100">
                 <br>
                 <h3 class="mt-3">{{ $student->user->first_name . ' ' . $student->user->last_name }}</h3>
                 <h6 class="mt-1">{{ $student->id }}</h6>
@@ -29,22 +29,23 @@
         </div>
 
         <div class="card">
-            <div class="card-body p-4">
-                <form class="ajax-update" data-reload="#page-header" method="post"
-                    action="{{ route('students.update', $student->user->id) }}">
+            <div wire:ignore class="card-body p-4">
+                <form class="ajax-update" method="post" action="{{ route('students.update', $student->user->id) }}">
                     @csrf
                     @method('PUT')
 
                     <h6 class="card-title">Update Student Photo:</h6>
 
                     <div class="form-group">
-                        <input value="{{ $student->user->userPersonalInfo?->passport_photo_path }}" accept="image/*"
-                            type="file" name="passport_photo_path" class="form-input-styled">
-                        <span class="form-text text-muted">JPEG or PNG. 2MB Max</span>
+                        <input wire:model="data.passport_photo_object" accept="image/*" type="file"
+                            name="passport_photo_path" class="form-input-styled" required>
+                        <span class="form-text text-muted">JPG or PNG. 2MB Max</span>
                     </div>
 
                     <div class="text-left">
-                        <button type="submit" class="btn btn-primary">Update <i class="icon-pencil ml-2"></i></button>
+                        <button type="submit" class="btn btn-primary">
+                            Update <i class="icon-pencil ml-2"></i>
+                        </button>
                     </div>
                 </form>
 
@@ -169,8 +170,8 @@
                             </tbody>
                         </table>
                         <div class="text-right mb-1 mt-4">
-                            <button id="ajax-btn" type="button"
-                                onclick="manageAcademicInfor('{{ $student->id }}')" class="btn btn-primary">Update
+                            <button id="ajax-btn" type="button" onclick="manageAcademicInfor('{{ $student->id }}')"
+                                class="btn btn-primary">Update
                                 Information <i class="icon-pencil ml-2"></i>
                             </button>
                         </div>
