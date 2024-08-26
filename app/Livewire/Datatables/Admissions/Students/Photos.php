@@ -7,6 +7,7 @@ use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Users\UserPersonalInfoRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Blade;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Exportable;
@@ -20,6 +21,8 @@ use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 
 final class Photos extends PowerGridComponent
 {
+    public string $tableName = 'StudentPhotosTable';
+    public bool $deferLoading = true;
 
     protected UserPersonalInfoRepository $userPersonalInfoRepo;
     protected StudentRepository $studentRepo;
@@ -64,10 +67,11 @@ final class Photos extends PowerGridComponent
             })
 
             ->add('program.name')
-            ->add('level.name')
 
             ->add('photo', function ($row) {
-                return $row->user->userPersonalInfo?->passport_photo_path ?? '';
+                return Blade::render('components.table-fields.admissions.students.photos', [
+                    'row' => $row,
+                ]);
             });
     }
 
@@ -84,9 +88,6 @@ final class Photos extends PowerGridComponent
                 ->sortable(),
 
             Column::make('Photo', 'photo'),
-
-            Column::make('Level', 'level.name')
-                ->sortable(),
         ];
     }
 }

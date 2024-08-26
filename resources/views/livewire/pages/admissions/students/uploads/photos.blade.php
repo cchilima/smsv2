@@ -1,5 +1,9 @@
 @section('page_title', 'Student Photos')
 
+@push('scripts')
+    @filepondScripts
+@endpush
+
 @php
     use App\Helpers\Qs;
 @endphp
@@ -24,21 +28,23 @@
             </div>
 
             <div wire:ignore class="tab-pane fade show" id="upload-photos">
-                <form class="ajax-store" method="post" action="{{ route('application.collect_fee') }}">
-                    @csrf
 
-                    <div class="form-group">
-                        <label for="applicant">Applicant Code</label>
-                        <input type="text" class="form-control" id="applicant" name="applicant"
-                            placeholder="Applicant Code" required>
-                    </div>
+                <form class="ajax-update" wire:submit="uploadPhotos()">
+                    <x-filepond::upload wire:model="photos" required="true" multiple="true" max-files="10"
+                        label-idle="Drag & drop or <span class='filepond--label-action'>browse.</span> up to 10 photos  " />
 
                     <div class="text-left">
-                        <button wire:click.debounce.1000ms="refreshTable('ApplicationsTable')" id="ajax-btn"
-                            type="submit" class="btn btn-primary">Submit <i class="icon-paperplane ml-2"></i></button>
+                        <button wire:loading.attr="disabled"
+                            wire:click.debounce.1000ms="refreshTable('StudentPhotosTable')" id="ajax-btn"
+                            type="submit" class="btn btn-primary">
+                            Upload Photos
+                        </button>
                     </div>
                 </form>
 
+                <p class="mt-3">JPG/PNG & 2MB max size per file. File name format: <code>STUDENT-ID.jpg/png</code>
+                    e.g., <code>1234567.jpg</code>
+                </p>
             </div>
         </div>
     </div>
