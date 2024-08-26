@@ -23,7 +23,7 @@ class UserPersonalInfoRepository
             mkdir($dir, 0777, true);
         }
 
-        // create new image manager and image instance
+        // Create new image manager and image instance
         $imageManager = new ImageManager(new Driver());
         $image = $imageManager->read($fileObject->getRealPath());
 
@@ -31,10 +31,6 @@ class UserPersonalInfoRepository
         $resizedImage = $image->scaleDown(height: 500);
         $encodedImage = $resizedImage->encode(new JpegEncoder(quality: 50));
         $fileName = $userId . '.jpg';
-
-        // TODO: Convert to JPG and compress
-        // TODO: Delete any existing files with the same name
-        // TODO: Show validation errors on front-end
 
         // Save to storage path
         $encodedImage->save($dir . '/' . $fileName);
