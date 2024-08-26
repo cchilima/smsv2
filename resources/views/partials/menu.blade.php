@@ -344,7 +344,7 @@
                         </li>
 
                         <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['search', 'students.create', 'students.edit', 'students.list']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['search', 'students.create', 'students.edit', 'students.list', 'students.upload-photos']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                             <a href="#" class="nav-link"><i class="icon-users"></i> <span>
                                     Students</span></a>
 
@@ -364,6 +364,12 @@
                                     <a href="{{ route('students.list') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['students.list']) ? 'active' : '' }}">
                                         <span>Student List</span></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('students.upload-photos') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['students.upload-photos']) ? 'active' : '' }}">
+                                        <span>Upload Student Photos</span></a>
                                 </li>
 
                             </ul>

@@ -16,7 +16,7 @@ use Livewire\WithFileUploads;
 
 class Show extends Component
 {
-    use CanRefreshDataTable, WithFileUploads;
+    use CanRefreshDataTable;
 
     public $data;
 
