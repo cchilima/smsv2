@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Livewire\Pages\Admissions\Students\Uploads;
+namespace App\Livewire\Pages\Admissions\Students;
 
 use App\Helpers\Qs;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Users\UserPersonalInfoRepository;
 use App\Traits\CanRefreshDataTable;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
@@ -13,7 +16,7 @@ use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Spatie\LivewireFilepond\WithFilePond;
 
-class Photos extends Component
+class UploadPhotos extends Component
 {
     use CanRefreshDataTable, WithFilePond;
 
@@ -28,15 +31,21 @@ class Photos extends Component
         $this->studentRepo = app(StudentRepository::class);
     }
 
-    // TODO: Fix validation and error handling
+    public function mount()
+    {
+        Gate::allowIf(Qs::userIsTeamSA());
+    }
+
     public function uploadPhotos()
     {
-        // $this->validate();
-
         try {
+            $this->validate();
+
+            DB::beginTransaction();
+
             if (!empty($this->photos)) {
                 $failedUploads = [
-                    'invalid_student_id' => [],
+                    'invalid_student_ids' => [],
                 ];
 
                 // Loop through each photo and process it
@@ -53,51 +62,71 @@ class Photos extends Component
                         $uploadedPhotoPath = $this->userPersonalInfoRepo->uploadPassportPhoto($photo, $user->id);
 
                         // Update user personal info with new path
-                        $user->userPersonalInfo?->update(['passport_photo_path' => $uploadedPhotoPath]);
+                        return $user->userPersonalInfo?->update(['passport_photo_path' => $uploadedPhotoPath]);
                     }
 
                     // If user not found, record failed upload and skip to next photo
-                    $failedUploads['invalid_student_id'][] = $photo->getClientOriginalName();
+                    $failedUploads['invalid_student_ids'][] = $photo->getClientOriginalName();
                 });
 
                 // If there are failed uploads, return error message
-                if (!empty($failedUploads)) {
-                    // Qs::json('Failed to upload photos: ' . implode(', ', $failedUploads), false);
+                if (!empty($failedUploads['invalid_student_ids'])) {
 
-                    $errorsInvalidId = collect($failedUploads['invalid_student_id'])->map(function ($photo) {
+                    $invalidIdErrors = collect($failedUploads['invalid_student_ids'])->map(function ($photo) {
                         return 'Upload failed - invalid student ID: ' . $photo;
                     })->toArray();
 
-                    // return Qs::displayError($errorsInvalidId);
+                    $this->dispatch('show_errors', $invalidIdErrors);
                 }
 
-                // return Qs::jsonStoreOk();
+                // Refresh student photos datatable
+                $this->refreshTable('StudentPhotosTable');
+
+                DB::commit();
             }
         } catch (ValidationException $e) {
-            dd($e);
+            $messages = [];
+
+            foreach ($e->validator->errors()->messages() as $value) {
+                $messages[] = $value[0];
+            }
+
+            $this->dispatch('show_errors', array_unique($messages));
         } catch (\Throwable $th) {
-            dd($th);
+            throw $th;
         }
     }
 
     public function rules()
     {
         return [
-            'photos' => 'required|array|min:30',
-            'photos.*' => 'required|file|mimes:jpg,png|max:2048',
+            'photos' => 'required|array|max:20',
+            'photos.*' => 'required|file|mimes:jpg,jpeg,png|max:5120',
         ];
     }
 
     public function validationAttributes()
     {
         return [
-            'photos.*' => 'Photos',
+            'photos.*' => 'photo',
+            'photos' => 'photos'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'photos.required' => 'Add at least one photo.',
+            'photos.*.file' => 'Each item must be a valid file.',
+            'photos.*.mimes' => 'Each photo must be a file of type JPG or PNG.',
+            'photos.*.max' => 'Each photo should not be greater than 5MB.',
+            'photos.max' => 'You may upload no more than :max photos at a time.',
         ];
     }
 
     #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
-        return view('livewire.pages.admissions.students.uploads.photos');
+        return view('livewire.pages.admissions.students.upload-photos');
     }
 }

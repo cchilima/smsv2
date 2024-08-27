@@ -28,24 +28,41 @@
             </div>
 
             <div wire:ignore class="tab-pane fade show" id="upload-photos">
-
                 <form wire:submit="uploadPhotos()">
-                    <x-filepond::upload wire:model="photos" required="true" multiple="true" max-files="10"
-                        label-idle="Drag & drop or <span class='filepond--label-action'>browse.</span> up to 10 photos  " />
+                    <x-filepond::upload wire:model="photos" required="true" multiple="true" max-files="20"
+                        label-idle="Drag & drop or <span class='filepond--label-action'>browse</span> up to 20 photos  " />
+
+                    <div class="errors"></div>
 
                     <div class="text-left">
-                        <button wire:loading.attr="disabled"
-                            wire:click.debounce.1000ms="refreshTable('StudentPhotosTable')" id="ajax-btn"
-                            type="submit" class="btn btn-primary">
+                        <button wire:loading.attr="disabled" id="ajax-btn" type="submit" class="btn btn-primary">
                             Upload Photos
                         </button>
                     </div>
                 </form>
 
-                <p class="mt-3">JPG/PNG & 2MB max size per file. File name format: <code>STUDENT-ID.jpg/png</code>
-                    e.g., <code>1234567.jpg</code>
+                <p class="mt-3">JPG/PNG. 5MB max size per file. File name format: <code>STUDENT-ID.jpg/png</code>
+                    e.g. <code>1234567.jpg</code>
                 </p>
             </div>
         </div>
     </div>
 </div>
+
+@script
+    <script>
+        $wire.on('show_errors', function(params) {
+            showErrors(params[0], 'errors');
+        })
+
+        function showErrors(errors, containerClass) {
+            errorsDiv = document.querySelector(`.${containerClass}`);
+            errorsDiv.innerHTML = '';
+
+            errors.forEach(function(message) {
+                errorsDiv.insertAdjacentHTML('beforeend',
+                    `<span class="d-block mt-2 mb-2 text-danger error-message">${message}</span>`);
+            });
+        }
+    </script>
+@endscript

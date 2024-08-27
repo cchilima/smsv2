@@ -22,6 +22,7 @@ use App\Repositories\Users\{userNextOfKinRepository, UserPersonalInfoRepository,
 use http\Client\Curl\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class StudentController extends Controller
 {
@@ -274,10 +275,12 @@ class StudentController extends Controller
             DB::commit();
 
             return Qs::jsonStoreOk();
+        } catch (ValidationException $e) {
+            return Qs::json($e->getMessage(), false);
         } catch (\Exception $e) {
             DB::rollBack();
 
-            dd($e);
+            // dd($e);
             // Log the error or handle it accordingly
             return Qs::json('failed to update', false);
         }

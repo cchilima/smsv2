@@ -64,7 +64,7 @@ use App\Livewire\Pages\Accounting\Fees\Index as FeesIndex;
 use App\Livewire\Pages\Accounting\PaymentMethods\Index as PaymentMethodsIndex;
 use App\Livewire\Pages\Admissions\Applications\Index as ApplicationsIndex;
 use App\Livewire\Pages\Admissions\Students\Show as ShowStudent;
-use App\Livewire\Pages\Admissions\Students\Uploads\Photos as UploadStudentPhotos;
+use App\Livewire\Pages\Admissions\Students\UploadPhotos as UploadStudentPhotos;
 use App\Livewire\Pages\Notices\Announcements\Index as AnnouncementsIndex;
 use App\Livewire\Pages\Residency\Countries\Index as CountriesIndex;
 use App\Livewire\Pages\Residency\Provinces\Index as ProvincesIndex;

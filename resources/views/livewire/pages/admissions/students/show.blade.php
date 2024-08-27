@@ -37,8 +37,8 @@
                     <h6 class="card-title">Update Student Photo:</h6>
 
                     <div class="form-group">
-                        <input wire:model="data.passport_photo_object" accept="image/*" type="file"
-                            name="passport_photo_path" class="form-input-styled" required>
+                        <input accept="image/*" type="file" name="passport_photo_path" class="form-input-styled"
+                            required>
                         <span class="form-text text-muted">JPG or PNG. 2MB Max</span>
                     </div>
 
@@ -1518,16 +1518,16 @@
                         </tbody>
                     </table>
 
-                   {{-- @if ($isWithinRegistrationPeriod) --}}
-                        @if (!$isRegistered)
-                            <form action="{{ route('enrollments.store') }}" method="post">
-                                @csrf
-                                <input name="student_number" type="hidden" value="{{ $student->id }}" />
-                                <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register
-                                </button>
-                            </form>
-                        @endif
-                        {{-- @endif --}}
+                    {{-- @if ($isWithinRegistrationPeriod) --}}
+                    @if (!$isRegistered)
+                        <form action="{{ route('enrollments.store') }}" method="post">
+                            @csrf
+                            <input name="student_number" type="hidden" value="{{ $student->id }}" />
+                            <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register
+                            </button>
+                        </form>
+                    @endif
+                    {{-- @endif --}}
                 </div>
             @else
                 <div class="container ">

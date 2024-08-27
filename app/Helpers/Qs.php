@@ -7,6 +7,7 @@ use App\Models\Settings\Setting;
 use App\Models\Users\User;
 use Illuminate\Support\Facades\Auth;
 use Hashids\Hashids;
+
 class Qs
 {
     public static function displayError($errors)
@@ -17,8 +18,8 @@ class Qs
         return '
                 <div class="alert alert-danger alert-styled-left alert-dismissible">
 									<button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
-									<span class="font-weight-semibold">Oops!</span> '.
-        implode(' ', $data).'
+									<span class="font-weight-semibold">Oops!</span> ' .
+            implode(' ', $data) . '
 							    </div>
                 ';
     }
@@ -48,8 +49,8 @@ class Qs
     {
         return '
  <div class="alert alert-success alert-bordered">
-                    <button type="button" class="close" data-dismiss="alert"><span>&times;</span><span class="sr-only">Close</span></button> '.
-        $msg.'  </div>
+                    <button type="button" class="close" data-dismiss="alert"><span>&times;</span><span class="sr-only">Close</span></button> ' .
+            $msg . '  </div>
                 ';
     }
 
@@ -65,7 +66,7 @@ class Qs
 
     public static function getTeamSAT()
     {
-        return ['admin', 'super_admin', 'instructor','student', 'accountant'];
+        return ['admin', 'super_admin', 'instructor', 'student', 'accountant'];
     }
 
     public static function getTeamAcademic()
@@ -78,7 +79,7 @@ class Qs
     }
     public static function getSupportTeamAll()
     {
-        return ['admin', 'super_admin', 'instructor','student', 'accountant'];
+        return ['admin', 'super_admin', 'instructor', 'student', 'accountant'];
     }
 
     public static function getTeamAdministrative()
@@ -88,44 +89,91 @@ class Qs
 
     public static function hash($id)
     {
-        $date = date('dMY').'ZUT';
+        $date = date('dMY') . 'ZUT';
         $hash = new Hashids($date, 14);
         return $hash->encode($id);
     }
 
     public static function getUserRecord($remove = [])
     {
-        $data = ['first_name', 'middle_name', 'last_name', 'gender','image',
-            'email', 'password', 'passport', 'nrc'];
+        $data = [
+            'first_name',
+            'middle_name',
+            'last_name',
+            'gender',
+            'image',
+            'email',
+            'password',
+            'passport',
+            'nrc'
+        ];
 
         return $remove ? array_values(array_diff($data, $remove)) : $data;
     }
     public static function getUserRecords($remove = [])
     {
-        $data = ['first_name', 'middle_name', 'last_name', 'gender','image',
-            'email', 'password', 'passport', 'nrc','user_type'];
+        $data = [
+            'first_name',
+            'middle_name',
+            'last_name',
+            'gender',
+            'image',
+            'email',
+            'password',
+            'passport',
+            'nrc',
+            'user_type'
+        ];
 
         return $remove ? array_values(array_diff($data, $remove)) : $data;
     }
     public static function getUserPersonalinfor($remove = [])
     {
-        $data = ['dob', 'marital_status', 'province_state', 'town_city',
-            'telephone', 'mobile', 'nationality', 'street_main',
-            'post_code'];
+        $data = [
+            'dob',
+            'marital_status',
+            'province_state',
+            'town_city',
+            'telephone',
+            'mobile',
+            'nationality',
+            'street_main',
+            'post_code'
+        ];
 
         return $remove ? array_values(array_diff($data, $remove)) : $data;
     }
     public static function getUserNKInfor($remove = [])
     {
-        $data = ['nk_full_name','nk_email', 'relationship', 'nkaddress', 'nktel', 'nk_relationship','nk_nal_id',
-            'nk_state_id','nk_phone', 'nk_town_id'];
+        $data = [
+            'nk_full_name',
+            'nk_email',
+            'relationship',
+            'nkaddress',
+            'nktel',
+            'nk_relationship',
+            'nk_nal_id',
+            'nk_state_id',
+            'nk_phone',
+            'nk_town_id'
+        ];
 
         return $remove ? array_values(array_diff($data, $remove)) : $data;
     }
     public static function getUserACInfor($remove = [])
     {
-        $data = ['nk_full_name','nk_email', 'relationship', 'nkaddress', 'nktel', 'nk_relationship','nk_nal_id',
-            'nk_state_id','nk_phone', 'nk_town_id'];
+        $data = [
+            'nk_full_name',
+            'nk_email',
+            'relationship',
+            'nkaddress',
+            'nktel',
+            'nk_relationship',
+            'nk_nal_id',
+            'nk_state_id',
+            'nk_phone',
+            'nk_town_id'
+        ];
 
         return $remove ? array_values(array_diff($data, $remove)) : $data;
     }
@@ -139,7 +187,7 @@ class Qs
 
     public static function decodeHash($str, $toString = true)
     {
-        $date = date('dMY').'ZUT';
+        $date = date('dMY') . 'ZUT';
         $hash = new Hashids($date, 14);
         $decoded = $hash->decode($str);
         return $toString ? implode(',', $decoded) : $decoded;
@@ -180,13 +228,12 @@ class Qs
         $data = ['programID', 'intakeID', 'studymodeID', 'level_id', 'typeID', 'paymentPlanID'];
 
         return $remove ? array_values(array_diff($data, $remove)) : $data;
-
     }
 
     public static function getUserType()
     {
         $user = Auth::user();
-        return $user->userType->title;
+        return $user?->userType->title;
     }
 
     public static function userIsSuperAdmin()
@@ -228,13 +275,13 @@ class Qs
         return in_array($user->userType->title, self::getStaff());
     }
 
-    public static function getStaff($remove=[])
+    public static function getStaff($remove = [])
     {
         $data =  ['super_admin', 'admin', 'instructor', 'accountant', 'librarian'];
         return $remove ? array_values(array_diff($data, $remove)) : $data;
     }
 
-    public static function getAllUserTypes($remove=[])
+    public static function getAllUserTypes($remove = [])
     {
         $data =  ['super_admin', 'admin', 'instructor', 'accountant', 'librarian', 'student'];
         return $remove ? array_values(array_diff($data, $remove)) : $data;
@@ -253,7 +300,7 @@ class Qs
 
     public static function userIsMyChild($student_id, $parent_id)
     {
-        $data = ['user_id' => $student_id, 'my_parent_id' =>$parent_id];
+        $data = ['user_id' => $student_id, 'my_parent_id' => $parent_id];
         return StudentRecord::where($data)->exists();
     }
 
@@ -288,12 +335,12 @@ class Qs
 
     public static function getUserUploadPath()
     {
-        return 'uploads/'.date('Y').'/'.date('m').'/'.date('d').'/';
+        return 'uploads/' . date('Y') . '/' . date('m') . '/' . date('d') . '/';
     }
 
     public static function getUploadPath($user_type)
     {
-        return 'uploads/'.$user_type.'/';
+        return 'uploads/' . $user_type . '/';
     }
 
     public static function getFileMetaData($file)
@@ -315,7 +362,7 @@ class Qs
         $base = log($size, 1024);
         $suffixes = array('B', 'KB', 'MB', 'GB', 'TB');
 
-        return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
+        return round(pow(1024, $base - floor($base)), $precision) . ' ' . $suffixes[floor($base)];
     }
 
     public static function getSetting($type)
@@ -332,7 +379,7 @@ class Qs
     {
         $oy = self::getCurrentSession();
         $old_yr = explode('-', $oy);
-        return ++$old_yr[0].'-'.++$old_yr[1];
+        return ++$old_yr[0] . '-' . ++$old_yr[1];
     }
 
     public static function getSystemName()
@@ -356,7 +403,7 @@ class Qs
     }
     public static function jsonError()
     {
-        return self::json(__('msg.failed'),false);
+        return self::json(__('msg.failed'), false);
     }
 
     public static function jsonUpdateOk()
@@ -383,7 +430,7 @@ class Qs
     {
         $data = [];
         $to = (is_array($goto) ? $goto[0] : $goto) ?: 'dashboard';
-        if(is_array($goto)){
+        if (is_array($goto)) {
             array_shift($goto);
             $data = $goto;
         }
@@ -418,5 +465,4 @@ class Qs
     {
         return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     }
-
 }
