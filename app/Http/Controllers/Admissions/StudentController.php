@@ -22,6 +22,7 @@ use App\Repositories\Users\{userNextOfKinRepository, UserPersonalInfoRepository,
 use http\Client\Curl\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class StudentController extends Controller
 {
@@ -145,9 +146,11 @@ class StudentController extends Controller
             // Change DOB date format
             $personalData = $this->studentRepo->changeDBOFromat($personalData);
 
+            $passportPhotoObject = $personalData['passport_photo_path'] ?? null;
+
             // Upload passport photo
-            if ($passportPhotoPath = $personalData['passport_photo_path'] ?? null) {
-                $personalData['passport_photo_path'] = $this->userPersonalInfoRepo->uploadPassportPhoto($passportPhotoPath);
+            if ($passportPhotoObject) {
+                $personalData['passport_photo_path'] = $this->userPersonalInfoRepo->uploadPassportPhoto($passportPhotoObject, $user->id);
             }
 
             // Create personal info record
@@ -226,6 +229,11 @@ class StudentController extends Controller
                 $nextOfKinDataWithPrefix = $request->validate($nextOfKinInfoRequest->rules());
             } elseif ($request->program_id) {
                 $studentData = $request->validate($academicInfoRequest->rules());
+            } elseif ($request->passport_photo_path) {
+                // Validate passport photo for photo update operations
+                $personalData = $request->validate([
+                    'passport_photo_path' => $personalInfoRequest->rules()['passport_photo_path']
+                ]);
             }
 
             if ($nextOfKinDataWithPrefix) {
@@ -248,7 +256,14 @@ class StudentController extends Controller
                 $user->update($userData);
             } elseif ($personalData) {
                 // Update or create UserPersonalInfo
-                $userPersonalInfo = $user->userPersonalInfo()->update($personalData);
+                $passportPhotoObject = $personalData['passport_photo_path'] ?? null;
+
+                // Upload passport photo
+                if ($passportPhotoObject) {
+                    $personalData['passport_photo_path'] = $this->userPersonalInfoRepo->uploadPassportPhoto($passportPhotoObject, $user->id);
+                }
+
+                $user->userPersonalInfo()->update($personalData);
             } elseif ($nextOfKinDataWithPrefix) {
                 // Update or create NextOfKin
                 $nextOfKin = $user->userNextOfKin()->update($nextOfKinData);
@@ -260,62 +275,17 @@ class StudentController extends Controller
             DB::commit();
 
             return Qs::jsonStoreOk();
+        } catch (ValidationException $e) {
+            return Qs::json($e->getMessage(), false);
         } catch (\Exception $e) {
             DB::rollBack();
 
-            //dd($e);
+            // dd($e);
             // Log the error or handle it accordingly
             return Qs::json('failed to update', false);
         }
     }
 
-    public function search(Request $request)
-    {
-
-        if (isset($request['query']) && !$request['query'] == '') {
-            $searchText = $request['query'];
-            $users['users'] = $this->studentRepo->studentSearch($searchText);
-            return view('pages.students.student_search', $users);
-        } else {
-            return view('pages.students.student_search');
-        }
-    }
-
-    // student management controller
-    // public function studentShow($id)
-    // {
-    //     $data['student'] = $this->studentRepo->getStudentInfor($id);
-    //     $data['studentId'] = $data['student']->id;
-    //     $data['countries'] = $this->studentRepo->getCountries();
-    //     $data['programs'] = $this->studentRepo->getPrograms();
-    //     $data['towns'] = $this->studentRepo->getTowns();
-    //     $data['provinces'] = $this->studentRepo->getProvinces();
-    //     $data['course_levels'] = $this->studentRepo->getCourseLevels();
-    //     $data['periodIntakes'] = $this->studentRepo->getIntakes();
-    //     $data['studyModes'] = $this->studentRepo->getStudyModes();
-    //     $data['periodTypes'] = $this->studentRepo->getPeriodTypes();
-    //     $data['relationships'] = $this->studentRepo->getRelationships();
-    //     $data['maritalStatuses'] = $this->studentRepo->getMaritalStatuses();
-    //     $data['paymentMethods'] = $this->studentRepo->getPaymentMethods();
-    //     $data['fees'] = $this->studentRepo->getFees($id);
-
-    //     // Find student
-    //     $student = $this->studentRepo->findUser($id);
-
-    //     $x = $this->studentRepo->getStudentInfor($id);
-
-    //     $data['courses'] = $this->registrationRepo->getAll($student->student->id);
-    //     $data['isRegistered'] = $this->registrationRepo->getRegistrationStatus($student->student->id);
-    //     $data['isWithinRegistrationPeriod'] = $this->registrationRepo->checkIfWithinRegistrationPeriod($student->student->id);
-    //     $data['isInvoiced'] = $this->registrationRepo->checkIfInvoiced($student->student->id);
-    //     $data['enrollments'] = $this->enrollmentRepo->getEnrollments($student->student->id);
-    //     $data['results'] = $this->classaAsessmentRepo->GetExamGrades($id);
-    //     $data['caresults'] = $this->classaAsessmentRepo->GetCaStudentGrades($id);
-
-    //     $data['percentage'] = $this->invoiceRepo->paymentPercentage($student->student->id);
-
-    //     return view('pages.students.show', $data);
-    // }
 
     public function resetAccountPassword(ResetPasswordInfo $request)
     {

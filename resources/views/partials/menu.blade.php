@@ -360,12 +360,12 @@
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['search']) ? 'active' : '' }}">
                                         <span>Student Information</span></a>
                                 </li> --}}
+
                                 <li class="nav-item">
                                     <a href="{{ route('students.list') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['students.list']) ? 'active' : '' }}">
                                         <span>Student List</span></a>
                                 </li>
-
                             </ul>
                         </li>
 
@@ -461,6 +461,7 @@
 
                         <li
                             class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
+                                'students.upload-photos',
                                 'announcements.index',
                                 'marital-statuses.create',
                                 'marital-statuses.edit',
@@ -479,6 +480,12 @@
                                     Other</span></a>
 
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Profile">
+                                <li class="nav-item">
+                                    <a href="{{ route('students.upload-photos') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['students.upload-photos']) ? 'active' : '' }}">
+                                        <span>Upload Student Photos</span></a>
+                                </li>
+
                                 <li class="nav-item">
                                     <a href="{{ route('announcements.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['announcements.create', 'announcements.edit', 'announcements.index']) ? 'active' : '' }}">

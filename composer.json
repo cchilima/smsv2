@@ -23,6 +23,7 @@
         "openspout/openspout": "^4.24",
         "owen-it/laravel-auditing": "^13.6",
         "power-components/livewire-powergrid": "^5.10",
+        "spatie/livewire-filepond": "^1.1",
         "vinkla/hashids": "^11.0"
     },
     "require-dev": {
