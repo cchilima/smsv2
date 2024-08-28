@@ -296,6 +296,7 @@ class EnrollmentRepository
 
             // Calculate total invoice amount
             $totalInvoiceAmount = 0;
+            
             foreach ($student->invoices as $invoice) {
                 $totalInvoiceAmount += $invoice->details->sum('amount');
             }
