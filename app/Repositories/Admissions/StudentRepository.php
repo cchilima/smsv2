@@ -27,7 +27,7 @@ class StudentRepository
 
     public function getAll($executeQuery = true)
     {
-        $query = Student::with(['user', 'program', 'level']);
+        $query = Student::with(['user', 'user.userPersonalInfo', 'program', 'level',]);
 
         return $executeQuery ? $query->get() : $query;
     }
