@@ -72,8 +72,8 @@ class UploadPhotos extends Component
                 // If there are failed uploads, return error message
                 if (!empty($failedUploads['invalid_student_ids'])) {
 
-                    $invalidIdErrors = collect($failedUploads['invalid_student_ids'])->map(function ($photo) {
-                        return 'Invalid student ID: ' . $photo;
+                    $invalidIdErrors = collect($failedUploads['invalid_student_ids'])->map(function ($studentId) {
+                        return 'Invalid student ID: ' . $studentId;
                     })->toArray();
 
                     return $this->dispatch('show_invalid_id_errors', $invalidIdErrors);
