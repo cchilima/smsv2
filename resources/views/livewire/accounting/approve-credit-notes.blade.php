@@ -48,18 +48,19 @@
 
     @script
         <script>
+
             $wire.on('approved', () => {
                 M.toast({
                     html: 'credit note approved successfully'
                 })
             });
 
-
             $wire.on('approval-failed', () => {
                 M.toast({
                     html: 'approval unsuccessful'
                 })
             });
+            
         </script>
     @endscript
 

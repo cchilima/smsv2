@@ -72,6 +72,7 @@ class InvoiceRepository
 
             DB::commit();
             return true;
+
         } catch (\Exception $e) {
             DB::rollback();
             dd($e);  // Or handle the exception as needed
@@ -331,6 +332,27 @@ class InvoiceRepository
         return ['fees' => $fees, 'universal_fees' => $universalFees];
     }
 
+
+    private function getAcademicPeriodFees($student, $academic_period_id)
+    {
+        $fees = DB::table('academic_period_fees')
+            ->join('program_academic_period_fee', 'academic_period_fees.id', '=', 'program_academic_period_fee.academic_period_fee_id')
+            ->join('programs', 'program_academic_period_fee.program_id', '=', 'programs.id')
+            ->join('fees', 'fees.id', '=', 'academic_period_fees.fee_id')
+            ->where('fees.type', 'recurring')
+            ->where('academic_period_fees.academic_period_id', $academic_period_id)
+            ->where('programs.id', $student->program_id)
+            ->whereNotIn('fees.type', ['course repeat fee', 'accommodation fee'])
+            ->select('academic_period_fees.*', 'programs.id as program_id')
+            ->get();
+
+        $universalFees = AcademicPeriodFee::doesntHave('programs')->whereHas('fee', function ($query) {
+            $query->where('type', 'recurring');
+        })->get();
+
+        return ['fees' => $fees, 'universal_fees' => $universalFees];
+    }
+
     private function finalizeInvoice($student, $invoice)
     {
         // Commit the transaction
@@ -343,7 +365,7 @@ class InvoiceRepository
         $this->statementRepo->removeZeroStatementAmounts();
     }
 
-    public function paymentPercentage($student_id)
+    public function paymentPercentageAllInvoices($student_id)
     {
         $accumulative_total = 0;
         $accumulative_payments = 0;
@@ -362,6 +384,68 @@ class InvoiceRepository
 
         return (($accumulative_payments / $accumulative_total) * 100);
     }
+
+
+    public function paymentPercentage($student_id)
+    {
+        $accumulative_total = 0;
+        $accumulative_payments = 0;
+        $acCurrentFeesTotal = 0;
+    
+        // Get the current date
+        $currentDate = date('Y-m-d');
+
+        // get student
+        $student = $this->getStudent($student_id);
+
+        // Determine academic period
+        $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, $currentDate);
+
+        // Determine period fees for current academic period
+        $acFees = $this->getAcademicPeriodFees($student, $academicPeriod->academic_period_id);
+
+        // Get cummulative academic fees total for all student's past academic periods
+        $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
+
+        // Get all receipts
+        $receipts_total = $student->receipts->sum('amount');
+
+        // Calculate the accumulative totals
+        $acCurrentFeesTotal  += ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount'));
+     
+        // Prepare for calculation 
+        $accumulative_total = $acCurrentFeesTotal;
+
+        // Prepare for calculation 
+        $accumulative_payments = $receipts_total - $acPastFeesTotal ;
+    
+        // Safeguard against division by zero
+        if ($accumulative_total == 0) {
+            return 0; // or you can choose another appropriate value or action
+        }        
+    
+        return (($accumulative_payments / $accumulative_total) * 100);
+    }
+    
+
+    private function getAllPastFees($student, $ac_period_id)
+    {
+        $total = 0;
+
+        $academicPeriodIds = Invoice::where('student_id', $student->id)
+        ->where('academic_period_id', '!=', $ac_period_id)
+        ->pluck('academic_period_id')
+        ->unique();
+    
+       
+        foreach ($academicPeriodIds as $period_id) {
+            $fees = $this->getAcademicPeriodFees($student, $period_id);
+            $total += ($fees['fees']->sum('amount')) + ($fees['universal_fees']->sum('amount'));
+        }
+
+        return $total;
+    }
+    
 
     /**
      * Get all non-invoiced receipts for a given student.

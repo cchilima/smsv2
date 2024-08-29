@@ -37,9 +37,10 @@ class StudentRegistrationRepository
         $currentDate = date('Y-m-d');
 
         // Step 3: Get the next available academic period
-        $nextAcademicPeriod = $this->getNextAcademicPeriod($student->study_mode_id, $currentDate);
+        $nextAcademicPeriod = $this->getNextAcademicPeriod($student, $currentDate);
+
         // Step 4: Get closed academic periods
-        $closedAcademicPeriods = $this->getClosedAcademicPeriods($student->study_mode_id, $currentDate);
+        $closedAcademicPeriods = $this->getClosedAcademicPeriods($student, $currentDate);
 
         // Check if there is a next academic period
         if ($nextAcademicPeriod) {
@@ -133,12 +134,14 @@ class StudentRegistrationRepository
             ->get();
     }
 
-    private function getNextAcademicPeriod($study_mode_id, $currentDate)
+    public function getNextAcademicPeriod($student, $currentDate)
     {
         // Get the next available academic period for the study mode
         return DB::table('academic_period_information')
             ->join('academic_periods', 'academic_period_information.academic_period_id', '=', 'academic_periods.id')
-            ->where('academic_period_information.study_mode_id', $study_mode_id)
+            ->where('academic_period_information.study_mode_id', $student->study_mode_id)
+            ->where('academic_period_information.academic_period_intake_id', $student->academic_period_intake_id)
+            ->where('academic_periods.period_type_id', $student->period_type_id)
             ->where('academic_periods.ac_start_date', '<=', $currentDate)
             ->where('academic_periods.ac_end_date', '>=', $currentDate)
             ->orderBy('academic_periods.created_at', 'asc')
@@ -146,12 +149,14 @@ class StudentRegistrationRepository
             ->first();
     }
 
-    private function getClosedAcademicPeriods($study_mode_id, $currentDate)
+    private function getClosedAcademicPeriods($student, $currentDate)
     {
         // Get all closed academic periods for the study mode
         return DB::table('academic_period_information')
             ->join('academic_periods', 'academic_period_information.academic_period_id', '=', 'academic_periods.id')
-            ->where('academic_period_information.study_mode_id', $study_mode_id)
+            ->where('academic_period_information.study_mode_id', $student->study_mode_id)
+            ->where('academic_period_information.academic_period_intake_id', $student->academic_period_intake_id)
+            ->where('academic_periods.period_type_id', $student->period_type_id)
             ->where(function ($query) use ($currentDate) {
                 $query
                     ->where('academic_periods.ac_end_date', '<', $currentDate)
