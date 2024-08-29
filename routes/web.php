@@ -46,6 +46,7 @@ use App\Livewire\Applications\{InitiateApplication, CompleteApplication, Complet
 use App\Livewire\Pages\Academics\AcademicPeriods\Index as AcademicPeriodsIndex;
 use App\Livewire\Pages\Academics\AcademicPeriodClasses\Index as AcademicPeriodClassesIndex;
 use App\Livewire\Pages\Academics\AcademicPeriodTypes\Index as AcademicPeriodTypesIndex;
+use App\Livewire\Pages\Academics\Assessments\ExamResultsReviewBoard;
 use App\Livewire\Pages\Academics\Courses\Index as CoursesIndex;
 use App\Livewire\Pages\Academics\CourseLevels\Index as CourseLevelsIndex;
 use App\Livewire\Pages\Academics\Departments\Index as DepartmentsIndex;
@@ -122,7 +123,8 @@ Route::group(['prefix' => 'assess'], function () {
     Route::group(['prefix' => 'exams'], function () {
         Route::get('/publish-program-list/{id}', [ClassAssessmentsController::class, 'GetProgramsToPublish'])->name('getPublishPrograms');
         Route::get('/program-results/{aid}/{pid}', [ClassAssessmentsController::class, 'GetProgramResults'])->name('getPramResults');
-        Route::get('/program-results-levels', [ClassAssessmentsController::class, 'GetProgramResultsLevel'])->name('getPramResultsLevel');
+        // Route::get('/program-results-levels', [ClassAssessmentsController::class, 'GetProgramResultsLevel'])->name('getPramResultsLevel');
+        Route::get('/program-results-levels', ExamResultsReviewBoard::class)->name('getPramResultsLevel');
         Route::get('/results', [ClassAssessmentsController::class, 'MyResults'])->name('student-exam_results');
         Route::post('/load-more', [ClassAssessmentsController::class, 'LoadMoreResults'])->name('load.more.results.board');
     });
