@@ -8,23 +8,27 @@ use App\Models\Academics\CourseLevel;
 use App\Models\Academics\PeriodType;
 use App\Models\Academics\Program;
 use App\Repositories\Academics\ClassAssessmentsRepo;
+use App\Traits\CanShowAlerts;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
-use PowerComponents\LivewirePowerGrid\Footer;
-use PowerComponents\LivewirePowerGrid\Header;
 use PowerComponents\LivewirePowerGrid\Exportable;
 use PowerComponents\LivewirePowerGrid\Facades\Rule;
+use PowerComponents\LivewirePowerGrid\Footer;
+use PowerComponents\LivewirePowerGrid\Header;
 use PowerComponents\LivewirePowerGrid\PowerGrid;
-use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
+use PowerComponents\LivewirePowerGrid\PowerGridFields;
 
 final class ExamResultsReviewBoard extends PowerGridComponent
 {
+    use CanShowAlerts;
+
     public CourseLevel $level;
     public Program $program;
     public AcademicPeriod $academicPeriod;
@@ -55,7 +59,7 @@ final class ExamResultsReviewBoard extends PowerGridComponent
     public function publishAllResults(array $studentIds)
     {
         try {
-            if (empty($studentIds)) throw new \Exception();
+            if (empty($studentIds)) throw new \Exception('No student IDs provided');
 
             $this->classAssessmentsRepo->publishGrades(
                 $studentIds,
@@ -63,19 +67,9 @@ final class ExamResultsReviewBoard extends PowerGridComponent
                 $this->periodType->id
             );
 
-            $notificationData = [
-                'msg' => 'Results published successfully',
-                'type' => 'success',
-            ];
-
-            return $this->js("flash(" . json_encode($notificationData) . ")");
+            return $this->flash(message: 'Results published successfully');
         } catch (\Throwable $th) {
-            $notificationData = [
-                'msg' => 'Failed to publish results',
-                'type' => 'error',
-            ];
-
-            return $this->js("flash(" . json_encode($notificationData) . ")");
+            return $this->flash(message: '<strong>Failed to publish results:</strong> <br>' . Str::limit($th->getMessage(), 60), type: 'error');
         }
     }
 

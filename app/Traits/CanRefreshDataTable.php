@@ -2,6 +2,10 @@
 
 namespace App\Traits;
 
+/**
+ * This trait provides methods for refreshing PowerGrid datatables in Livewire pages.
+ * @author Blessed Zulu <bzulu@zut.edu.zm>
+ */
 trait CanRefreshDataTable
 {
     /**
