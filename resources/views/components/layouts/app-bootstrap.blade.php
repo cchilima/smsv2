@@ -47,8 +47,8 @@
     </div>
 
     @include('partials.inc_bottom')
-    @livewireScripts
     @stack('scripts')
+    @livewireScripts
 </body>
 
 </html>

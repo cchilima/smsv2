@@ -6,7 +6,6 @@ use App\Helpers\Qs;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Users\UserPersonalInfoRepository;
 use App\Traits\CanRefreshDataTable;
-use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -66,18 +65,21 @@ class UploadPhotos extends Component
                     }
 
                     // If user not found, record failed upload and skip to next photo
-                    $failedUploads['invalid_student_ids'][] = $photo->getClientOriginalName();
+                    $failedUploads['invalid_student_ids'][] = Str::before($photo->getClientOriginalName(), '.' .
+                        $photo->getClientOriginalExtension());;
                 });
 
                 // If there are failed uploads, return error message
                 if (!empty($failedUploads['invalid_student_ids'])) {
 
-                    $invalidIdErrors = collect($failedUploads['invalid_student_ids'])->map(function ($photo) {
-                        return 'Upload failed - invalid student ID: ' . $photo;
+                    $invalidIdErrors = collect($failedUploads['invalid_student_ids'])->map(function ($studentId) {
+                        return 'Invalid student ID: ' . $studentId;
                     })->toArray();
 
-                    $this->dispatch('show_errors', $invalidIdErrors);
+                    return $this->dispatch('show_invalid_id_errors', $invalidIdErrors);
                 }
+
+                $this->dispatch('show_success');
 
                 // Refresh student photos datatable
                 $this->refreshTable('StudentPhotosTable');
@@ -91,7 +93,7 @@ class UploadPhotos extends Component
                 $messages[] = $value[0];
             }
 
-            $this->dispatch('show_errors', array_unique($messages));
+            $this->dispatch('show_validation_errors', array_unique($messages));
         } catch (\Throwable $th) {
             throw $th;
         }

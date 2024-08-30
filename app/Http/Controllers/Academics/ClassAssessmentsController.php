@@ -373,8 +373,6 @@ class ClassAssessmentsController extends Controller
     }
     public function LoadMoreResults(Request $request)
     {
-
-
         $aid = $request->input('academic');
         $pid = $request->input('program');
         $level = $request->input('level');
@@ -390,26 +388,28 @@ class ClassAssessmentsController extends Controller
         //dd($level, $pid, $aid,$current_page,$last_page,$per_page);
         return response()->json($grades);
     }
-    public function GetProgramResultsLevel(Request $request)
-    {
-        $aid = $request->query('aid');
-        $pid = $request->query('pid');
-        $level = $request->query('level');
-        $aid = Qs::decodeHash($aid);
-        $pid = Qs::decodeHash($pid);
-        $level = Qs::decodeHash($level);
 
-        $grades = $this->classaAsessmentRepo->getGrades($level, $pid, $aid);
+    // ? Moved to Livewire component
+    // public function GetProgramResultsLevel(Request $request)
+    // {
+    //     $aid = $request->query('aid');
+    //     $pid = $request->query('pid');
+    //     $level = $request->query('level');
+    //     $aid = Qs::decodeHash($aid);
+    //     $pid = Qs::decodeHash($pid);
+    //     $level = Qs::decodeHash($level);
 
-        $data['period'] = $this->academic->find($aid);
-        $data['program_data'] = $this->programsRepo->findOne($pid);
-        $data['level'] = $this->levels->find($level);
-        $data['students'] = $this->classaAsessmentRepo->total_students($level, $pid, $aid);
+    //     $grades = $this->classaAsessmentRepo->getGrades($level, $pid, $aid);
 
-        return view('pages.class_assessments.results_review_board', compact('grades'), $data);
-    }
-    public
-    function BoardofExaminersUpdateResults(Request $request)
+    //     $data['period'] = $this->academic->find($aid);
+    //     $data['program_data'] = $this->programsRepo->findOne($pid);
+    //     $data['level'] = $this->levels->find($level);
+    //     $data['students'] = $this->classaAsessmentRepo->total_students($level, $pid, $aid);
+
+    //     return view('pages.class_assessments.results_review_board', compact('grades'), $data);
+    // }
+
+    public function BoardofExaminersUpdateResults(Request $request)
     {
         $requestData = $request->input('updatedAssessments'); // Get the request data
         //dd($request);
@@ -452,26 +452,31 @@ class ClassAssessmentsController extends Controller
         }
     }
 
-    public
-    function getAssessToUpdate(Request $request)
+    public function getAssessToUpdate(Request $request)
     {
         $class_id = $request->input('classID');
         $exam = $request->input('exam');
         $data = $this->classaAsessmentRepo->getClassAssessmentCas($class_id, $exam);
         return response()->json($data);
     }
-    public
-    function PublishProgramResults(Request $request)
-    {;
-        $student_id = $request->input('ids');
+
+    public function PublishProgramResults(Request $request)
+    {
+        $studentIds = $request->input('ids');
         $academicPeriodID = $request->input('academicPeriodID');
         $type = $request->input('type');
-        $this->classaAsessmentRepo->publishGrades($request->ids, $academicPeriodID, $type);
+
+        if (empty($studentIds) || empty($academicPeriodID) || empty($type)) {
+            return Qs::json('Error publishing results', false);
+        }
+
+        $this->classaAsessmentRepo->publishGrades($studentIds, $academicPeriodID, $type);
+
         return Qs::json('Marks updated successfully', true);
     }
+
     public function PublishForAllStudents($ac, $type)
     {
-
         $this->classaAsessmentRepo->publishGrades(null, $ac, $type);
 
         // $id = Qs::decodeHash($ac);
