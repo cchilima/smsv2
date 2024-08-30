@@ -19,24 +19,10 @@ class AssessmentsTypesController extends Controller
     protected $assessmentRepo;
     public function __construct(AssessmentTypesRepo $assessmentTypesRepo)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->assessmentRepo = $assessmentTypesRepo;
-    }
-
-    public function index()
-    {
-        $assessment['assessments'] = $this->assessmentRepo->getAll();
-        return view('pages.assessment_types.index',$assessment);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -51,21 +37,13 @@ class AssessmentsTypesController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
         $assessment['assessment'] = $courses = $this->assessmentRepo->find($id);
 
-        return !is_null($courses ) ? view('pages.assessment_types.edit', $assessment)
+        return !is_null($courses) ? view('pages.assessment_types.edit', $assessment)
             : Qs::goWithDanger('pages.assessment_types.index');
     }
 
@@ -85,13 +63,13 @@ class AssessmentsTypesController extends Controller
     public function destroy(string $id)
     {
         //check if assessment is already in the DB
-//        $available = ImportList::where('assessmentID',$id)->get();
-//
-//        if ($available && count($available)>0){
-//            return back()->with('flash_danger', __('msg.delete_not_okay'));
-//        }else{
-//            $this->assessmentRepo->find($id)->delete();
-//            return back()->with('flash_success', __('msg.delete_ok'));
-//        }
+        //        $available = ImportList::where('assessmentID',$id)->get();
+        //
+        //        if ($available && count($available)>0){
+        //            return back()->with('flash_danger', __('msg.delete_not_okay'));
+        //        }else{
+        //            $this->assessmentRepo->find($id)->delete();
+        //            return back()->with('flash_success', __('msg.delete_ok'));
+        //        }
     }
 }
