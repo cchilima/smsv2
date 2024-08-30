@@ -67,11 +67,13 @@ use App\Livewire\Pages\Accounting\PaymentMethods\Index as PaymentMethodsIndex;
 use App\Livewire\Pages\Admissions\Applications\Index as ApplicationsIndex;
 use App\Livewire\Pages\Admissions\Students\Show as ShowStudent;
 use App\Livewire\Pages\Admissions\Students\UploadPhotos as UploadStudentPhotos;
+use App\Livewire\Pages\ClassAssessments\Index as ClassAssessmentIndex;
 use App\Livewire\Pages\Notices\Announcements\Index as AnnouncementsIndex;
 use App\Livewire\Pages\Residency\Countries\Index as CountriesIndex;
 use App\Livewire\Pages\Residency\Provinces\Index as ProvincesIndex;
 use App\Livewire\Pages\Residency\Towns\Index as TownsIndex;
 use App\Livewire\Pages\Settings\MaritalStatuses\Index as MaritalStatusesIndex;
+use App\Models\Academics\ClassAssessment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -257,6 +259,7 @@ Route::get('/prerequisites', PrerequisitesIndex::class)->name('prerequisites.ind
 Route::resource('program-courses', ProgramCoursesController::class);
 
 Route::resource('classAssessments', ClassAssessmentsController::class);
+Route::get('/classAssessments', ClassAssessmentIndex::class)->name('classAssessments.index');
 Route::resource('assessments', AssessmentsTypesController::class);
 Route::get('/assessments', AssessmentTypesIndex::class)->name('assessments.index');
 Route::resource('registration', StudentRegistrationController::class);

@@ -57,29 +57,28 @@ class ClassAssessmentsController extends Controller
         $this->coursesRepo = $courseRepository;
     }
 
-    public function index()
-    {
+    // public function index()
+    // {
 
-        $data['open'] = $this->academic->getAllopen();
-        $data['assess'] = $this->assessmentTypes->getAll();
-        return view('pages.class_assessments.index', $data);
-    }
+    //     $data['open'] = $this->academic->getAllopen();
+    //     $data['assess'] = $this->assessmentTypes->getAll();
+    //     return view('pages.class_assessments.index', $data);
+    // }
 
-    public
-    function getClasses(string $id)
+    public function getClasses(string $id)
     {
         $classes = $this->academic->getAcadeperiodClasses($id);
         return $classes;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $data['open'] = $this->academic->getAllopen();
-        return view('pages.academics.class_assessments.show', $data);
-    }
+    // /**
+    //  * Show the form for creating a new resource.
+    //  */
+    // public function create()
+    // {
+    //     $data['open'] = $this->academic->getAllopen();
+    //     return view('pages.academics.class_assessments.show', $data);
+    // }
 
     /**
      * Store a newly created resource in storage.
