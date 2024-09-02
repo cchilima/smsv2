@@ -340,22 +340,23 @@ class ClassAssessmentsController extends Controller
         return view('pages.class_assessments.edit', compact('academicPeriod'));
     }
 
-    public function GetProgramResultsLevelCas(Request $request)
-    {
-        $aid = $request->query('aid');
-        $pid = $request->query('pid');
-        $level = $request->query('level');
-        $aid = Qs::decodeHash($aid);
-        $pid = Qs::decodeHash($pid);
-        $level = Qs::decodeHash($level);
-        $grades = $this->classaAsessmentRepo->getCaGrades($level, $pid, $aid);
-        $data['period'] = $this->academic->find($aid);
-        $data['program_data'] = $this->programsRepo->findOne($pid);
-        $data['level'] = $this->levels->find($level);
-        $data['students'] = $this->classaAsessmentRepo->total_students($level, $pid, $aid);
+    // Moved to Livewire page component
+    // public function GetProgramResultsLevelCas(Request $request)
+    // {
+    //     $aid = $request->query('aid');
+    //     $pid = $request->query('pid');
+    //     $level = $request->query('level');
+    //     $aid = Qs::decodeHash($aid);
+    //     $pid = Qs::decodeHash($pid);
+    //     $level = Qs::decodeHash($level);
+    //     $grades = $this->classaAsessmentRepo->getCaGrades($level, $pid, $aid);
+    //     $data['period'] = $this->academic->find($aid);
+    //     $data['program_data'] = $this->programsRepo->findOne($pid);
+    //     $data['level'] = $this->levels->find($level);
+    //     $data['students'] = $this->classaAsessmentRepo->total_students($level, $pid, $aid);
 
-        return view('pages.cas.results_review_board', compact('grades'), $data);
-    }
+    //     return view('pages.cas.results_review_board', compact('grades'), $data);
+    // }
     public function LoadMoreResultsCas(Request $request)
     {
         $aid = $request->input('academic');
