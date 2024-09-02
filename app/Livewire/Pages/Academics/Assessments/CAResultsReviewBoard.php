@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-class ExamResultsReviewBoard extends Component
+class CAResultsReviewBoard extends Component
 {
     public array $data = [];
 
@@ -41,7 +41,7 @@ class ExamResultsReviewBoard extends Component
         $pid = Qs::decodeHash($pid);
         $level = Qs::decodeHash($level);
 
-        $this->data['grades'] = $this->classAssessmentRepo->getGrades($level, $pid, $aid);
+        $this->data['grades'] = $this->classAssessmentRepo->getCaGrades($level, $pid, $aid);
         $this->data['period'] = $this->academicPeriodRepo->find($aid);
         $this->data['program_data'] = $this->programRepo->findOne($pid);
         $this->data['level'] = $this->courseLevelRepo->find($level);
@@ -51,6 +51,6 @@ class ExamResultsReviewBoard extends Component
     #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
-        return view('livewire.pages.academics.assessments.exam-results-review-board', $this->data);
+        return view('livewire.pages.academics.assessments.ca-results-review-board', $this->data);
     }
 }

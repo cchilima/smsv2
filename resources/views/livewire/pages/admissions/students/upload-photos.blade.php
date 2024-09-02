@@ -52,28 +52,11 @@
 @script
     <script>
         $wire.on('show_validation_errors', function(params) {
-            new PNotify({
-                text: 'Upload failed.',
-                type: 'error',
-            });
-
             showErrors(params[0], 'errors');
         })
 
         $wire.on('show_invalid_id_errors', function(params) {
-            new PNotify({
-                text: 'Photos with invalid student IDs failed to upload.',
-                type: 'warning',
-            });
-
             showErrors(params[0], 'errors');
-        })
-
-        $wire.on('show_success', function() {
-            new PNotify({
-                text: 'Photos uploaded successfully.',
-                type: 'success',
-            });
         })
 
         function showErrors(errors, containerClass) {

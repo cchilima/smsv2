@@ -57,29 +57,28 @@ class ClassAssessmentsController extends Controller
         $this->coursesRepo = $courseRepository;
     }
 
-    public function index()
-    {
+    // public function index()
+    // {
 
-        $data['open'] = $this->academic->getAllopen();
-        $data['assess'] = $this->assessmentTypes->getAll();
-        return view('pages.class_assessments.index', $data);
-    }
+    //     $data['open'] = $this->academic->getAllopen();
+    //     $data['assess'] = $this->assessmentTypes->getAll();
+    //     return view('pages.class_assessments.index', $data);
+    // }
 
-    public
-    function getClasses(string $id)
+    public function getClasses(string $id)
     {
         $classes = $this->academic->getAcadeperiodClasses($id);
         return $classes;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $data['open'] = $this->academic->getAllopen();
-        return view('pages.academics.class_assessments.show', $data);
-    }
+    // /**
+    //  * Show the form for creating a new resource.
+    //  */
+    // public function create()
+    // {
+    //     $data['open'] = $this->academic->getAllopen();
+    //     return view('pages.academics.class_assessments.show', $data);
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -327,35 +326,37 @@ class ClassAssessmentsController extends Controller
     public function GetProgramsToPublishCas(string $id)
     {
         $id = Qs::decodeHash($id);
-        $period = $this->academic->find($id);
-        $programs = $this->classaAsessmentRepo->publishAvailableProgramsCas($id);
+        $academicPeriod = $this->academic->find($id);
+        // $programs = $this->classaAsessmentRepo->publishAvailableProgramsCas($id);
         //dd($programs);
-        return view('pages.cas.edit', compact('programs', 'period'));
+        return view('pages.cas.edit', compact('academicPeriod'));
     }
+
     public function GetProgramsToPublish(string $id)
     {
         $id = Qs::decodeHash($id);
-        $period = $this->academic->find($id);
+        $academicPeriod = $this->academic->find($id);
 
-        return view('pages.class_assessments.edit', compact('id', 'period'));
+        return view('pages.class_assessments.edit', compact('academicPeriod'));
     }
 
-    public function GetProgramResultsLevelCas(Request $request)
-    {
-        $aid = $request->query('aid');
-        $pid = $request->query('pid');
-        $level = $request->query('level');
-        $aid = Qs::decodeHash($aid);
-        $pid = Qs::decodeHash($pid);
-        $level = Qs::decodeHash($level);
-        $grades = $this->classaAsessmentRepo->getCaGrades($level, $pid, $aid);
-        $data['period'] = $this->academic->find($aid);
-        $data['program_data'] = $this->programsRepo->findOne($pid);
-        $data['level'] = $this->levels->find($level);
-        $data['students'] = $this->classaAsessmentRepo->total_students($level, $pid, $aid);
+    // Moved to Livewire page component
+    // public function GetProgramResultsLevelCas(Request $request)
+    // {
+    //     $aid = $request->query('aid');
+    //     $pid = $request->query('pid');
+    //     $level = $request->query('level');
+    //     $aid = Qs::decodeHash($aid);
+    //     $pid = Qs::decodeHash($pid);
+    //     $level = Qs::decodeHash($level);
+    //     $grades = $this->classaAsessmentRepo->getCaGrades($level, $pid, $aid);
+    //     $data['period'] = $this->academic->find($aid);
+    //     $data['program_data'] = $this->programsRepo->findOne($pid);
+    //     $data['level'] = $this->levels->find($level);
+    //     $data['students'] = $this->classaAsessmentRepo->total_students($level, $pid, $aid);
 
-        return view('pages.cas.results_review_board', compact('grades'), $data);
-    }
+    //     return view('pages.cas.results_review_board', compact('grades'), $data);
+    // }
     public function LoadMoreResultsCas(Request $request)
     {
         $aid = $request->input('academic');
