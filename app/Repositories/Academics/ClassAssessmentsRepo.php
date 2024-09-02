@@ -218,9 +218,12 @@ class ClassAssessmentsRepo
                 }
             }
 
-            $organizedData[] = $programData;
+            // Only add the program to the array if it has students
+            if ($programData['students'] > 0) {
+                $organizedData[] = $programData;
+            }
         }
-        //dd($organizedData);
+
         return array_values($organizedData);
     }
 

@@ -61,7 +61,7 @@ final class PublishResults extends PowerGridComponent
                 return $entry->students;
             })
             ->add('status', function ($entry) {
-                return $entry->status = 0 ? 'Not Published' : 'Published';
+                return $entry->status === 0 ? 'Not Published' : 'Published';
             })
 
             ->add('user-actions', function ($entry) {

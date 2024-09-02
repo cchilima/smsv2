@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('page_title', 'Publishing Results for ' . $period->code)
+@section('page_title', 'Publishing Results for ' . $academicPeriod->code)
 @section('content')
     @php
         use App\Helpers\Qs;
@@ -11,10 +11,12 @@
         </div>
 
         <div class="card-body">
-            <a href="{{ route('PublishForAllStudents', ['ac' => $period->id, 'type' => 1]) }}" class="dropdown-item"><i
-                    class="icon-eye"></i> Publish Results for {{ $period->code }}</a>
+            <a href="{{ route('PublishForAllStudents', ['ac' => $academicPeriod->id, 'type' => 1]) }}"
+                class="dropdown-item"><i class="icon-eye"></i> Publish Results for {{ $academicPeriod->code }}</a>
 
-            <livewire:datatables.academics.assessments.publish-results :academicPeriodId="$id" />
+            @livewire('datatables.academics.assessments.publish-results', [
+                'academicPeriodId' => $academicPeriod->id,
+            ])
         </div>
 
     </div>

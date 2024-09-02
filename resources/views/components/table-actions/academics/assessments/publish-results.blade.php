@@ -13,10 +13,10 @@
         <div class="dropdown-menu dropdown-menu-left">
 
             <a href="{{ route('getPramResults', ['aid' => Qs::hash($periodId), 'pid' => Qs::hash($entry->id)]) }}"
-                class="dropdown-item">View Results <i class="icon-pencil"></i></a>
+                class="dropdown-item">View Results</a>
             @foreach ($entry->levels as $level)
                 <a href="{{ route('getPramResultsLevel', ['aid' => Qs::hash($periodId), 'pid' => Qs::hash($entry->id), 'level' => Qs::hash($level['id'])]) }}"
-                    class="dropdown-item">View {{ $level['name'] }} Results <i class="icon-pencil"></i></a>
+                    class="dropdown-item">View {{ $level['name'] }} Results</a>
             @endforeach
 
             @if ($entry->status == 0)

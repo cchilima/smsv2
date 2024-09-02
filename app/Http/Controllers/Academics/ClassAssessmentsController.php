@@ -326,17 +326,18 @@ class ClassAssessmentsController extends Controller
     public function GetProgramsToPublishCas(string $id)
     {
         $id = Qs::decodeHash($id);
-        $period = $this->academic->find($id);
-        $programs = $this->classaAsessmentRepo->publishAvailableProgramsCas($id);
+        $academicPeriod = $this->academic->find($id);
+        // $programs = $this->classaAsessmentRepo->publishAvailableProgramsCas($id);
         //dd($programs);
-        return view('pages.cas.edit', compact('programs', 'period'));
+        return view('pages.cas.edit', compact('academicPeriod'));
     }
+
     public function GetProgramsToPublish(string $id)
     {
         $id = Qs::decodeHash($id);
-        $period = $this->academic->find($id);
+        $academicPeriod = $this->academic->find($id);
 
-        return view('pages.class_assessments.edit', compact('id', 'period'));
+        return view('pages.class_assessments.edit', compact('academicPeriod'));
     }
 
     public function GetProgramResultsLevelCas(Request $request)
