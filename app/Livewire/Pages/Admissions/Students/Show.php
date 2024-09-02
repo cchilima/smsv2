@@ -41,9 +41,7 @@ class Show extends Component
 
         $this->data['student'] = $this->studentRepo->getStudentInfor($userId);
         $this->data['studentId'] = $this->data['student']->id;
-
-        $this->data['passport_photo_path'] = $this->data['student']->user->userPersonalInfo?->passport_photo_path
-            ?? 'images/default-avatar.png';
+        $this->data['passport_photo_path'] = $this->data['student']->user->userPersonalInfo?->passport_photo_path ?? 'images/default-avatar.png';
 
         $this->data['countries'] = $this->studentRepo->getCountries();
         $this->data['programs'] = $this->studentRepo->getPrograms();
@@ -62,9 +60,7 @@ class Show extends Component
         $student = $this->studentRepo->findUser($userId);
 
         $this->data['courses'] = $this->studentRegistrationRepo->getAll($student->student->id);
-
         $this->data['isRegistered'] = $this->studentRegistrationRepo->getRegistrationStatus($student->student->id);
-
         $this->data['isWithinRegistrationPeriod'] = $this->studentRegistrationRepo->checkIfWithinRegistrationPeriod($student->student->id);
 
         $this->data['isInvoiced'] = $this->studentRegistrationRepo->checkIfInvoiced($student->student->id);
@@ -73,7 +69,10 @@ class Show extends Component
         $this->data['caresults'] = $this->classaAsessmentRepo->GetCaStudentGrades($userId);
 
         $this->data['percentage'] = $this->invoiceRepo->paymentPercentage($student->student->id);
+
     }
+
+    
 
     #[Layout('components.layouts.app-bootstrap')]
     public function render()

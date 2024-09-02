@@ -179,10 +179,12 @@ public function saveGrade()
 
             $this->reset(['subject', 'grade']);
 
-            $this->dispatch('grade-added');
+           $this->dispatch('grade-added');
+
+           return $this->mount($this->applicant->id);
 
         } else {
-            $this->dispatch('fill-all-fields');
+           return $this->dispatch('fill-all-fields');
         }
     } catch (\Throwable $th) {
         $this->dispatch('grade-failed');
@@ -198,7 +200,10 @@ public function saveGrade()
         if (is_file($this->results)) {
             $this->applicantRepo->uploadAttachment($this->results, $this->applicant->id);
             $this->reset(['results']);
-            return $this->dispatch('attachment-added');
+
+            $this->dispatch('attachment-added');
+
+            return $this->mount($this->applicant->id);
             
         } else {
             // Handle the case where $this->results is not a file

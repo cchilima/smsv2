@@ -861,7 +861,7 @@
                                             <div class="form-group">
                                                 <label for="program_id">Program: <span
                                                         class="text-danger">*</span></label>
-                                                <select data-placeholder="Select Program" required
+                                                <select disabled data-placeholder="Select Program" required
                                                     class="select-search form-control" name="program_id"
                                                     id="program_id">
                                                     <option value=""></option>
@@ -876,7 +876,7 @@
                                             <div class="form-group">
                                                 <label for="academic_period_intake_id">Academic Period Intake: <span
                                                         class="text-danger">*</span></label>
-                                                <select data-placeholder="Select Academic Period Intake" required
+                                                <select disabled data-placeholder="Select Academic Period Intake" required
                                                     class="select-search form-control"
                                                     name="academic_period_intake_id" id="academic_period_intake_id">
                                                     <option value=""></option>
@@ -908,7 +908,7 @@
                                             <div class="form-group">
                                                 <label for="course_level_id">Course Level: <span
                                                         class="text-danger">*</span></label>
-                                                <select data-placeholder="Select Course Level" required
+                                                <select disabled data-placeholder="Select Course Level" required
                                                     class="select-search form-control" name="course_level_id"
                                                     id="course_level_id">
                                                     <option value=""></option>
@@ -923,7 +923,7 @@
                                             <div class="form-group">
                                                 <label for="period_type_id">Period Type: <span
                                                         class="text-danger">*</span></label>
-                                                <select data-placeholder="Select Period Type" required
+                                                <select disabled data-placeholder="Select Period Type" required
                                                     class="select-search form-control" name="period_type_id"
                                                     id="period_type_id">
                                                     <option value=""></option>

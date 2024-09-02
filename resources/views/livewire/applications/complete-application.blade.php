@@ -3,19 +3,19 @@
 
         <div class="form-wizard mt-10 mb-5 items-center">
             <a wire:click="sectionChanged('personal_info')"
-                class="{{ $currentSection === 'personal_info' ? 'active' : '' }}">Personal Info</a>
+                class="{{ $currentSection === 'personal_info' ? 'active' : '' }}">Personal Info </a>
 
-            ->
+           <span><i class="material-icons small grey-text">arrow_forward</i></span>
 
             <a wire:click="sectionChanged('academic_info')"
                 class="{{ $currentSection === 'academic_info' ? 'active' : '' }}">Program Applied for</a>
 
-            ->
+                <span><i class="material-icons small grey-text">arrow_forward</i></span>
 
             <a wire:click="sectionChanged('next_of_kin')"
-                class="{{ $currentSection === 'next_of_kin' ? 'active' : '' }}">Next of Kin</a>
+                class="{{ $currentSection === 'next_of_kin' ? 'active' : '' }}">Next of Kin </a>
 
-            ->
+                <span><i class="material-icons small grey-text ">arrow_forward</i></span>
 
             <a wire:click="sectionChanged('results')"
                 class="{{ $currentSection === 'results' ? 'active' : '' }}">Results</a>
