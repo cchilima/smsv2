@@ -82,6 +82,6 @@ class ProgramController extends Controller
     public function destroy(string $id)
     {
         $this->programs->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        return Qs::goBackWithSuccess('Record deleted successfully');;
     }
 }

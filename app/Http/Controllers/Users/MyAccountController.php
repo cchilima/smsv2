@@ -17,8 +17,8 @@ class MyAccountController extends Controller
 
     public function __construct(UserRepository $userRepo)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->userRepo = $userRepo;
     }
@@ -87,12 +87,12 @@ class MyAccountController extends Controller
         $old_pass = $req->current_password;
         $new_pass = $req->password;
 
-        if(password_verify($old_pass, $my_pass)){
+        if (password_verify($old_pass, $my_pass)) {
             $data['password'] = Hash::make($new_pass);
             $this->userRepo->update($user_id, $data);
-            return back()->with('flash_success', __('msg.p_reset'));
+            return back()->with('flash_success', __('Password changed successfully'));
         }
 
-        return back()->with('flash_danger', __('msg.p_reset_fail'));
+        return back()->with('flash_danger', __('Failed to change password'));
     }
 }

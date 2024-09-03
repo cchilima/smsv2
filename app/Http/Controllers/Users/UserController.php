@@ -19,8 +19,8 @@ class UserController extends Controller
 
     public function __construct(UserRepository $userRepo)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
         $this->userRepo = $userRepo;
     }
@@ -73,12 +73,11 @@ class UserController extends Controller
             DB::commit();
 
             return Qs::jsonStoreOk();
-
         } catch (\Exception $e) {
 
             DB::rollBack();
             // Log the error or handle it accordingly
-            return Qs::json(false,'msg.create_failed');
+            return Qs::jsonError('Failed to create record');
         }
     }
 
@@ -128,13 +127,12 @@ class UserController extends Controller
             DB::commit();
 
             return Qs::jsonStoreOk();
-
         } catch (\Exception $e) {
 
             DB::rollBack();
 
             // Log the error or handle it accordingly
-            return Qs::jsonError(__('msg.update_failed'));
+            return Qs::jsonError('Failed to create record');
         }
     }
 
@@ -144,6 +142,6 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $this->userRepo->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        return Qs::goBackWithSuccess('Record deleted successfully');
     }
 }

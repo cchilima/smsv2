@@ -37,7 +37,7 @@ class FeeController extends Controller
         if ($fee) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::json(false, 'msg.create_failed');
+            return Qs::jsonError('Failed to create record');
         }
     }
 
@@ -68,6 +68,6 @@ class FeeController extends Controller
     public function destroy(string $id)
     {
         $this->fees->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        return Qs::goBackWithSuccess('Record deleted successfully');
     }
 }

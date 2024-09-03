@@ -41,7 +41,7 @@ class TownController extends Controller
         $town = $this->townRepo->create($data);
 
         if (!$town) {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonError('Failed to create record');
         }
 
         return Qs::jsonStoreOk();
@@ -75,10 +75,9 @@ class TownController extends Controller
     {
         try {
             $this->townRepo->delete($town);
-            return back()->with('flash_success', __('msg.delete_ok'));
+            return Qs::goBackWithSuccess('Record deleted successfully');
         } catch (\Throwable $th) {
-            // Qs::jsonError(__('msg.delete_failed'));
-            return back()->with('flash_error', __('msg.delete_error'));
+            return Qs::goBackWithError('Failed to delete record');
         }
     }
 }

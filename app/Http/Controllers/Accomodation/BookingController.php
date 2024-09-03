@@ -60,7 +60,7 @@ class BookingController extends Controller
         if ($data) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonError('Failed to create record');
         }
     }
 
@@ -93,7 +93,7 @@ class BookingController extends Controller
         if ($update) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonError('Failed to create record');
         }
     }
 
@@ -106,7 +106,7 @@ class BookingController extends Controller
         $dataB['is_available'] = 'true';
         $this->bed_space_repository->update($current->bed_space_id, $dataB);
         $this->booking_repository->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        return Qs::goBackWithSuccess('Record deleted successfully');
     }
     public function ConfirmBooking(Request $request)
     {

@@ -38,7 +38,7 @@ class ProvinceController extends Controller
         $province = $this->provinceRepo->create($data);
 
         if (!$province) {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonError('Failed to create record');
         }
 
         return Qs::jsonStoreOk();
@@ -71,9 +71,9 @@ class ProvinceController extends Controller
     {
         try {
             $this->provinceRepo->delete($province);
-            return back()->with('flash_success', __('msg.delete_ok'));
+            return Qs::goBackWithSuccess('Record deleted successfully');
         } catch (\Throwable $th) {
-            return back()->with('flash_error', __('msg.delete_error'));
+            return Qs::goBackWithError('Failed to delete record');
         }
     }
 

@@ -25,7 +25,7 @@ class EnrollmentController extends Controller
     public function __construct(EnrollmentRepository $enrollmentRepo, StudentRegistrationRepository $studentRepo)
     {
 
-       $this->middleware(Student::class, ['only' => ['destroy',] ]);
+        $this->middleware(Student::class, ['only' => ['destroy',]]);
 
         $this->enrollmentRepo = $enrollmentRepo;
         $this->studentRepo = $studentRepo;
@@ -64,9 +64,9 @@ class EnrollmentController extends Controller
         // Give student feedback
         if ($enrolled) {
             return redirect()->back()->with('status', 'Enrollment successful');
-           // return Qs::jsonStoreOk();
+            // return Qs::jsonStoreOk();
         } else {
-            return Qs::json(false,'msg.create_failed');
+            return Qs::jsonError('Failed to enroll student');
         }
     }
 
@@ -101,5 +101,4 @@ class EnrollmentController extends Controller
     {
         //
     }
-
 }

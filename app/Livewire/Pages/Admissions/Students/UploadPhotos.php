@@ -104,6 +104,8 @@ class UploadPhotos extends Component
 
             $this->dispatch('show_validation_errors', array_unique($messages));
         } catch (\Throwable $th) {
+            DB::rollBack();
+
             throw $th;
         }
     }

@@ -73,6 +73,6 @@ class CourseLevelController extends Controller
     public function destroy(string $id)
     {
         $this->courselevels->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        return Qs::goBackWithSuccess('Record deleted successfully');;
     }
 }

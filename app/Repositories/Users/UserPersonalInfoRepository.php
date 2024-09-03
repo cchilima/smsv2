@@ -4,6 +4,7 @@ namespace App\Repositories\Users;
 
 use App\Http\Requests\Users\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Encoders\JpegEncoder;
 use Intervention\Image\ImageManager;
@@ -11,16 +12,13 @@ use Intervention\Image\ImageManager;
 
 class UserPersonalInfoRepository
 {
-    public function uploadPassportPhotos() {}
-
     public function uploadPassportPhoto(UploadedFile $fileObject, $userId)
     {
-        $dir_rel = 'app/public/uploads/passport-photos/';
-        $dir = storage_path($dir_rel);
+        $dir = 'app/public/uploads/passport-photos';
 
         // Create directory if it doesn't exist
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
+        if (!is_dir(storage_path($dir))) {
+            mkdir(storage_path($dir), 0777, true);
         }
 
         // Create new image manager and image instance
@@ -33,15 +31,15 @@ class UserPersonalInfoRepository
         $fileName = $userId . '.jpg';
 
         // Save to storage path
-        $encodedImage->save($dir . '/' . $fileName);
+        $encodedImage->save(storage_path($dir) . '/' . $fileName);
 
         // Return generated path
-        return str_replace('app/public', 'storage', $dir_rel) . $fileName;
+        return 'storage/uploads/passport-photos/' . $fileName;
     }
 
     public function deletePassportPhoto($path): bool
     {
-        $file = storage_path($path);
+        $file = public_path($path);
 
         return file_exists($file) ? unlink($file) : false;
     }

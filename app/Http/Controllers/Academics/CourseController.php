@@ -71,6 +71,6 @@ class CourseController extends Controller
     public function destroy(string $id)
     {
         $this->courses->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        return Qs::goBackWithSuccess('Record deleted successfully');;
     }
 }

@@ -103,7 +103,7 @@ class AcademicPeriodController extends Controller
     public function destroy(string $id)
     {
         $this->periods->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        return Qs::goBackWithSuccess('Record deleted successfully');
     }
 
     public function getProgramsByAcademicPeriod(string $academicPeriodId)

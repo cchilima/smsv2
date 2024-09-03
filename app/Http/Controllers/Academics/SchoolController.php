@@ -79,6 +79,6 @@ class SchoolController extends Controller
     public function destroy(string $id)
     {
         $this->schoolRepo->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        return Qs::goBackWithSuccess('Record deleted successfully');;
     }
 }

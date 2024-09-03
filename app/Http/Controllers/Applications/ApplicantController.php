@@ -73,7 +73,7 @@ class ApplicantController extends Controller
             if ($collected) {
                 return Qs::jsonStoreOk();
             } else {
-                return Qs::json(false, 'msg.create_failed');
+                return Qs::jsonError('Failed to collect fee');
             }
         }
 
@@ -99,10 +99,9 @@ class ApplicantController extends Controller
 
                 return redirect()->route('application.complete_application', $application->id);
             } else {
-                return Qs::json(false, 'msg.create_failed');
+                return Qs::jsonError('Failed to initiate application');
             }
         } else {
-
             return view('pages.applications.my_applications', compact('applications'));
         }
     }
@@ -201,7 +200,7 @@ class ApplicantController extends Controller
             return Qs::jsonApplicationUpdateOk('Application progress saved. Fill out the rest of the form to complete your application.');
         }
 
-        return Qs::json(false, 'msg.create_failed');
+        return Qs::jsonError('Failed to save application');
     }
 
     public function downloadAttachment($attachment_id)
@@ -216,7 +215,7 @@ class ApplicantController extends Controller
             // Return download response
             return response()->download($filePath, $attachment->attachment);
         } catch (\Throwable $th) {
-            return Qs::json(false, 'msg.download_failed');
+            return Qs::jsonError('Failed to download attachment');
             // throw $th;
         }
     }

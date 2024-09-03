@@ -34,7 +34,7 @@ class CountryController extends Controller
         $country = $this->countryRepo->create($data);
 
         if (!$country) {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonError('Failed to create record');
         }
 
         return Qs::jsonStoreOk();
@@ -77,9 +77,9 @@ class CountryController extends Controller
 
         try {
             $this->countryRepo->delete($country);
-            return back()->with('flash_success', __('msg.delete_ok'));
+            return Qs::goBackWithSuccess('Record deleted successfully');
         } catch (\Throwable $th) {
-            return back()->with('flash_error', __('msg.delete_error'));
+            return Qs::goBackWithError('Failed to delete record');
         }
     }
 

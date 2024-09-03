@@ -44,7 +44,7 @@ class MaritalStatusController extends Controller
         if ($maritalStatus) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonError('Failed to create record');
         }
     }
 
@@ -76,6 +76,6 @@ class MaritalStatusController extends Controller
     public function destroy(string $id)
     {
         $this->maritalStatuses->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        return Qs::goBackWithSuccess('Record deleted successfully');
     }
 }

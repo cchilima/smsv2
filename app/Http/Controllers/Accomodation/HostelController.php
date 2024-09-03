@@ -47,10 +47,10 @@ class HostelController extends Controller
 
         $hostel = $this->hostel_repository->create($data);
 
-        if ($hostel) {
+        if (!$hostel) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonError('Failed to create record');
         }
     }
 
@@ -89,6 +89,6 @@ class HostelController extends Controller
     public function destroy(string $id)
     {
         $this->hostel_repository->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        return Qs::goBackWithSuccess('Record deleted successfully');
     }
 }
