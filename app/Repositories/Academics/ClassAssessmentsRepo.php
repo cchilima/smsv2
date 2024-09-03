@@ -1081,7 +1081,7 @@ class ClassAssessmentsRepo
 
     public function total_students($level, $pid, $aid)
     {
-        return Student::where('program_id', $pid)
+        /*return Student::where('program_id', $pid)
             ->where('course_level_id', $level)
             ->with([
                 'grades' => function ($query) use ($aid) {
@@ -1093,6 +1093,15 @@ class ClassAssessmentsRepo
                 'grades.assessment_type'
             ])
             ->distinct('students.id') // Assuming 'id' is the primary key of the students table
+            ->count();*/
+       return Student::where('program_id', $pid)
+            ->where('course_level_id', $level)
+            ->whereHas('grades', function ($query) use ($aid) {
+                $query->where('academic_period_id', $aid);
+            })
+            ->whereHas('enrollments.class', function ($query) use ($aid) {
+                $query->where('academic_period_id', $aid);
+            })
             ->count();
     }
 
