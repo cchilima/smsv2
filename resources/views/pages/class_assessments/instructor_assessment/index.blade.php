@@ -192,6 +192,4 @@
         </div>
     </div>
 
-    {{-- Class List Ends --}}
-
 @endsection

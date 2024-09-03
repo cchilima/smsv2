@@ -6,7 +6,6 @@ use App\Repositories\Academics\ClassAssessmentsRepo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
-use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Footer;
 use PowerComponents\LivewirePowerGrid\Header;
@@ -15,9 +14,9 @@ use PowerComponents\LivewirePowerGrid\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 
-final class PublishResults extends PowerGridComponent
+final class PublishCAResults extends PowerGridComponent
 {
-    public string $tableName = 'PublishResultsTable';
+    public string $tableName = 'PublishCAResultsTable';
     public string $academicPeriodId;
     public bool $deferLoading = true;
     public string $sortField = 'name';
@@ -31,7 +30,7 @@ final class PublishResults extends PowerGridComponent
 
     public function datasource(): ?Collection
     {
-        return collect($this->classaAsessmentRepo->publishAvailablePrograms($this->academicPeriodId));
+        return collect($this->classaAsessmentRepo->publishAvailableProgramsCas($this->academicPeriodId));
     }
 
     public function setUp(): array
@@ -65,7 +64,7 @@ final class PublishResults extends PowerGridComponent
             })
 
             ->add('user-actions', function ($entry) {
-                return Blade::render('<x-table-actions.academics.assessments.publish-results :entry="$entry" :periodId="$periodId" />', [
+                return Blade::render('<x-table-actions.academics.assessments.publish-ca-results :entry="$entry" :periodId="$periodId" />', [
                     'entry' => $entry,
                     'periodId' => $this->academicPeriodId
                 ]);

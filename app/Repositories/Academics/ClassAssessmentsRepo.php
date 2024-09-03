@@ -218,9 +218,12 @@ class ClassAssessmentsRepo
                 }
             }
 
-            $organizedData[] = $programData;
+            // Only add the program to the array if it has students
+            if ($programData['students'] > 0) {
+                $organizedData[] = $programData;
+            }
         }
-        //dd($organizedData);
+
         return array_values($organizedData);
     }
 
@@ -343,7 +346,7 @@ class ClassAssessmentsRepo
                 'user',
                 'level',
                 'enrollments.class.course.grades.assessment_type.class_assessment'
-            ])->paginate(2, ['*'], 'page', 1);
+            ])->paginate(1, ['*'], 'page', 1);
 
         $organizedData = [
             'current_page' => $data->currentPage(),
@@ -410,10 +413,103 @@ class ClassAssessmentsRepo
             }
         }
 
-
-        //dd($organizedData);
-
         return $organizedData;
+    }
+
+    public function getCaGradesDatatableCollection($level, $pid, $aid)
+    {
+        $studentGrades = Student::where('program_id', $pid)
+            ->where('course_level_id', $level)
+            ->whereHas('grades', function ($query) use ($aid) {
+                $query->whereNot('assessment_type_id', 1)
+                    ->where('academic_period_id', $aid);
+            })
+            ->whereHas('enrollments.class', function ($query) use ($aid) {
+                $query->where('academic_period_id', $aid);
+            })
+            // Exclude students with null or different academic period enrollments
+            ->with([
+                'enrollments.class' => function ($query) use ($aid) {
+                    $query->where('academic_period_id', $aid);
+                },
+                'enrollments.class.course.grades' => function ($query) use ($aid) {
+                    $query->where('academic_period_id', $aid)
+                        ->whereNot('assessment_type_id', 1)
+                        ->where('publication_status', 0)
+                        ->select(
+                            'course_id',
+                            'academic_period_id',
+                            'course_code',
+                            'course_title',
+                            'student_id',
+                            'total',
+                            'assessment_type_id'
+
+                        )
+                        ->groupBy('assessment_type_id', 'total', 'course_code', 'course_title', 'course_id', 'academic_period_id', 'student_id');
+                },
+                'program',
+                'user',
+                'level',
+                'enrollments.class.course.grades.assessment_type.class_assessment'
+            ])->get();
+
+        $studentGradesArr = [];
+
+        foreach ($studentGrades as $student) {
+            $studentId = $student->id;
+
+            // Initialize student's data if not already present
+            if (!isset($studentGradesArr[$studentId])) {
+                $studentGradesArr[$studentId] = [
+                    'id' => $studentId,
+                    'course_level_id' => $level,
+                    'program_id' => $student->program->id,
+                    'program_name' => $student->program->name,
+                    'ac' => $aid,
+                    'name' => $student->user->first_name . ' ' . $student->user->middle_name . ' ' . $student->user->last_name,
+                    'calculated_grade' => self::comments($studentId, $aid, 1),
+                    'courses' => [],
+                ];
+            }
+
+            foreach ($student->enrollments as $enrollment) {
+                if (
+                    $enrollment->class &&
+                    $enrollment->class->academic_period_id !== null &&
+                    $enrollment->class->academic_period_id == $aid
+                ) {
+                    $courseId = $enrollment->class->course->id;
+
+                    // Initialize course's data if not already present
+                    if (!isset($studentGradesArr[$studentId]['courses'][$courseId])) {
+                        $studentGradesArr[$studentId]['courses'][$courseId] = [
+                            'course_id' => $courseId,
+                            'class_id' => $enrollment->class->id,
+                            'academic_period_id' => $aid, // Assuming academic period is the same for all courses
+                            'course_code' => $enrollment->class->course->code,
+                            'course_title' => $enrollment->class->course->name,
+                            'grades' => [],
+                        ];
+                    }
+
+                    foreach ($enrollment->class->course->grades as $grade) {
+                        if ($grade->academic_period_id == $aid && $grade->student_id == $studentId) {
+                            $studentGradesArr[$studentId]['courses'][$courseId]['grades'][] = [
+                                'type' => $grade->assessment_type->name,
+                                'total' => $grade->total,
+                                'grade' => self::calculateGrade($grade->total, $student->program->id),
+                                'outof' => self::getClassAssessmentCastotal($courseId, $aid),
+                                'id' => self::getGradeIDCAs($aid, $courseId, $studentId),
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return collect($studentGradesArr);
     }
 
     public function getCaGradesLoad($level, $pid, $aid, $current_page, $last_page, $per_page)
@@ -682,7 +778,7 @@ class ClassAssessmentsRepo
 
     public function getGradesDatatableCollection($level, $pid, $aid)
     {
-        $result = Student::where('program_id', $pid)
+        $studentGrades = Student::where('program_id', $pid)
             ->where('course_level_id', $level)
             ->whereHas('grades', function ($query) use ($aid) {
                 $query->where('academic_period_id', $aid);
@@ -716,9 +812,9 @@ class ClassAssessmentsRepo
                 'enrollments.class.course.grades.assessment_type.class_assessment'
             ])->get();
 
-        $studentGrades = [];
+        $studentGradesArr = [];
 
-        foreach ($result as $student) {
+        foreach ($studentGrades as $student) {
             foreach ($student->enrollments as $enrollment) {
                 if (
                     $enrollment->class &&
@@ -729,8 +825,8 @@ class ClassAssessmentsRepo
                     $studentId = $student->id;
 
                     // Initialize student's data if not already present
-                    if (!isset($studentGrades[$studentId])) {
-                        $studentGrades[$studentId] = [
+                    if (!isset($studentGradesArr[$studentId])) {
+                        $studentGradesArr[$studentId] = [
                             'id' => $studentId,
                             'course_level_id' => $level,
                             'program_id' => $student->program->id,
@@ -742,8 +838,8 @@ class ClassAssessmentsRepo
                     }
 
                     // Initialize course's data if not already present
-                    if (!isset($studentGrades[$studentId]['courses'][$courseId])) {
-                        $studentGrades[$studentId]['courses'][$courseId] = [
+                    if (!isset($studentGradesArr[$studentId]['courses'][$courseId])) {
+                        $studentGradesArr[$studentId]['courses'][$courseId] = [
                             'course_id' => $enrollment->class->course->id,
                             'class_id' => $enrollment->class->id,
                             'academic_period_id' => $aid, // Assuming academic period is the same for all courses
@@ -765,7 +861,7 @@ class ClassAssessmentsRepo
                     // If there are grades available for the course, update student grades
                     foreach ($enrollment->class->course->grades as $grade) {
                         if ($grade->academic_period_id == $aid && $grade->student_id == $studentId) {
-                            $studentGrades[$studentId]['courses'][$courseId]['grades'] = [
+                            $studentGradesArr[$studentId]['courses'][$courseId]['grades'] = [
                                 'exam' => $grade->exam,
                                 'ca' => $grade->ca,
                                 'total_sum' => $grade->total_sum,
@@ -776,12 +872,12 @@ class ClassAssessmentsRepo
                         }
                     }
 
-                    // $studentGrades[$studentId]['courses'][$courseId]['course_details']['student_grades'][] = $studentGrades;
+                    // $studentGradesArr[$studentId]['courses'][$courseId]['course_details']['student_grades'][] = $studentGradesArr;
                 }
             }
         }
 
-        return collect($studentGrades);
+        return collect($studentGradesArr);
     }
 
     public function getExamTotal($student_id, $api, $course_id)
@@ -1545,7 +1641,7 @@ class ClassAssessmentsRepo
             $status = 'new';
         } elseif ($courseCount - 1 == $passedCourse || $courseCount - 2 == $passedCourse) {
             $coursesToRepeat = implode(", ", array_column($courseFailedArray, 'course_code'));
-            $comment = 'Proceed, RPT ' . $coursesToRepeat;
+            $comment = 'Proceed & Repeat ' . $coursesToRepeat;
             $status = 'new';
         } elseif ($courseCount - 3 >= $passedCourse) {
             $coursesToRepeat = implode(",", array_column($courseFailedArray, 'course_code'));

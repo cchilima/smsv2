@@ -23,6 +23,7 @@
 
 <script>
     document.addEventListener('livewire:init', function() {
+
         Livewire.hook('morph.added', () => {
             $('.edit-total-link').on('click', function() {
                 var row = $(this).closest('tr');

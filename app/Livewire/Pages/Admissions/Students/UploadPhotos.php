@@ -6,6 +6,7 @@ use App\Helpers\Qs;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Users\UserPersonalInfoRepository;
 use App\Traits\CanRefreshDataTable;
+use App\Traits\CanShowAlerts;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -17,7 +18,7 @@ use Spatie\LivewireFilepond\WithFilePond;
 
 class UploadPhotos extends Component
 {
-    use CanRefreshDataTable, WithFilePond;
+    use CanRefreshDataTable, WithFilePond, CanShowAlerts;
 
     public array $photos = [];
 
@@ -42,56 +43,64 @@ class UploadPhotos extends Component
 
             DB::beginTransaction();
 
-            if (!empty($this->photos)) {
-                $failedUploads = [
-                    'invalid_student_ids' => [],
-                ];
+            $failedUploads = [
+                'invalid_student_ids' => [],
+            ];
 
-                // Loop through each photo and process it
-                collect($this->photos)->each(function (TemporaryUploadedFile $photo) use (&$failedUploads) {
-                    // Get student ID from the file name
-                    $studentId = Str::before($photo->getClientOriginalName(), '.' .
-                        $photo->getClientOriginalExtension());
+            // Loop through each photo and process it
+            collect($this->photos)->each(function (TemporaryUploadedFile $photo) use (&$failedUploads) {
+                // Get student ID from the file name
+                $studentId = Str::before($photo->getClientOriginalName(), '.' .
+                    $photo->getClientOriginalExtension());
 
-                    // Get student user record
-                    $user = $this->studentRepo->find($studentId)?->user;
+                // Get student user record
+                $user = $this->studentRepo->find($studentId)?->user;
 
-                    if ($user) {
-                        // Upload photo
-                        $uploadedPhotoPath = $this->userPersonalInfoRepo->uploadPassportPhoto($photo, $user->id);
+                if ($user) {
+                    // Upload photo
+                    $uploadedPhotoPath = $this->userPersonalInfoRepo->uploadPassportPhoto($photo, $user->id);
 
-                        // Update user personal info with new path
-                        return $user->userPersonalInfo?->update(['passport_photo_path' => $uploadedPhotoPath]);
-                    }
-
-                    // If user not found, record failed upload and skip to next photo
-                    $failedUploads['invalid_student_ids'][] = Str::before($photo->getClientOriginalName(), '.' .
-                        $photo->getClientOriginalExtension());;
-                });
-
-                // If there are failed uploads, return error message
-                if (!empty($failedUploads['invalid_student_ids'])) {
-
-                    $invalidIdErrors = collect($failedUploads['invalid_student_ids'])->map(function ($studentId) {
-                        return 'Invalid student ID: ' . $studentId;
-                    })->toArray();
-
-                    return $this->dispatch('show_invalid_id_errors', $invalidIdErrors);
+                    // Update user personal info with new path
+                    return $user->userPersonalInfo?->update(['passport_photo_path' => $uploadedPhotoPath]);
                 }
 
-                $this->dispatch('show_success');
+                // If user not found, record failed upload and skip to next photo
+                $failedUploads['invalid_student_ids'][] = Str::before($photo->getClientOriginalName(), '.' .
+                    $photo->getClientOriginalExtension());;
+            });
 
-                // Refresh student photos datatable
-                $this->refreshTable('StudentPhotosTable');
+            // If there are failed uploads, return error message
+            if (!empty($failedUploads['invalid_student_ids'])) {
 
-                DB::commit();
+                $invalidIdErrors = collect($failedUploads['invalid_student_ids'])->map(function ($studentId) {
+                    return 'Invalid student ID: ' . $studentId;
+                })->toArray();
+
+                $this->flash(
+                    message: '<strong>Upload incomplete: </strong> <br>Photos with invalid student IDs could not be uploaded.',
+                    type: 'warning'
+                );
+
+                return $this->dispatch('show_invalid_id_errors', $invalidIdErrors);
             }
+
+            $this->flash(message: 'Photos uploaded successfully');
+
+            // Refresh student photos datatable
+            $this->refreshTable('StudentPhotosTable');
+
+            DB::commit();
         } catch (ValidationException $e) {
             $messages = [];
 
             foreach ($e->validator->errors()->messages() as $value) {
                 $messages[] = $value[0];
             }
+
+            $this->flash(
+                message: '<strong>Failed to upload photos: </strong> <br> Check your input and try again.',
+                type: 'error'
+            );
 
             $this->dispatch('show_validation_errors', array_unique($messages));
         } catch (\Throwable $th) {
