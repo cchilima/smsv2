@@ -37,14 +37,13 @@ class MaritalStatusController extends Controller
      */
     public function store(MaritalStatus $request)
     {
-        $data = $request->only(['status', 'description']);
+        try {
+            $data = $request->only(['status', 'description']);
+            $this->maritalStatuses->create($data);
 
-        $maritalStatus = $this->maritalStatuses->create($data);
-
-        if ($maritalStatus) {
-            return Qs::jsonStoreOk();
-        } else {
-            return Qs::jsonError('Failed to create record');
+            return Qs::jsonStoreOk('Marital status created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create marital status: ' . $th->getMessage());
         }
     }
 
@@ -59,15 +58,19 @@ class MaritalStatusController extends Controller
             : Qs::goWithDanger('pages.maritalStatuses.index');
     }
 
-
     /**
      * Update the specified resource in storage.
      */
     public function update(MaritalStatusUpdate $request, string $id)
     {
-        $data = $request->only(['status', 'description']);
-        $this->maritalStatuses->update($id, $data);
-        return Qs::jsonUpdateOk();
+        try {
+            $data = $request->only(['status', 'description']);
+            $this->maritalStatuses->update($id, $data);
+
+            return Qs::jsonUpdateOk('Marital status updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update marital status: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -75,7 +78,13 @@ class MaritalStatusController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->maritalStatuses->find($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');
+        try {
+            $this->maritalStatuses->find($id)->delete();
+            return Qs::goBackWithSuccess('Marital status deleted successfully');
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError(
+                'Failed to delete marital status: ' . $th->getMessage()
+            );
+        }
     }
 }
