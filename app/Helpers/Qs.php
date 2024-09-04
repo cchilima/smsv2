@@ -401,10 +401,6 @@ class Qs
     {
         return self::json(__($msg));
     }
-    public static function jsonStoreError($msg = "Failed to create record")
-    {
-        return self::json(__($msg), false);
-    }
 
     public static function jsonError($msg = "Action failed")
     {

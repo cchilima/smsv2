@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Schools\School;
 use App\Http\Requests\Schools\SchoolUpdate;
 use App\Repositories\Academics\SchooolRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -27,26 +28,38 @@ class SchoolController extends Controller
     }
 
     /**
+     * Generate a custom slug for a given school name
+     * 
+     * @param string $schoolName The name of the school
+     * @return string
+     */
+    private function generateSchoolSlug(string $schoolName): string
+    {
+        $lowerCaseName = Str::lower($schoolName);
+        return Str::slug(Str::after($lowerCaseName, 'school of '));
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(School $req)
     {
-        $data = $req->only(['name', 'description']);
+        try {
+            $data = $req->only(['name', 'description']);
 
-        $lowerCaseName = Str::lower($data['name']);
-        $data['slug'] = Str::slug(Str::after($lowerCaseName, 'school of '));
+            // Generate slug
+            $data['slug'] = $this->generateSchoolSlug($data['name']);
 
-        $this->schoolRepo->create($data);
+            $this->schoolRepo->create($data);
 
-        return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+            return Qs::jsonStoreOk('School created successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] === 1062) {
+                return Qs::jsonError('A school with the generated slug ' . '"' . $data['slug'] . '" already exists');
+            }
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create school: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -65,12 +78,21 @@ class SchoolController extends Controller
      */
     public function update(SchoolUpdate $req, $id)
     {
+        try {
+            $data = $req->only(['name', 'description']);
 
-        //$data = $req->only(['name', 'description']);
-        $data = $req->only(['name']);
-        $this->schoolRepo->update($id, $data);
+            $data['slug'] = $this->generateSchoolSlug($data['name']);
 
-        return Qs::jsonUpdateOk();
+            $this->schoolRepo->update($id, $data);
+
+            return Qs::jsonUpdateOk('School updated successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] === 1062) {
+                return Qs::jsonError('A school with the generated slug ' . '"' . $data['slug'] . '" already exists');
+            }
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update school: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -78,7 +100,15 @@ class SchoolController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->schoolRepo->find($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');;
+        try {
+            $this->schoolRepo->find($id)->delete();
+            return Qs::goBackWithSuccess('school deleted successfully');;
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] === 1451) {
+                return Qs::goBackWithError('Cannot delete a school referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete school: ' . $th->getMessage());
+        }
     }
 }
