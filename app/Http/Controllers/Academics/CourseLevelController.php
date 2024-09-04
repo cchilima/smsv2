@@ -78,7 +78,7 @@ class CourseLevelController extends Controller
             return Qs::goBackWithSuccess('Course level deleted successfully');;
         } catch (QueryException $qe) {
             if ($qe->errorInfo[1] == 1451) {
-                return Qs::goBackWithError('Cannot delete course level referenced by other records');
+                return Qs::goBackWithError('Cannot delete a course level referenced by other records');
             }
         } catch (\Throwable $th) {
             return Qs::goBackWithError('Failed to delete course level: ' . $th->getMessage());

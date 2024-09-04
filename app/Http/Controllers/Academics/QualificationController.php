@@ -76,7 +76,7 @@ class QualificationController extends Controller
             return Qs::goBackWithSuccess('Qualification deleted successfully');;
         } catch (QueryException $qe) {
             if ($qe->errorInfo[1] == 1451) {
-                return Qs::goBackWithError('Cannot delete qualification referenced by other records');
+                return Qs::goBackWithError('Cannot delete a qualification referenced by other records');
             }
         } catch (\Throwable $th) {
             return Qs::goBackWithError('Failed to delete qualification: ' . $th->getMessage());
