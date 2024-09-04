@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Residency\Country as CountryRequest;
 use App\Models\Residency\Country;
 use App\Repositories\Residency\CountryRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class CountryController extends Controller
@@ -28,24 +29,16 @@ class CountryController extends Controller
      */
     public function store(CountryRequest $request)
     {
-        $data = $request->only(['alpha_2_code', 'alpha_3_code', 'nationality', 'dialing_code']);
-        $data['country'] = $request['name'];
+        try {
+            $data = $request->only(['alpha_2_code', 'alpha_3_code', 'nationality', 'dialing_code']);
+            $data['country'] = $request['name'];
 
-        $country = $this->countryRepo->create($data);
+            $this->countryRepo->create($data);
 
-        if (!$country) {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonStoreOk('Country created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create country: ' . $th->getMessage());
         }
-
-        return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Country $country)
-    {
-        //
     }
 
     /**
@@ -61,12 +54,16 @@ class CountryController extends Controller
      */
     public function update(CountryRequest $request, Country $country)
     {
-        $data = $request->only(['alpha_2_code', 'alpha_3_code', 'nationality', 'dialing_code']);
-        $data['country'] = $request['name'];
+        try {
+            $data = $request->only(['alpha_2_code', 'alpha_3_code', 'nationality', 'dialing_code']);
+            $data['country'] = $request['name'];
 
-        $this->countryRepo->update($country, $data);
+            $this->countryRepo->update($country, $data);
 
-        return Qs::jsonUpdateOk();
+            return Qs::jsonUpdateOk('Country updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update country: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -74,12 +71,15 @@ class CountryController extends Controller
      */
     public function destroy(Country $country)
     {
-
         try {
             $this->countryRepo->delete($country);
-            return back()->with('flash_success', __('msg.delete_ok'));
+            return Qs::goBackWithSuccess('Country deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete a country referenced by other records');
+            }
         } catch (\Throwable $th) {
-            return back()->with('flash_error', __('msg.delete_error'));
+            return Qs::goBackWithError('Failed to delete country: ' . $th->getMessage());
         }
     }
 

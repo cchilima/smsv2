@@ -175,7 +175,7 @@ class StudentController extends Controller
             DB::rollBack();
             // Log the error or handle it accordingly
             // return redirect(\route('students.index'));
-            return Qs::json('msg.create_failed => ' . $e->getMessage(), false);
+            return Qs::json('Failed to create record => ' . $e->getMessage(), false);
         }
         //return Qs::jsonStoreOk();
     }
@@ -306,35 +306,17 @@ class StudentController extends Controller
         try {
             DB::beginTransaction();
 
-            $user = $this->studentRepo->getUserByStudentId($studentId);
-            $student = $user->student;
-
-            // Delete uploaded passport photo
-            if ($passportPhotoPath = $user->userPersonalInfo->passport_photo_path ?? null) {
-                $this->userPersonalInfoRepo->deletePassportPhoto($passportPhotoPath);
-            }
-
-            // Delete user personal information
-            $user->userPersonalInfo->delete();
-
-            // Delete next of kin record
-            $user->userNextOfKin->delete();
-
-            // Delete student record
-            $student->delete();
-
-            // Delete user
-            $user->delete();
+            $this->studentRepo->destroy($studentId);
 
             DB::commit();
 
-            return redirect(route('students.index'));
-
-            // return Qs::json('Deleted successfully');
+            return Qs::goBackWithSuccess('Student deleted successfully');
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return Qs::json('msg.delete_failed => ' . $e->getMessage(), false);
+            throw $e;
+
+            return Qs::goBackWithError('Failed to delete student: '  . $e->getMessage());
         }
     }
 
@@ -360,7 +342,7 @@ class StudentController extends Controller
         if ($data) {
             return Qs::jsonStoreOk();
         } else {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonError('Failed to create record');
         }
     }
 

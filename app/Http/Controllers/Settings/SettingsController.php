@@ -42,7 +42,7 @@ class SettingsController extends Controller
         $setting = $this->settingsRepo->create($data);
 
         if (!$setting) {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonError('Failed to create record');
         }
 
         return Qs::jsonStoreOk();
@@ -72,6 +72,6 @@ class SettingsController extends Controller
     public function destroy(Setting $setting)
     {
         $this->settingsRepo->delete($setting);
-        return back()->with('flash_success', __('msg.delete_ok'));
+        return Qs::goBackWithSuccess('Record deleted successfully');
     }
 }

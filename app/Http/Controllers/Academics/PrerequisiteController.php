@@ -87,6 +87,6 @@ class PrerequisiteController extends Controller
     {
         $id = Qs::decodeHash($id);
         $this->prerequisiteRepo->findone($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        return Qs::goBackWithSuccess('Record deleted successfully');;
     }
 }

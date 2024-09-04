@@ -66,10 +66,10 @@ class AssessmentsTypesController extends Controller
         //        $available = ImportList::where('assessmentID',$id)->get();
         //
         //        if ($available && count($available)>0){
-        //            return back()->with('flash_danger', __('msg.delete_not_okay'));
+        //            return back()->with('flash_danger', __('Failed to delete record'));
         //        }else{
         //            $this->assessmentRepo->find($id)->delete();
-        //            return back()->with('flash_success', __('msg.delete_ok'));
+        //            return Qs::goBackWithSuccess('Record deleted successfully');;
         //        }
     }
 }

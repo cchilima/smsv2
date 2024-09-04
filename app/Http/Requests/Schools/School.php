@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Schools;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class School extends FormRequest
 {
@@ -23,6 +24,7 @@ class School extends FormRequest
     {
         return [
             'name' => 'required|string|unique:schools',
+            'description' => 'nullable|string',
         ];
     }
 }

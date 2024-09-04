@@ -33,7 +33,7 @@ class PaymentMethodController extends Controller
         $paymentMethod = $this->paymentMethodRepo->create($data);
 
         if (!$paymentMethod) {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonError('Failed to create record');
         }
 
         return Qs::jsonStoreOk();
@@ -66,9 +66,9 @@ class PaymentMethodController extends Controller
     {
         try {
             $this->paymentMethodRepo->delete($paymentMethod);
-            return back()->with('flash_success', __('msg.delete_ok'));
+            return Qs::goBackWithSuccess('Record deleted successfully');
         } catch (\Throwable $th) {
-            return back()->with('flash_error', __('msg.delete_error'));
+            return Qs::goBackWithError('Failed to delete record');
         }
     }
 }

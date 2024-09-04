@@ -397,33 +397,39 @@ class Qs
         return $arr ? response()->json($arr) : response()->json(['ok' => $ok, 'msg' => $msg]);
     }
 
-    public static function jsonStoreOk()
+    public static function jsonStoreOk($msg = 'Record created successfully')
     {
-        return self::json(__('msg.store_ok'));
-    }
-    public static function jsonError()
-    {
-        return self::json(__('msg.failed'), false);
+        return self::json(__($msg));
     }
 
-    public static function jsonUpdateOk()
+    public static function jsonError($msg = "Action failed")
     {
-        return self::json(__('msg.update_ok'));
+        return self::json(__($msg), false);
     }
 
-    public static function storeOk($routeName)
+    public static function jsonUpdateOk($msg = 'Record updated successfully')
     {
-        return self::goWithSuccess($routeName, __('msg.store_ok'));
+        return self::json(__($msg));
     }
 
-    public static function deleteOk($routeName)
+    public static function jsonUpdateError($msg = "Failed to update record")
     {
-        return self::goWithSuccess($routeName, __('msg.del_ok'));
+        return self::json(__($msg), false);
     }
 
-    public static function updateOk($routeName)
+    public static function storeOk($routeName, $msg = 'Record created successfully')
     {
-        return self::goWithSuccess($routeName, __('msg.update_ok'));
+        return self::goWithSuccess($routeName, __($msg));
+    }
+
+    public static function deleteOk($routeName, $msg = 'Record deleted successfully')
+    {
+        return self::goWithSuccess($routeName, __($msg));
+    }
+
+    public static function updateOk($routeName, $msg = 'Record updated successfully')
+    {
+        return self::goWithSuccess($routeName, __($msg));
     }
 
     public static function goToRoute($goto, $status = 302, $headers = [], $secure = null)
@@ -448,18 +454,20 @@ class Qs
         return self::goToRoute($to)->with('flash_success', $msg);
     }
 
-    public static function goWithSuccessCustom($msg)
+    public static function goBackWithSuccess($msg = "Action completed successfully")
     {
         return redirect()->back()->with('flash_success', $msg);
     }
 
-
+    public static function goBackWithError($msg = "Action failed")
+    {
+        return redirect()->back()->with('flash_error', $msg);
+    }
 
     public static function jsonApplicationUpdateOk($msg)
     {
         return self::json(__($msg));
     }
-
 
     public static function getDaysOfTheWeek()
     {

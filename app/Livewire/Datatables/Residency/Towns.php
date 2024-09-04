@@ -109,7 +109,7 @@ final class Towns extends PowerGridComponent
     {
         return [
             Button::add('actions')
-                ->bladeComponent('table-actions.residency.provinces', ['row' => $row])
+                ->bladeComponent('table-actions.residency.towns', ['row' => $row])
         ];
     }
 }

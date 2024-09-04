@@ -104,7 +104,12 @@ class UploadPhotos extends Component
 
             $this->dispatch('show_validation_errors', array_unique($messages));
         } catch (\Throwable $th) {
-            throw $th;
+            DB::rollBack();
+
+            return $this->flash(
+                message: '<strong>Failed to upload photos: </strong> <br> ' . $th->getMessage(),
+                type: 'error'
+            );
         }
     }
 

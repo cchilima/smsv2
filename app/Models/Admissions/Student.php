@@ -10,7 +10,7 @@ use App\Models\Academics\Program;
 use App\Models\Academics\ProgramCourses;
 use App\Models\Academics\StudyMode;
 use App\Models\Academics\AcademicPeriodInformation;
-use App\Models\Accounting\{Invoice, Statement, Receipt};
+use App\Models\Accounting\{Invoice, InvoiceDetail, Statement, Receipt};
 use App\Models\Enrollments\Enrollment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -78,9 +78,14 @@ class Student extends Model implements AuditableContract
         return $this->hasMany(Invoice::class);
     }
 
+    public function invoicesDetails()
+    {
+        return $this->hasManyThrough(InvoiceDetail::class, Invoice::class);
+    }
+
     public function statements()
     {
-        return $this->hasMany(Statement::class);
+        return $this->hasMany(Statement::class, 'collected_from');
     }
 
     public function receipts()
@@ -108,6 +113,6 @@ class Student extends Model implements AuditableContract
 
     public function receiptsNonInvoiced()
     {
-      return $this->hasMany(Receipt::class, 'student_id')->whereNull('invoice_id')->where('amount', '>', 0)->orderBy('created_at');
+        return $this->hasMany(Receipt::class, 'student_id')->whereNull('invoice_id')->where('amount', '>', 0)->orderBy('created_at');
     }
 }
