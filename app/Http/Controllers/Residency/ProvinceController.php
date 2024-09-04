@@ -10,8 +10,7 @@ use App\Http\Requests\Residency\Province as ProvinceRequest;
 use App\Models\Residency\Province;
 use App\Repositories\Residency\CountryRepository;
 use App\Repositories\Residency\ProvinceRepository;
-use Illuminate\Http\Request;
-use PhpParser\Node\Stmt\TryCatch;
+use Illuminate\Database\QueryException;
 
 class ProvinceController extends Controller
 {
@@ -34,14 +33,14 @@ class ProvinceController extends Controller
      */
     public function store(ProvinceRequest $request)
     {
-        $data = $request->only(['name', 'country_id']);
-        $province = $this->provinceRepo->create($data);
+        try {
+            $data = $request->only(['name', 'country_id']);
+            $this->provinceRepo->create($data);
 
-        if (!$province) {
+            return Qs::jsonStoreOk();
+        } catch (\Throwable $th) {
             return Qs::jsonError('Failed to create record');
         }
-
-        return Qs::jsonStoreOk();
     }
 
     /**
@@ -58,10 +57,14 @@ class ProvinceController extends Controller
      */
     public function update(ProvinceRequest $request, Province $province)
     {
-        $data = $request->only(['name', 'country_id']);
-        $this->provinceRepo->update($province, $data);
+        try {
+            $data = $request->only(['name', 'country_id']);
+            $this->provinceRepo->update($province, $data);
 
-        return Qs::jsonUpdateOk();
+            return Qs::jsonUpdateOk('Province updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update province: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -71,12 +74,15 @@ class ProvinceController extends Controller
     {
         try {
             $this->provinceRepo->delete($province);
-            return Qs::goBackWithSuccess('Record deleted successfully');
+            return Qs::goBackWithSuccess('Province deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] === 1451) {
+                return Qs::goBackWithError('Cannot delete a province referenced by other records');
+            }
         } catch (\Throwable $th) {
-            return Qs::goBackWithError('Failed to delete record');
+            return Qs::goBackWithError('Failed to delete province');
         }
     }
-
 
     /**
      * Get the towns in a specified province from storage

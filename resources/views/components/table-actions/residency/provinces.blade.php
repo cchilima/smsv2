@@ -10,7 +10,7 @@
 
         <div class="dropdown-menu dropdown-menu-left">
             @if (Qs::userIsTeamSA())
-                <a href="{{ route('countries.edit', $row->id) }}" class="dropdown-item"><i class="icon-pencil"></i>
+                <a href="{{ route('provinces.edit', $row->id) }}" class="dropdown-item"><i class="icon-pencil"></i>
                     Edit</a>
             @endif
             @if (Qs::userIsSuperAdmin())
@@ -18,7 +18,7 @@
                         class="icon-trash"></i>
                     Delete</a>
                 <form method="post" id="item-delete-{{ $row->id }}"
-                    action="{{ route('countries.destroy', $row->id) }}" class="hidden">@csrf @method('delete')
+                    action="{{ route('provinces.destroy', $row->id) }}" class="hidden">@csrf @method('delete')
                 </form>
             @endif
         </div>
