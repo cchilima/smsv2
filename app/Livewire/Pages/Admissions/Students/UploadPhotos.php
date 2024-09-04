@@ -106,7 +106,10 @@ class UploadPhotos extends Component
         } catch (\Throwable $th) {
             DB::rollBack();
 
-            throw $th;
+            return $this->flash(
+                message: '<strong>Failed to upload photos: </strong> <br> ' . $th->getMessage(),
+                type: 'error'
+            );
         }
     }
 

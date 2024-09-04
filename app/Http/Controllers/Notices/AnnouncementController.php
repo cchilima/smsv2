@@ -32,26 +32,30 @@ class AnnouncementController extends Controller
      */
     public function store(Request $request)
     {
-        // Set 'addressed_to' to null if 'everyone' is selected
-        $request['addressed_to'] = $request['addressed_to'] === 'everyone' ? null : $request['addressed_to'];
+        try {
+            // Set 'addressed_to' to null if 'everyone' is selected
+            $request['addressed_to'] = $request['addressed_to'] === 'everyone' ? null : $request['addressed_to'];
 
-        if ($request->hasFile('attachment')) {
-            $data = $request->only(['addressed_to', 'title', 'description', 'attachment', 'archived']);
-            $attachment = $request->file('attachment');
+            if ($request->hasFile('attachment')) {
+                $data = $request->only(['addressed_to', 'title', 'description', 'attachment', 'archived']);
+                $attachment = $request->file('attachment');
 
-            $f = Qs::getFileMetaData($attachment);
+                $f = Qs::getFileMetaData($attachment);
 
-            $f['name'] = $data['attachment'] . 'announcement.' . $f['ext'];
-            $f['path'] = $attachment->storeAs(Qs::getPublicUploadPathAnnouncements(), $f['name']);
-            $attachment_path = asset('storage/announcements/' . $f['name']);
-            $data['attachment'] = $attachment_path;
-            $this->announcement->create($data);
-        } else {
-            $data = $request->only(['addressed_to', 'title', 'description', 'archived']);
-            $this->announcement->create($data);
+                $f['name'] = $data['attachment'] . 'announcement.' . $f['ext'];
+                $f['path'] = $attachment->storeAs(Qs::getPublicUploadPathAnnouncements(), $f['name']);
+                $attachment_path = asset('storage/announcements/' . $f['name']);
+                $data['attachment'] = $attachment_path;
+                $this->announcement->create($data);
+            } else {
+                $data = $request->only(['addressed_to', 'title', 'description', 'archived']);
+                $this->announcement->create($data);
+            }
+
+            return Qs::jsonStoreOk('Announcement created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create announcement: ' . $th->getMessage());
         }
-
-        return Qs::jsonStoreOk();
     }
 
     /**
@@ -59,11 +63,9 @@ class AnnouncementController extends Controller
      */
     public function edit(string $id)
     {
-
         $data['announcement'] = $announcement = $this->announcement->find($id);
 
         $data['userTypes'] = $this->announcement->getUserTypes();
-
 
         return !is_null($announcement) ? view('pages.announcements.edit', $data)
             : Qs::goWithDanger('pages.announcements.index');
@@ -74,24 +76,27 @@ class AnnouncementController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if ($request->hasFile('attachment')) {
-            $data = $request->only(['addressed_to', 'title', 'description', 'attachment', 'archived']);
-            $attachment = $request->file('attachment');
+        try {
+            if ($request->hasFile('attachment')) {
+                $data = $request->only(['addressed_to', 'title', 'description', 'attachment', 'archived']);
+                $attachment = $request->file('attachment');
 
-            $f = Qs::getFileMetaData($attachment);
+                $f = Qs::getFileMetaData($attachment);
 
-            $f['name'] = $data['attachment'] . 'announcement.' . $f['ext'];
-            $f['path'] = $attachment->storeAs(Qs::getPublicUploadPathAnnouncements(), $f['name']);
-            $attachment_path = asset('storage/announcements/' . $f['name']);
-            $data['attachment'] = $attachment_path;
-            $this->announcement->update($id, $data);
-        } else {
+                $f['name'] = $data['attachment'] . 'announcement.' . $f['ext'];
+                $f['path'] = $attachment->storeAs(Qs::getPublicUploadPathAnnouncements(), $f['name']);
+                $attachment_path = asset('storage/announcements/' . $f['name']);
+                $data['attachment'] = $attachment_path;
+                $this->announcement->update($id, $data);
+            } else {
+                $data = $request->only(['addressed_to', 'title', 'description', 'archived']);
+                $this->announcement->update($id, $data);
+            }
 
-            $data = $request->only(['addressed_to', 'title', 'description', 'archived']);
-            $this->announcement->update($id, $data);
+            return Qs::updateOk('Announcement updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update announcement: ' . $th->getMessage());
         }
-
-        return Qs::jsonStoreOk();
     }
 
     /**
@@ -99,8 +104,12 @@ class AnnouncementController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->announcement->find($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');
+        try {
+            $this->announcement->find($id)->delete();
+            return Qs::goBackWithSuccess('Announcement deleted successfully');
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete announcement: ' . $th->getMessage());
+        }
     }
 
 
@@ -116,10 +125,10 @@ class AnnouncementController extends Controller
         try {
             $userId = Auth::user()->id;
             $this->announcement->dismissAnnouncement($userId, $announcement_id);
-            return redirect()->back()->with('flash_success', __('Announcement dismissed'));
+
+            return Qs::goBackWithSuccess('Announcement dismissed successfully');
         } catch (\Throwable $th) {
-            return redirect()->back()->with('flash_error', __('Failed to dismiss announcement'));
-            //throw $th;
+            return Qs::goBackWithError('Failed to dismiss announcement: ' . $th->getMessage());
         }
     }
 }

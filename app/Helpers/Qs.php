@@ -465,7 +465,7 @@ class Qs
 
     public static function goBackWithError($msg = "Action failed")
     {
-        return redirect()->back()->with('flash_danger', $msg);
+        return redirect()->back()->with('flash_error', $msg);
     }
 
     public static function jsonApplicationUpdateOk($msg)

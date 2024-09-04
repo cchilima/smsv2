@@ -44,10 +44,17 @@
     });
     @endif
 
-    @if (session('flash_error') || session('flash_danger'))
+    @if (session('flash_danger'))
     flash({
-        msg: '{{ session('flash_error') ?: session('flash_danger') }}',
+        msg: '{{ session('flash_danger') }}',
         type: 'danger'
+    });
+    @endif
+
+    @if (session('flash_error'))
+    flash({
+        msg: '{{ session('flash_error') }}',
+        type: 'error'
     });
     @endif
 
