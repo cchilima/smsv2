@@ -11,7 +11,6 @@ use App\Models\Residency\Town;
 use App\Repositories\Residency\CountryRepository;
 use App\Repositories\Residency\ProvinceRepository;
 use App\Repositories\Residency\TownRepository;
-use Illuminate\Http\Request;
 
 class TownController extends Controller
 {
@@ -37,14 +36,14 @@ class TownController extends Controller
      */
     public function store(TownRequest $request)
     {
-        $data = $request->only(['name', 'country_id', 'province_id']);
-        $town = $this->townRepo->create($data);
+        try {
+            $data = $request->only(['name', 'country_id', 'province_id']);
+            $this->townRepo->create($data);
 
-        if (!$town) {
-            return Qs::jsonError('Failed to create record');
+            return Qs::jsonStoreOk('Town created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create town: ' . $th->getMessage());
         }
-
-        return Qs::jsonStoreOk();
     }
 
     /**
@@ -62,10 +61,14 @@ class TownController extends Controller
      */
     public function update(TownRequest $request, Town $town)
     {
-        $data = $request->only(['name', 'country_id', 'province_id']);
-        $this->townRepo->update($town, $data);
+        try {
+            $data = $request->only(['name', 'country_id', 'province_id']);
+            $this->townRepo->update($town, $data);
 
-        return Qs::jsonUpdateOk();
+            return Qs::jsonUpdateOk('Town updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update town: ' . $th->getMessage());
+        }
     }
 
     /**

@@ -37,9 +37,9 @@ class ProvinceController extends Controller
             $data = $request->only(['name', 'country_id']);
             $this->provinceRepo->create($data);
 
-            return Qs::jsonStoreOk();
+            return Qs::jsonStoreOk('Province created successfully');
         } catch (\Throwable $th) {
-            return Qs::jsonError('Failed to create record');
+            return Qs::jsonError('Failed to create province: ' . $th->getMessage());
         }
     }
 
