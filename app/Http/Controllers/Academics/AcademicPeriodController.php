@@ -11,6 +11,7 @@ use App\Http\Requests\AcademicPeriods\Period;
 use App\Http\Requests\AcademicPeriods\PeriodUpdate;
 use App\Repositories\Academics\AcademicPeriodClassRepository;
 use App\Repositories\Academics\AcademicPeriodRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class AcademicPeriodController extends Controller
@@ -44,15 +45,15 @@ class AcademicPeriodController extends Controller
      */
     public function store(Period $request)
     {
-        $data = $request->only(['name', 'code', 'ac_start_date', 'ac_end_date', 'period_type_id']);
-        $data['ac_start_date'] = date('Y-m-d', strtotime($data['ac_start_date']));
-        $data['ac_end_date'] = date('Y-m-d', strtotime($data['ac_end_date']));
-        $period = $this->periods->create($data);
+        try {
+            $data = $request->only(['name', 'code', 'ac_start_date', 'ac_end_date', 'period_type_id']);
+            $data['ac_start_date'] = date('Y-m-d', strtotime($data['ac_start_date']));
+            $data['ac_end_date'] = date('Y-m-d', strtotime($data['ac_end_date']));
+            $period = $this->periods->create($data);
 
-        if ($period) {
-            return Qs::jsonStoreOk();
-        } else {
-            return Qs::json(false, 'failed to create message');
+            return Qs::jsonStoreOk('Academic period created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create academic period: ' . $th->getMessage());
         }
     }
 
@@ -90,11 +91,16 @@ class AcademicPeriodController extends Controller
      */
     public function update(PeriodUpdate $request, string $id)
     {
-        $data = $request->only(['name', 'code', 'ac_start_date', 'ac_end_date', 'period_type_id']);
-        $data['ac_start_date'] = date('Y-m-d', strtotime($data['ac_start_date']));
-        $data['ac_end_date'] = date('Y-m-d', strtotime($data['ac_end_date']));
-        $this->periods->update($id, $data);
-        return Qs::jsonUpdateOk();
+        try {
+            $data = $request->only(['name', 'code', 'ac_start_date', 'ac_end_date', 'period_type_id']);
+            $data['ac_start_date'] = date('Y-m-d', strtotime($data['ac_start_date']));
+            $data['ac_end_date'] = date('Y-m-d', strtotime($data['ac_end_date']));
+            $this->periods->update($id, $data);
+
+            return Qs::jsonUpdateOk('Academic period updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update academic period: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -102,8 +108,17 @@ class AcademicPeriodController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->periods->find($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');
+        try {
+            $this->periods->find($id)->delete();
+
+            return Qs::goBackWithSuccess('Academic period deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] === 1451) {
+                return Qs::goBackWithError('Cannot delete an academic period referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete academic period: ' . $th->getMessage());
+        }
     }
 
     public function getProgramsByAcademicPeriod(string $academicPeriodId)
