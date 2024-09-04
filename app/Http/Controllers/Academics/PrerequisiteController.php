@@ -33,24 +33,20 @@ class PrerequisiteController extends Controller
      */
     public function store(Prerequisite $req)
     {
-        $data = $req->only(['course_id', 'prerequisite_course_id']);
+        try {
+            $data = $req->only(['course_id', 'prerequisite_course_id']);
 
-        foreach ($data['prerequisite_course_id'] as $courseID) {
-            $this->prerequisiteRepo->create([
-                'prerequisite_course_id' => $courseID,
-                'course_id' => $data['course_id'],
-            ]);
+            foreach ($data['prerequisite_course_id'] as $courseID) {
+                $this->prerequisiteRepo->create([
+                    'prerequisite_course_id' => $courseID,
+                    'course_id' => $data['course_id'],
+                ]);
+            }
+
+            return Qs::jsonStoreOk('Prerequisites added successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to add prerequisites: ' . $th->getMessage());
         }
-
-        return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -71,13 +67,17 @@ class PrerequisiteController extends Controller
      */
     public function update(PrerequisiteUpdate $req, string $id)
     {
-        $id = Qs::decodeHash($id);
-        $data = $req->only(['course_id', 'prerequisite_course_id']);
+        try {
+            $id = Qs::decodeHash($id);
+            $data = $req->only(['course_id', 'prerequisite_course_id']);
 
-        foreach ($data['prerequisite_course_id'] as $courseID) {
-            $this->prerequisiteRepo->updateOrInsert($id, $courseID);
+            foreach ($data['prerequisite_course_id'] as $courseID) {
+                $this->prerequisiteRepo->updateOrInsert($id, $courseID);
+            }
+            return Qs::jsonUpdateOk('Prerequisites updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update prerequisites: ' . $th->getMessage());
         }
-        return Qs::jsonUpdateOk();
     }
 
     /**
@@ -85,8 +85,14 @@ class PrerequisiteController extends Controller
      */
     public function destroy(string $id)
     {
-        $id = Qs::decodeHash($id);
-        $this->prerequisiteRepo->findone($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');;
+        try {
+            $id = Qs::decodeHash($id);
+
+            $this->prerequisiteRepo->findone($id)->delete();
+
+            return Qs::goBackWithSuccess('Prerequisites deleted successfully');;
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete prerequisites: ' . $th->getMessage());
+        }
     }
 }

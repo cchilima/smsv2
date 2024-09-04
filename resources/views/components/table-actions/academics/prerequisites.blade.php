@@ -14,7 +14,7 @@
                         class="icon-pencil"></i> Edit</a>
             @endif
             @if (Qs::userIsSuperAdmin())
-                <a id="{{ $row->pid }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i
+                <a id="{{ $row->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i
                         class="icon-trash"></i> Delete</a>
                 <form method="post" id="item-delete-{{ $row->id }}"
                     action="{{ route('prerequisites.destroy', Qs::hash($row->id)) }}" class="hidden">@csrf
