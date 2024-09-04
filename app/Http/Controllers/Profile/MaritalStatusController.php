@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\MaritalStatuses\MaritalStatus;
 use App\Http\Requests\MaritalStatuses\MaritalStatusUpdate;
 use App\Repositories\Profile\MaritalStatusRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class MaritalStatusController extends Controller
@@ -81,6 +82,10 @@ class MaritalStatusController extends Controller
         try {
             $this->maritalStatuses->find($id)->delete();
             return Qs::goBackWithSuccess('Marital status deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete a marital status referenced by other records');
+            }
         } catch (\Throwable $th) {
             return Qs::goBackWithError(
                 'Failed to delete marital status: ' . $th->getMessage()
