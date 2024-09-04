@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Qualifications\Qualification;
 use App\Http\Requests\Qualifications\QualificationUpdate;
 use App\Repositories\Academics\QualificationsRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class QualificationController extends Controller
@@ -27,19 +28,15 @@ class QualificationController extends Controller
      */
     public function store(Qualification $req)
     {
-        $data = $req->only(['name']);
-        $data['slug'] = $data['name'];
-        $this->qualifications->create($data);
+        try {
+            $data = $req->only(['name']);
+            $data['slug'] = $data['name'];
+            $this->qualifications->create($data);
 
-        return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+            return Qs::jsonStoreOk('Qualification created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create qualification: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -58,11 +55,15 @@ class QualificationController extends Controller
      */
     public function update(QualificationUpdate $req, string $id)
     {
-        $data = $req->only(['name']);
-        $data['slug'] = $data['name'];
-        $this->qualifications->update($id, $data);
+        try {
+            $data = $req->only(['name']);
+            $data['slug'] = $data['name'];
+            $this->qualifications->update($id, $data);
 
-        return Qs::jsonUpdateOk();
+            return Qs::jsonUpdateOk('Qualification updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update qualification: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -70,7 +71,15 @@ class QualificationController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->qualifications->find($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');;
+        try {
+            $this->qualifications->find($id)->delete();
+            return Qs::goBackWithSuccess('Qualification deleted successfully');;
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete qualification referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete qualification: ' . $th->getMessage());
+        }
     }
 }
