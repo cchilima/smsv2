@@ -14,6 +14,7 @@ use App\Repositories\Academics\DepartmentsRepository;
 use App\Repositories\Academics\ProgramCoursesRepository;
 use App\Repositories\Academics\ProgramsRepository;
 use App\Repositories\Academics\QualificationsRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class ProgramController extends Controller
@@ -46,11 +47,15 @@ class ProgramController extends Controller
      */
     public function store(Program $req)
     {
-        $data = $req->only(['code', 'name', 'department_id', 'qualification_id', 'description']);
-        $data['slug'] = $data['code'];
-        $this->programs->create($data);
+        try {
+            $data = $req->only(['code', 'name', 'department_id', 'qualification_id', 'description']);
+            $data['slug'] = $data['code'];
+            $this->programs->create($data);
 
-        return Qs::jsonStoreOk();
+            return Qs::jsonStoreOk('Program created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create program: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -58,11 +63,12 @@ class ProgramController extends Controller
      */
     public function edit(string $id)
     {
-        $program['program'] = $programs = $this->programs->find($id);
+        $program['program'] = $this->programs->findOne($id);
         $program['departments'] = $this->depart->getAll();
         $program['qualifications'] = $this->qualification->getAll();
-        return !is_null($programs) ? view('pages.programs.edit', $program)
-            : Qs::goWithDanger('pages.programs.index');
+
+        return !is_null($program['program']) ? view('pages.programs.edit', $program)
+            : Qs::goWithDanger('programs.index');
     }
 
     /**
@@ -70,10 +76,14 @@ class ProgramController extends Controller
      */
     public function update(ProgramUpdate $req, string $id)
     {
-        $data = $req->only(['code', 'name', 'department_id', 'qualification_id', 'description']);
-        $this->programs->update($id, $data);
+        try {
+            $data = $req->only(['code', 'name', 'department_id', 'qualification_id', 'description']);
+            $this->programs->update($id, $data);
 
-        return Qs::jsonStoreOk();
+            return Qs::jsonUpdateOk('Program updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update program: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -81,7 +91,15 @@ class ProgramController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->programs->find($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');;
+        try {
+            $this->programs->findOne($id)->delete();
+            return Qs::goBackWithSuccess('Program deleted successfully');;
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete program referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete program: ' . $th->getMessage());
+        }
     }
 }
