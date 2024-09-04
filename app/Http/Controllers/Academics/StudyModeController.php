@@ -76,8 +76,12 @@ class StudyModeController extends Controller
         try {
             $this->studymode->find($id)->delete();
             return Qs::goBackWithSuccess('Study mode deleted successfully');;
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete study mode referenced by other records');
+            }
         } catch (\Throwable $th) {
-            return Qs::goBackWithError('Failed to delete study mode: ' . $th->getMessage());
+            return Qs::goBackWithError('Failed to delete sctudy mode: ' . $th->getMessage());
         }
     }
 }
