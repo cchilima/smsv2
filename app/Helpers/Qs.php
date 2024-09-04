@@ -445,7 +445,7 @@ class Qs
 
     public static function goWithDanger($to = 'dashboard', $msg = NULL)
     {
-        $msg = $msg ? $msg : __('msg.rnf');
+        $msg = $msg ? $msg : __('Page or resourcenot found');
         return self::goToRoute($to)->with('flash_danger', $msg);
     }
 
