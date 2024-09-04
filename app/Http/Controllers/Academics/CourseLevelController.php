@@ -10,6 +10,7 @@ use App\Http\Requests\CourseLevels\CourseLevels;
 use App\Http\Requests\CourseLevels\CourseLevelsUpdate;
 use App\Http\Requests\Courses\CoursesUpdate;
 use App\Repositories\Academics\CourseLevelsRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class CourseLevelController extends Controller
@@ -31,18 +32,14 @@ class CourseLevelController extends Controller
      */
     public function store(CourseLevels $req)
     {
-        $data = $req->only(['name']);
-        $this->courselevels->create($data);
+        try {
+            $data = $req->only(['name']);
+            $this->courselevels->create($data);
 
-        return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+            return Qs::jsonStoreOk('Course level created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create course level: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -61,10 +58,14 @@ class CourseLevelController extends Controller
      */
     public function update(CourseLevelsUpdate $req, string $id)
     {
-        $data = $req->only(['name']);
-        $this->courselevels->update($id, $data);
+        try {
+            $data = $req->only(['name']);
+            $this->courselevels->update($id, $data);
 
-        return Qs::jsonUpdateOk();
+            return Qs::jsonUpdateOk('Course level updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update course level: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -72,7 +73,15 @@ class CourseLevelController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->courselevels->find($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');;
+        try {
+            $this->courselevels->find($id)->delete();
+            return Qs::goBackWithSuccess('Course level deleted successfully');;
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete course level referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete course level: ' . $th->getMessage());
+        }
     }
 }
