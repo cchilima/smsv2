@@ -11,6 +11,7 @@ use App\Models\Residency\Town;
 use App\Repositories\Residency\CountryRepository;
 use App\Repositories\Residency\ProvinceRepository;
 use App\Repositories\Residency\TownRepository;
+use Illuminate\Database\QueryException;
 
 class TownController extends Controller
 {
@@ -78,9 +79,13 @@ class TownController extends Controller
     {
         try {
             $this->townRepo->delete($town);
-            return Qs::goBackWithSuccess('Record deleted successfully');
+            return Qs::goBackWithSuccess('Town deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] === 1451) {
+                return Qs::goBackWithError('Cannot delete a town referenced by other records');
+            }
         } catch (\Throwable $th) {
-            return Qs::goBackWithError('Failed to delete record');
+            return Qs::goBackWithError('Failed to delete town');
         }
     }
 }
