@@ -67,10 +67,10 @@ class APFeesController extends Controller
             }
             DB::commit();
 
-            return Qs::jsonStoreOk();
+            return Qs::jsonStoreOk('Academic period fee added successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return Qs::json('Failed to create record => ' . $e->getMessage(), false);
+            return Qs::jsonError('Failed to add academic period fee: ' . $e->getMessage(), false);
         }
     }
 
@@ -130,10 +130,10 @@ class APFeesController extends Controller
 
             DB::commit();
 
-            return Qs::jsonUpdateOk();
+            return Qs::jsonUpdateOk('Academic period fee updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return Qs::json('Failed to update record => ' . $e->getMessage(), false);
+            return Qs::jsonError('Failed to update academic period fee: ' . $e->getMessage());
         }
     }
 
