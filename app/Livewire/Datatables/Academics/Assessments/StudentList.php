@@ -26,7 +26,7 @@ final class StudentList extends PowerGridComponent
     public string $tableName = 'AssessmentsStudentListTable';
     public $class;
     public $assessID;
-    public bool $deferLoading = true;
+    // public bool $deferLoading = true;
 
     public ?AcademicPeriodClass $class_ass;
 
@@ -87,7 +87,7 @@ final class StudentList extends PowerGridComponent
             Column::make('Student ID', 'student_id')->searchable(),
             Column::make('Assessment Type', 'assesment.assessment_type.name'),
             Column::make('Academic Period', 'class.academicPeriod.name'),
-            Column::action('Enter Grade')
+            Column::action('Enter Grade (%)')
         ];
     }
 

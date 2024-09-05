@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Datatables\Academics\Assessments;
 
-use App\Helpers\Qs;
 use App\Models\Academics\AcademicPeriod;
 use App\Models\Academics\CourseLevel;
 use App\Models\Academics\PeriodType;
@@ -12,20 +11,18 @@ use App\Traits\CanShowAlerts;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Exportable;
-use PowerComponents\LivewirePowerGrid\Facades\Rule;
 use PowerComponents\LivewirePowerGrid\Footer;
 use PowerComponents\LivewirePowerGrid\Header;
 use PowerComponents\LivewirePowerGrid\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 
-final class ExamResultsReviewBoard extends PowerGridComponent
+final class CAResultsReviewBoard extends PowerGridComponent
 {
     use CanShowAlerts;
 
@@ -46,7 +43,7 @@ final class ExamResultsReviewBoard extends PowerGridComponent
 
     public function datasource(): ?Collection
     {
-        $studentGrades = $this->classAssessmentsRepo->getGradesDatatableCollection(
+        $studentGrades = $this->classAssessmentsRepo->getCaGradesDatatableCollection(
             $this->level->id,
             $this->program->id,
             $this->academicPeriod->id
@@ -85,26 +82,12 @@ final class ExamResultsReviewBoard extends PowerGridComponent
                     'studentIds' => $this->datasource()->pluck('id')->toArray()
                 ]),
 
-            // ->route('publishProgramResults', [
-            //     'ids' => $this->datasource()->pluck('id')->toArray(),
-            //     'academicPeriodID' => $this->academicPeriod->id,
-            //     'type' => $this->periodType->id,
-            // ])
-            // ->method('post'),
-
             Button::add('publish-selected-results')
                 ->class('btn btn-primary ' . (count($this->checkboxValues) > 0 ? '' : 'disabled'))
                 ->slot('Publish Selected (' . count($this->checkboxValues) . ')')
                 ->dispatch('publish-results.' . $this->tableName, [
                     'studentIds' => $this->checkboxValues
                 ]),
-
-            // ->route('publishProgramResults', [
-            //     'ids' => $this->checkboxValues,
-            //     'academicPeriodID' => $this->academicPeriod->id,
-            //     'type' => $this->periodType->id,
-            // ])
-            // ->method('post'),
         ];
     }
 
@@ -128,7 +111,7 @@ final class ExamResultsReviewBoard extends PowerGridComponent
             ->add('id')
             ->add('name')
             ->add('entry', function ($entry) {
-                return Blade::render('<x-table-fields.academics.assessments.exam-results-review-board :entry="$entry" :academicPeriod="$academicPeriod" :program="$program" :level="$level" />', [
+                return Blade::render('<x-table-fields.academics.assessments.ca-results-review-board :entry="$entry" :academicPeriod="$academicPeriod" :program="$program" :level="$level" />', [
                     'entry' => $entry,
                     'academicPeriod' => $this->academicPeriod,
                     'program' => $this->program,
