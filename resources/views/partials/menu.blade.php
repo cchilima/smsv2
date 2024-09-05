@@ -366,6 +366,7 @@
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['students.list']) ? 'active' : '' }}">
                                         <span>Student List</span></a>
                                 </li>
+
                             </ul>
                         </li>
 

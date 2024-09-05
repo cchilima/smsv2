@@ -69,6 +69,7 @@ class Show extends Component
         $this->data['caresults'] = $this->classaAsessmentRepo->GetCaStudentGrades($userId);
 
         $this->data['percentage'] = $this->invoiceRepo->paymentPercentage($student->student->id);
+        $this->data['enrolled_courses'] = $this->studentRegistrationRepo->curentEnrolledClasses($student->student->id);
 
     }
 

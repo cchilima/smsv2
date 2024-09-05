@@ -39,6 +39,7 @@ use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Users\MyAccountController;
 use App\Http\Controllers\Users\StudentController as UsersStudentController;
 use App\Http\Controllers\Users\UserController;
+use App\Livewire\Students\{AddDropCourse};
 use App\Livewire\Accounting\{ViewInvoiceDetails, ApproveCreditNotes};
 use App\Livewire\Applications\{InitiateApplication, CompleteApplication, CompletedApplication, MyApplications};
 
@@ -85,10 +86,9 @@ Route::get('/staff-login', function () {
 Route::get('announcement/{announcement_id}', [AnnouncementController::class, 'ShowAnnouncement'])->name('announcement.fullview');
 Route::post('announcement/{announcement_id}/dismiss', [AnnouncementController::class, 'dismissAnnouncement'])->name('announcement.dismiss');
 
-
-
 Auth::routes(['register' => false]);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
 Route::group(['prefix' => 'students'], function () {
     Route::get('/search', [StudentController::class, 'search'])->name('search');
     Route::post('/search', [StudentController::class, 'search'])->name('students.lists');
@@ -202,6 +202,11 @@ Route::get('/application/{application_id}', CompletedApplication::class)->name('
 // Accounting livewire routes
 Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
 Route::get('/approve-credit-notes', ApproveCreditNotes::class)->name('accounting.approve_credit_notes');
+
+// Add drop courses
+Route::get('/add-drop-course/{student_id}', AddDropCourse::class)->name('students.add-drop-course');
+
+
 
 Route::get('/applications', ApplicationsIndex::class)->name('application.index');
 //Route::get('/applications/initiate', [ApplicantController::class, 'initiate'])->name('application.initiate');

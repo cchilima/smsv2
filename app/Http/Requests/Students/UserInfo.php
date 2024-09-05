@@ -26,7 +26,7 @@ class UserInfo extends FormRequest
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
             'gender' => 'required|in:Male,Female',
-            'email' => 'required|email|max:255|unique:users',
+            'email' => 'required|email|max:255',
         ];
     }
 }

@@ -207,6 +207,7 @@ class StudentController extends Controller
     public function update(Request $request, string $id)
     {
         try {
+
             DB::beginTransaction();
 
             $userData = null;
@@ -221,13 +222,14 @@ class StudentController extends Controller
             $academicInfoRequest = new AcademicInfo();
 
             // Determine the type of request and validate accordingly
-            if ($request->email && $request->gender) {
+            if ($request->first_name && $request->last_name) {
                 $userData = $request->validate($userInfoRequest->rules());
             } elseif ($request->nrc) {
                 $personalData = $request->validate($personalInfoRequest->rules());
+                dd($personalData );
             } elseif ($request->kin_relationship_id) {
                 $nextOfKinDataWithPrefix = $request->validate($nextOfKinInfoRequest->rules());
-            } elseif ($request->program_id) {
+            } elseif ($request->study_mode_id) {
                 $studentData = $request->validate($academicInfoRequest->rules());
             } elseif ($request->passport_photo_path) {
                 // Validate passport photo for photo update operations
@@ -254,6 +256,7 @@ class StudentController extends Controller
             if ($userData) {
                 // Update the user data
                 $user->update($userData);
+
             } elseif ($personalData) {
                 // Update or create UserPersonalInfo
                 $passportPhotoObject = $personalData['passport_photo_path'] ?? null;
@@ -264,23 +267,32 @@ class StudentController extends Controller
                 }
 
                 $user->userPersonalInfo()->update($personalData);
+
             } elseif ($nextOfKinDataWithPrefix) {
                 // Update or create NextOfKin
                 $nextOfKin = $user->userNextOfKin()->update($nextOfKinData);
             } elseif ($studentData) {
+                // Incase study mode change re-enroll student
+                $reenrolled = $this->enrollmentRepo->autoReenrollment($studentData['study_mode_id'], $user->student);
                 // Update or create Student
-                $student = $user->student()->update($studentData);
+                if($reenrolled){
+                    $student = $user->student()->update($studentData);
+                } else {
+                    return Qs::json('failed to update', false);
+                }
+                
             }
 
             DB::commit();
 
             return Qs::jsonStoreOk();
+
         } catch (ValidationException $e) {
             return Qs::json($e->getMessage(), false);
         } catch (\Exception $e) {
             DB::rollBack();
 
-            // dd($e);
+         dd($e);
             // Log the error or handle it accordingly
             return Qs::json('failed to update', false);
         }
@@ -364,8 +376,7 @@ class StudentController extends Controller
         }
     }
 
-    public
-    function getRooms(string $id)
+    public function getRooms(string $id)
     {
         return $this->rooms_repository->getSpecificRooms($id);
     }

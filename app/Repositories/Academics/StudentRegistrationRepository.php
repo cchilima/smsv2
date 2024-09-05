@@ -25,7 +25,7 @@ class StudentRegistrationRepository
         return $student;
     }
 
-    public function getAll($student_id = null)
+    public function getAll($student_id = null, $study_mode_change = null)
     {
         // Step 1: Get student information
         $student = $this->getStudentById($student_id);
@@ -67,7 +67,12 @@ class StudentRegistrationRepository
                 $filteredCourseIds = $this->filterCourses($currentCourses, $failedCoursesPrerequisites, $allPassedCourseIds);
 
                 // Step 9: Determine course results to return
-                return $this->getCourseResults($student->id, $currentAcademicPeriodId, $allFailedCourseIds, $allPassedCourseIds, $filteredCourseIds);
+                if(!$study_mode_change){
+                    return $this->getCourseResults($student->id, $currentAcademicPeriodId, $allFailedCourseIds, $allPassedCourseIds, $filteredCourseIds);
+                } else {
+                    return $this->getCourseResultsStudyModeVariation($student->id, $currentAcademicPeriodId, $allFailedCourseIds, $allPassedCourseIds, $filteredCourseIds);
+                }
+                
             }
         }
     }
@@ -116,7 +121,7 @@ class StudentRegistrationRepository
     }
     
 
-    private function getStudentById($student_id)
+    public function getStudentById($student_id)
     {
         // Get student by ID, or get the current student if no ID is provided
         if ($student_id) {
@@ -266,6 +271,27 @@ class StudentRegistrationRepository
 
         return [];
     }
+
+
+    private function getCourseResultsStudyModeVariation($student_id, $academicPeriodId, $allFailedCourseIds, $allPassedCourseIds, $filteredCourseIds)
+    {
+        // This method is to support study mode update , its basically doesnt check if student has an invoice for the new academic period attached to the new study mode
+
+        // Determine which courses to return based on the student's failed and passed courses
+        $filteredWithoutPassed = array_diff($filteredCourseIds, $allPassedCourseIds);
+
+        if (count($allFailedCourseIds) >= 3) {
+            // If the student has failed 3 or more courses, get those courses
+            $currentCourses = $this->getCoursesByIds($allFailedCourseIds, $academicPeriodId);
+        } else {
+            // Otherwise, get the filtered courses excluding the passed ones
+            $currentCourses = $this->getCoursesByIds($filteredWithoutPassed, $academicPeriodId);
+        }
+
+        // Return the courses 
+            return $currentCourses;
+    }
+
 
     private function getCoursesByIds($courseIds, $academicPeriodId)
     {
@@ -484,4 +510,41 @@ class StudentRegistrationRepository
             'coursesFailed' => $courseFailedArray,
         ];
     }
+
+    public function curentEnrolledClasses($student_id)
+    {
+        // Eager load invoices and enrollments with classes and courses
+        $student = $this->getStudentById($student_id)->load([
+            'invoices' => function ($query) {
+                $query->latest(); // Only the latest invoice will be fetched
+            },
+            'enrollments.class.course' // Eager load enrollments with classes and their courses
+        ]);
+    
+        // Get the latest invoice
+        $invoice = $student->invoices->first(); // Assuming `latest()` was already called in eager load
+    
+        // Return empty array if no latest invoice found
+        if (!$invoice) {
+            return [];
+        }
+    
+        // Filter enrollments where the class's academic period matches the latest invoice
+        $courses = $student->enrollments
+            ->filter(function ($enrollment) use ($invoice) {
+                return $enrollment->class->academic_period_id == $invoice->academic_period_id;
+            })
+            ->map(function ($enrollment) {
+                // Return an array with enrollment_id and course details
+                return [
+                    'enrollment_id' => $enrollment->id,
+                    'course' => $enrollment->class->course
+                ];
+            })
+            ->all(); 
+    
+        return $courses;
+    }
+    
+    
 }
