@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Reports\Enrollments;
 
 use App\Exports\AcademicPeriodEnrollmentsExport;
+use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\Student;
 use App\Http\Middleware\Custom\SuperAdmin;
@@ -50,54 +51,6 @@ class EnrollmentReportsController extends Controller
         return view('pages.reports.enrollments.index', $data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
     public function ExamRegisters()
     {
         $data['ac'] = $this->academicPeriodRepository->getAllopen();
@@ -118,98 +71,121 @@ class EnrollmentReportsController extends Controller
 
     public function DownloadStudentProgramList($ac)
     {
-        $academic = $this->enrollmentRepository->getStudentsWithProgramAndAcademicPeriods($ac);
-        $fileName = $ac . '-program-student-list-' . now()->format('d-m-Y-His') . '.pdf';
-        $logodata = file_get_contents(public_path('/images/logo.png'));
-        $logo = base64_encode($logodata);
-        $pdf = Pdf::loadView('templates.pdf.program-student-list', compact('academic', 'logo'));
+        try {
+            $academic = $this->enrollmentRepository->getStudentsWithProgramAndAcademicPeriods($ac);
+            $fileName = $ac . '-program-student-list-' . now()->format('d-m-Y-His') . '.pdf';
+            $logodata = file_get_contents(public_path('/images/logo.png'));
+            $logo = base64_encode($logodata);
+            $pdf = Pdf::loadView('templates.pdf.program-student-list', compact('academic', 'logo'));
 
-        return $pdf->download($fileName);
-        // dd($academic);getStudentsForProgramAndAcademicPeriod($program_id, $academic_period_id)
+            return $pdf->download($fileName);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to download student program list: ' . $th->getMessage());
+        }
     }
 
     public function DownloadStudentProgramListOne($ac, $pid)
     {
-        $academic = $this->enrollmentRepository->getStudentsForProgramAndAcademicPeriod($pid, $ac);
-        $fileName = $ac . '-program-student-list-' . now()->format('d-m-Y-His') . '.pdf';
-        $logodata = file_get_contents(public_path('/images/logo.png'));
-        $logo = base64_encode($logodata);
-        $pdf = Pdf::loadView('templates.pdf.one-program-student-list', compact('academic', 'logo'));
+        try {
+            $academic = $this->enrollmentRepository->getStudentsForProgramAndAcademicPeriod($pid, $ac);
+            $fileName = $ac . '-program-student-list-' . now()->format('d-m-Y-His') . '.pdf';
+            $logodata = file_get_contents(public_path('/images/logo.png'));
+            $logo = base64_encode($logodata);
+            $pdf = Pdf::loadView('templates.pdf.one-program-student-list', compact('academic', 'logo'));
 
-        return $pdf->download($fileName);
+            return $pdf->download($fileName);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to download student program list: ' . $th->getMessage());
+        }
     }
 
     public function DownloadAcClassLists($ac)
     {
+        try {
+            ini_set('max_execution_time', 3000000);
+            $academic = $this->enrollmentRepository->getStudentsWithProgramsForAcademicPeriod($ac);
+            // dd($academic);
+            $fileName = $ac . '-class-student-list-' . now()->format('d-m-Y-His') . '.pdf';
+            $logodata = file_get_contents(public_path('/images/logo.png'));
+            $logo = base64_encode($logodata);
+            $pdf = Pdf::loadView('templates.pdf.class-student-list', compact('academic', 'logo'));
 
-        ini_set('max_execution_time', 3000000);
-        $academic = $this->enrollmentRepository->getStudentsWithProgramsForAcademicPeriod($ac);
-        // dd($academic);
-        $fileName = $ac . '-class-student-list-' . now()->format('d-m-Y-His') . '.pdf';
-        $logodata = file_get_contents(public_path('/images/logo.png'));
-        $logo = base64_encode($logodata);
-        $pdf = Pdf::loadView('templates.pdf.class-student-list', compact('academic', 'logo'));
-        return $pdf->download($fileName);
+            return $pdf->download($fileName);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to download academic period class list: ' . $th->getMessage());
+        }
     }
 
     public function DownloadAcOneClassLists($ac, $classid)
     {
+        try {
+            ini_set('max_execution_time', 3000000);
+            $academic = $this->enrollmentRepository->getStudentsWithProgramsForClassAndAcademicPeriod($ac, $classid);
+            //dd($academic);
+            // dd($academic);
+            $fileName = $ac . '-class-student-list-' . now()->format('d-m-Y-His') . '.pdf';
+            $logodata = file_get_contents(public_path('/images/logo.png'));
+            $logo = base64_encode($logodata);
+            $pdf = Pdf::loadView('templates.pdf.class-one-student-list', compact('academic', 'logo'));
 
-        ini_set('max_execution_time', 3000000);
-        $academic = $this->enrollmentRepository->getStudentsWithProgramsForClassAndAcademicPeriod($ac, $classid);
-        //dd($academic);
-        // dd($academic);
-        $fileName = $ac . '-class-student-list-' . now()->format('d-m-Y-His') . '.pdf';
-        $logodata = file_get_contents(public_path('/images/logo.png'));
-        $logo = base64_encode($logodata);
-        $pdf = Pdf::loadView('templates.pdf.class-one-student-list', compact('academic', 'logo'));
-        return $pdf->download($fileName);
+            return $pdf->download($fileName);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to download academic period class list: ' . $th->getMessage());
+        }
     }
 
     public function ExamRegistersDownload(Request $request)
     {
-        $ac_id = $request->input('ac_id');
-        $class_id = $request->input('class_id');
+        try {
+            $ac_id = $request->input('ac_id');
+            $class_id = $request->input('class_id');
 
-        $academics = $this->enrollmentRepository->getStudentsWithProgramsForClassesAndAcademicPeriods($ac_id, $class_id);
-        // dd($academics);
-        $fileName = 'E-exam-register-' . now()->format('d-m-Y-His') . '.pdf';
-        $logodata = file_get_contents(public_path('/images/logo.png'));
-        $logo = base64_encode($logodata);
-        $pdf = Pdf::loadView('templates.pdf.exam_register', compact('academics', 'logo'));
-        return $pdf->download($fileName);
-        // dd($academic);
+            $academics = $this->enrollmentRepository->getStudentsWithProgramsForClassesAndAcademicPeriods($ac_id, $class_id);
+            // dd($academics);
+            $fileName = 'E-exam-register-' . now()->format('d-m-Y-His') . '.pdf';
+            $logodata = file_get_contents(public_path('/images/logo.png'));
+            $logo = base64_encode($logodata);
+            $pdf = Pdf::loadView('templates.pdf.exam_register', compact('academics', 'logo'));
+
+            return $pdf->download($fileName);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to download exam register: ' . $th->getMessage());
+        }
     }
 
     public function DownloadstudentProgramListCsv($ac)
     {
-        $academic = $this->enrollmentRepository->getStudentsWithProgramAndAcademicPeriods($ac);
+        try {
+            $academic = $this->enrollmentRepository->getStudentsWithProgramAndAcademicPeriods($ac);
 
-        $csvContent = "";
+            $csvContent = "";
 
-        // Initialize CSV content with header row
-        $csvContent = "Name,Student ID,Email,Gender,Level,Program,Payment Percentage,Balance\n";
+            // Initialize CSV content with header row
+            $csvContent = "Name,Student ID,Email,Gender,Level,Program,Payment Percentage,Balance\n";
 
-        // Iterate through each academic period's programs and students
-        foreach ($academic['programs'] as $program) {
-            foreach ($program['students'] as $student) {
-                // Format CSV data for each student
-                $csvContent .= "{$student['name']},{$student['student_id']},{$student['email']},{$student['gender']},{$student['level']},{$program['program_name']},{$student['payment_percentage']},{$student['balance']}\n";
+            // Iterate through each academic period's programs and students
+            foreach ($academic['programs'] as $program) {
+                foreach ($program['students'] as $student) {
+                    // Format CSV data for each student
+                    $csvContent .= "{$student['name']},{$student['student_id']},{$student['email']},{$student['gender']},{$student['level']},{$program['program_name']},{$student['payment_percentage']},{$student['balance']}\n";
+                }
             }
+
+            // Generate filename
+            // $filename = 'student-list-' . now()->format('Y-m-d-His') . '.csv';
+
+            // Write CSV content to file
+            // file_put_contents($filename, $csvContent);
+            $filename = 'student-list-' . now()->format('Y-m-d-His') . '.csv';
+
+            // Write CSV content to file
+            file_put_contents($filename, $csvContent);
+
+            // Return file download response
+            return response()->download($filename)->deleteFileAfterSend(true);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to download student program list: ' . $th->getMessage());
         }
-
-        // Generate filename
-        // $filename = 'student-list-' . now()->format('Y-m-d-His') . '.csv';
-
-        // Write CSV content to file
-        // file_put_contents($filename, $csvContent);
-        $filename = 'student-list-' . now()->format('Y-m-d-His') . '.csv';
-
-        // Write CSV content to file
-        file_put_contents($filename, $csvContent);
-
-        // Return file download response
-        return response()->download($filename)->deleteFileAfterSend(true);
     }
 
     public function DownloadStudentProgramListOneCSV($ac, $pid)

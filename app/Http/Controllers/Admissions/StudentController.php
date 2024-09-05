@@ -286,18 +286,15 @@ class StudentController extends Controller
         }
     }
 
-
     public function resetAccountPassword(ResetPasswordInfo $request)
     {
         $resetPasswordData = $request->validated();
 
         try {
             $this->studentRepo->resetPassword($resetPasswordData);
-
-            return Qs::jsonStoreOk();
+            return Qs::jsonStoreOk('Password reset successfully');
         } catch (\Exception $e) {
-            // Log the error or handle it accordingly
-            return Qs::json(false, 'failed to reset password');
+            return Qs::jsonError('Failed to reset password: ' . $e->getMessage());
         }
     }
 
@@ -330,35 +327,44 @@ class StudentController extends Controller
         $data['closed'] = $this->booking_repository->getClosedBookingsOne($student_id->id);
         return view('pages.students.accommodation', $data);
     }
+
     public function applyBedSpace(Booking $request)
     {
-        $data = $request->only(['student_id', 'bed_space_id']);
-        $data['booking_date'] = date('Y-m-d', strtotime(now()));
-        $data['expiration_date'] = date('Y-m-d', strtotime('+1 day', time()));
-        // 'student_id','bed_space_id','booking_date','expiration_date'
-        $dataB['is_available'] = 'false';
-        $data = $this->booking_repository->create($data);
-        $this->bed_space_repository->update($data['bed_space_id'], $dataB);
-        if ($data) {
-            return Qs::jsonStoreOk();
-        } else {
-            return Qs::jsonError('Failed to create record');
+        try {
+            $data = $request->only(['student_id', 'bed_space_id']);
+            $data['booking_date'] = date('Y-m-d', strtotime(now()));
+            $data['expiration_date'] = date('Y-m-d', strtotime('+1 day', time()));
+
+            $dataB['is_available'] = 'false';
+            $data = $this->booking_repository->create($data);
+            $this->bed_space_repository->update($data['bed_space_id'], $dataB);
+
+            return Qs::jsonStoreOk('Booking created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create booking: ' . $th->getMessage());
         }
     }
 
-    public
-    function getRooms(string $id)
+    public function getRooms(string $id)
     {
-        return $this->rooms_repository->getSpecificRooms($id);
+        try {
+            return $this->rooms_repository->getSpecificRooms($id);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to get rooms: ' . $th->getMessage());
+        }
     }
-    public
-    function getBedSpaces(string $ids)
-    {
-        $id = Auth::user();
-        $student_id = \App\Models\Admissions\Student::where('user_id', $id->id)->first();
-        $data['students'] = $this->bed_space_repository->getActiveStudentOne($student_id->id);
-        $data['spaces'] = $this->bed_space_repository->getAvailable($ids);
 
-        return $data;
+    public function getBedSpaces(string $ids)
+    {
+        try {
+            $id = Auth::user();
+            $student_id = \App\Models\Admissions\Student::where('user_id', $id->id)->first();
+            $data['students'] = $this->bed_space_repository->getActiveStudentOne($student_id->id);
+            $data['spaces'] = $this->bed_space_repository->getAvailable($ids);
+
+            return $data;
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to get bed spaces: ' . $th->getMessage());
+        }
     }
 }

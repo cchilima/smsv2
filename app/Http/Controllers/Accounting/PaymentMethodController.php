@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Accounting\PaymentMethod as PaymentMethodRequest;
 use App\Models\Accounting\PaymentMethod;
 use App\Repositories\Accounting\PaymentMethodRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class PaymentMethodController extends Controller
@@ -28,15 +29,14 @@ class PaymentMethodController extends Controller
      */
     public function store(PaymentMethodRequest $request)
     {
-        $data = $request->only(['name']);
+        try {
+            $data = $request->only(['name']);
+            $this->paymentMethodRepo->create($data);
 
-        $paymentMethod = $this->paymentMethodRepo->create($data);
-
-        if (!$paymentMethod) {
-            return Qs::jsonError('Failed to create record');
+            return Qs::jsonStoreOk('Payment method created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create record: ' . $th->getMessage());
         }
-
-        return Qs::jsonStoreOk();
     }
 
     /**
@@ -52,11 +52,14 @@ class PaymentMethodController extends Controller
      */
     public function update(PaymentMethodRequest $request, PaymentMethod $paymentMethod)
     {
-        $data = $request->only(['name']);
+        try {
+            $data = $request->only(['name']);
+            $this->paymentMethodRepo->update($paymentMethod, $data);
 
-        $this->paymentMethodRepo->update($paymentMethod, $data);
-
-        return Qs::jsonUpdateOk();
+            return Qs::jsonUpdateOk();
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update payment method: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -66,9 +69,13 @@ class PaymentMethodController extends Controller
     {
         try {
             $this->paymentMethodRepo->delete($paymentMethod);
-            return Qs::goBackWithSuccess('Record deleted successfully');
+            return Qs::goBackWithSuccess('Payment method deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete payment method referenced by other records');
+            }
         } catch (\Throwable $th) {
-            return Qs::goBackWithError('Failed to delete record');
+            return Qs::goBackWithError('Failed to delete payment method');
         }
     }
 }

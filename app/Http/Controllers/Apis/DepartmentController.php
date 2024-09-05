@@ -19,6 +19,10 @@ class DepartmentController extends Controller
 
     public function findBySlug($slug)
     {
-        return response()->json($this->departments->findBySlug($slug));
+        try {
+            return response()->json($this->departments->findBySlug($slug));
+        } catch (\Throwable $th) {
+            return response()->json('Failed to get department: ' . $th->getMessage(), 400);
+        }
     }
 }

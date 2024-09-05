@@ -74,7 +74,8 @@ class StudentAdminissionController extends Controller
 
             // Upload passport photo
             if ($passportPhotoPath = $personalData['passport_photo_path'] ?? null) {
-                $personalData['passport_photo_path'] = $this->userPersonalInfoRepo->uploadPassportPhoto($passportPhotoPath);
+                $personalData['passport_photo_path'] = $this->userPersonalInfoRepo
+                    ->uploadPassportPhoto($passportPhotoPath, $user->id);
             }
 
             // Create personal info record

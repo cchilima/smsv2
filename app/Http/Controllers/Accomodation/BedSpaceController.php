@@ -10,6 +10,7 @@ use App\Http\Requests\Accomodation\BedSpace;
 use App\Http\Requests\Accomodation\BedSpaceUpdate;
 use App\Repositories\Accommodation\BedSpaceRepository;
 use App\Repositories\Accommodation\RoomRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class BedSpaceController extends Controller
@@ -32,16 +33,20 @@ class BedSpaceController extends Controller
      */
     public function store(BedSpace $request)
     {
-        $data = $request->only(['room_id', 'bed_number', 'is_available']);
+        try {
+            $data = $request->only(['room_id', 'bed_number', 'is_available']);
+            $room = $this->room_repository->find($data['room_id']);
+            $existing_bed_spaces = $this->bed_space_repository->capacity($data['room_id']);
 
-        $currentCapacity = $this->room_repository->find($data['room_id']);
-        $bed_space = $this->bed_space_repository->capacity($data['room_id']);
+            if ($existing_bed_spaces  >= $room->capacity) {
+                throw new \Exception('Maximum room capacity reached (' . $room->capacity . ')');
+            }
 
-        if ($currentCapacity->capacity >= $bed_space) {
-            $hostel = $this->bed_space_repository->create($data);
-            return Qs::jsonStoreOk();
-        } else {
-            return Qs::json('capacity is ' . $currentCapacity->capacity . ' and is less than ' . $bed_space, false);
+            $this->bed_space_repository->create($data);
+
+            return Qs::jsonStoreOk('Bed space created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create bed space: ' . $th->getMessage());
         }
     }
 
@@ -61,9 +66,14 @@ class BedSpaceController extends Controller
      */
     public function update(BedSpaceUpdate $request, string $id)
     {
-        $data = $request->only(['room_id', 'bed_number', 'is_available']);
-        $this->bed_space_repository->update($id, $data);
-        return Qs::jsonUpdateOk();
+        try {
+            $data = $request->only(['room_id', 'bed_number', 'is_available']);
+            $this->bed_space_repository->update($id, $data);
+
+            return Qs::jsonUpdateOk('Bed space updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update bed space: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -71,7 +81,15 @@ class BedSpaceController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->bed_space_repository->find($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');;
+        try {
+            $this->bed_space_repository->find($id)->delete();
+            return Qs::goBackWithSuccess('Bed space deleted successfully');;
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete bed space referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete bed space: ' . $th->getMessage());
+        }
     }
 }

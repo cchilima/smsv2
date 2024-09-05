@@ -65,19 +65,19 @@ class ApplicantController extends Controller
      */
     public function collectFee(Request $request)
     {
-        if (Qs::userIsTeamSAT() || Qs::userIsSuperAdmin()) {
+        try {
+            if (Qs::userIsTeamSAT() || Qs::userIsSuperAdmin()) {
 
-            $data = $request;
-            $collected = $this->applicantRepo->collectApplicantFee($data);
+                $data = $request;
+                $collected = $this->applicantRepo->collectApplicantFee($data);
 
-            if ($collected) {
-                return Qs::jsonStoreOk();
-            } else {
-                return Qs::jsonError('Failed to collect fee');
+                return Qs::jsonStoreOk('Fee collected successfully');
             }
-        }
 
-        return redirect(route('home'));
+            return redirect(route('home'));
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to collect fee: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -158,49 +158,49 @@ class ApplicantController extends Controller
      */
     public function saveApplication(ApplicationRequest $request, $id)
     {
+        try {
+            $data = $request;
 
-        $data = $request;
+            /*   $data = $request->only([
+    
+                'nrc',
+                'passport',
+                'first_name',
+                'middle_name',
+                'last_name',
+                'date_of_birth',
+                'gender',
+                'address',
+                'postal_code',
+                'email',
+                'phone_number',
+                'application_date',
+                'status',
+                'town_id',
+                'province_id',
+                'country_id',
+                'program_id',
+                'period_type_id',
+                'study_mode_id',
+                'academic_period_intake_id',
+                'attachment'
+    
+            ]); */
 
-        /*   $data = $request->only([
+            $data = $this->applicantRepo->changeDBOFromat($data);
 
-            'nrc',
-            'passport',
-            'first_name',
-            'middle_name',
-            'last_name',
-            'date_of_birth',
-            'gender',
-            'address',
-            'postal_code',
-            'email',
-            'phone_number',
-            'application_date',
-            'status',
-            'town_id',
-            'province_id',
-            'country_id',
-            'program_id',
-            'period_type_id',
-            'study_mode_id',
-            'academic_period_intake_id',
-            'attachment'
+            $application = $this->applicantRepo->saveApplication($data, $id);
 
-        ]); */
+            $isComplete = $this->applicantRepo->checkApplicationCompletion($id);
 
-        $data = $this->applicantRepo->changeDBOFromat($data);
-
-        $application = $this->applicantRepo->saveApplication($data, $id);
-
-        $isComplete = $this->applicantRepo->checkApplicationCompletion($id);
-
-        if ($isComplete) {
-            // return Qs::jsonApplicationUpdateOk('Application completed successfully.');
-            return redirect(route('application.start_application', $id))->with('flash_success', 'Application completed successfully.');
-        } else {
-            return Qs::jsonApplicationUpdateOk('Application progress saved. Fill out the rest of the form to complete your application.');
+            if ($isComplete) {
+                return redirect(route('application.start_application', $id))->with('flash_success', 'Application completed successfully.');
+            } else {
+                return Qs::jsonUpdateOk('Application progress saved. Fill out the rest of the form to complete your application.');
+            }
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to save application: ' . $th->getMessage());
         }
-
-        return Qs::jsonError('Failed to save application');
     }
 
     public function downloadAttachment($attachment_id)
@@ -241,7 +241,6 @@ class ApplicantController extends Controller
 
     public function ApplicationsStatus(string $status, $id)
     {
-
         $id = Qs::decodeHash($id);
         $applications = [];
         if ($id == 1) {
@@ -263,13 +262,16 @@ class ApplicantController extends Controller
      */
     public function provisional(Request $request)
     {
+        try {
+            $applicant = $this->applicantRepo->getApplication($request->applicant_id);
 
-        $applicant = $this->applicantRepo->getApplication($request->applicant_id);
+            $fileName = $applicant->applicant_code . '-provisional letter-' . now()->format('d-m-Y-His') . '.pdf';
 
-        $fileName = $applicant->applicant_code . '-provisional letter-' . now()->format('d-m-Y-His') . '.pdf';
+            $pdf = Pdf::loadView('templates.pdf.provisional-letter', compact('applicant'));
 
-        $pdf = Pdf::loadView('templates.pdf.provisional-letter', compact('applicant'));
-
-        return $pdf->download($fileName);
+            return $pdf->download($fileName);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to generate provisional letter: ' . $th->getMessage());
+        }
     }
 }

@@ -30,10 +30,14 @@ class AssessmentsTypesController extends Controller
      */
     public function store(Assessments $req)
     {
-        $data = $req->only(['name']);
-        $this->assessmentRepo->create($data);
+        try {
+            $data = $req->only(['name']);
+            $this->assessmentRepo->create($data);
 
-        return Qs::jsonStoreOk();
+            return Qs::jsonStoreOk('Assessment type created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create assessment type: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -52,9 +56,14 @@ class AssessmentsTypesController extends Controller
      */
     public function update(AssessmentsUpdate $req, string $id)
     {
-        $data = $req->only(['name']);
-        $this->assessmentRepo->update($id, $data);
-        return Qs::jsonUpdateOk();
+        try {
+            $data = $req->only(['name']);
+            $this->assessmentRepo->update($id, $data);
+
+            return Qs::jsonUpdateOk('Assessment type updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update assessment type: ' . $th->getMessage());
+        }
     }
 
     /**

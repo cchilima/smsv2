@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Accomodation\Hostel;
 use App\Http\Requests\Accomodation\HostelUpdate;
 use App\Repositories\Accommodation\HostelRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class HostelController extends Controller
@@ -31,35 +32,18 @@ class HostelController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Hostel $request)
     {
-        $data = $request->only(['hostel_name', 'location']);
+        try {
+            $data = $request->only(['hostel_name', 'location']);
+            $this->hostel_repository->create($data);
 
-        $hostel = $this->hostel_repository->create($data);
-
-        if (!$hostel) {
-            return Qs::jsonStoreOk();
-        } else {
-            return Qs::jsonError('Failed to create record');
+            return Qs::jsonStoreOk('Hostel created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create hostel: ' . $th->getMessage());
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -78,9 +62,14 @@ class HostelController extends Controller
      */
     public function update(HostelUpdate $request, string $id)
     {
-        $data = $request->only(['hostel_name', 'location']);
-        $this->hostel_repository->update($id, $data);
-        return Qs::jsonUpdateOk();
+        try {
+            $data = $request->only(['hostel_name', 'location']);
+            $this->hostel_repository->update($id, $data);
+
+            return Qs::jsonUpdateOk('Hostel updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update hostel: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -88,7 +77,15 @@ class HostelController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->hostel_repository->find($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');
+        try {
+            $this->hostel_repository->find($id)->delete();
+            return Qs::goBackWithSuccess('Hostel deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete hostel referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete hostel: ' . $th->getMessage());
+        }
     }
 }

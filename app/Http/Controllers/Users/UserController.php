@@ -10,6 +10,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Users\User;
 use App\Http\Requests\Users\UserUpdate;
 use App\Repositories\Users\UserRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -72,12 +73,12 @@ class UserController extends Controller
 
             DB::commit();
 
-            return Qs::jsonStoreOk();
+            return Qs::jsonStoreOk('User created successfully');
         } catch (\Exception $e) {
 
             DB::rollBack();
             // Log the error or handle it accordingly
-            return Qs::jsonError('Failed to create record');
+            return Qs::jsonError('Failed to create user: ' . $e->getMessage());
         }
     }
 
@@ -116,7 +117,6 @@ class UserController extends Controller
 
             $userData = $request->only(['first_name', 'middle_name', 'last_name', 'gender', 'email', 'user_type_id']);
 
-
             // Check if the user already exists
             $user = $this->userRepo->find($id);
 
@@ -126,13 +126,13 @@ class UserController extends Controller
 
             DB::commit();
 
-            return Qs::jsonStoreOk();
-        } catch (\Exception $e) {
+            return Qs::jsonUpdateOk('User updated successfully');
+        } catch (\Throwable $th) {
 
             DB::rollBack();
 
             // Log the error or handle it accordingly
-            return Qs::jsonError('Failed to create record');
+            return Qs::jsonError('Failed to update user: ' . $th->getMessage());
         }
     }
 
@@ -141,7 +141,15 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->userRepo->find($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');
+        try {
+            $this->userRepo->find($id)->delete();
+            return Qs::goBackWithSuccess('User deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete a user referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete user: ' . $th->getMessage());
+        }
     }
 }

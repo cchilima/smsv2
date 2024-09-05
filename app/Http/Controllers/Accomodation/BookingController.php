@@ -18,6 +18,7 @@ use App\Repositories\Accommodation\BookingRepository;
 use App\Repositories\Accommodation\HostelRepository;
 use App\Repositories\Accommodation\RoomRepository;
 use App\Repositories\Accounting\InvoiceRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
@@ -49,18 +50,19 @@ class BookingController extends Controller
      */
     public function store(Booking $request)
     {
-        $data = $request->only(['student_id', 'bed_space_id']);
-        $data['booking_date'] = date('Y-m-d', strtotime(now()));
-        $data['expiration_date'] = date('Y-m-d', strtotime('+1 day', time()));
-        // 'student_id','bed_space_id','booking_date','expiration_date'
-        $dataB['is_available'] = 'false';
-        $data = $this->booking_repository->create($data);
-        $this->bed_space_repository->update($data['bed_space_id'], $dataB);
-        $this->booking_repository->invoiceStudent($data['student_id']);
-        if ($data) {
-            return Qs::jsonStoreOk();
-        } else {
-            return Qs::jsonError('Failed to create record');
+        try {
+            $data = $request->only(['student_id', 'bed_space_id']);
+            $data['booking_date'] = date('Y-m-d', strtotime(now()));
+            $data['expiration_date'] = date('Y-m-d', strtotime('+1 day', time()));
+            // 'student_id','bed_space_id','booking_date','expiration_date'
+            $dataB['is_available'] = 'false';
+            $data = $this->booking_repository->create($data);
+            $this->bed_space_repository->update($data['bed_space_id'], $dataB);
+            $this->booking_repository->invoiceStudent($data['student_id']);
+
+            return Qs::jsonStoreOk('Booking created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create record: ' . $th->getMessage());
         }
     }
 
@@ -80,20 +82,20 @@ class BookingController extends Controller
      */
     public function update(BookingUpdate $request, string $id)
     {
-        $data = $request->only(['student_id', 'bed_space_id']);
-        $data['booking_date'] = date('Y-m-d', strtotime(now()));
-        $data['expiration_date'] = date('Y-m-d', strtotime('+1 day', time()));
-        $dataF['is_available'] = 'false';
-        $current = $this->booking_repository->find($id);
-        $dataB['is_available'] = 'true';
-        $this->bed_space_repository->update($current->bed_space_id, $dataB);
-        $update = $this->booking_repository->update($id, $data);
-        $this->bed_space_repository->update($data['bed_space_id'], $dataF);
+        try {
+            $data = $request->only(['student_id', 'bed_space_id']);
+            $data['booking_date'] = date('Y-m-d', strtotime(now()));
+            $data['expiration_date'] = date('Y-m-d', strtotime('+1 day', time()));
+            $dataF['is_available'] = 'false';
+            $current = $this->booking_repository->find($id);
+            $dataB['is_available'] = 'true';
+            $this->bed_space_repository->update($current->bed_space_id, $dataB);
+            $update = $this->booking_repository->update($id, $data);
+            $this->bed_space_repository->update($data['bed_space_id'], $dataF);
 
-        if ($update) {
-            return Qs::jsonStoreOk();
-        } else {
-            return Qs::jsonError('Failed to create record');
+            return Qs::jsonStoreOk('Booking updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create booking: ' . $th->getMessage());
         }
     }
 
@@ -102,38 +104,47 @@ class BookingController extends Controller
      */
     public function destroy(string $id)
     {
-        $current = $this->booking_repository->find($id);
-        $dataB['is_available'] = 'true';
-        $this->bed_space_repository->update($current->bed_space_id, $dataB);
-        $this->booking_repository->find($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');
-    }
-    public function ConfirmBooking(Request $request)
-    {
-        $id = $request->input('id');
-        $student_id = $request->input('student_id');
-        $studentIdsFromEnrollment = Enrollment::where('student_id', $student_id)
-            ->first();
-        //dd($request);
-        $ac = AcademicPeriodClass::where('id', $studentIdsFromEnrollment->academic_period_class_id)->first();
-        // Get next academic period
-        $aca = AcademicPeriod::find($ac->academic_period_id);
-        $data['expiration_date'] = $aca->ac_end_date;
-        $data = $this->booking_repository->update($id, $data);
-        if ($data) {
-            return Qs::jsonStoreOk();
-        } else {
-            return Qs::jsonError();
+        try {
+            $current = $this->booking_repository->find($id);
+            $dataB['is_available'] = 'true';
+            $this->bed_space_repository->update($current->bed_space_id, $dataB);
+            $this->booking_repository->find($id)->delete();
+
+            return Qs::goBackWithSuccess('Booking deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete booking referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete booking: ' . $th->getMessage());
         }
     }
 
-    public
-    function getRooms(string $id)
+    public function ConfirmBooking(Request $request)
+    {
+        try {
+            $id = $request->input('id');
+            $student_id = $request->input('student_id');
+            $studentIdsFromEnrollment = Enrollment::where('student_id', $student_id)->first();
+            $ac = AcademicPeriodClass::where('id', $studentIdsFromEnrollment->academic_period_class_id)->first();
+
+            // Get next academic period
+            $aca = AcademicPeriod::find($ac->academic_period_id);
+            $data['expiration_date'] = $aca->ac_end_date;
+            $data = $this->booking_repository->update($id, $data);
+
+            return Qs::jsonStoreOk('Booking confirmed successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to confirm booking: ' . $th->getMessage());
+        }
+    }
+
+    public function getRooms(string $id)
     {
         return $this->rooms_repository->getSpecificRooms($id);
     }
-    public
-    function getBedSpaces(string $id)
+
+    public function getBedSpaces(string $id)
     {
         $data['students'] = $this->bed_space_repository->getActiveStudents();
         $data['spaces'] = $this->bed_space_repository->getAvailable($id);

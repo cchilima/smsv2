@@ -38,14 +38,14 @@ class SettingsController extends Controller
      */
     public function store(SettingRequest $request)
     {
-        $data = $request->only(['type', 'description']);
-        $setting = $this->settingsRepo->create($data);
+        try {
+            $data = $request->only(['type', 'description']);
+            $this->settingsRepo->create($data);
 
-        if (!$setting) {
-            return Qs::jsonError('Failed to create record');
+            return Qs::jsonStoreOk('Setting created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create setting: ' . $th->getMessage());
         }
-
-        return Qs::jsonStoreOk();
     }
 
     /**
@@ -61,9 +61,14 @@ class SettingsController extends Controller
      */
     public function update(SettingRequest $request, Setting $setting)
     {
-        $data = $request->only(['description']);
-        $this->settingsRepo->update($setting, $data);
-        return Qs::jsonUpdateOk();
+        try {
+            $data = $request->only(['description']);
+            $this->settingsRepo->update($setting, $data);
+
+            return Qs::jsonUpdateOk('Setting updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update setting: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -71,7 +76,13 @@ class SettingsController extends Controller
      */
     public function destroy(Setting $setting)
     {
-        $this->settingsRepo->delete($setting);
-        return Qs::goBackWithSuccess('Record deleted successfully');
+        return Qs::goBackWithError('Cannot delete system settings');
+
+        // try {
+        //     $this->settingsRepo->delete($setting);
+        //     return Qs::goBackWithSuccess('Record deleted successfully');
+        // } catch (\Throwable $th) {
+        //     return Qs::goBackWithError('Failed to delete record: ' . $th->getMessage());
+        // }
     }
 }
