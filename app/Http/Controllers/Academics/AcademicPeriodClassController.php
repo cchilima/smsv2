@@ -11,6 +11,7 @@ use App\Http\Requests\AcademicPeriodClasses\PeriodClass;
 use App\Http\Requests\AcademicPeriodClasses\PeriodClassUpdate;
 use App\Repositories\Academics\AcademicPeriodClassRepository;
 use App\Repositories\Academics\AcademicPeriodRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class AcademicPeriodClassController extends Controller
@@ -60,16 +61,15 @@ class AcademicPeriodClassController extends Controller
     public function store(PeriodClass $request)
     {
 
-        $data = $request->only(['instructor_id', 'course_id', 'academic_period_id']);
-        $data['key'] = rand(2, 23);
+        try {
+            $data = $request->only(['instructor_id', 'course_id', 'academic_period_id']);
+            $data['key'] = rand(2, 23);
 
+            $this->periodClasses->create($data);
 
-        $periodClass = $this->periodClasses->create($data);
-
-        if ($periodClass) {
-            return Qs::jsonStoreOk();
-        } else {
-            return Qs::json(false, 'error to create message message');
+            return Qs::jsonStoreOk('Academic period class created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create academic period class');
         }
     }
 
@@ -92,9 +92,14 @@ class AcademicPeriodClassController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $data = $request->only(['instructor_id', 'course_id', 'academic_period_id']);
-        $this->periodClasses->update($id, $data);
-        return Qs::jsonUpdateOk();
+        try {
+            $data = $request->only(['instructor_id', 'course_id', 'academic_period_id']);
+
+            $this->periodClasses->update($id, $data);
+            return Qs::jsonUpdateOk('Academic period class updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update academic period class: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -102,7 +107,15 @@ class AcademicPeriodClassController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->periodClasses->find($id)->delete();
-        return Qs::goBackWithSuccess('Record deleted successfully');
+        try {
+            $this->periodClasses->find($id)->delete();
+            return Qs::goBackWithSuccess('Academic period class deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete an academic period class referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete academic period class: ' . $th->getMessage());
+        }
     }
 }
