@@ -269,13 +269,12 @@ class StudentController extends Controller
 
             DB::commit();
 
-            return Qs::jsonStoreOk();
+            return Qs::jsonStoreOk('Student record updated successfully');
         } catch (ValidationException $e) {
             return Qs::json($e->getMessage(), false);
         } catch (\Throwable $th) {
             DB::rollBack();
 
-            dd($e);
             // Log the error or handle it accordingly
             return Qs::jsonError('Failed to update student record: ' . $th->getMessage());
         }
