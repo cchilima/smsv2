@@ -69,7 +69,7 @@ class AcademicPeriodClassController extends Controller
 
             return Qs::jsonStoreOk('Academic period class created successfully');
         } catch (\Throwable $th) {
-            return Qs::jsonError('Failed to create academic period class');
+            return Qs::jsonError('Failed to create academic period class: ' . $th->getMessage());
         }
     }
 
