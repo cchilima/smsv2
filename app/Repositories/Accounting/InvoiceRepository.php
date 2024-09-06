@@ -365,6 +365,24 @@ class InvoiceRepository
         $this->statementRepo->removeZeroStatementAmounts();
     }
 
+    public function invoiceTotal($invoice_id)
+    {
+       $invoice = $this->getInvoice($invoice_id);
+       $accumulative_total = $invoice->details->sum('amount');
+
+       return $accumulative_total;
+
+    }
+
+    public function paymentAgainstInvoice($invoice_id)
+    {
+        $invoice = $this->getInvoice($invoice_id);
+        $accumulative_payments = $invoice->statements->sum('amount');
+ 
+        return $accumulative_payments;
+
+    }
+
     public function paymentPercentageAllInvoices($student_id)
     {
         $accumulative_total = 0;

@@ -941,7 +941,7 @@
                                             <div class="form-group">
                                                 <label for="admission_year">Admission Year: <span
                                                         class="text-danger">*</span></label>
-                                                <input value="{{ $student->admission_year }}" required
+                                                <input disabled value="{{ $student->admission_year }}" required
                                                     type="year" name="admission_year" class="form-control"
                                                     placeholder="Admission Year">
                                             </div>
@@ -1014,6 +1014,27 @@
                                                     class="form-control">
                                             </div>
                                         </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Email: <span class="text-danger">*</span></label>
+                                                <input value="{{ $student->user->email }}" required
+                                                    type="text" name="email" placeholder="Email"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <!-- Add more rows as needed -->
+                                        <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="lga_id">Gender <span class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Gender" required
+                                                class="select-search form-control" name="gender" id="lga_id">
+                                                <option value="Male"  {{  $student->user->userPersonalInfo?->gender == 'Male'? 'selected' : '' }}>Male</option>
+                                                <option value="Female"  {{  $student->user->userPersonalInfo?->gender == 'Female'? 'selected' : '' }}>Female</option>
+                                            </select>
+                                        </div>
+                                    </div>
 
                                         <!-- Add more rows as needed -->
                                         <div class="col-md-6">
@@ -1111,7 +1132,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Phone: <span class="text-danger">*</span></label>
-                                                <input value="{{ $student->user->userNextOfKin->phone }}" required
+                                                <input value="{{ $student->user->userNextOfKin->mobile }}" required
                                                     type="text" name="kin_mobile" class="form-control"
                                                     placeholder="">
                                             </div>
@@ -1541,6 +1562,53 @@
         </div>
 
     @endif
+
+
+
+
+    <div class="card card-collapsed">
+
+        <div class="card-header header-elements-inline">
+            <h6 class="card-title">Course Management</h6>
+            {!! Qs::getPanelOptions() !!}
+        </div>
+
+        <div class="card-body">
+
+
+            @if(count($enrolled_courses) > 0)
+
+            <div class="text-right ">
+                <a href="{{ route('students.add-drop-course', $student->id ) }}" class="btn btn-primary mt-2 mb-2 right text-white">Course Add \ Drop</a>
+             </div>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Code</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($enrolled_courses as $course)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $course['course']->code }}</td>
+                            <td>{{ $course['course']->name }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            @else
+            <div class="container ">
+                <p>No course available</p>
+            </div>
+        @endif
+
+        </div>
+    </div>
 
 </div>
 

@@ -74,6 +74,22 @@ class ViewInvoiceDetails extends Component
     {
         try {
 
+            // check if invoice is not in negative
+            
+            $invoice_payments = $this->invoiceRepo->paymentAgainstInvoice($this->invoice->id);
+            $invoice_total = $this->invoiceRepo->invoiceTotal($this->invoice->id);
+
+            // credit notes total
+            $creditNotesTotal = 0;
+
+            foreach($this->creditNoteItems as $item){
+               $creditNotesTotal += $item['amount'];
+            }
+
+            if( $creditNotesTotal > ($invoice_total -  $invoice_payments)){
+               return $this->dispatch('raise-another-invoice');
+            }
+
             $created = $this->creditNoteRepo->raiseCreditNote($this->creditNoteItems); 
 
             $this->reset(['creditNoteReason','creditNoteItems']);
@@ -82,7 +98,9 @@ class ViewInvoiceDetails extends Component
                 // Queue the email
                 Mail::to('stembo@zut.edu.zm')->bcc(['stembo@zut.edu.zm'])->queue(new ApproveCreditNote());
                 
+                $this->mount($this->invoice->id);
                 return $this->dispatch('credit-note-created');
+
             } else {
                 return $this->dispatch('credit-note-exists');
             }

@@ -164,6 +164,12 @@
             })
         });
 
+        $wire.on('raise-another-invoice', () => {
+            M.toast({
+                html: 'raise a new and then raise credit note.'
+            })
+        });
+
         $wire.on('give-reason', () => {
             M.toast({
                 html: 'please specify reason'

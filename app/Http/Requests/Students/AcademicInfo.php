@@ -23,12 +23,12 @@ class AcademicInfo extends FormRequest
     {
         return [
 
-            'program_id' => 'required|exists:programs,id',
-            'study_mode_id' => 'required|exists:study_modes,id',
-            'period_type_id' => 'required|exists:period_types,id',
-            'academic_period_intake_id' => 'required|exists:academic_period_intakes,id',
-            'course_level_id' => 'required|exists:course_levels,id',
-            'graduated' => 'required|boolean',
+          //  'program_id' => 'required|exists:programs,id',
+              'study_mode_id' => 'required|exists:study_modes,id',
+         //   'period_type_id' => 'required|exists:period_types,id',
+         //   'academic_period_intake_id' => 'required|exists:academic_period_intakes,id',
+         //   'course_level_id' => 'required|exists:course_levels,id',
+              'graduated' => 'required|boolean',
 
         ];
     }
