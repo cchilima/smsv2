@@ -63,7 +63,6 @@ class AcademicPeriodClassController extends Controller
 
         try {
             $data = $request->only(['instructor_id', 'course_id', 'academic_period_id']);
-            $data['key'] = rand(2, 23);
 
             $this->periodClasses->create($data);
 
