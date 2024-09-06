@@ -14,7 +14,7 @@
             <ul class="nav nav-tabs nav-tabs-highlight">
                 <li class="nav-item"><a href="#new-period" class="nav-link active show" data-toggle="tab"><i
                             class="icon-plus2"></i>
-                        Create New Academic Period</a></li>
+                        Add Information</a></li>
                 <li class="nav-item"><a href="#all-fees" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
                         Create Classes</a></li>
                 <li class="nav-item"><a href="#new-ac-fees" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
