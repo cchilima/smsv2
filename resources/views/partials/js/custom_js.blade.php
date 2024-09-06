@@ -853,7 +853,7 @@
 
 
     function modifyMarksCAsL(id, student, code, name, grades) {
-        console.log(student);
+        // console.log(student);
 
         // const user = JSON.parse(student);
         //console.log(user);
@@ -866,13 +866,12 @@
 
         // const user = JSON.parse(decodeURIComponent(student));
         const data = JSON.parse(decodeURIComponent(grades));
-        console.log(data);
+        // console.log(data);
 
 
         // Check if the response is valid and contains data
         if (data && data.length > 0) {
             // Assuming that you want to update the modal body with data from the response
-            console.log("hi there mweemba");
             var title = $('#staticBackdropLabel');
             title.text(student);
             // Clear the existing content in the modal body
@@ -936,7 +935,7 @@
         var modalBody = $('#staticBackdrop .modal-body');
         modalBody.empty();
         const data = JSON.parse(grades);
-        console.log(data);
+        // console.log(data);
 
         // Check if the response is valid and contains data
         if (data && data.length > 0) {
@@ -1004,7 +1003,7 @@
 
         const user = JSON.parse(decodeURIComponent(student));
         const data = JSON.parse(decodeURIComponent(grades));
-        console.log(data);
+        // console.log(data);
 
         // Check if the response is valid and contains data
         if (data && data.length > 0) {
@@ -1082,7 +1081,7 @@
             },
             success: function(resp) {
                 // Update the display mode with the new value
-                console.log(resp)
+                // console.log(resp)
                 // Check if the response is valid and contains data
                 if (resp && 'id' in resp) {
                     // Assuming that you want to update the modal body with data from the response
@@ -1136,7 +1135,7 @@
                     $('#assesmentID').val('');
                 } else {
                     // Handle the case where there is no data or an error occurred
-                    console.log('No data found in the response or an error occurred.');
+                    // console.log('No data found in the response or an error occurred.');
                     flash({
                         msg: 'No Assessments found for the course',
                         type: 'danger'
@@ -1195,7 +1194,7 @@
 
                 },
                 success: function(resp) {
-                    console.log(resp)
+                    // console.log(resp)
                     if (resp.ok === true) {
                         $('#staticBackdrop').modal('hide');
 
@@ -1220,7 +1219,7 @@
             $('#staticBackdrop').modal('hide');
         }
         // You now have an array containing objects with "Total" and "key" values
-        console.log(updatedAssessments);
+        // console.log(updatedAssessments);
         // $('#staticBackdrop').modal('hide');
 
         // You can send this data to the server using an AJAX request or perform any other action as needed.
@@ -1256,7 +1255,7 @@
         });
         var academic = $('input[name="academic"]').val();
         var type = $('input[name="type"]').val();
-        console.log(academic);
+        // console.log(academic);
         if (ids != '') {
             $(this).attr("disabled", true);
             $(this).html('<i class="fa fa-spinner fa-spin"></i> Publish Results');
@@ -1270,7 +1269,7 @@
                     type: type
                 },
                 success: function(resp) {
-                    console.log(resp)
+                    // console.log(resp)
                     $('.success-mail').css('display', 'block');
                     $('.publish-results-board').attr("disabled", false);
                     $('.publish-results-board').html(
@@ -1318,7 +1317,7 @@
                 level: level
             },
             success: function(response) {
-                console.log(response)
+                // console.log(response)
                 if (response && Object.keys(response.students).length > 0) {
                     $.each(response.students, function(studentId, student) {
                         var coursesHtml = '';
@@ -1446,7 +1445,7 @@
                 level: level
             },
             success: function(response) {
-                console.log(response.data)
+                // console.log(response.data)
 
                 if (response && Object.keys(response.students).length > 0) {
                     $.each(response.students, function(studentId, student) {
@@ -1548,7 +1547,7 @@
 
     function updateLoadMoreButtonCAs(academicData, program, academic, level) {
         // Dynamically set the onclick function with the new academicData
-        console.log(program);
+        // console.log(program);
         var button = $('.load-more-results-first-cas');
         button.attr('onclick',
             `LoadMoreResultsCas('${academicData.current_page}', '${academicData.last_page}', '${academicData.per_page}', '${program}', '${academic}', '${level}')`
