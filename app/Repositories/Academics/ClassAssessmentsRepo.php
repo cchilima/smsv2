@@ -404,6 +404,7 @@ class ClassAssessmentsRepo
                                 'grade' => self::calculateGrade($grade->total, $student->program->id),
                                 'outof' => self::getClassAssessmentCastotal($courseId, $aid),
                                 'id' => self::getGradeIDCAs($aid, $courseId, $studentId),
+                                'student_id' => $studentId,
                             ];
 
                             $organizedData['students'][$studentId]['courses'][$courseId]['course_details']['student_grades'][] = $studentGrades;
@@ -606,6 +607,7 @@ class ClassAssessmentsRepo
                                 'grade' => self::calculateGrade($grade->total, $student->program->id),
                                 'outof' => self::getClassAssessmentCastotal($courseId, $aid),
                                 'id' => self::getGradeIDCAs($aid, $courseId, $studentId),
+                                'student_id' => $studentId,
                             ];
 
                             $organizedData['students'][$studentId]['courses'][$courseId]['course_details']['student_grades'][] = $studentGrades;
@@ -756,6 +758,7 @@ class ClassAssessmentsRepo
                     foreach ($enrollment->class->course->grades as $grade) {
                         if ($grade->academic_period_id == $aid && $grade->student_id == $studentId) {
                             $studentGrades = [
+                                'student_id' => $studentId,
                                 'exams' => $grade->exam,
                                 'exam' => $grade->exam,
                                 'ca' => $grade->ca,
@@ -1094,7 +1097,7 @@ class ClassAssessmentsRepo
             ])
             ->distinct('students.id') // Assuming 'id' is the primary key of the students table
             ->count();*/
-       return Student::where('program_id', $pid)
+        return Student::where('program_id', $pid)
             ->where('course_level_id', $level)
             ->whereHas('grades', function ($query) use ($aid) {
                 $query->where('academic_period_id', $aid);

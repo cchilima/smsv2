@@ -539,10 +539,12 @@ class ClassAssessmentsController extends Controller
                 'updated_at' => now(),
             ]);
 
-            return Qs::jsonStoreOk('Student results added successfully');
+            DB::commit();
+
+            return Qs::jsonStoreOk('Student grades added successfully');
         } catch (\Throwable $th) {
             DB::rollBack();
-            return Qs::jsonError('Failed to add student results: ' . $th->getMessage());
+            return Qs::jsonError('Failed to add student grades: ' . $th->getMessage());
         }
     }
     public function getStudentsProgramResults($id)

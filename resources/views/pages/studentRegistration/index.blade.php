@@ -106,7 +106,7 @@
                         @if (!$isRegistered)
                             <form action="{{ route('enrollments.store') }}" method="post">
                                 @csrf
-                                <input name="student_number" type="hidden" value="{{ $student->id }}" />
+                                <input name="student_number" type="hidden" value="{{ auth()->user()->student->id }}" />
                                 <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register
                                 </button>
                             </form>
