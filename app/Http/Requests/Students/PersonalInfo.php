@@ -34,7 +34,7 @@ class PersonalInfo extends FormRequest
             'country_id' => 'required|exists:countries,id',
             'nrc' => 'required|string|max:20',
             'passport' => 'nullable|string|max:20',
-            'passport_photo_path' => 'nullable|file|mimes:jpeg,png|max:2048',
+            // 'passport_photo_path' => 'nullable|file|mimes:jpeg,png|max:2048',
         ];
     }
 }

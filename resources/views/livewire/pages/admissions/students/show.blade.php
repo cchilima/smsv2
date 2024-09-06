@@ -20,8 +20,10 @@
                         : asset($student->user->userPersonalInfo?->passport_photo_path);
                 @endphp
 
-                <img style="aspect-ratio: 1/1; object-fit: cover" src="{{ $passportPhotoUrl }}" alt="photo"
-                    class="rounded-circle w-100 h-100">
+                <div class="rounded-circle w-100 h-100">
+                    <img style="aspect-ratio: 1/1; object-fit: cover" src="{{ $passportPhotoUrl }}" alt="photo"
+                        class="rounded-circle w-100 h-100">
+                </div>
                 <br>
                 <h3 class="mt-3">{{ $student->user->first_name . ' ' . $student->user->last_name }}</h3>
                 <h6 class="mt-1">{{ $student->id }}</h6>
@@ -30,20 +32,18 @@
 
         <div class="card">
             <div wire:ignore class="card-body p-4">
-                <form class="ajax-update" method="post" action="{{ route('students.update', $student->user->id) }}">
-                    @csrf
-                    @method('PUT')
+                <form wire:submit="uploadPassportPhoto">
 
                     <h6 class="card-title">Update Student Photo:</h6>
 
                     <div class="form-group">
-                        <input accept="image/*" type="file" name="passport_photo_path" class="form-input-styled"
+                        <input accept="image/*" type="file" wire:model="passportPhoto" class="form-input-styled"
                             required>
                         <span class="form-text text-muted">JPG or PNG. 2MB Max</span>
                     </div>
 
                     <div class="text-left">
-                        <button type="submit" class="btn btn-primary">
+                        <button wire:loading.attr="disabled" type="submit" class="btn btn-primary">
                             Update <i class="icon-pencil ml-2"></i>
                         </button>
                     </div>
@@ -763,12 +763,15 @@
                             </h4>
                         </div>
 
-                        <livewire:datatables.admissions.students.invoices :studentId="$studentId" />
-
+                        @livewire('datatables.admissions.students.invoices', [
+                            'studentId' => $student->id,
+                        ])
                     </div>
 
                     <div class="tab-pane fade show" id="payment-history">
-                        <livewire:datatables.admissions.students.payment-history :studentId="$studentId" />
+                        @livewire('datatables.admissions.students.payment-history', [
+                            'studentId' => $student->id,
+                        ])
                     </div>
 
                 </div>
@@ -876,8 +879,8 @@
                                             <div class="form-group">
                                                 <label for="academic_period_intake_id">Academic Period Intake: <span
                                                         class="text-danger">*</span></label>
-                                                <select disabled data-placeholder="Select Academic Period Intake" required
-                                                    class="select-search form-control"
+                                                <select disabled data-placeholder="Select Academic Period Intake"
+                                                    required class="select-search form-control"
                                                     name="academic_period_intake_id" id="academic_period_intake_id">
                                                     <option value=""></option>
                                                     @foreach ($periodIntakes as $intake)

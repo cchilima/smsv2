@@ -229,11 +229,6 @@ class StudentController extends Controller
                 $nextOfKinDataWithPrefix = $request->validate($nextOfKinInfoRequest->rules());
             } elseif ($request->program_id) {
                 $studentData = $request->validate($academicInfoRequest->rules());
-            } elseif ($request->passport_photo_path) {
-                // Validate passport photo for photo update operations
-                $personalData = $request->validate([
-                    'passport_photo_path' => $personalInfoRequest->rules()['passport_photo_path']
-                ]);
             }
 
             if ($nextOfKinDataWithPrefix) {
@@ -255,14 +250,6 @@ class StudentController extends Controller
                 // Update the user data
                 $user->update($userData);
             } elseif ($personalData) {
-                // Update or create UserPersonalInfo
-                $passportPhotoObject = $personalData['passport_photo_path'] ?? null;
-
-                // Upload passport photo
-                if ($passportPhotoObject) {
-                    $personalData['passport_photo_path'] = $this->userPersonalInfoRepo->uploadPassportPhoto($passportPhotoObject, $user->id);
-                }
-
                 $user->userPersonalInfo()->update($personalData);
             } elseif ($nextOfKinDataWithPrefix) {
                 // Update or create NextOfKin
@@ -294,25 +281,6 @@ class StudentController extends Controller
             return Qs::jsonStoreOk('Password reset successfully');
         } catch (\Exception $e) {
             return Qs::jsonError('Failed to reset password: ' . $e->getMessage());
-        }
-    }
-
-    public function destroy($studentId)
-    {
-        try {
-            DB::beginTransaction();
-
-            $this->studentRepo->destroy($studentId);
-
-            DB::commit();
-
-            return Qs::goBackWithSuccess('Student deleted successfully');
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            throw $e;
-
-            return Qs::goBackWithError('Failed to delete student: '  . $e->getMessage());
         }
     }
 
