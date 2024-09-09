@@ -463,18 +463,12 @@ class ClassAssessmentsController extends Controller
 
     public function PublishForAllStudents($ac, $type)
     {
-        $this->classaAsessmentRepo->publishGrades(null, $ac, $type);
-
-        // $id = Qs::decodeHash($ac);
-        $academicPeriod = $this->academic->find($ac);
-        $programs = $this->classaAsessmentRepo->publishAvailableProgramsCas($ac);
-        //dd($programs);
-        if ($type == 1) {
-            return view('pages.class_assessments.edit', compact('programs', 'academicPeriod'));
+        try {
+            $this->classaAsessmentRepo->publishGrades(null, $ac, $type);
+            return Qs::goBackWithSuccess('Results published successfully');
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to publish grades: ' . $th->getMessage());
         }
-        return view('pages.cas.edit', compact('programs', 'academicPeriod'));
-
-        //return redirect(route('getPublishPrograms',$ac));
     }
     public function MyCAResults()
     {
