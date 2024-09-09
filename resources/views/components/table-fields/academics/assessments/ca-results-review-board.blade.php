@@ -92,3 +92,29 @@
         {{-- {{ Form::label('publish', 'Publish', ['class' => 'mr-3 float-right']) }} --}}
     </p>
 </div>
+
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content row col card card-body">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <div class="list-icons">
+                    <a type="submit" class="btn btn-outline-light" onclick="CloseModal()"><i
+                            class="icon-close2 ml-2"></i></a>
+                </div>
+            </div>
+            <div class="modal-body p-3">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary closeModalButton" onclick="CloseModal()"
+                    id="closeModalButton" data-bs-dismiss="modal">
+                    Close
+                </button>
+                <button wire:click.debounce.1000ms="$refresh" type="button" onclick="SubmitData()"
+                    class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
