@@ -26,7 +26,7 @@ class Qs
 
     public static function getAppCode()
     {
-        return self::getSetting('system_title') ?: 'ZUT';
+        return self::getSetting('system_title') ?: 'Zambia University College of Technology';
     }
 
     public static function getDefaultUserImage()

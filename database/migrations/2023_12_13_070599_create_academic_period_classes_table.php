@@ -22,7 +22,6 @@ return new class extends Migration
             $table->index('instructor_id');
             $table->index('course_id');
             $table->index('academic_period_id');
-            $table->index('key');
         });
     }
 
