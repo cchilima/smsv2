@@ -496,6 +496,7 @@ class ClassAssessmentsRepo
                     foreach ($enrollment->class->course->grades as $grade) {
                         if ($grade->academic_period_id == $aid && $grade->student_id == $studentId) {
                             $studentGradesArr[$studentId]['courses'][$courseId]['grades'][] = [
+                                'student_id' => $studentId,
                                 'type' => $grade->assessment_type->name,
                                 'total' => $grade->total,
                                 'grade' => self::calculateGrade($grade->total, $student->program->id),
@@ -862,6 +863,7 @@ class ClassAssessmentsRepo
                     foreach ($enrollment->class->course->grades as $grade) {
                         if ($grade->academic_period_id == $aid && $grade->student_id == $studentId) {
                             $studentGradesArr[$studentId]['courses'][$courseId]['grades'] = [
+                                'student_id' => $studentId,
                                 'exam' => $grade->exam,
                                 'ca' => $grade->ca,
                                 'total_sum' => $grade->total_sum,
@@ -1094,7 +1096,7 @@ class ClassAssessmentsRepo
             ])
             ->distinct('students.id') // Assuming 'id' is the primary key of the students table
             ->count();*/
-       return Student::where('program_id', $pid)
+        return Student::where('program_id', $pid)
             ->where('course_level_id', $level)
             ->whereHas('grades', function ($query) use ($aid) {
                 $query->where('academic_period_id', $aid);
@@ -1195,7 +1197,7 @@ class ClassAssessmentsRepo
                 return $stud->grades->where('publication_status', 0)->where('assessment_type_id', 1)->where('course_id', $courseId)->isNotEmpty();
             }
         )->count();
-         //dd($matchingCourseCount);
+        //dd($matchingCourseCount);
         // Retrieve distinct course levels for the student's program
         $distinctCourseLevels = ProgramCourses::where('program_id', $stud->program_id)
             ->distinct('course_level_id')
