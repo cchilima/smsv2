@@ -103,6 +103,10 @@
                                     <td>{{ '' }}</td>
                                 </tr>
                                 <tr>
+                                    <td class="font-weight-bold text-justify">Semester</td>
+                                    <td>{{ $student->semester }}</td>
+                                </tr>
+                                <tr>
                                     <td class="font-weight-bold text-justify">Study Category</td>
                                     <td class="academic-infor">
                                         <span>{{ $student->study_mode->name }}</span>

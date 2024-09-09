@@ -1198,7 +1198,7 @@ class ClassAssessmentsRepo
                 return $stud->grades->where('publication_status', 0)->where('assessment_type_id', 1)->where('course_id', $courseId)->isNotEmpty();
             }
         )->count();
-        // dd($matchingCourseCount);
+         //dd($matchingCourseCount);
         // Retrieve distinct course levels for the student's program
         $distinctCourseLevels = ProgramCourses::where('program_id', $stud->program_id)
             ->distinct('course_level_id')
@@ -1237,6 +1237,7 @@ class ClassAssessmentsRepo
                     'message' => 'true'
                 ];
             } elseif ($matchingCourseCount > 1) {
+
                 // Determine the next course level
                 $nextCourseLevelId = $distinctCourseLevels->get($currentIndex + 1);
 

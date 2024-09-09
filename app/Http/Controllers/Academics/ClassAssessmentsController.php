@@ -466,13 +466,13 @@ class ClassAssessmentsController extends Controller
         $this->classaAsessmentRepo->publishGrades(null, $ac, $type);
 
         // $id = Qs::decodeHash($ac);
-        $period = $this->academic->find($ac);
+        $academicPeriod = $this->academic->find($ac);
         $programs = $this->classaAsessmentRepo->publishAvailableProgramsCas($ac);
         //dd($programs);
         if ($type == 1) {
-            return view('pages.class_assessments.edit', compact('programs', 'period'));
+            return view('pages.class_assessments.edit', compact('programs', 'academicPeriod'));
         }
-        return view('pages.cas.edit', compact('programs', 'period'));
+        return view('pages.cas.edit', compact('programs', 'academicPeriod'));
 
         //return redirect(route('getPublishPrograms',$ac));
     }
