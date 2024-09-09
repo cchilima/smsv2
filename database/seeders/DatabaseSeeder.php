@@ -414,6 +414,8 @@ class DatabaseSeeder extends Seeder
             ['type' => 'address', 'description' => '2893 Kalewa Road'],
             ['type' => 'township', 'description' => 'Northrise'],
             ['type' => 'town', 'description' => 'Ndola'],
+            ['type' => 'province', 'description' => 'Copperbelt'],
+            ['type' => 'country', 'description' => 'Zambia'],
             ['type' => 'system_email', 'description' => 'test@admin.com'],
             ['type' => 'alt_email', 'description' => ''],
             ['type' => 'email_host', 'description' => ''],
