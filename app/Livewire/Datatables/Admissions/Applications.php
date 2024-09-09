@@ -53,35 +53,35 @@ final class Applications extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('applicant_code')
-            ->add('nrc')
-            ->add('passport')
+            ->add('national_id', function ($row) {
+                return $row->nrc ? $row->nrc : ($row->passport ? $row->passport : '-');
+            })
             ->add('first_name')
-            ->add('middle_name')
             ->add('last_name')
             ->add('gender')
             ->add('date_of_birth')
             ->add('fee_paid', function (Applicant $row) {
                 return $row->payment->sum('amount');
             })
-            ->add('status')
-            ->add('program.name')
-            ->add('study_mode.name')
-            ->add('intake.name')
-            ->add('application_date');
+            ->add('created_at');
     }
 
     public function columns(): array
     {
         return [
-            Column::make('First Name', 'first_name')
+            Column::make('Application Code', 'applicant_code')
                 ->sortable()
                 ->searchable(),
+
+            Column::make('First Name', 'first_name')
+                ->searchable()
+                ->sortable(),
 
             Column::make('Last Name', 'last_name')
-                ->sortable()
-                ->searchable(),
+                ->searchable()
+                ->sortable(),
 
-            Column::make('Application Code', 'applicant_code')
+            Column::make('Gender', 'gender')
                 ->sortable()
                 ->searchable(),
 
@@ -91,26 +91,8 @@ final class Applications extends PowerGridComponent
 
             Column::make('Fee Paid (K)', 'fee_paid'),
 
-            Column::make('NRC', 'nrc')
-                ->sortable()
-                ->searchable(),
 
-            Column::make('Passport', 'passport')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Date of Birth', 'date_of_birth')
-                ->sortable(),
-
-            Column::make('Gender', 'gender')
-                ->sortable()
-                ->searchable(),
-
-
-            Column::make('Program', 'program.name'),
-            Column::make('Study Mode', 'study_mode.name'),
-            Column::make('Intake', 'intake.name'),
-            Column::make('Application Date', 'created_at')
+            Column::make('Date', 'created_at')
                 ->sortable()
                 ->searchable(),
 

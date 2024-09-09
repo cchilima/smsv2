@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\MaritalStatuses\MaritalStatus;
 use App\Http\Requests\MaritalStatuses\MaritalStatusUpdate;
 use App\Repositories\Profile\MaritalStatusRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class MaritalStatusController extends Controller
@@ -37,14 +38,13 @@ class MaritalStatusController extends Controller
      */
     public function store(MaritalStatus $request)
     {
-        $data = $request->only(['status', 'description']);
+        try {
+            $data = $request->only(['status', 'description']);
+            $this->maritalStatuses->create($data);
 
-        $maritalStatus = $this->maritalStatuses->create($data);
-
-        if ($maritalStatus) {
-            return Qs::jsonStoreOk();
-        } else {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonStoreOk('Marital status created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create marital status: ' . $th->getMessage());
         }
     }
 
@@ -59,15 +59,19 @@ class MaritalStatusController extends Controller
             : Qs::goWithDanger('pages.maritalStatuses.index');
     }
 
-
     /**
      * Update the specified resource in storage.
      */
     public function update(MaritalStatusUpdate $request, string $id)
     {
-        $data = $request->only(['status', 'description']);
-        $this->maritalStatuses->update($id, $data);
-        return Qs::jsonUpdateOk();
+        try {
+            $data = $request->only(['status', 'description']);
+            $this->maritalStatuses->update($id, $data);
+
+            return Qs::jsonUpdateOk('Marital status updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update marital status: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -75,7 +79,17 @@ class MaritalStatusController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->maritalStatuses->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        try {
+            $this->maritalStatuses->find($id)->delete();
+            return Qs::goBackWithSuccess('Marital status deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete a marital status referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError(
+                'Failed to delete marital status: ' . $th->getMessage()
+            );
+        }
     }
 }

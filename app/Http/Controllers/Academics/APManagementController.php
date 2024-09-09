@@ -47,45 +47,34 @@ class APManagementController extends Controller
         return view('pages.academicPeriodInformation.index', compact('courses', 'studyModes', 'programsCourses', 'intakes', 'academic', 'instructors', 'fees'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(APinformation $request)
     {
-        //
+        try {
+            $data = $request->only([
+                'academic_period_intake_id',
+                'study_mode_id',
+                'view_results_threshold',
+                'exam_slip_threshold',
+                'registration_threshold',
+                'late_registration_end_date',
+                'late_registration_date',
+                'registration_date',
+                'academic_period_id'
+            ]);
 
-        $data = $request->only([
-            'academic_period_intake_id', 'study_mode_id', 'view_results_threshold',
-            'exam_slip_threshold', 'registration_threshold', 'late_registration_end_date', 'late_registration_date',
-            'registration_date', 'academic_period_id'
-        ]);
+            $data['late_registration_end_date'] = date('Y-m-d', strtotime($data['late_registration_end_date']));
+            $data['late_registration_date'] = date('Y-m-d', strtotime($data['late_registration_date']));
+            $data['registration_date'] = date('Y-m-d', strtotime($data['registration_date']));
+            $period = $this->periods->APcreate($data);
 
-        $data['late_registration_end_date'] = date('Y-m-d', strtotime($data['late_registration_end_date']));
-        $data['late_registration_date'] = date('Y-m-d', strtotime($data['late_registration_date']));
-        $data['registration_date'] = date('Y-m-d', strtotime($data['registration_date']));
-        $period = $this->periods->APcreate($data);
-
-        if ($period) {
-            return Qs::jsonStoreOk();
-        } else {
-            return Qs::json(false, 'failed to create message');
+            return Qs::jsonStoreOk('Academic period information added successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to add academic period information: ' . $th->getMessage());
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -127,13 +116,5 @@ class APManagementController extends Controller
         } else {
             return Qs::json(false, 'failed to create message');
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

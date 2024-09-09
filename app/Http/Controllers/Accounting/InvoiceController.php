@@ -24,63 +24,6 @@ class InvoiceController extends Controller
     {
         $this->middleware(TeamSAT::class, ['only' => ['destroy',]]);
         $this->invoiceRepo = $invoiceRepo;
-
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 
     /**
@@ -89,19 +32,10 @@ class InvoiceController extends Controller
     public function batchInvoicing(Request $request)
     {
         try {
-
-            $batchInvoiced = $this->invoiceRepo->invoiceStudents($request->academic_period);
-
-            if ($batchInvoiced) {
-
-                return Qs::jsonStoreOk();
-            } else {
-                return Qs::json(false, 'failed to invoice batch');
-            }
-        } catch (\Exception $e) {
-
-            // Log the error or handle it accordingly
-            return Qs::json(false, 'failed to invoice batch');
+            $this->invoiceRepo->invoiceStudents($request->academic_period);
+            return Qs::jsonStoreOk('Batch invoicing successful');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Batch invoicing failed: ' . $th->getMessage());
         }
     }
 
@@ -111,48 +45,52 @@ class InvoiceController extends Controller
      */
     public function Invoice(Request $request)
     {
-
         try {
-
-            $student_invoiced = $this->invoiceRepo->invoiceStudent($request->academic_period, $request->student_id);
-
-            return $student_invoiced ? Qs::jsonStoreOk() : Qs::json('Failed to invoice student.', false);
-        } catch (\Exception $e) {
-
-            // Log the error or handle it accordingly
-
+            $this->invoiceRepo->invoiceStudent($request->academic_period, $request->student_id);
+            return Qs::jsonStoreOk('Student invoiced successfully');
+        } catch (\Throwable $th) {
+            Qs::jsonError('Failed to invoice student: ' . $th->getMessage());
         }
     }
 
     public function customInvoice(Request $request)
     {
         try {
+            $this->invoiceRepo->customInvoiceStudent(
+                $request->amount,
+                $request->fee_id,
+                $request->student_id
+            );
 
-            // custom invoice student
-            $student_invoiced = $this->invoiceRepo->customInvoiceStudent($request->amount, $request->fee_id, $request->student_id);
-
-            // give user feedback
-            return $student_invoiced ? Qs::jsonStoreOk() : Qs::json(false, 'Failed to invoice student.');
-        } catch (\Exception $e) {
-            //throw $th;
+            return Qs::jsonStoreOk('Student invoiced successfully');
+        } catch (\Throwable $th) {
+            Qs::jsonError('Failed to invoice student: ' . $th->getMessage());
         }
     }
 
     public function downloadInvoice(Request $request, Invoice $invoice)
     {
-        $student = $invoice->student;
-        $fileName = $student->id . '-invoice-' . $invoice->created_at->format('d-m-Y') . '.pdf';
+        try {
+            $student = $invoice->student;
+            $fileName = $student->id . '-invoice-' . $invoice->created_at->format('d-m-Y') . '.pdf';
 
-        $pdf = Pdf::loadView('templates.pdf.invoice', compact('invoice', 'student'));
+            $pdf = Pdf::loadView('templates.pdf.invoice', compact('invoice', 'student'));
 
-        return $pdf->download($fileName);
+            return $pdf->download($fileName);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to download invoice: ' . $th->getMessage());
+        }
     }
 
     public function exportInvoices(Request $request, Student $student)
     {
-        $fileName = $student->id . '-invoices-' . now()->format('d-m-Y-His') . '.xlsx';
-        $export = new InvoicesExport($student);
+        try {
+            $fileName = $student->id . '-invoices-' . now()->format('d-m-Y-His') . '.xlsx';
+            $export = new InvoicesExport($student);
 
-        return Excel::download($export, $fileName);
+            return Excel::download($export, $fileName);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to export invoices: ' . $th->getMessage());
+        }
     }
 }

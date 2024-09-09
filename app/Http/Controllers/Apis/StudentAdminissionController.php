@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Apis;
 
+use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Students\Student;
 use App\Repositories\Academics\ClassAssessmentsRepo;
@@ -20,7 +21,7 @@ class StudentAdminissionController extends Controller
     protected $studentRepo;
     protected $registrationRepo;
     protected $userPersonalInfoRepo;
-    protected $userRepo,$qualifications;
+    protected $userRepo, $qualifications;
     protected $userNextOfKinRepo, $enrollmentRepo, $classaAsessmentRepo;
 
     public function __construct(
@@ -31,8 +32,8 @@ class StudentAdminissionController extends Controller
         userNextOfKinRepository $userNextOfKinRepo,
         QualificationsRepository $qualifications
     ) {
-       // $this->middleware(TeamSA::class, ['except' => ['destroy']]);
-       // $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
+        // $this->middleware(TeamSA::class, ['except' => ['destroy']]);
+        // $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
 
         $this->studentRepo = $studentRepo;
         $this->registrationRepo = $registrationRepo;
@@ -48,7 +49,7 @@ class StudentAdminissionController extends Controller
      */
     public function store(Request $request)
     {
-       // return $this->qualifications->getAll();
+        // return $this->qualifications->getAll();
         try {
 
             DB::beginTransaction();
@@ -73,7 +74,8 @@ class StudentAdminissionController extends Controller
 
             // Upload passport photo
             if ($passportPhotoPath = $personalData['passport_photo_path'] ?? null) {
-                $personalData['passport_photo_path'] = $this->userPersonalInfoRepo->uploadPassportPhoto($passportPhotoPath);
+                $personalData['passport_photo_path'] = $this->userPersonalInfoRepo
+                    ->uploadPassportPhoto($passportPhotoPath, $user->id);
             }
 
             // Create personal info record
@@ -98,9 +100,7 @@ class StudentAdminissionController extends Controller
 
             DB::rollBack();
             // Log the error or handle it accordingly
-            return 'msg.create_failed => ' . $e->getMessage();
+            return Qs::jsonError('Failed to create record => ' . $e->getMessage());
         }
     }
-
-
 }

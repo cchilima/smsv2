@@ -18,8 +18,8 @@ class ProgramCoursesController extends Controller
     protected $programCoursesRepo;
     public function __construct(ProgramCoursesRepository $programCoursesRepo)
     {
-        $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
-        $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
+        $this->middleware(TeamSA::class, ['except' => ['destroy',]]);
+        $this->middleware(SuperAdmin::class, ['only' => ['destroy',]]);
 
 
         $this->programCoursesRepo = $programCoursesRepo;
@@ -42,49 +42,33 @@ class ProgramCoursesController extends Controller
      */
     public function store(ProgramCourse $req)
     {
-        $data = $req->only(['course_id', 'program_id','level_id']);
+        try {
+            $data = $req->only(['course_id', 'program_id', 'level_id']);
 
-        foreach ($data['course_id'] as $courseID) {
-            $this->programCoursesRepo->create([
-                'course_id' => $courseID,
-                'program_id' => $data['program_id'],
-                'course_level_id' => $data['level_id'],
-            ]);
+            foreach ($data['course_id'] as $courseID) {
+                $this->programCoursesRepo->create([
+                    'course_id' => $courseID,
+                    'program_id' => $data['program_id'],
+                    'course_level_id' => $data['level_id'],
+                ]);
+            }
+
+            return Qs::jsonStoreOk('Program course created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create program course: ' . $th->getMessage());
         }
-
-        return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $program,string $level,string $course)
+    public function destroy(string $program, string $level, string $course)
     {
-        $this->programCoursesRepo->findProgramlevelCoursesDelete($program,$level,$course)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        try {
+            $this->programCoursesRepo->findProgramlevelCoursesDelete($program, $level, $course)->delete();
+            return Qs::goBackWithSuccess('Program course deleted successfully');;
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete program course: ' . $th->getMessage());
+        }
     }
 }

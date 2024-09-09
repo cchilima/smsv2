@@ -17,16 +17,28 @@ class SchoolController extends Controller
 
     public function getAll()
     {
-        return $this->schools->getAll();
+        try {
+            return $this->schools->getAll();
+        } catch (\Throwable $th) {
+            return response()->json('Failed to get schools: ' . $th->getMessage(), 400);
+        }
     }
 
     public function findBySlug($slug)
     {
-        return response()->json($this->schools->findBySlug($slug));
+        try {
+            return response()->json($this->schools->findBySlug($slug));
+        } catch (\Throwable $th) {
+            return response()->json('Failed to get school: ' . $th->getMessage(), 400);
+        }
     }
 
     public function getDepartmentsBySchoolSlug($slug)
     {
-        return response()->json($this->schools->getDepartmentsBySchoolSlug($slug));
+        try {
+            return response()->json($this->schools->getDepartmentsBySchoolSlug($slug));
+        } catch (\Throwable $th) {
+            return response()->json('Failed to get departments: ' . $th->getMessage(), 400);
+        }
     }
 }

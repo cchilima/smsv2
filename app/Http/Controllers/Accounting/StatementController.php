@@ -25,95 +25,49 @@ class StatementController extends Controller
         $this->statementRepo = $statementRepo;
     }
 
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-
         try {
+            $this->statementRepo->collectPayment(
+                $request->amount,
+                $request->academic_period,
+                $request->student_id,
+                $request->payment_method_id
+            );
 
-            $collected = $this->statementRepo->collectPayment($request->amount, $request->academic_period, $request->student_id, $request->payment_method_id);
-
-
-            if ($collected) {
-                return Qs::jsonStoreOk();
-            } else {
-                dd($collected);
-                return Qs::json('failed to collect payment', false);
-            }
-        } catch (\Exception $e) {
-
-            // Log the error or handle it accordingly
-            return Qs::json('failed to collect payment', false);
+            return Qs::jsonStoreOk('Payment collected successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to collect payment: ' . $th->getMessage());
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 
     public function downloadStatement(Request $request, Invoice $invoice)
     {
-        $fileType = $request['file-type'];
-        $student = $invoice->student;
-        $fileName = $student->id . '-statement-' . $invoice->created_at->format('d-m-Y') . '.pdf';
+        try {
+            $fileType = $request['file-type'];
+            $student = $invoice->student;
+            $fileName = $student->id . '-statement-' . $invoice->created_at->format('d-m-Y') . '.pdf';
 
-        $pdf = Pdf::loadView('templates.pdf.statement', compact('student', 'invoice', 'fileName'));
+            $pdf = Pdf::loadView('templates.pdf.statement', compact('student', 'invoice', 'fileName'));
 
-        return $pdf->download($fileName);
+            return $pdf->download($fileName);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to download statement: ' . $th->getMessage());
+        }
     }
 
     public function exportStatements(Request $request, Student $student)
     {
-        $fileName = $student->id . '-statements-' . now()->format('d-m-Y-His') . '.xlsx';
-        $export = new StatementsExport($student);
+        try {
+            $fileName = $student->id . '-statements-' . now()->format('d-m-Y-His') . '.xlsx';
+            $export = new StatementsExport($student);
 
-        return Excel::download($export, $fileName);
+            return Excel::download($export, $fileName);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to export statements: ' . $th->getMessage());
+        }
     }
 }

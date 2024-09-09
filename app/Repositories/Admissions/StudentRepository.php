@@ -17,6 +17,13 @@ class StudentRepository
 {
     const DEFAULT_STUDENT_PASSWORD = 'secret';
 
+    public UserPersonalInfoRepository $userPersonalInfoRepo;
+
+    public function __construct(UserPersonalInfoRepository $userPersonalInfoRepo)
+    {
+        $this->userPersonalInfoRepo = $userPersonalInfoRepo;
+    }
+
     public function createUser($data)
     {
         $data['password'] = $this->encryptPassword(self::DEFAULT_STUDENT_PASSWORD);
@@ -390,8 +397,51 @@ class StudentRepository
         return $executeQuery ? $query->get() : $query;
     }
 
+    /**
+     * Delete a student record and all associated records.
+     *
+     * @param  string  $id The ID of the student
+     * @return bool
+     */
     public function destroy($id)
     {
-        return Student::destroy($id);
+        $user = $this->findUser($id);
+        $student = $user->student;
+
+        // Delete uploaded passport photo
+        $passportPhotoPath = $user->userPersonalInfo?->passport_photo_path ?? null;
+
+        if ($passportPhotoPath) {
+            $this->userPersonalInfoRepo->deletePassportPhoto($passportPhotoPath);
+        }
+
+        // Delete user personal information
+        $user->userPersonalInfo->delete();
+
+        // Delete financial records
+        $student->statements->each->delete();
+        $student->statementsWithoutInvoice->each->delete();
+        $student->receipts->each->delete();
+        $student->receiptsNonInvoiced->each->delete();
+        $student->invoicesDetails->each->delete();
+        $student->invoices->each->delete();
+
+        // Delete academic records
+        $student->grades->each->delete();
+        $student->enrollments->each->delete();
+
+        // Delete next of kin record
+        $user->userNextOfKin->delete();
+
+        // Delete student record
+        $student->delete();
+
+        // Delete user
+        $user->delete();
+
+        $student = Student::find($id);
+        $user->userPersonalInfo->delete();
+        $user->userNextOfKin->delete();
+        $user->delete();
     }
 }
