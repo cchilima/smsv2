@@ -13,12 +13,12 @@
                 <a href="{{ route('show.student', $row->id, ['ac' => 1]) }}" class="dropdown-item"><i class="icon-eye"></i>
                     Show</a>
             @endif
-            @if (Qs::userIsSuperAdmin())
+            {{-- @if (Qs::userIsSuperAdmin())
                 <a id="{{ $row->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i
                         class="icon-trash"></i> Delete</a>
                 <form method="post" id="item-delete-{{ $row->id }}"
                     action="{{ route('students.destroy', $row->id) }}" class="hidden">@csrf @method('delete')</form>
-            @endif
+            @endif --}}
 
         </div>
     </div>

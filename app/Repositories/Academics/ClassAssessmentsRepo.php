@@ -851,6 +851,7 @@ class ClassAssessmentsRepo
                             'course_title' => $enrollment->class->course->name,
 
                             'grades' => [
+                                'student_id' => $studentId,
                                 'exam' => 'NE',
                                 'ca' => 'NE',
                                 'total_sum' => 'NE',

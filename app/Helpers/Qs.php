@@ -440,6 +440,7 @@ class Qs
             array_shift($goto);
             $data = $goto;
         }
+
         return app('redirect')->to(route($to, $data), $status, $headers, $secure);
     }
 

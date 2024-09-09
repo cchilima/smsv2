@@ -7,6 +7,7 @@ use App\Repositories\Academics\AcademicPeriodRepository;
 use App\Repositories\Academics\ClassAssessmentsRepo;
 use App\Repositories\Academics\CourseLevelsRepository;
 use App\Repositories\Academics\ProgramsRepository;
+use App\Traits\CanRefreshDataTable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
@@ -42,6 +43,7 @@ class ExamResultsReviewBoard extends Component
         $level = Qs::decodeHash($level);
 
         $this->data['grades'] = $this->classAssessmentRepo->getGrades($level, $pid, $aid);
+
         $this->data['period'] = $this->academicPeriodRepo->find($aid);
         $this->data['program_data'] = $this->programRepo->findOne($pid);
         $this->data['level'] = $this->courseLevelRepo->find($level);
