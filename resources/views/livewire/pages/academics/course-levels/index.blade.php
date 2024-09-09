@@ -35,7 +35,7 @@
                                         class="text-danger">*</span></label>
                                 <div class="col-lg-9">
                                     <input name="name" value="{{ old('name') }}" required type="text"
-                                        class="form-control" placeholder="Course Name">
+                                        class="form-control" placeholder="Course Level">
                                 </div>
                             </div>
 

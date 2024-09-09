@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Intakes\Intake;
 use App\Http\Requests\Intakes\IntakeUpdate;
 use App\Repositories\Academics\IntakesRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class IntakeController extends Controller
@@ -30,11 +31,14 @@ class IntakeController extends Controller
      */
     public function store(Intake $req)
     {
+        try {
+            $data = $req->only(['name']);
+            $this->intakes->create($data);
 
-        $data = $req->only(['name']);
-        $this->intakes->create($data);
-
-        return Qs::jsonStoreOk();
+            return Qs::jsonStoreOk('Academic period intake created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create academic period intake: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -53,10 +57,14 @@ class IntakeController extends Controller
      */
     public function update(IntakeUpdate $req, string $id)
     {
-        $data = $req->only(['name']);
-        $this->intakes->update($id, $data);
+        try {
+            $data = $req->only(['name']);
+            $this->intakes->update($id, $data);
 
-        return Qs::jsonUpdateOk();
+            return Qs::jsonUpdateOk('Academic period intake updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update academic period intake: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -64,7 +72,15 @@ class IntakeController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->intakes->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        try {
+            $this->intakes->find($id)->delete();
+            return Qs::goBackWithSuccess('Academic period intake deleted successfully');;
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete academic period intake referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete academic period intake: ' . $th->getMessage());
+        }
     }
 }

@@ -61,16 +61,16 @@ class APFeesController extends Controller
             if (!empty($data['program_id'])) {
                 foreach ($data['program_id'] as $program_id) {
                     $program = Program::find($program_id);
-                    $academicPeriodFee = AcademicPeriodFee::find($periodId);//where('fee_id', $data['fee_id'])->first();
+                    $academicPeriodFee = AcademicPeriodFee::find($periodId); //where('fee_id', $data['fee_id'])->first();
                     $program->academicPeriodFees()->attach($academicPeriodFee->id);
                 }
             }
             DB::commit();
 
-            return Qs::jsonStoreOk();
+            return Qs::jsonStoreOk('Academic period fee added successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return Qs::json('msg.create_failed => ' . $e->getMessage(), false);
+            return Qs::jsonError('Failed to add academic period fee: ' . $e->getMessage(), false);
         }
     }
 
@@ -103,14 +103,14 @@ class APFeesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-//        $data = $request->only(['amount', 'fee_id']);
-//        $period = $this->periods->APFeeUpdate($id, $data);
-//
-//        if ($period) {
-//            return Qs::jsonStoreOk();
-//        } else {
-//            return Qs::json(false, 'failed to create message');
-//        }
+        //        $data = $request->only(['amount', 'fee_id']);
+        //        $period = $this->periods->APFeeUpdate($id, $data);
+        //
+        //        if ($period) {
+        //            return Qs::jsonStoreOk();
+        //        } else {
+        //            return Qs::json(false, 'failed to create message');
+        //        }
 
 
         try {
@@ -130,10 +130,10 @@ class APFeesController extends Controller
 
             DB::commit();
 
-            return Qs::jsonStoreOk();
+            return Qs::jsonUpdateOk('Academic period fee updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return Qs::json('msg.create_failed => ' . $e->getMessage(), false);
+            return Qs::jsonError('Failed to update academic period fee: ' . $e->getMessage());
         }
     }
 

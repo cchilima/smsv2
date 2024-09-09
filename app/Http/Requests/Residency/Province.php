@@ -24,7 +24,7 @@ class Province extends FormRequest
         if ($this->isMethod('post') || $this->isMethod('put')) {
             return [
                 'name' => 'required|string|max:255',
-                'country_id' => 'required|numeric|exists:countries,id'
+                'country_id' => 'required|numeric|exists:countries,id',
             ];
         }
 

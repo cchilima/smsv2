@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\PeriodTypes\PeriodType;
 use App\Http\Requests\PeriodTypes\PeriodTypeUpdate;
 use App\Repositories\Academics\PeriodTypeRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class PeriodTypeController extends Controller
@@ -31,11 +32,15 @@ class PeriodTypeController extends Controller
      */
     public function store(PeriodType $req)
     {
-        $data = $req->only(['name', 'description']);
+        try {
+            $data = $req->only(['name', 'description']);
 
-        $this->periodTypes->create($data);
+            $this->periodTypes->create($data);
 
-        return Qs::jsonStoreOk();
+            return Qs::jsonStoreOk('Academic period type created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create academic period type: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -54,11 +59,14 @@ class PeriodTypeController extends Controller
      */
     public function update(PeriodTypeUpdate $req, string $id)
     {
-        //$data = $req->only(['name', 'description']);
-        $data = $req->only(['name']);
-        $this->periodTypes->update($id, $data);
+        try {
+            $data = $req->only(['name', 'description']);
+            $this->periodTypes->update($id, $data);
 
-        return Qs::jsonUpdateOk();
+            return Qs::jsonUpdateOk('Academic period type updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update academic period type: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -66,7 +74,15 @@ class PeriodTypeController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->periodTypes->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        try {
+            $this->periodTypes->find($id)->delete();
+            return Qs::goBackWithSuccess('Academic period type deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] === 1451) {
+                return Qs::goBackWithError('Cannot delete an academic period type referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete academic period type: ' . $th->getMessage());
+        }
     }
 }

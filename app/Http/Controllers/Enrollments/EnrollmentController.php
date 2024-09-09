@@ -24,27 +24,10 @@ class EnrollmentController extends Controller
 
     public function __construct(EnrollmentRepository $enrollmentRepo, StudentRegistrationRepository $studentRepo)
     {
-
-       $this->middleware(Student::class, ['only' => ['destroy',] ]);
+        $this->middleware(Student::class, ['only' => ['destroy',]]);
 
         $this->enrollmentRepo = $enrollmentRepo;
         $this->studentRepo = $studentRepo;
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -52,54 +35,20 @@ class EnrollmentController extends Controller
      */
     public function store(Request $request)
     {
-        // Incase request from management get student number
-        $studentNumber = $request->input('student_number');
+        try {
+            // Incase request from management get student number
+            $studentNumber = $request->input('student_number');
 
-        // Get courses student can register for
-        $courseToRegister = $this->studentRepo->getAll($studentNumber);
+            // Get courses student can register for
+            $courseToRegister = $this->studentRepo->getAll($studentNumber);
 
-        // Register and enrollment student in the above courses.
-        $enrolled = $this->enrollmentRepo->create($courseToRegister, $studentNumber);
+            // Register and enrollment student in the above courses.
+            $this->enrollmentRepo->create($courseToRegister, $studentNumber);
 
-        // Give student feedback
-        if ($enrolled) {
-            return redirect()->back()->with('status', 'Enrollment successful');
-           // return Qs::jsonStoreOk();
-        } else {
-            return Qs::json(false,'msg.create_failed');
+            // Give student feedback
+            return Qs::goBackWithSuccess('Enrollment successful');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Enrollment failed');
         }
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
 }

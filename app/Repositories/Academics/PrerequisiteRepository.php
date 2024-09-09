@@ -34,9 +34,9 @@ class PrerequisiteRepository
     {
         return Course::find($id);
     }
-    public function updateOrInsert($id,$courseID){
-        Prerequisite::updateOrInsert(
-            ['course_id' => $id],
+    public function updateOrInsert($id, $courseID)
+    {
+        Prerequisite::updateOrCreate(
             [
                 'prerequisite_course_id' => $courseID,
                 'course_id' => $id,

@@ -24,6 +24,7 @@ use App\Repositories\Academics\ProgramsRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -85,67 +86,39 @@ class ClassAssessmentsController extends Controller
      */
     public function store(ClassAssessments $req)
     {
-        $data = $req->only(['assessment_type_id', 'academic_period_class_id', 'total', 'end_date']);
-        $classData = ClassAssessment::where('academic_period_class_id', $data['academic_period_class_id'])->get();
-        $data['end_date'] = date('Y-m-d', strtotime($data['end_date']));
-        $data['key'] = $data['assessment_type_id'] . '-' . $data['assessment_type_id'];
-        $totalValue = 0;
-        foreach ($classData as $class) {
-            $totalValue = $totalValue + $class['total'];
-        }
-        $existingRecord = ClassAssessment::where([
-            'assessment_type_id' => $data['assessment_type_id'],
-            'academic_period_class_id' => $data['academic_period_class_id']
-        ])->first();
+        try {
+            $data = $req->only(['assessment_type_id', 'academic_period_class_id', 'total', 'end_date']);
+            $classData = ClassAssessment::where('academic_period_class_id', $data['academic_period_class_id'])->get();
+            $data['end_date'] = date('Y-m-d', strtotime($data['end_date']));
+            $data['key'] = $data['assessment_type_id'] . '-' . $data['assessment_type_id'];
+            $totalValue = 0;
 
-        if ($existingRecord) {
-            return Qs::json('Data already exists', false);
-        } else {
-            if ($totalValue > 100 || ($totalValue + $data['total']) > 100) {
-                return Qs::json('Total for the assessment is greater than 100', false);
-            } else {
-                $this->classaAsessmentRepo->create($data);
-                return Qs::jsonStoreOk();
+            foreach ($classData as $class) {
+                $totalValue = $totalValue + $class['total'];
             }
+
+            $existingRecord = ClassAssessment::where([
+                'assessment_type_id' => $data['assessment_type_id'],
+                'academic_period_class_id' => $data['academic_period_class_id']
+            ])->first();
+
+            if ($existingRecord) {
+                throw new \Exception('Data already exists');
+            }
+
+            if ($totalValue > 100 || ($totalValue + $data['total']) > 100) {
+                throw new \Exception('Total for the assessment is greater than 100');
+            }
+
+            $this->classaAsessmentRepo->create($data);
+            return Qs::jsonStoreOk('Class assessment added successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to add class assessment: ' . $th->getMessage());
         }
-        //dd($totalValue);
-
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-    public
-    function UpdateTotalResultsExams(Request $request, string $id)
+    public function UpdateTotalResultsExams(Request $request, string $id)
     {
         $id = Qs::decodeHash($id);
         $total = $request->input('total');
@@ -197,34 +170,38 @@ class ClassAssessmentsController extends Controller
 
     public function DownloadResultsTemplate(Request $request)
     {
-        $csvContent = "";
-        $class = $request->input('classId');
-        $assessID = $request->input('assessID');
-        $class_ass = $this->classaAsessmentRepo->getClassAssessments($class, $assessID);
-        // Add header row for Enrolments By Program
-        $csvContent .= "First Name,Last Name,Student ID,Course Code,Course Name,AcademicPeriod,Program,Assessment type,Marked out of,Total\n";
-        // Extract data from Blade template loop for Enrolments By Program
-        foreach ($class_ass->enrollments as $classData) {
-            $last_name = $classData->student->user->first_name;
-            $firstname = $classData->student->user->last_name;
-            $studentID = $classData->student->id;
-            $program = $classData->student->program_id;
-            $courseCode = $class_ass->course->code;
-            $courseName = $class_ass->course->name;
-            $apid = $class_ass->academic_period_id;
-            $assessmentId = $class_ass->class_assessments[0]->assessment_type_id;
-            $total = '';
-            $sometotal = $class_ass->class_assessments[0]->total;
-            $csvContent .= "$firstname,$last_name,$studentID,$courseCode,$courseName,$apid,$program,$assessmentId,$sometotal,$total\n";
-            // dd($classData);
-        }
-        $filename = 'results_upload_template.csv';
-        file_put_contents($filename, $csvContent);
-        $response = [
-            'fileUrl' => asset($filename), // Generate a URL to the file
-        ];
+        try {
+            $csvContent = "";
+            $class = $request->input('classId');
+            $assessID = $request->input('assessID');
+            $class_ass = $this->classaAsessmentRepo->getClassAssessments($class, $assessID);
+            // Add header row for Enrolments By Program
+            $csvContent .= "First Name,Last Name,Student ID,Course Code,Course Name,AcademicPeriod,Program,Assessment type,Marked out of,Total\n";
+            // Extract data from Blade template loop for Enrolments By Program
+            foreach ($class_ass->enrollments as $classData) {
+                $last_name = $classData->student->user->first_name;
+                $firstname = $classData->student->user->last_name;
+                $studentID = $classData->student->id;
+                $program = $classData->student->program_id;
+                $courseCode = $class_ass->course->code;
+                $courseName = $class_ass->course->name;
+                $apid = $class_ass->academic_period_id;
+                $assessmentId = $class_ass->class_assessments[0]->assessment_type_id;
+                $total = '';
+                $sometotal = $class_ass->class_assessments[0]->total;
+                $csvContent .= "$firstname,$last_name,$studentID,$courseCode,$courseName,$apid,$program,$assessmentId,$sometotal,$total\n";
+                // dd($classData);
+            }
+            $filename = 'results_upload_template.csv';
+            file_put_contents($filename, $csvContent);
+            $response = [
+                'fileUrl' => asset($filename), // Generate a URL to the file
+            ];
 
-        return response()->json($response);
+            return response()->json($response);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to download results template: ' . $th->getMessage());
+        }
     }
 
     public function ProcessUploadedResults(Request $request)
@@ -412,44 +389,48 @@ class ClassAssessmentsController extends Controller
 
     public function BoardofExaminersUpdateResults(Request $request)
     {
-        $requestData = $request->input('updatedAssessments'); // Get the request data
-        //dd($request);
-        $operation = $request->input('operation');
-        $sOperation = ($operation == 1 ? '+' : '-');
-        if (isset($requestData[0]['apid'])) {
-            $studentIDs = $this->classaAsessmentRepo->getStudentId($requestData[0]['code'], $requestData[0]['id'], $requestData[0]['apid']);
-            foreach ($studentIDs as $studentID) {
+        try {
+            $requestData = $request->input('updatedAssessments'); // Get the request data
+            //dd($request);
+            $operation = $request->input('operation');
+            $sOperation = ($operation == 1 ? '+' : '-');
+            if (isset($requestData[0]['apid'])) {
+                $studentIDs = $this->classaAsessmentRepo->getStudentId($requestData[0]['code'], $requestData[0]['id'], $requestData[0]['apid']);
+                foreach ($studentIDs as $studentID) {
+                    foreach ($requestData as $item) {
+                        $currentTotal = $this->classaAsessmentRepo->getGradeAll($item['id'], $item['code'], $item['apid'], $studentID);
+                        if ($sOperation == '+') {
+                            $newTotal = $currentTotal + $item['total'];
+                        } else {
+                            $newTotal = $currentTotal - $item['total'];
+                        }
+
+                        if ($newTotal > $item['outof']) {
+                            $newTotal = $item['outof'];
+                        }
+
+                        $this->classaAsessmentRepo->UpdateGradeAll($item['id'], $item['code'], $item['apid'], $studentID, $newTotal);
+                    }
+                }
+                return Qs::jsonUpdateOk('Marks updated successfully');
+            } else {
                 foreach ($requestData as $item) {
-                    $currentTotal = $this->classaAsessmentRepo->getGradeAll($item['id'], $item['code'], $item['apid'], $studentID);
+                    $currentTotal = $this->classaAsessmentRepo->getGrade($item['id']);
                     if ($sOperation == '+') {
                         $newTotal = $currentTotal + $item['total'];
                     } else {
                         $newTotal = $currentTotal - $item['total'];
                     }
-
                     if ($newTotal > $item['outof']) {
                         $newTotal = $item['outof'];
                     }
-
-                    $this->classaAsessmentRepo->UpdateGradeAll($item['id'], $item['code'], $item['apid'], $studentID, $newTotal);
+                    $data['total'] = $newTotal;
+                    $this->classaAsessmentRepo->updateGrade($item['id'], $data);
                 }
+                return Qs::jsonUpdateOk('Marks updated successfully');
             }
-            return Qs::json('Marks updated successfully', true);
-        } else {
-            foreach ($requestData as $item) {
-                $currentTotal = $this->classaAsessmentRepo->getGrade($item['id']);
-                if ($sOperation == '+') {
-                    $newTotal = $currentTotal + $item['total'];
-                } else {
-                    $newTotal = $currentTotal - $item['total'];
-                }
-                if ($newTotal > $item['outof']) {
-                    $newTotal = $item['outof'];
-                }
-                $data['total'] = $newTotal;
-                $this->classaAsessmentRepo->updateGrade($item['id'], $data);
-            }
-            return Qs::json('Marks updated successfully', true);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update marks: ' . $th->getMessage());
         }
     }
 
@@ -463,17 +444,21 @@ class ClassAssessmentsController extends Controller
 
     public function PublishProgramResults(Request $request)
     {
-        $studentIds = $request->input('ids');
-        $academicPeriodID = $request->input('academicPeriodID');
-        $type = $request->input('type');
+        try {
+            $studentIds = $request->input('ids');
+            $academicPeriodID = $request->input('academicPeriodID');
+            $type = $request->input('type');
 
-        if (empty($studentIds) || empty($academicPeriodID) || empty($type)) {
-            return Qs::json('Error publishing results', false);
+            if (empty($studentIds) || empty($academicPeriodID) || empty($type)) {
+                throw new \Exception('Invalid request');
+            }
+
+            $this->classaAsessmentRepo->publishGrades($studentIds, $academicPeriodID, $type);
+
+            return Qs::jsonStoreOk('Grades published successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to publish grades: ' . $th->getMessage());
         }
-
-        $this->classaAsessmentRepo->publishGrades($studentIds, $academicPeriodID, $type);
-
-        return Qs::json('Marks updated successfully', true);
     }
 
     public function PublishForAllStudents($ac, $type)
@@ -507,50 +492,68 @@ class ClassAssessmentsController extends Controller
         //dd($results);
         return view('pages.students.exams.exam_results', compact('results', 'student'));
     }
-    public
-    function PostStudentResults(Request $request)
-    {
-        $id = $request->input('id');
-        $data['total'] = $request->input('total');
-        //dd($id);
 
-        //$this->classaAsessmentRepo->update($id,$data);
-        $this->classaAsessmentRepo->updatetotaGrade($id, $data['total']);
-        return Qs::jsonStoreOk();
+    public function PostStudentResults(Request $request)
+    {
+        try {
+            $id = $request->input('id');
+            $data['total'] = $request->input('total');
+
+            //$this->classaAsessmentRepo->update($id,$data);
+            $this->classaAsessmentRepo->updatetotaGrade($id, $data['total']);
+            return Qs::jsonStoreOk('Student results posted successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to post student results: ' . $th->getMessage());
+        }
     }
+
     public function AddStudentResult(Request $request)
     {
-        $student_id = Qs::decodeHash($request->input('id'));
-        $ac_id = Qs::decodeHash($request->input('ac_id'));
-        $assess_type_id = Qs::decodeHash($request->input('assess_type_id'));
-        $course_id = Qs::decodeHash($request->input('course_id'));
-        $course = $this->coursesRepo->find($course_id);
-        $student = Student::find($student_id);
-        $total = $request->input('total');
-        $existingRow = Grade::where('student_id', $student_id)->where('assessment_type_id', $assess_type_id)->where('course_code', $course->code)->get()->first();
+        try {
+            DB::beginTransaction();
 
-        if ($existingRow) {
-            $existingRow->delete();
+            $student_id = Qs::decodeHash($request->input('id'));
+            $ac_id = Qs::decodeHash($request->input('ac_id'));
+            $assess_type_id = Qs::decodeHash($request->input('assess_type_id'));
+            $course_id = Qs::decodeHash($request->input('course_id'));
+            $course = $this->coursesRepo->find($course_id);
+            $student = Student::find($student_id);
+            $total = $request->input('total');
+            $existingRow = Grade::where('student_id', $student_id)->where('assessment_type_id', $assess_type_id)->where('course_code', $course->code)->get()->first();
+
+            if ($existingRow) {
+                $existingRow->delete();
+            }
+
+            Grade::create([
+                'academic_period_id' => $ac_id,
+                'student_id' => $student_id,
+                'total' => $total, // Total
+                'course_title' => $course->name,
+                'course_code' => $course->code,
+                'publication_status' => 0,
+                'assessment_type_id' => $assess_type_id,
+                'student_level_id' => $student->course_level_id,
+                'course_id' => $course->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            return Qs::jsonStoreOk('Student grades added successfully');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return Qs::jsonError('Failed to add student grades: ' . $th->getMessage());
         }
-        $create = Grade::create([
-            'academic_period_id' => $ac_id,
-            'student_id' => $student_id,
-            'total' => $total, // Total
-            'course_title' => $course->name,
-            'course_code' => $course->code,
-            'publication_status' => 0,
-            'assessment_type_id' => $assess_type_id,
-            'student_level_id' => $student->course_level_id,
-            'course_id' => $course->id,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        //dd($student_id);
-        return Qs::jsonStoreOk();
     }
     public function getStudentsProgramResults($id)
     {
-        $results = $this->classaAsessmentRepo->GetStudentExamGrades($id);
-        dd($results);
+        try {
+            $results = $this->classaAsessmentRepo->GetStudentExamGrades($id);
+            dd($results);
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to get student program results: ' . $th->getMessage());
+        }
     }
 }

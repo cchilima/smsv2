@@ -10,6 +10,7 @@ use App\Http\Requests\Accomodation\Room;
 use App\Http\Requests\Accomodation\RoomUpdate;
 use App\Repositories\Accommodation\HostelRepository;
 use App\Repositories\Accommodation\RoomRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class RoomController extends Controller
@@ -32,14 +33,13 @@ class RoomController extends Controller
      */
     public function store(Room $request)
     {
-        $data = $request->only(['hostel_id', 'room_number', 'capacity', 'gender']);
+        try {
+            $data = $request->only(['hostel_id', 'room_number', 'capacity', 'gender']);
+            $this->room_repository->create($data);
 
-        $hostel = $this->room_repository->create($data);
-
-        if ($hostel) {
-            return Qs::jsonStoreOk();
-        } else {
-            return Qs::jsonError(__('msg.create_failed'));
+            return Qs::jsonStoreOk('Room created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create room: ' . $th->getMessage());
         }
     }
 
@@ -60,9 +60,14 @@ class RoomController extends Controller
      */
     public function update(RoomUpdate $request, string $id)
     {
-        $data = $request->only(['hostel_id', 'room_number', 'capacity', 'gender']);
-        $this->room_repository->update($id, $data);
-        return Qs::jsonUpdateOk();
+        try {
+            $data = $request->only(['hostel_id', 'room_number', 'capacity', 'gender']);
+            $this->room_repository->update($id, $data);
+
+            return Qs::jsonUpdateOk('Room updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update room: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -70,7 +75,15 @@ class RoomController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->room_repository->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        try {
+            $this->room_repository->find($id)->delete();
+            return Qs::goBackWithSuccess('Room deleted successfully');
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete room referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete room: ' . $th->getMessage());
+        }
     }
 }

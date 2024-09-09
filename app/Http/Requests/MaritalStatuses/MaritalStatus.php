@@ -22,7 +22,14 @@ class MaritalStatus extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|string|unique:marital_statuses',
+            'status' => 'required|string|unique:marital_statuses|in:Married,Single,Widowed,Divorced,Separated',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'status.in' => 'Marital status must be one of the following: Married, Single, Widowed, Divorced, Separated',
         ];
     }
 }

@@ -22,46 +22,6 @@ class GradeContoller extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request)
@@ -78,18 +38,10 @@ class GradeContoller extends Controller
                 // Update grade
                 $grade->update(['total' => $request->value]);
 
-                return Qs::json(true, 'Marks updated successfully');
+                return Qs::jsonUpdateOk('Marks updated successfully');
             }
         } catch (\Exception $e) {
-            return Qs::json(false, $e->getMessage() ?? 'Failed to update marks');
+            return Qs::jsonError('Failed to update marks: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\Courses\Courses;
 use App\Http\Requests\Courses\CoursesUpdate;
 use App\Repositories\Academics\CourseRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
@@ -30,18 +31,14 @@ class CourseController extends Controller
      */
     public function store(Courses $req)
     {
-        $data = $req->only(['code', 'name']);
-        $this->courses->create($data);
+        try {
+            $data = $req->only(['code', 'name']);
+            $this->courses->create($data);
 
-        return Qs::jsonStoreOk();
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+            return Qs::jsonStoreOk('Course created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create course: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -60,9 +57,13 @@ class CourseController extends Controller
      */
     public function update(CoursesUpdate $req, string $id)
     {
-        $data = $req->only(['code', 'name']);
-        $this->courses->update($id, $data);
-        return Qs::jsonUpdateOk();
+        try {
+            $data = $req->only(['code', 'name']);
+            $this->courses->update($id, $data);
+            return Qs::jsonUpdateOk('Course updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update course: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -70,7 +71,15 @@ class CourseController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->courses->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        try {
+            $this->courses->find($id)->delete();
+            return Qs::goBackWithSuccess('Course deleted successfully');;
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete course referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete course: ' . $th->getMessage());
+        }
     }
 }

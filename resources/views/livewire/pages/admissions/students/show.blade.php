@@ -6,7 +6,7 @@
 @endphp
 
 @if (session('status'))
-    <?php Qs::goWithSuccessCustom(session('status')); ?>
+    <?php Qs::goBackWithSuccess(session('status')); ?>
 @endif
 
 <div class="row">

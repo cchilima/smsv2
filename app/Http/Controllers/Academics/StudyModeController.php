@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\StudyMode\StudyMode;
 use App\Http\Requests\StudyMode\StudyModeUpdate;
 use App\Repositories\Academics\StudyModeRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class StudyModeController extends Controller
@@ -30,11 +31,14 @@ class StudyModeController extends Controller
      */
     public function store(StudyMode $req)
     {
-        //$data = $req->only(['name', 'description']);
-        $data = $req->only(['name']);
-        $this->studymode->create($data);
+        try {
+            $data = $req->only(['name', 'description']);
+            $this->studymode->create($data);
 
-        return Qs::jsonStoreOk();
+            return Qs::jsonStoreOk('Study mode created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create study mode: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -54,11 +58,14 @@ class StudyModeController extends Controller
     public function update(StudyModeUpdate $req, $id)
     {
 
-        //$data = $req->only(['name', 'description']);
-        $data = $req->only(['name']);
-        $this->studymode->update($id, $data);
+        try {
+            $data = $req->only(['name', 'description']);
+            $this->studymode->update($id, $data);
 
-        return Qs::jsonUpdateOk();
+            return Qs::jsonUpdateOk('Study mode updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update study mode: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -66,7 +73,15 @@ class StudyModeController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->studymode->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        try {
+            $this->studymode->find($id)->delete();
+            return Qs::goBackWithSuccess('Study mode deleted successfully');;
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete study mode referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete sctudy mode: ' . $th->getMessage());
+        }
     }
 }

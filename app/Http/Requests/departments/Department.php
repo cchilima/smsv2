@@ -22,7 +22,7 @@ class Department extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:departments',
+            'name' => 'required|string|unique:departments,name',
             'school_id' => 'required|integer|exists:schools,id'
         ];
     }

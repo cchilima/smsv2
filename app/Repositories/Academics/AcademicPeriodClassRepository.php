@@ -51,8 +51,13 @@ class AcademicPeriodClassRepository
 
     public function getInstructors()
     {
-        return User::join('user_types', 'user_types.id', 'users.user_type_id')
-            ->where('user_types.title', 'instructor')->get();
+        // return User::join('user_types', 'user_types.id', 'users.user_type_id')
+        // ->where('user_types.title', 'instructor')->get();
+
+        return User::with('userType')
+            ->whereHas('userType', function ($query) {
+                $query->where('title', 'instructor');
+            })->get();
     }
     public function academicPrograms($id)
     {

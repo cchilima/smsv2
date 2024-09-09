@@ -9,6 +9,7 @@ use App\Http\Middleware\Custom\TeamSA;
 use App\Http\Requests\departments\Department;
 use App\Http\Requests\departments\DepartmentUpdate;
 use App\Repositories\Academics\DepartmentsRepository;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
@@ -28,24 +29,27 @@ class DepartmentController extends Controller
      */
     public function store(Department $req)
     {
+        try {
+            if ($req->hasFile('cover')) {
+                $data = $req->only(['school_id', 'name', 'description', 'cover']);
+                $logo = $req->file('cover');
+                $f = Qs::getFileMetaData($logo);
+                $f['name'] = $data['name'] . 'logo.' . $f['ext'];
+                $f['path'] = $logo->storeAs(Qs::getPublicUploadPathDep(), $f['name']);
+                $logo_path = asset('storage/depart/' . $f['name']);
+                $data['cover'] = $logo_path;
+                $data['slug'] = $data['name'];
+                $this->department->create($data);
+            } else {
+                $data = $req->only(['school_id', 'name', 'description']);
+                $data['slug'] = $data['name'];
+                $this->department->create($data);
+            }
 
-        if ($req->hasFile('cover')) {
-            $data = $req->only(['school_id', 'name', 'description', 'cover']);
-            $logo = $req->file('cover');
-            $f = Qs::getFileMetaData($logo);
-            $f['name'] = $data['name'] . 'logo.' . $f['ext'];
-            $f['path'] = $logo->storeAs(Qs::getPublicUploadPathDep(), $f['name']);
-            $logo_path = asset('storage/depart/' . $f['name']);
-            $data['cover'] = $logo_path;
-            $data['slug'] = $data['name'];
-            $this->department->create($data);
-        } else {
-            $data = $req->only(['school_id', 'name', 'description']);
-            $data['slug'] = $data['name'];
-            $this->department->create($data);
+            return Qs::jsonStoreOk('Department created successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to create department: ' . $th->getMessage());
         }
-
-        return Qs::jsonStoreOk();
     }
 
     /**
@@ -57,7 +61,7 @@ class DepartmentController extends Controller
         $data['department'] = $department = $this->department->find($id);
 
         return !is_null($department) ? view('pages.departments.show', $data)
-            : Qs::goWithDanger('pages.departments.index');
+            : Qs::goWithDanger('departments.index');
     }
 
     /**
@@ -66,8 +70,8 @@ class DepartmentController extends Controller
     public function edit(string $id)
     {
         $data['departments'] = $department = $this->department->find($id);
-        return !is_null($department) ? view('pages.academics.departments.edit', $data)
-            : Qs::goWithDanger('pages.academics.departments.index');
+        return !is_null($department) ? view('pages.departments.edit', $data)
+            : Qs::goWithDanger('departments.index');
     }
 
     /**
@@ -75,23 +79,27 @@ class DepartmentController extends Controller
      */
     public function update(DepartmentUpdate $req, string $id)
     {
-        if ($req->hasFile('cover')) {
-            $data = $req->only(['name', 'description', 'cover', 'slug']);
-            $logo = $req->file('cover');
-            $f = Qs::getFileMetaData($logo);
-            $f['name'] = $data['name'] . 'logo.' . $f['ext'];
-            $f['path'] = $logo->storeAs(Qs::getPublicUploadPathDep(), $f['name']);
-            $logo_path = asset('storage/depart/' . $f['name']);
-            $data['cover'] = $logo_path;
-            $data['slug'] = $data['name'];
-            $this->department->update($id, $data);
-        } else {
-            $data = $req->only(['name', 'description', 'slug']);
-            $data['slug'] = $data['name'];
-            $this->department->update($id, $data);
-        }
+        try {
+            if ($req->hasFile('cover')) {
+                $data = $req->only(['name', 'description', 'cover', 'slug']);
+                $logo = $req->file('cover');
+                $f = Qs::getFileMetaData($logo);
+                $f['name'] = $data['name'] . 'logo.' . $f['ext'];
+                $f['path'] = $logo->storeAs(Qs::getPublicUploadPathDep(), $f['name']);
+                $logo_path = asset('storage/depart/' . $f['name']);
+                $data['cover'] = $logo_path;
+                $data['slug'] = $data['name'];
+                $this->department->update($id, $data);
+            } else {
+                $data = $req->only(['name', 'description', 'slug']);
+                $data['slug'] = $data['name'];
+                $this->department->update($id, $data);
+            }
 
-        return Qs::jsonStoreOk();
+            return Qs::jsonUpdateOk('Department updated successfully');
+        } catch (\Throwable $th) {
+            return Qs::jsonError('Failed to update department: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -99,7 +107,15 @@ class DepartmentController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->department->find($id)->delete();
-        return back()->with('flash_success', __('msg.delete_ok'));
+        try {
+            $this->department->find($id)->delete();
+            return Qs::goBackWithSuccess('Department deleted successfully');;
+        } catch (QueryException $qe) {
+            if ($qe->errorInfo[1] == 1451) {
+                return Qs::goBackWithError('Cannot delete department referenced by other records');
+            }
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to delete department: ' . $th->getMessage());
+        }
     }
 }
