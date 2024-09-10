@@ -16,7 +16,7 @@ class ApplicantRepository
     private function generateUniqueApplicantCode()
     {
         do {
-            $code = $this->generateMixedCaseCode(10);  // Adjust the length as needed
+            $code = $this->generateMixedCaseCode(15);  // Adjust the length as needed
         } while (Applicant::where('applicant_code', $code)->exists());
 
         return $code;
@@ -24,7 +24,7 @@ class ApplicantRepository
 
     private function generateMixedCaseCode($length)
     {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {

@@ -122,7 +122,7 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Status</td>
-                                    <td>{{ $student->admission_status == 0 ? 'Active' : 'Inactive' }}</td>
+                                    <td>{{ $student->admission_status == 'active' ? 'Active' : 'Inactive' }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Programme Name</td>

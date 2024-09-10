@@ -339,15 +339,15 @@ class InvoiceRepository
             ->join('program_academic_period_fee', 'academic_period_fees.id', '=', 'program_academic_period_fee.academic_period_fee_id')
             ->join('programs', 'program_academic_period_fee.program_id', '=', 'programs.id')
             ->join('fees', 'fees.id', '=', 'academic_period_fees.fee_id')
-            ->where('fees.type', 'recurring')
+            ->whereIn('fees.type', ['recurring','once off'])
             ->where('academic_period_fees.academic_period_id', $academic_period_id)
             ->where('programs.id', $student->program_id)
             ->whereNotIn('fees.type', ['course repeat fee', 'accommodation fee'])
-            ->select('academic_period_fees.*', 'programs.id as program_id')
+            ->select('academic_period_fees.*', 'programs.id as program_id', 'fees.type')
             ->get();
 
         $universalFees = AcademicPeriodFee::doesntHave('programs')->whereHas('fee', function ($query) {
-            $query->where('type', 'recurring');
+            $query->whereIn('type', ['recurring','once off']);
         })->get();
 
         return ['fees' => $fees, 'universal_fees' => $universalFees];
@@ -422,8 +422,27 @@ class InvoiceRepository
         // Determine period fees for current academic period
         $acFees = $this->getAcademicPeriodFees($student, $academicPeriod->academic_period_id);
 
-        // Get cummulative academic fees total for all student's past academic periods
+        // Get cummulative academic fees total for all student's past academic periods, and handle all once of fees
         $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
+
+
+        // Take out one-time fees if student has $acPastFeesTotal assumption student has already been billed once off fees
+        if ($acPastFeesTotal > 0) {
+            // Filter out one-time fees
+            $filteredFees = collect($acFees['fees'])->filter(function ($fee) {
+                return $fee->type != 'once off';
+            });
+
+            $filteredUniversalFees = collect($acFees['universal_fees'])->filter(function ($ufee) {
+                return $ufee->type != 'once off';
+            });
+
+            // Update acFees with filtered collections
+            $acFees['fees'] = $filteredFees;
+            $acFees['universal_fees'] = $filteredUniversalFees;
+        }
+
+
 
         // Get all receipts
         $receipts_total = $student->receipts->sum('amount');
@@ -431,6 +450,7 @@ class InvoiceRepository
         // Calculate the accumulative totals
         $acCurrentFeesTotal  += ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount'));
      
+
         // Prepare for calculation 
         $accumulative_total = $acCurrentFeesTotal;
 

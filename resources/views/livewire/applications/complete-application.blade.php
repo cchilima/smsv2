@@ -2,23 +2,19 @@
     <div class="container p-10">
 
         <div class="form-wizard mt-10 mb-5 items-center">
-            <a wire:click="sectionChanged('personal_info')"
-                class="{{ $currentSection === 'personal_info' ? 'active' : '' }}">Personal Info </a>
+            <a class="{{ $currentSection === 'personal_info' ? 'active' : '' }}">Personal Info </a>
 
-           <span><i class="material-icons small grey-text">arrow_forward</i></span>
+            <span><i class="material-icons small grey-text">arrow_forward</i></span>
 
-            <a wire:click="sectionChanged('academic_info')"
-                class="{{ $currentSection === 'academic_info' ? 'active' : '' }}">Program Applied for</a>
+            <a class="{{ $currentSection === 'academic_info' ? 'active' : '' }}">Program Applied for</a>
 
-                <span><i class="material-icons small grey-text">arrow_forward</i></span>
+            <span><i class="material-icons small grey-text">arrow_forward</i></span>
 
-            <a wire:click="sectionChanged('next_of_kin')"
-                class="{{ $currentSection === 'next_of_kin' ? 'active' : '' }}">Next of Kin </a>
+            <a class="{{ $currentSection === 'next_of_kin' ? 'active' : '' }}">Next of Kin </a>
 
-                <span><i class="material-icons small grey-text ">arrow_forward</i></span>
+            <span><i class="material-icons small grey-text ">arrow_forward</i></span>
 
-            <a wire:click="sectionChanged('results')"
-                class="{{ $currentSection === 'results' ? 'active' : '' }}">Results</a>
+            <a class="{{ $currentSection === 'results' ? 'active' : '' }}">Results</a>
         </div>
 
         <div class="mb-5">
@@ -431,6 +427,28 @@
                 </form>
             </div>
         </div>
+
+
+        <div class="row mt-3">
+    <div class="col s12 center-align">
+        <!-- Previous Button -->
+        <a class="btn-floating btn-large waves-effect waves-light white" 
+           wire:click="previousSection" 
+           {{ $currentSection === 'personal_info' ? 'disabled' : '' }}>
+            <i class="material-icons indigo-text">arrow_back</i>
+        </a>
+
+        <!-- Next Button -->
+        <a class="btn-floating btn-large waves-effect waves-light white" 
+           wire:click="nextSection" 
+           {{ $currentSection === 'results' ? 'disabled' : '' }}>
+            <i class="material-icons indigo-text">arrow_forward</i>
+        </a>
+    </div>
+</div>
+
+
+
     </div>
 </div>
 
@@ -463,6 +481,19 @@
         $wire.on('attachment-failed', () => {
             M.toast({
                 html: 'attachment upload unsuccessful'
+            })
+        });
+
+        $wire.on('progress-saved', () => {
+            M.toast({
+                html: 'progress saved successfully'
+            })
+        });
+
+
+        $wire.on('application-completed', () => {
+            M.toast({
+                html: 'application completed'
             })
         });
     </script>

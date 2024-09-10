@@ -55,6 +55,9 @@ class CompleteApplication extends Component
 
     public $currentSection = 'personal_info';
 
+    // Define an array of section names in the desired order
+    protected $sections = ['personal_info', 'academic_info', 'next_of_kin', 'results'];
+
     public function mount($application_id)
     {
         $this->applicant = Applicant::find($application_id);
@@ -150,8 +153,12 @@ class CompleteApplication extends Component
         ]
     );
 
+    $this->dispatch('progress-saved');
+
     // Check the application completion status
-    $this->applicantRepo->checkApplicationCompletion($this->applicant->id);
+    if($this->applicantRepo->checkApplicationCompletion($this->applicant->id)){
+        $this->dispatch('application-completed');
+    }
 }
 
 
@@ -217,9 +224,34 @@ public function saveGrade()
         $this->saveProgress();
     }
 
-    public function sectionChanged($section)
+
+
+    /**
+     * Navigate to the previous section.
+     */
+    public function previousSection()
     {
-        $this->currentSection = $section;
+        // Get the current section index
+        $currentIndex = array_search($this->currentSection, $this->sections);
+
+        // If not the first section, go to the previous section
+        if ($currentIndex > 0) {
+            $this->currentSection = $this->sections[$currentIndex - 1];
+        }
+    }
+
+    /**
+     * Navigate to the next section.
+     */
+    public function nextSection()
+    {
+        // Get the current section index
+        $currentIndex = array_search($this->currentSection, $this->sections);
+
+        // If not the last section, go to the next section
+        if ($currentIndex < count($this->sections) - 1) {
+            $this->currentSection = $this->sections[$currentIndex + 1];
+        }
     }
 
     #[Layout('components.layouts.administrator')]

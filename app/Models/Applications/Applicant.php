@@ -68,7 +68,7 @@ class Applicant extends Model implements AuditableContract
 
     public function study_mode()
     {
-        return $this->belongsTo(StudyMode::class, 'academic_period_intake_id');
+        return $this->belongsTo(StudyMode::class, 'study_mode_id');
     }
 
     public function attachment()
