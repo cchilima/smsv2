@@ -1,3 +1,7 @@
+@php
+    use App\Helpers\Qs;
+@endphp
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
@@ -20,7 +24,7 @@
     <div class="header" style="  text-align:center;">
 
         <h1 style="color: black; opacity: 1;">
-            ZAMBIA UNIVERSITY COLLEGE OF TECHNOLOGY<br>
+            {{ Qs::getSystemName() }}<br>
             {{ strtoupper($course['academic_period_name']) }} EXAMINATIONS SLIP
         </h1>
 

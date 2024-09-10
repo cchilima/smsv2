@@ -18,15 +18,14 @@ use App\Helpers\Qs;
 
     <table class="w-full">
         <tr>
-            <td class="w-half">
-                <img class="logo" src="{{ storage_path('images/logo-v2.png') }}" alt="Logo" height="150">
-            </td>
-            <td class="w-half">
-                <h2>INVOICE</h2>
-                <div class="v-spacer">{{ Qs::getSystemName() }}</div>
-                <div class="v-spacer">P.O. Box 71601</div>
-                <div class="v-spacer">Ndola</div>
-                <div class="v-spacer">Zambia</div>
+            <td class="w-full text-center">
+                <img class="logo" src="{{ asset('images/logo-v2.png') }}" alt="Logo" height="65">
+                <h2>{{ Qs::getSystemName() }}</h2>
+                <span class="v-spacer">{{ Qs::getSetting('po_box') }},</span>
+                <span class="v-spacer">{{ Qs::getSetting('address') }},</span>
+                <span class="v-spacer">{{ Qs::getSetting('town') }},</span>
+                <span class="v-spacer">{{ Qs::getSetting('country') }}.</span>
+                <h3 class="top-spacer">Student Invoice</h3>
             </td>
         </tr>
     </table>

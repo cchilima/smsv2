@@ -6,7 +6,7 @@
     @endphp
     <div class="card">
         <div class="card-header header-elements-inline">
-            <h6 class="card-title">Run reports to get a fully customized output for all receipts.</h6>
+            <h6 class="card-title">Run reports to get a fully customized output for student lists.</h6>
             {!! Qs::getPanelOptions() !!}
         </div>
         <div class="card-body">
