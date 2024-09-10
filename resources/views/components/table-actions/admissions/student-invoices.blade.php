@@ -13,6 +13,12 @@
                 <a href="{{ route('accounting.invoice_details', $row->id) }}" class="dropdown-item"><i
                         class="icon-eye"></i>
                     view</a>
+
+
+                <a class="dropdown-item" href="{{ route('student.download-invoice', $row->id) }}">
+                <i
+                class="icon-download4"></i> dowload PDF 
+                </a>
             @endif
         </div>
     </div>

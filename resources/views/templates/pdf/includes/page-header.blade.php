@@ -5,7 +5,7 @@
 <table class="w-full">
     <tr>
         <td class="w-full text-center">
-            <img class="logo" src="{{ asset('images/logo-v2.png') }}" alt="Logo" height="65">
+            <img class="logo" src="{{ public_path('images/logo-v2.png') }}" alt="Logo" height="65">
             <h2 class="v-spacer">{{ Qs::getSystemName() }}</h2>
             <span>{{ Qs::getSetting('po_box') }},</span>
             <span>{{ Qs::getSetting('address') }},</span>
