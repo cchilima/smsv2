@@ -18,12 +18,14 @@ use App\Helpers\Qs;
 
     <table class="w-full">
         <tr>
-            <td class="w-half">
-                <img class="logo" src="{{ asset('images/logo-v2.png') }}" alt="Logo" height="75">
-            </td>
-            <td class="w-half">
-                <h2>Registration Summary</h2>
-                <div class="v-spacer">{{ Qs::getSystemName() }}</div>
+            <td class="w-full text-center">
+                <img class="logo" src="{{ asset('images/logo-v2.png') }}" alt="Logo" height="65">
+                <h2>{{ Qs::getSystemName() }}</h2>
+                <span class="v-spacer">{{ Qs::getSetting('po_box') }},</span>
+                <span class="v-spacer">{{ Qs::getSetting('address') }},</span>
+                <span class="v-spacer">{{ Qs::getSetting('town') }},</span>
+                <span class="v-spacer">{{ Qs::getSetting('country') }}.</span>
+                <h3 class="top-spacer">Student Registration Summary</h3>
             </td>
         </tr>
     </table>
@@ -31,7 +33,7 @@ use App\Helpers\Qs;
     <hr>
 
     <div class="margin-top">
-        <h2 class="v-spacer">Student Information</h2>
+        <h3 class="v-spacer">Student Information</h3>
     </div>
 
     <div class="margin-top">
@@ -48,7 +50,7 @@ use App\Helpers\Qs;
     </div>
 
     <div class="margin-top">
-        <h2 class="v-spacer">Admission Information</h2>
+        <h3 class="v-spacer">Admission Information</h3>
     </div>
 
     <div class="margin-top">
@@ -65,7 +67,7 @@ use App\Helpers\Qs;
     </div>
 
     <div class="margin-top">
-        <h2 class="v-spacer">Registered Courses</h2>
+        <h3 class="v-spacer">Registered Courses</h3>
     </div>
 
     <div class="margin-top">
@@ -80,16 +82,6 @@ use App\Helpers\Qs;
             </tbody>
         </table>
     </div>
-
-    {{-- <div class="footer margin-top">
-
-        <div class="total">
-            Total: $129.00 USD
-        </div>
-
-        <div>Payment received. Thank you!</div>
-        <div>&copy; ZUT</div>
-    </div> --}}
 </body>
 
 </html>
