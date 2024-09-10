@@ -28,11 +28,10 @@ use App\Helpers\Qs;
                     <div class="v-spacer"><b>{{ $student->user->first_name . ' ' . $student->user->last_name }}</b>
                     </div>
                     <div class="v-spacer">{{ $student->user->userPersonalInfo->street_main }}</div>
-                    <div class="v-spacer">{{ $student->user->userPersonalInfo->town->name }}</div>
                     <div class="v-spacer">
-                        {{ $student->user->userPersonalInfo->province->name }},
-                        {{ $student->user->userPersonalInfo->country->alpha_2_code }}
-                    </div>
+                        {{ $student->user->userPersonalInfo->town->name }},
+                        {{ $student->user->userPersonalInfo->country->country }}</div>
+                    <div class="v-spacer">
                 </td>
                 <td class="w-half">
                     <div class="v-spacer"><b>Invoice Number: </b>{{ $invoice->id }}</div>

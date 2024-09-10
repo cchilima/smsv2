@@ -70,19 +70,4 @@ class SettingsController extends Controller
             return Qs::jsonError('Failed to update setting: ' . $th->getMessage());
         }
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Setting $setting)
-    {
-        return Qs::goBackWithError('Cannot delete system settings');
-
-        // try {
-        //     $this->settingsRepo->delete($setting);
-        //     return Qs::goBackWithSuccess('Record deleted successfully');
-        // } catch (\Throwable $th) {
-        //     return Qs::goBackWithError('Failed to delete record: ' . $th->getMessage());
-        // }
-    }
 }
