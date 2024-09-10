@@ -27,176 +27,48 @@
 
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="invoices">
-                            @foreach ($finances['invoices'] as $key => $invoice)
-                                <table class="table table-bordered  mb-3 mb-lg-4">
-                                    <thead>
-                                        <th>#</th>
-                                        <th>Fee type</th>
-                                        <th>Amount</th>
-                                    </thead>
-                                    <tbody>
+                            <div>
+                                <h4 class="d-flex align-items-center justify-content-between">
+                                    <span>Invoices</span>
 
-                                        <tr>
-                                            <h4 class="d-flex align-items-center justify-content-between">
-                                                <span>INV - {{ ++$key }}</span>
+                                    <div class="mb-2 d-flex justify-content-end">
+                                        <form action="{{ route('student.export-invoices', $student->id) }}" method="get">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="icon-download4 mr-1 lr-lg-2"></i>
+                                                <span>Export Invoices</span>
+                                            </button>
+                                        </form>
+                                    </div>
 
-                                                <div class="d-flex align-items-center">
-                                                    <div class="mr-2 mr-lg-3">
-                                                        <form action="{{ route('student.download-invoice', $invoice->id) }}"
-                                                            method="get">
-                                                            @csrf
-                                                            <input type="hidden" class="d-none" name="file-type"
-                                                                value="pdf">
-                                                            <button type="submit" class="btn btn-primary">
-                                                                <i class="icon-download4 mr-1 lr-lg-2"></i>
-                                                                <span>PDF</span>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
+                                </h4>
+                            </div>
 
-                                            </h4>
-                                        </tr>
-                                        @foreach ($invoice->details as $key => $detail)
-                                            <tr>
-                                                <td>{{ ++$key }}</td>
-                                                <td>{{ $detail->fee->name }}</td>
-                                                <td>K {{ $detail->amount }}</td>
-                                            </tr>
-                                        @endforeach
-                                        <tr>
-                                            <td></td>
-                                            <td><b>Total</b></td>
-                                            <td>K {{ $invoice->details->sum('amount') }}</td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                            @endforeach
+                            @livewire('datatables.admissions.students.invoices', [
+                                'studentId' => $student->id,
+                            ])
 
                         </div>
 
                         <div class="tab-pane fade show" id="statements">
-                            @foreach ($finances['invoices'] as $key => $invoice)
-                                <table class="table table-bordered  mb-3 mb-lg-4">
-                                    <thead>
-                                        <th>#</th>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                        <th>Amount</th>
+                            <div class="mb-2 d-flex justify-content-end">
+                                <form action="{{ route('student.export-statements', $student->id) }}" method="get">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="icon-download4 mr-1 lr-lg-2"></i>
+                                        <span>Export Statements</span>
+                                    </button>
+                                </form>
+                            </div>
 
-                                    </thead>
-                                    <tbody>
-
-                                        <tr>
-                                            <h4 class="d-flex align-items-center justify-content-between">
-                                                <span>INV - {{ ++$key }}</span>
-
-                                                <div class="d-flex align-items-center">
-                                                    <div class="mr-2 mr-lg-3">
-                                                        <form
-                                                            action="{{ route('student.download-statement', $invoice->id) }}"
-                                                            method="get">
-                                                            @csrf
-                                                            <input type="hidden" class="d-none" name="file-type"
-                                                                value="pdf">
-                                                            <button type="submit" class="btn btn-primary">
-                                                                <i class="icon-download4 mr-1 lr-lg-2"></i>
-                                                                <span>PDF</span>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-
-                                            </h4>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td><b>Opening Balance</b> </td>
-                                            <td>K {{ $invoice->details->sum('amount') }}</td>
-                                        </tr>
-                                        @foreach ($invoice->statements as $key => $statement)
-                                            <tr>
-                                                <td>{{ ++$key }}</td>
-                                                <td>{{ $statement->created_at->format('d F Y') }}</td>
-                                                <td>Payment</td>
-                                                <td>K {{ $statement->amount }}</td>
-                                            </tr>
-                                        @endforeach
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td><b>Closing Balance </b></td>
-                                            <td>K
-                                                {{ $invoice->details->sum('amount') - $invoice->statements->sum('amount') }}
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                            @endforeach
-
-                            <br>
-
-                            @if ($finances['statementsWithoutInvoice']->sum('amount') > 0)
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <th>#</th>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                        <th>Amount</th>
-
-                                    </thead>
-                                    <tbody>
-
-                                        <tr>
-                                            <h4>Not Invoiced</h4>
-                                        </tr>
-
-                                        @foreach ($student->statementsWithoutInvoice as $key => $statement)
-                                            <tr>
-                                                <td>{{ ++$key }}</td>
-                                                <td>{{ $statement->created_at->format('d F Y') }}</td>
-                                                <td>Payment</td>
-                                                <td>K {{ $statement->amount }}</td>
-                                            </tr>
-                                        @endforeach
-
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td>Total</td>
-                                            <td>
-                                                - K {{ $student->statementsWithoutInvoice->sum('amount') }}.00
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-
-                            @endif
+                            <livewire:datatables.admissions.students.statements :student="$student" />
 
                         </div>
 
                         <div class="tab-pane fade show" id="payment-history">
-
-                            <table class="table table-bordered">
-                                <thead>
-                                    <th>#</th>
-                                    <th>Date</th>
-                                    <th>Amount</th>
-                                </thead>
-                                <tbody>
-                                    @foreach ($finances['receipts'] as $key => $receipt)
-                                        <tr>
-                                            <td>{{ ++$key }}</td>
-                                            <td>{{ $receipt->created_at->format('d F Y') }}</td>
-                                            <td>K {{ $receipt->amount }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                            @livewire('datatables.admissions.students.payment-history', [
+                                'studentId' => $student->id,
+                            ])
                         </div>
 
                     </div>

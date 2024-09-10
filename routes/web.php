@@ -355,7 +355,7 @@ Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])
 
 // Student-specific Routes
 Route::group(['prefix' => 'student'], function () {
-    Route::get('/enrollments', [UsersStudentController::class, 'enrollments'])->name('student.enrollments');
+    Route::get('/profile', [UsersStudentController::class, 'profile'])->name('student.profile');
     Route::get('/finances', [UsersStudentController::class, 'finances'])->name('student.finances');
 
     // Financial statements generator/download routes
