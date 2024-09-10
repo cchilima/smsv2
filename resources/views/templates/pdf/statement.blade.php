@@ -16,20 +16,7 @@ use App\Helpers\Qs;
 
 <body>
 
-    <table class="w-full">
-        <tr>
-            <td class="w-half">
-                <img class="logo" src="{{ asset('images/logo-v2.png') }}" alt="Logo" height="150">
-            </td>
-            <td class="w-half">
-                <h2>STATEMENT</h2>
-                <div class="v-spacer">{{ Qs::getSystemName() }}</div>
-                <div class="v-spacer">P.O. Box 71601</div>
-                <div class="v-spacer">Ndola</div>
-                <div class="v-spacer">Zambia</div>
-            </td>
-        </tr>
-    </table>
+    @include('templates.pdf.includes.page-header', ['title' => 'Statement'])
 
     <hr>
 

@@ -1,3 +1,7 @@
+@php
+    use App\Helpers\Qs;
+@endphp
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
@@ -5,7 +9,84 @@
     <meta charset="utf-8">
     <title></title>
 
-    @include('templates.pdf.includes.pdf-styles')
+    <style media="screen">
+        #logo {
+            height: 200px;
+            width: auto;
+        }
+
+        h1 {
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        body {
+            opacity: 1;
+        }
+
+        .header {
+            padding-left: 15%;
+            padding-right: 15%;
+        }
+
+        #qrcode {
+            bottom: 0;
+            position: absolute;
+        }
+
+        #main-header {}
+
+        #main-header .left {
+            width: 20%;
+            height: 300px;
+            display: inline;
+            background-color: blue;
+        }
+
+        #main-header .right {
+            width: 80%;
+            background-color: red;
+            display: inline;
+            height: 300px;
+        }
+
+        #watermark {
+            margin-top: -9%;
+            z-index: 1;
+            position: absolute;
+            opacity: 0.1;
+            margin-left: 8.5%;
+        }
+
+        #background {
+            margin-top: -80%;
+            z-index: -99;
+            margin-left: -10%;
+            position: absolute;
+            background-repeat: repeat;
+            opacity: 0.01;
+            height: 1900px;
+        }
+
+        p {
+            font-size: 12px;
+            display: inline;
+        }
+
+        td {
+            font-size: 10px;
+        }
+
+        ul li {
+            font-size: 12px;
+        }
+
+        hr {
+            color: #333;
+            border-width: 1px;
+        }
+    </style>
 </head>
 
 <body>
@@ -26,7 +107,7 @@
                 margin-bottom: 5px;
             ">
         <h1 style="color: black;font-size:20px; font-weight: bold; margin-top: -10px;">
-            ZAMBIA UNIVERSITY COLLEGE OF TECHNOLOGY
+            {{ Qs::getSystemName() }}
         </h1>
         <br>
         <h3 style="font-size: 14px;">EXAMINATION ATTENDANCE REGISTER</h3>

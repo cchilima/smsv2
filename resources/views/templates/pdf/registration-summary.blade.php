@@ -16,19 +16,7 @@ use App\Helpers\Qs;
 
 <body>
 
-    <table class="w-full">
-        <tr>
-            <td class="w-full text-center">
-                <img class="logo" src="{{ asset('images/logo-v2.png') }}" alt="Logo" height="65">
-                <h2>{{ Qs::getSystemName() }}</h2>
-                <span class="v-spacer">{{ Qs::getSetting('po_box') }},</span>
-                <span class="v-spacer">{{ Qs::getSetting('address') }},</span>
-                <span class="v-spacer">{{ Qs::getSetting('town') }},</span>
-                <span class="v-spacer">{{ Qs::getSetting('country') }}.</span>
-                <h3 class="top-spacer">Student Registration Summary</h3>
-            </td>
-        </tr>
-    </table>
+    @include('templates.pdf.includes.page-header', ['title' => 'Student Registration Summary'])
 
     <hr>
 

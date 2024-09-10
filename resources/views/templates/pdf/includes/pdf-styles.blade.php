@@ -3,6 +3,9 @@
         font-family: Arial, Helvetica, sans-serif;
     }
 
+    h1,
+    h2,
+    h3,
     h4 {
         margin: 0;
     }
@@ -16,7 +19,11 @@
     }
 
     .margin-top {
-        margin-top: 1.25rem;
+        margin-top: 1rem;
+    }
+
+    .margin-bottom {
+        margin-bottom: 1rem;
     }
 
     .footer {
