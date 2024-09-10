@@ -12,6 +12,13 @@ use Intervention\Image\ImageManager;
 
 class UserPersonalInfoRepository
 {
+    /**
+     * Upload a passport photo for a user.
+     *
+     * @param  UploadedFile  $fileObject The uploaded file object.
+     * @param  int  $userId The ID of the user.
+     * @return string The path to the uploaded newly stored file.
+     */
     public function uploadPassportPhoto(UploadedFile $fileObject, $userId)
     {
         $dir = 'app/public/uploads/passport-photos';

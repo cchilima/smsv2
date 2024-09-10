@@ -930,7 +930,7 @@
 
     function modifyMarksExam(id, student, code, name, grades) {
         ///const user = JSON.parse(student);
-        //console.log(user);
+        console.log(id);
         //$('#staticBackdrop').modal('show');
         var modalBody = $('#staticBackdrop .modal-body');
         modalBody.empty();

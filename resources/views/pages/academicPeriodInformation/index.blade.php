@@ -14,7 +14,7 @@
             <ul class="nav nav-tabs nav-tabs-highlight">
                 <li class="nav-item"><a href="#new-period" class="nav-link active show" data-toggle="tab"><i
                             class="icon-plus2"></i>
-                        Create New Academic Period</a></li>
+                        Add Information</a></li>
                 <li class="nav-item"><a href="#all-fees" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
                         Create Classes</a></li>
                 <li class="nav-item"><a href="#new-ac-fees" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
@@ -104,31 +104,32 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Result Threshold <span
-                                            class="text-danger">*</span></label>
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">View Results Threshold
+                                        (%)<span class="text-danger">*</span></label>
                                     <div class="col-lg-9">
                                         <input name="view_results_threshold" maxlength="3" max="100"
                                             value="{{ old('view_results_threshold') }}" required type="number"
-                                            class="form-control" placeholder="View results Threshold">
+                                            class="form-control" placeholder="View results threshold">
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Exam Slip Threshold
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Download Exam Slip Threshold
+                                        (%)
                                         <span class="text-danger">*</span></label>
                                     <div class="col-lg-9">
                                         <input name="exam_slip_threshold" maxlength="3" max="100"
                                             value="{{ old('exam_slip_threshold') }}" required type="number"
-                                            class="form-control" placeholder="Exam Slip Threshold">
+                                            class="form-control" placeholder="Exam slip threshold">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label font-weight-semibold">Registration Threshold
+                                    <label class="col-lg-3 col-form-label font-weight-semibold">Registration Threshold (%)
                                         <span class="text-danger">*</span></label>
                                     <div class="col-lg-9">
                                         <input name="registration_threshold" value="{{ old('registration_threshold') }}"
                                             required type="text" class="form-control"
-                                            placeholder="Registration Threshold">
+                                            placeholder="Registration threshold">
                                     </div>
                                 </div>
 
@@ -137,7 +138,8 @@
                                         <span class="text-danger">*</span></label>
                                     <div class="col-lg-9">
                                         <input name="registration_date" value="{{ old('registration_date') }}" required
-                                            type="text" class="form-control date-pick" placeholder="AC start Date">
+                                            type="text" class="form-control date-pick"
+                                            placeholder="Registration start Date">
                                     </div>
                                 </div>
 
@@ -147,7 +149,7 @@
                                     <div class="col-lg-9">
                                         <input name="late_registration_date" value="{{ old('late_registration_date') }}"
                                             required type="text" class="form-control date-pick"
-                                            placeholder="Late registration">
+                                            placeholder="Late registration start date">
                                     </div>
                                 </div>
 
@@ -157,7 +159,7 @@
                                     <div class="col-lg-9">
                                         <input name="late_registration_end_date"
                                             value="{{ old('late_registration_end_date') }}" required type="text"
-                                            class="form-control date-pick" placeholder="Late end registration">
+                                            class="form-control date-pick" placeholder="Late registration end date">
                                     </div>
                                 </div>
 

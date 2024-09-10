@@ -26,7 +26,7 @@ class Qs
 
     public static function getAppCode()
     {
-        return self::getSetting('system_title') ?: 'ZUT';
+        return self::getSetting('system_title') ?: 'Zambia University College of Technology';
     }
 
     public static function getDefaultUserImage()
@@ -440,6 +440,7 @@ class Qs
             array_shift($goto);
             $data = $goto;
         }
+
         return app('redirect')->to(route($to, $data), $status, $headers, $secure);
     }
 

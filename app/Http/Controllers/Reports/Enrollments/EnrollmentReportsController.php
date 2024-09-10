@@ -80,7 +80,7 @@ class EnrollmentReportsController extends Controller
 
             return $pdf->download($fileName);
         } catch (\Throwable $th) {
-            return Qs::jsonError('Failed to download student program list: ' . $th->getMessage());
+            return Qs::jsonError('Failed to download student list: ' . $th->getMessage());
         }
     }
 
@@ -95,7 +95,7 @@ class EnrollmentReportsController extends Controller
 
             return $pdf->download($fileName);
         } catch (\Throwable $th) {
-            return Qs::jsonError('Failed to download student program list: ' . $th->getMessage());
+            return Qs::jsonError('Failed to download student list: ' . $th->getMessage());
         }
     }
 
@@ -282,43 +282,6 @@ class EnrollmentReportsController extends Controller
             $export = new AcademicPeriodEnrollmentsExport($academicPeriods);
 
             return Excel::download($export, $filename);
-
-            // // Initialize CSV content with header row
-            // $csvContent = "Academic Period ID,Academic Period Name,Program Name,Student ID,Student Name,Student Number,Gender,Payment Percentage,Balance\n";
-
-            // // Iterate through each academic period
-            // foreach ($academicPeriods as $academicPeriod) {
-            //     // Write academic period information in CSV
-            //     $academicPeriodId = $academicPeriod['academic_period_id'];
-            //     $academicPeriodName = $academicPeriod['academic_period_name'];
-
-            //     // Iterate through each program in the academic period
-            //     foreach ($academicPeriod['programs'] as $program) {
-            //         // Write program information in CSV
-            //         $programId = $program['program_id'];
-            //         $programName = $program['program_name'];
-
-            //         // Iterate through each student in the program
-            //         foreach ($program['students'] as $student) {
-            //             // Format CSV data for each student
-            //             $studentId = $student['student_id'];
-            //             $studentName = $student['name'];
-            //             $studentNumber = $student['student_number'];
-            //             $gender = $student['gender'];
-            //             $paymentPercentage = $student['payment_percentage'];
-            //             $balance = $student['balance'];
-
-            //             // Append data to CSV content
-            //             $csvContent .= "$academicPeriodId,$academicPeriodName,$programName,$studentId,$studentName,$studentNumber,$gender,$paymentPercentage,$balance\n";
-            //         }
-            //     }
-            // }
-
-            // // Write CSV content to file
-            // file_put_contents($filename, $csvContent);
-
-            // // Return file download response
-            // return response()->download($filename)->deleteFileAfterSend(true);
         }
 
         if ($request->input('fileType') === 'pdf') {

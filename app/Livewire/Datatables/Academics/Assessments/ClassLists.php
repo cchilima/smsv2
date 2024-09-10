@@ -75,15 +75,15 @@ final class ClassLists extends PowerGridComponent
             ->add('academicPeriod.name')
             ->add('studentCount', function (AcademicPeriodClass $row) {
                 return $row->enrollments->count();
-            })
-            ->add('gradedStudentCount', function (AcademicPeriodClass $row) {
-                return $row->enrollments->filter(function ($enrollment) use ($row) {
-                    return $enrollment->student->grades->contains(function ($grade) use ($row) {
-                        return $grade->course_id === $row->course_id
-                            && $grade->academic_period_id === $row->academic_period_id;
-                    });
-                })->count();
             });
+        // ->add('gradedStudentCount', function (AcademicPeriodClass $row) {
+        //     return $row->enrollments->filter(function ($enrollment) use ($row) {
+        //         return $enrollment->student->grades->contains(function ($grade) use ($row) {
+        //             return $grade->course_id === $row->course_id
+        //                 && $grade->academic_period_id === $row->academic_period_id;
+        //         });
+        //     })->count();
+        // });
     }
 
     public function columns(): array
@@ -94,7 +94,7 @@ final class ClassLists extends PowerGridComponent
             Column::make('Instructor', 'instructor'),
             Column::make('Academic Period', 'academicPeriod.name'),
             Column::make('Students', 'studentCount'),
-            Column::make('Graded Students', 'gradedStudentCount'),
+            // Column::make('Graded Students', 'gradedStudentCount'),
 
             Column::action('Action')
         ];

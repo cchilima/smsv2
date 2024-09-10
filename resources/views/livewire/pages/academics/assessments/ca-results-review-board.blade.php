@@ -27,7 +27,7 @@
             <div class="container">
                 <div class="row justify-content-end">
                     <div class="col-md-12">
-                        @if (!empty($grades))
+                        @if (!empty($grades['students']))
                             <div class="d-flex justify-content-between align-items-center float-right">
                                 <label class="mb-2">
                                     Publish All <input type="checkbox" value="1" name="user-all"

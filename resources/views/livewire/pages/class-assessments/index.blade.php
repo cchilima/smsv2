@@ -86,7 +86,8 @@
                             </div>
 
                             <div class="text-right">
-                                <button id="ajax-btn" type="submit" class="btn btn-primary">Submit form <i
+                                <button wire:click.debounce.1000ms="refreshTable('ClassAssessmentsTable')"
+                                    id="ajax-btn" type="submit" class="btn btn-primary">Submit form <i
                                         class="icon-paperplane ml-2"></i></button>
                             </div>
                         </form>

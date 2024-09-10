@@ -3,7 +3,9 @@
 namespace App\Livewire\Datatables\Academics\Assessments;
 
 use App\Models\Academics\AcademicPeriodClass;
+use App\Models\Academics\AssessmentType;
 use App\Models\Enrollments\Enrollment;
+use App\Repositories\Academics\AssessmentTypesRepo;
 use App\Repositories\Academics\ClassAssessmentsRepo;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,19 +29,23 @@ final class StudentList extends PowerGridComponent
     public $class;
     public $assessID;
     // public bool $deferLoading = true;
+    public $assessmentName;
 
     public ?AcademicPeriodClass $class_ass;
 
     protected ClassAssessmentsRepo $classaAsessmentRepo;
+    protected AssessmentTypesRepo $assessmentTypeRepo;
 
     public function boot(): void
     {
         $this->classaAsessmentRepo = app(ClassAssessmentsRepo::class);
+        $this->assessmentTypeRepo = app(AssessmentTypesRepo::class);
     }
 
     public function setUp(): array
     {
         $this->showCheckBox();
+        $this->assessmentName = $this->assessmentTypeRepo->find($this->assessID)?->name;
 
         return [
             Exportable::make('assessments-student-list-export')
@@ -74,7 +80,10 @@ final class StudentList extends PowerGridComponent
                 return $row->student->user->first_name . ' ' . $row->student->user->last_name;
             })
             ->add('student_id')
-            ->add('assesment.assessment_type.name')
+            // ->add('assesment.assessment_type.name')
+            ->add('assessmentType', function () {
+                return $this->assessmentName ?? '-';
+            })
             ->add('class.academicPeriod.name')
             ->add('created_at');
     }
@@ -85,7 +94,7 @@ final class StudentList extends PowerGridComponent
 
             Column::make('Student', 'student'),
             Column::make('Student ID', 'student_id')->searchable(),
-            Column::make('Assessment Type', 'assesment.assessment_type.name'),
+            Column::make('Assessment Type', 'assessmentType'),
             Column::make('Academic Period', 'class.academicPeriod.name'),
             Column::action('Enter Grade (%)')
         ];

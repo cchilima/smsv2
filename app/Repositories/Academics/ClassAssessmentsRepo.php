@@ -497,6 +497,7 @@ class ClassAssessmentsRepo
                     foreach ($enrollment->class->course->grades as $grade) {
                         if ($grade->academic_period_id == $aid && $grade->student_id == $studentId) {
                             $studentGradesArr[$studentId]['courses'][$courseId]['grades'][] = [
+                                'student_id' => $studentId,
                                 'type' => $grade->assessment_type->name,
                                 'total' => $grade->total,
                                 'grade' => self::calculateGrade($grade->total, $student->program->id),
@@ -850,6 +851,7 @@ class ClassAssessmentsRepo
                             'course_title' => $enrollment->class->course->name,
 
                             'grades' => [
+                                'student_id' => $studentId,
                                 'exam' => 'NE',
                                 'ca' => 'NE',
                                 'total_sum' => 'NE',
@@ -865,6 +867,7 @@ class ClassAssessmentsRepo
                     foreach ($enrollment->class->course->grades as $grade) {
                         if ($grade->academic_period_id == $aid && $grade->student_id == $studentId) {
                             $studentGradesArr[$studentId]['courses'][$courseId]['grades'] = [
+                                'student_id' => $studentId,
                                 'exam' => $grade->exam,
                                 'ca' => $grade->ca,
                                 'total_sum' => $grade->total_sum,
@@ -1198,7 +1201,7 @@ class ClassAssessmentsRepo
                 return $stud->grades->where('publication_status', 0)->where('assessment_type_id', 1)->where('course_id', $courseId)->isNotEmpty();
             }
         )->count();
-         //dd($matchingCourseCount);
+        //dd($matchingCourseCount);
         // Retrieve distinct course levels for the student's program
         $distinctCourseLevels = ProgramCourses::where('program_id', $stud->program_id)
             ->distinct('course_level_id')

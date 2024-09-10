@@ -63,13 +63,12 @@ class AcademicPeriodClassController extends Controller
 
         try {
             $data = $request->only(['instructor_id', 'course_id', 'academic_period_id']);
-            $data['key'] = rand(2, 23);
 
             $this->periodClasses->create($data);
 
             return Qs::jsonStoreOk('Academic period class created successfully');
         } catch (\Throwable $th) {
-            return Qs::jsonError('Failed to create academic period class');
+            return Qs::jsonError('Failed to create academic period class: ' . $th->getMessage());
         }
     }
 

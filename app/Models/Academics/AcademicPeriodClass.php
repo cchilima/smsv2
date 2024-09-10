@@ -13,7 +13,7 @@ class AcademicPeriodClass extends Model implements AuditableContract
 {
     use HasFactory, Auditable;
 
-    protected $fillable = ['course_id', 'instructor_id', 'academic_period_id', 'key'];
+    protected $fillable = ['course_id', 'instructor_id', 'academic_period_id'];
 
     public function academicPeriod()
     {

@@ -16,16 +16,12 @@ return new class extends Migration
             $table->foreignId('instructor_id')->constrained('users')->onDelete('restrict');
             $table->foreignId('course_id')->constrained('courses')->onDelete('restrict');
             $table->foreignId('academic_period_id')->constrained('academic_periods')->onDelete('restrict');
-            $table->integer('key')->unique();
             $table->timestamps();
 
             // Add indexes
             $table->index('instructor_id');
             $table->index('course_id');
             $table->index('academic_period_id');
-            $table->index('key');
-
-
         });
     }
 
