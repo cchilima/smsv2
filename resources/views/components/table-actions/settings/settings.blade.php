@@ -13,13 +13,13 @@
                 <a href="{{ route('settings.edit', $row->id) }}" class="dropdown-item"><i class="icon-pencil"></i>
                     Edit</a>
             @endif
-            @if (Qs::userIsSuperAdmin())
+            {{-- @if (Qs::userIsSuperAdmin())
                 <a id="{{ $row->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i
                         class="icon-trash"></i>
                     Delete</a>
                 <form method="post" id="item-delete-{{ $row->id }}"
                     action="{{ route('settings.destroy', $row->id) }}" class="hidden">@csrf @method('delete')</form>
-            @endif
+            @endif --}}
         </div>
     </div>
 </div>

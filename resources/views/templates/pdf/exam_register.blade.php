@@ -1,3 +1,7 @@
+@php
+    use App\Helpers\Qs;
+@endphp
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
@@ -103,7 +107,7 @@
                 margin-bottom: 5px;
             ">
         <h1 style="color: black;font-size:20px; font-weight: bold; margin-top: -10px;">
-            ZAMBIA UNIVERSITY COLLEGE OF TECHNOLOGY
+            {{ Qs::getSystemName() }}
         </h1>
         <br>
         <h3 style="font-size: 14px;">EXAMINATION ATTENDANCE REGISTER</h3>
