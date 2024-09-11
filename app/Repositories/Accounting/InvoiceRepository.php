@@ -419,11 +419,7 @@ class InvoiceRepository
 
     private function calculatePercentage($cumulativeAmount, $total)
     {
-        if ($total == 0) {
-            return 0;
-        }
-
-        return (($cumulativeAmount / $total) * 100);
+        return $total == 0 ? 0 : (($cumulativeAmount / $total) * 100);
     }
 
     public function paymentPercentage($student_id)
