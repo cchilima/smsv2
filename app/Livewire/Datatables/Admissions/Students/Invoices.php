@@ -38,10 +38,6 @@ final class Invoices extends PowerGridComponent
         $this->sortBy('created_at', 'desc');
 
         return [
-            Exportable::make('student-invoices-export')
-                ->striped()
-                ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
-            Header::make()->showSearchInput(),
             Footer::make()
                 ->showPerPage()
                 ->showRecordCount(),

@@ -24,6 +24,10 @@
 
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="status">
+                            @livewire('datatables.accommodation.bookings', [
+                                'student' => $student,
+                            ])
+
                             <table class="table datatable-button-html5-columns">
                                 <thead>
                                     <tr>

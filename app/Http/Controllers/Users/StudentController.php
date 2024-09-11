@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
@@ -51,22 +52,23 @@ class StudentController extends Controller
         $this->classaAsessmentRepo = $classaAsessmentRepo;
     }
 
-    public function enrollments()
+    public function profile()
     {
-        $id = Auth::user()->id;
-        $student = $this->studentRepo->findUser($id);
-        $data['enrollments']  = $this->enrollmentRepo->getEnrollments($student->student->id);
+        try {
+            $student = Auth::user()->student;
+            $data['student'] = $student;
+            $data['enrollments']  = $this->enrollmentRepo->getEnrollments($student->id);
 
-        return view('pages.students.enrollments', $data);
+            return view('pages.students.profile', $data);
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to load student profile');
+        }
     }
 
     public function finances()
     {
         $student = Auth::user()->student;
-        $finances['invoices'] = $student->invoices;
-        $finances['statementsWithoutInvoice'] = $student->statementsWithoutInvoice;
-        $finances['receipts'] = $student->receipts;
 
-        return view('pages.students.finances', compact('student', 'finances'));
+        return view('pages.students.finances', compact('student'));
     }
 }
