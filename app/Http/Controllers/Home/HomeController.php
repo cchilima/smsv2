@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\Accounting\InvoiceRepository;
 use App\Repositories\Reports\enrollments\EnrollmentRepository;
 use App\Repositories\Announcements\AnnouncementRepository;
 use App\Repositories\Applications\ApplicantRepository;
@@ -20,16 +21,19 @@ class HomeController extends Controller
     protected $enrollmentRepository;
     protected $announcementRepo;
     protected $applicantRepo;
+    protected $invoiceRepo;
 
     public function __construct(
         EnrollmentRepository $enrollmentRepository,
         AnnouncementRepository $announcementRepo,
-        ApplicantRepository $applicantRepo
+        ApplicantRepository $applicantRepo,
+        InvoiceRepository $invoiceRepo
     ) {
         $this->middleware('auth');
         $this->enrollmentRepository = $enrollmentRepository;
         $this->announcementRepo = $announcementRepo;
         $this->applicantRepo = $applicantRepo;
+        $this->invoiceRepo = $invoiceRepo;
     }
 
     /**
@@ -40,10 +44,15 @@ class HomeController extends Controller
     public function index()
     {
         $user = Auth::user();
+        $data['user'] = $user;
 
         if ($user->userType->title == 'student') {
 
             $data['announcements'] = $this->announcementRepo->getAllByUserType('Student');
+            $data['totalFees'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($user->student->id);
+            $data['totalPayments'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($user->student->id);
+            $data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($user->student->id);
+            $data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($user->student->id);
 
             return view('pages.home.student_home', $data);
         } else if ($user->userType->title == 'instructor') {

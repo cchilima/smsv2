@@ -66,7 +66,7 @@ final class Invoices extends PowerGridComponent
             ->add('total', function ($row) {
                 return number_format($row->details->sum('amount'), 2, '.', ',');
             })
-            ->add('created_at_formatted', function ($row) {
+            ->add('created_at', function ($row) {
                 return $row->created_at->format('F j Y, H:i');
             });
     }
@@ -81,7 +81,7 @@ final class Invoices extends PowerGridComponent
 
             Column::make('Total', 'total'),
 
-            Column::make('Created At', 'created_at_formatted')
+            Column::make('Created At', 'created_at')
                 ->sortable(),
 
             Column::action('Action')

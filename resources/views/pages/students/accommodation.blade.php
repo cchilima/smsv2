@@ -28,62 +28,6 @@
                                 'student' => $student,
                             ])
 
-                            <table class="table datatable-button-html5-columns">
-                                <thead>
-                                    <tr>
-                                        <th>S/N</th>
-                                        <th>student Number</th>
-                                        <th>student Name</th>
-                                        <th>Hostel</th>
-                                        <th>Room number</th>
-                                        <th>Bed number</th>
-                                        <th>Expiring Date</th>
-                                        <th>Booking Date</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($closed as $c)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $c->student_id }}</td>
-                                            <td>{{ $c->student->user->first_name . ' ' . $c->student->user->last_name }}
-                                            </td>
-                                            <td>{{ $c->bedSpace->room->hostel->hostel_name }}</td>
-                                            <td>{{ $c->bedSpace->room->room_number }}</td>
-                                            <td>{{ $c->bedSpace->bed_number }}</td>
-                                            <td>{{ date('j F Y', strtotime($c->expiration_date)) }}</td>
-                                            <td>{{ date('j F Y', strtotime($c->booking_date)) }}</td>
-                                            <td class="text-center">
-                                                <div class="list-icons">
-                                                    <div class="dropdown">
-                                                        <a href="#" class="list-icons-item" data-toggle="dropdown">
-                                                            <i class="icon-menu9"></i>
-                                                        </a>
-
-                                                        <div class="dropdown-menu dropdown-menu-left">
-                                                            @if (true)
-                                                                <a href="{{ route('bookings.edit', $c->id) }}"
-                                                                    class="dropdown-item"><i class="icon-pencil"></i>
-                                                                    Edit</a>
-                                                            @endif
-                                                            @if (true)
-                                                                <a id="{{ $c->id }}"
-                                                                    onclick="confirmDelete(this.id)" href="#"
-                                                                    class="dropdown-item"><i class="icon-trash"></i>
-                                                                    Delete</a>
-                                                                <form method="post" id="item-delete-{{ $c->id }}"
-                                                                    action="{{ route('bookings.destroy', $c->id) }}"
-                                                                    class="hidden">@csrf @method('delete')</form>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
                         </div>
 
                         <div class="tab-pane fade show" id="new">

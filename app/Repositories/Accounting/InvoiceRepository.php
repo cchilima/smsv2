@@ -72,7 +72,6 @@ class InvoiceRepository
 
             DB::commit();
             return true;
-
         } catch (\Exception $e) {
             DB::rollback();
             dd($e);  // Or handle the exception as needed
@@ -339,7 +338,7 @@ class InvoiceRepository
             ->join('program_academic_period_fee', 'academic_period_fees.id', '=', 'program_academic_period_fee.academic_period_fee_id')
             ->join('programs', 'program_academic_period_fee.program_id', '=', 'programs.id')
             ->join('fees', 'fees.id', '=', 'academic_period_fees.fee_id')
-            ->whereIn('fees.type', ['recurring','once off'])
+            ->whereIn('fees.type', ['recurring', 'once off'])
             ->where('academic_period_fees.academic_period_id', $academic_period_id)
             ->where('programs.id', $student->program_id)
             ->whereNotIn('fees.type', ['course repeat fee', 'accommodation fee'])
@@ -347,7 +346,7 @@ class InvoiceRepository
             ->get();
 
         $universalFees = AcademicPeriodFee::doesntHave('programs')->whereHas('fee', function ($query) {
-            $query->whereIn('type', ['recurring','once off']);
+            $query->whereIn('type', ['recurring', 'once off']);
         })->get();
 
         return ['fees' => $fees, 'universal_fees' => $universalFees];
@@ -367,20 +366,18 @@ class InvoiceRepository
 
     public function invoiceTotal($invoice_id)
     {
-       $invoice = $this->getInvoice($invoice_id);
-       $accumulative_total = $invoice->details->sum('amount');
+        $invoice = $this->getInvoice($invoice_id);
+        $accumulative_total = $invoice->details->sum('amount');
 
-       return $accumulative_total;
-
+        return $accumulative_total;
     }
 
     public function paymentAgainstInvoice($invoice_id)
     {
         $invoice = $this->getInvoice($invoice_id);
         $accumulative_payments = $invoice->statements->sum('amount');
- 
-        return $accumulative_payments;
 
+        return $accumulative_payments;
     }
 
     public function paymentPercentageAllInvoices($student_id)
@@ -403,79 +400,140 @@ class InvoiceRepository
         return (($accumulative_payments / $accumulative_total) * 100);
     }
 
+    private function getFilteredStudentAcademicPeriodFees($student, $academicPeriodId, $hasPastFees)
+    {
+        $acFees = $this->getAcademicPeriodFees($student, $academicPeriodId);
+
+        if ($hasPastFees) {
+            // Filter out one-time fees
+            $acFees['fees'] = collect($acFees['fees'])->filter(function ($fee) {
+                return $fee->type != 'once off';
+            });
+            $acFees['universal_fees'] = collect($acFees['universal_fees'])->filter(function ($ufee) {
+                return $ufee->type != 'once off';
+            });
+        }
+
+        return $acFees;
+    }
+
+    private function calculatePercentage($cumulativeAmount, $total)
+    {
+        if ($total == 0) {
+            return 0;
+        }
+
+        return (($cumulativeAmount / $total) * 100);
+    }
 
     public function paymentPercentage($student_id)
     {
-        $accumulative_total = 0;
-        $accumulative_payments = 0;
-        $acCurrentFeesTotal = 0;
-    
-        // Get the current date
-        $currentDate = date('Y-m-d');
-
-        // get student
+        // Get the student
         $student = $this->getStudent($student_id);
 
-        // Determine academic period
-        $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, $currentDate);
+        // Get the student's current academic period
+        $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
 
-        // Determine period fees for current academic period
-        $acFees = $this->getAcademicPeriodFees($student, $academicPeriod->academic_period_id);
-
-        // Get cummulative academic fees total for all student's past academic periods, and handle all once of fees
+        // Get the student's cumulative academic period fees
         $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
 
+        // Get current academic period fees and filter one-time fees if needed
+        $acFees = $this->getFilteredStudentAcademicPeriodFees(
+            $student,
+            $academicPeriod->academic_period_id,
+            $acPastFeesTotal > 0
+        );
 
-        // Take out one-time fees if student has $acPastFeesTotal assumption student has already been billed once off fees
-        if ($acPastFeesTotal > 0) {
-            // Filter out one-time fees
-            $filteredFees = collect($acFees['fees'])->filter(function ($fee) {
-                return $fee->type != 'once off';
-            });
+        // Calculate total fees for the current academic period
+        $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount'));
 
-            $filteredUniversalFees = collect($acFees['universal_fees'])->filter(function ($ufee) {
-                return $ufee->type != 'once off';
-            });
+        // Calculate total payments made by the student
+        $totalPayments = $student->receipts->sum('amount') - $acPastFeesTotal;
 
-            // Update acFees with filtered collections
-            $acFees['fees'] = $filteredFees;
-            $acFees['universal_fees'] = $filteredUniversalFees;
-        }
-
-
-
-        // Get all receipts
-        $receipts_total = $student->receipts->sum('amount');
-
-        // Calculate the accumulative totals
-        $acCurrentFeesTotal  += ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount'));
-     
-
-        // Prepare for calculation 
-        $accumulative_total = $acCurrentFeesTotal;
-
-        // Prepare for calculation 
-        $accumulative_payments = $receipts_total - $acPastFeesTotal ;
-    
-        // Safeguard against division by zero
-        if ($accumulative_total == 0) {
-            return 0; // or you can choose another appropriate value or action
-        }        
-    
-        return (($accumulative_payments / $accumulative_total) * 100);
+        // Calculate and return the payment percentage
+        return $this->calculatePercentage($totalPayments, $acCurrentFeesTotal);
     }
-    
+
+    public function getStudentPaymentBalance($student_id)
+    {
+        // Get the student
+        $student = $this->getStudent($student_id);
+
+        // Get the student's current academic period
+        $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+
+        // Get the student's cumulative academic period fees
+        $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
+
+        // Get current academic period fees and filter one-time fees if needed
+        $acFees = $this->getFilteredStudentAcademicPeriodFees(
+            $student,
+            $academicPeriod->academic_period_id,
+            $acPastFeesTotal > 0
+        );
+
+        // Calculate total fees for the current academic period
+        $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount'));
+
+        // Calculate total payments made by the student
+        $totalPayments = $student->receipts->sum('amount') - $acPastFeesTotal;
+
+        // Calculate and return the payment balance
+        return $acCurrentFeesTotal - $totalPayments;
+    }
+
+    public function getStudentAcademicPeriodFeesTotal($student_id)
+    {
+        // Get the student
+        $student = $this->getStudent($student_id);
+
+        // Get the student's current academic period
+        $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+
+        // Get the student's cumulative academic period fees
+        $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
+
+        // Get current academic period fees and filter one-time fees if needed
+        $acFees = $this->getFilteredStudentAcademicPeriodFees(
+            $student,
+            $academicPeriod->academic_period_id,
+            $acPastFeesTotal > 0
+        );
+
+        // Calculate total fees for the current academic period
+        $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount'));
+
+        // Calculate and return the fees total
+        return $acCurrentFeesTotal;
+    }
+
+    public function getStudentAcademicPeriodPaymentsTotal($student_id)
+    {
+        // Get the student
+        $student = $this->getStudent($student_id);
+
+        // Get the student's current academic period
+        $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+
+        // Get the student's cumulative academic period fees
+        $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
+
+        // Calculate total payments made by the student
+        $totalPayments = $student->receipts->sum('amount') - $acPastFeesTotal;
+
+        // Calculate and return the payments total
+        return $totalPayments;
+    }
 
     private function getAllPastFees($student, $ac_period_id)
     {
         $total = 0;
 
         $academicPeriodIds = Invoice::where('student_id', $student->id)
-        ->where('academic_period_id', '!=', $ac_period_id)
-        ->pluck('academic_period_id')
-        ->unique();
-    
-       
+            ->where('academic_period_id', '!=', $ac_period_id)
+            ->pluck('academic_period_id')
+            ->unique();
+
         foreach ($academicPeriodIds as $period_id) {
             $fees = $this->getAcademicPeriodFees($student, $period_id);
             $total += ($fees['fees']->sum('amount')) + ($fees['universal_fees']->sum('amount'));
@@ -483,10 +541,10 @@ class InvoiceRepository
 
         return $total;
     }
-    
+
 
     /**
-     * Get all non-invoiced receipts for a given student.
+     * Get all invoices for a given student.
      *
      * @param  int  $studentId The ID of the student.
      * @return \Illuminate\Database\Eloquent\Collection
