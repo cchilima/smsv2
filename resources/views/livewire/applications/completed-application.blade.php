@@ -119,6 +119,10 @@
     <div class="white rounded-md z-depth-1 p-10 mt-1">
     <table class="striped">
         <tbody class="light-deca">
+        <tr>
+                <th>Applied for year</th>
+                <td>{{ $application->year_applying_for ?? 'Missing' }}</td>
+            </tr>
             <tr>
                 <th>Program</th>
                 <td>{{ $application->program->name ?? 'Missing' }}</td>

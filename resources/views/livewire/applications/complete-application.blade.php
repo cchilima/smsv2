@@ -165,6 +165,20 @@
                         <div id="academic_info">
                             <div class="row">
 
+                                <div class="col m12 s12">
+                                    <label class="active">Year applying forlabel>
+                                    <select wire:model.live="year_applying_for"
+                                        class="browser-default custom-select ">
+                                        <option></option>
+                                        @foreach ($years as $year)
+                                            <option value="{{ $year }}"  @if ($year == $year_applying_for) selected @endif>
+                                            {{ $year }} 
+                                            </option>
+                                        @endforeach
+
+                                    </select>
+                                </div>
+
                                 <div class="col m6 s12">
                                     <label class="active">Program</label>
                                     <select wire:model.live="program_id" class="browser-default custom-select ">
@@ -430,22 +444,20 @@
 
 
         <div class="row mt-3">
-    <div class="col s12 center-align">
-        <!-- Previous Button -->
-        <a class="btn-floating btn-large waves-effect waves-light white" 
-           wire:click="previousSection" 
-           {{ $currentSection === 'personal_info' ? 'disabled' : '' }}>
-            <i class="material-icons indigo-text">arrow_back</i>
-        </a>
+            <div class="col s12 center-align">
+                <!-- Previous Button -->
+                <a class="btn-floating btn-large waves-effect waves-light white" wire:click="previousSection"
+                    {{ $currentSection === 'personal_info' ? 'disabled' : '' }}>
+                    <i class="material-icons indigo-text">arrow_back</i>
+                </a>
 
-        <!-- Next Button -->
-        <a class="btn-floating btn-large waves-effect waves-light white" 
-           wire:click="nextSection" 
-           {{ $currentSection === 'results' ? 'disabled' : '' }}>
-            <i class="material-icons indigo-text">arrow_forward</i>
-        </a>
-    </div>
-</div>
+                <!-- Next Button -->
+                <a class="btn-floating btn-large waves-effect waves-light white" wire:click="nextSection"
+                    {{ $currentSection === 'results' ? 'disabled' : '' }}>
+                    <i class="material-icons indigo-text">arrow_forward</i>
+                </a>
+            </div>
+        </div>
 
 
 

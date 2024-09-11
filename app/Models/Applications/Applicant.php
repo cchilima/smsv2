@@ -38,6 +38,7 @@ class Applicant extends Model
         'study_mode_id',
         'marital_status_id',
         'academic_period_intake_id',
+        'year_applying_for'
     ];
 
     public function program()

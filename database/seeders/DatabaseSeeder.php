@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
         // Seed Intakes
         $intakes = [
             ['name' => 'January'],
-            ['name' => 'July'],
+            ['name' => 'June'],
         ];
 
         AcademicPeriodIntake::insert($intakes);
