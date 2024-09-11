@@ -400,7 +400,7 @@ class InvoiceRepository
         return (($accumulative_payments / $accumulative_total) * 100);
     }
 
-    public function getFilteredStudentAcademicPeriodFees($student, $academicPeriodId, $hasPastFees)
+    private function getFilteredStudentAcademicPeriodFees($student, $academicPeriodId, $hasPastFees)
     {
         $acFees = $this->getAcademicPeriodFees($student, $academicPeriodId);
 
@@ -417,7 +417,7 @@ class InvoiceRepository
         return $acFees;
     }
 
-    public function calculatePercentage($cumulativeAmount, $total)
+    private function calculatePercentage($cumulativeAmount, $total)
     {
         if ($total == 0) {
             return 0;
@@ -517,16 +517,6 @@ class InvoiceRepository
 
         // Get the student's cumulative academic period fees
         $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
-
-        // Get current academic period fees and filter one-time fees if needed
-        $acFees = $this->getFilteredStudentAcademicPeriodFees(
-            $student,
-            $academicPeriod->academic_period_id,
-            $acPastFeesTotal > 0
-        );
-
-        // Calculate total fees for the current academic period
-        $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount'));
 
         // Calculate total payments made by the student
         $totalPayments = $student->receipts->sum('amount') - $acPastFeesTotal;

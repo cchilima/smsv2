@@ -214,9 +214,5 @@
             aspect-ratio: 1/1;
             object-fit: cover
         }
-
-        /* .bg-gradient-primary {
-                                                                                                            background: linear-gradient(to right, #020843, #007bff);
-                                                                                                        } */
     </style>
 @endpush
