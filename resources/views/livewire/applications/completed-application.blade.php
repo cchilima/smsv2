@@ -214,11 +214,9 @@
                     @if($application->status == 'complete' || $application->status == 'accepted')
 
                     @if($isEligibleForProvisonal)
-                        <form action="{{ route('application.download_provisional') }}" method="GET">
-                            @csrf @method('GET')
-                            <input name="applicant_id" hidden type="text" value="{{ $application->id }}">
-                            <button type="submit" class="btn btn-small black waves-effect waves-light rounded">Download</button>
-                        </form>
+                        <a href="{{ route('application.download_provisional', ['applicant_id' => $application->id]) }}" class="btn btn-small black waves-effect waves-light rounded">
+                            <i class="material-icons right">arrow_downward</i> Provisional Letter
+                        </a>
                     @else
                         Please visit our admissions team to guide you on next steps as you haven't meet the set candidate criteria for admission.
                     @endif
@@ -242,6 +240,7 @@
 
 
 </div>
+
 
 @auth
 @if (Qs::userIsSuperAdmin() || Qs::userIsAdmin())

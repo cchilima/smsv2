@@ -151,9 +151,7 @@ class CompleteApplication extends Component
             'province_id' => $this->kin_province_id,
             'relationship_id' => $this->kin_relationship_id,
         ]
-    );
-
-    $this->dispatch('progress-saved');
+    );    
 
     // Check the application completion status
     if($this->applicantRepo->checkApplicationCompletion($this->applicant->id)){

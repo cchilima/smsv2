@@ -2,18 +2,18 @@
 
 namespace App\Models\Applications;
 
+use App\Models\Academics\{Program, StudyMode};
+use App\Models\Admissions\{AcademicPeriodIntake};
+use App\Models\Applications\{ApplicantAttachment};
+use App\Models\Residency\{Country, Province, Town};
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Applications\{ApplicantAttachment};
-use App\Models\Academics\{Program,StudyMode};
-use App\Models\Admissions\{AcademicPeriodIntake};
-use App\Models\Residency\{Country, Province, Town};
-use OwenIt\Auditing\Auditable;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Applicant extends Model implements AuditableContract
+
+class Applicant extends Model 
 {
-    use HasFactory, Auditable;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
         'applicant_code',
@@ -39,7 +39,6 @@ class Applicant extends Model implements AuditableContract
         'marital_status_id',
         'academic_period_intake_id',
     ];
-
 
     public function program()
     {
@@ -90,8 +89,4 @@ class Applicant extends Model implements AuditableContract
     {
         return $this->hasOne(ApplicantNextOfKin::class);
     }
-
-
-
-
 }

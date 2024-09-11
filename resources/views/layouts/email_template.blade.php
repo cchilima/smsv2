@@ -76,6 +76,37 @@
             text-decoration: none;
             font-size: 16px;
         }
+
+        .download-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #000; /* Black background */
+        color: #fff !important; /* White text */
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .download-button:hover {
+        background-color: #444; /* Darker shade on hover */
+    }
+
+    .download-button span {
+        margin-right: 5px; /* Space between icon and text */
+    }
+
+    .note {
+        border: 0.8px solid grey;
+        border-radius: 10px;
+        padding: 10px;
+        color: red;
+    }
+
+
     </style>
 </head>
 <body>

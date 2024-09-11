@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('applicants', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('applicant_code')->unique();
             $table->string('nrc')->nullable();
             $table->string('passport')->nullable();

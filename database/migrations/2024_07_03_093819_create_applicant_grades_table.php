@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('secondary_school');
             $table->text('subject');
             $table->integer('grade');
-            $table->foreignId('applicant_id')->constrained('applicants')->onDelete('restrict');
+            $table->foreignUuid('applicant_id')->constrained('applicants')->onDelete('restrict');
             $table->timestamps();
         });
     }
