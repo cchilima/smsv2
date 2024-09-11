@@ -295,12 +295,16 @@ class StudentController extends Controller
     //student accommodation
     public function getAppliedBedSpaces()
     {
-        $id = Auth::user();
-        $student_id = \App\Models\Admissions\Student::where('user_id', $id->id)->first();
-        $data['hostel'] = $this->hostel_repository->getAll();
-        $data['open'] = $this->booking_repository->getOpenBookings();
-        $data['closed'] = $this->booking_repository->getClosedBookingsOne($student_id->id);
-        return view('pages.students.accommodation', $data);
+        try {
+            $data['student'] = Auth::user()->student;
+            $data['hostel'] = $this->hostel_repository->getAll();
+            $data['open'] = $this->booking_repository->getOpenBookings();
+            $data['closed'] = $this->booking_repository->getClosedBookingsOne($data['student']->id);
+
+            return view('pages.students.accommodation', $data);
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to load page' . $th->getMessage());
+        }
     }
 
     public function applyBedSpace(Booking $request)

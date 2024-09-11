@@ -7,6 +7,7 @@
     @endphp
 
     <div class="row">
+
         @if (count($announcements) > 0)
             <div class="col-12">
                 @foreach ($announcements as $announcement)
@@ -26,6 +27,7 @@
                 @endforeach
             </div>
         @endif
+
     </div>
 
 @endsection

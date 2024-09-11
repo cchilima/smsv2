@@ -3,6 +3,7 @@
 namespace App\Livewire\Datatables\Accommodation;
 
 use App\Models\Accomodation\Booking;
+use App\Models\Admissions\Student;
 use App\Repositories\Accommodation\BookingRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,6 +24,7 @@ final class Bookings extends PowerGridComponent
 
     public string $tableName = 'BookingsTable';
     public bool $deferLoading = true;
+    public ?Student $student;
 
     protected BookingRepository $bookingRepo;
 
@@ -48,7 +50,11 @@ final class Bookings extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return $this->bookingRepo->getOpenBookings(false);
+        if ($this->student) {
+            return  $this->bookingRepo->getClosedBookingsOne(student_id: $this->student->id, executeQuery: false);
+        }
+
+        return $this->bookingRepo->getOpenBookings(executeQuery: false);
     }
 
     public function relationSearch(): array

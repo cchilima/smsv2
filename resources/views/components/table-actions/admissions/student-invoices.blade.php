@@ -9,15 +9,16 @@
         </a>
 
         <div class="dropdown-menu dropdown-menu-left">
-            @if (Qs::userIsTeamSA())
-                <a href="{{ route('accounting.invoice_details', $row->id) }}" class="dropdown-item"><i
-                        class="icon-eye"></i>
-                    view</a>
+            @if (Qs::userIsTeamSA() || Qs::getUserType() === 'student')
 
+                @if (Qs::userIsTeamSA())
+                    <a href="{{ route('accounting.invoice_details', $row->id) }}" class="dropdown-item"><i
+                            class="icon-eye"></i>
+                        View</a>
+                @endif
 
                 <a class="dropdown-item" href="{{ route('student.download-invoice', $row->id) }}">
-                <i
-                class="icon-download4"></i> dowload PDF 
+                    <i class="icon-download4"></i> Dowload PDF
                 </a>
             @endif
         </div>

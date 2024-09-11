@@ -69,16 +69,20 @@ class BookingRepository
 
         $executeQuery ? $query->get() : $query;
     }
-    public function getClosedBookingsOne($student_id)
+    public function getClosedBookingsOne($student_id, $executeQuery = false)
     {
         $currentDateTime = Carbon::now();
-        return Booking::with('student.user', 'bedSpace.room.hostel')
+
+        $query = Booking::with('student.user', 'bedSpace.room.hostel')
             ->where('student_id', '=', $student_id)
             ->whereHas('bedSpace', function ($query) use ($currentDateTime) {
                 $query->where('is_available', '=', 'false')
                     ->whereDate('expiration_date', '>=', $currentDateTime);
-            })->get();
+            });
+
+        return $executeQuery ? $query->get() : $query;
     }
+
     public function invoiceStudent($student_id)
     {
         DB::beginTransaction();

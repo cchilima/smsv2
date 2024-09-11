@@ -554,7 +554,7 @@
                         ])
                             ? 'nav-item-expanded nav-item-open'
                             : '' }} ">
-                        <a href="#" class="nav-link"><i class="icon-books"></i> <span> Exams</span></a>
+                        <a href="#" class="nav-link"><i class="icon-books"></i> <span> Assessments</span></a>
 
                         <ul class="nav nav-group-sub" data-submenu-title="Manage Exams">
                             @if (true)
