@@ -16,8 +16,8 @@
                     @endphp
 
                     <div class="rounded-circle w-100 h-100">
-                        <img style="aspect-ratio: 1/1; object-fit: cover" src="{{ $passportPhotoUrl }}" alt="photo"
-                            class="rounded-circle w-100 h-100">
+                        <img style="aspect-ratio: 1/1; object-fit: cover" src="{{ $passportPhotoUrl }}"
+                            alt="User passport photo" class="rounded-circle w-100 h-100">
                     </div>
                     <br>
                     <h3 class="mt-3">{{ auth()->user()->first_name . ' ' . auth()->user()->last_name }}</h3>
