@@ -128,7 +128,7 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-justify">Registered Academic Year</td>
-                                        <td>{{ '' }}</td>
+                                        <td>{{ count($student->invoices) > 0 ? $student->invoices->last()->period->name : 'Not registered' }}</td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-justify">Semester</td>
