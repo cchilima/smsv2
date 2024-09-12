@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->enum('type', ['NRC / Passport', 'Results', 'Photo']);
             $table->string('attachment');
-            $table->foreignId('applicant_id')->contrained('applicants')->onDelete('restrict');
+            $table->foreignUuid('applicant_id')->contrained('applicants')->onDelete('restrict');
             $table->timestamps();
         });
     }

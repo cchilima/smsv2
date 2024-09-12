@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('full_name')->nullable();;
             $table->string('mobile')->nullable();;
             $table->string('telephone')->nullable();
-            $table->foreignId('applicant_id')->nullable()->constrained('applicants')->onDelete('restrict');
+            $table->foreignUuid('applicant_id')->nullable()->constrained('applicants')->onDelete('restrict');
             $table->foreignId('relationship_id')->nullable()->constrained('relationships')->onDelete('restrict');
             $table->string('address')->nullable();
             $table->foreignId('town_id')->nullable()->constrained('towns')->onDelete('restrict');

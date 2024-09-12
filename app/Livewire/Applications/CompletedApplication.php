@@ -102,6 +102,7 @@ class CompletedApplication extends Component
             $studentData['period_type_id'] = 1;
             $studentData['course_level_id'] = 1;
             $studentData['admission_year'] = date('Y');
+            $studentData['semester'] = '1';
     
             // Create user account
             $user = $this->studentRepo->createUser($userData);
@@ -110,7 +111,7 @@ class CompletedApplication extends Component
             $userPersonalInfo = $user->userPersonalInfo()->create($personalData);
     
             // Use the created user instance to associate and create NextOfKin
-            //dd($applicantObj->nextOfKin->toArray());
+            // dd($applicantObj->nextOfKin->toArray());
             $nextOfKin = $user->userNextOfKin()->create($applicantObj->nextOfKin->toArray());
     
             // Add student id to the data we have

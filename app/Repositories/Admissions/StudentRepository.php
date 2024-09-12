@@ -290,6 +290,7 @@ class StudentRepository
 
     public function getFees($student_id)
     {
+
         // get student
         $student = $this->getStudentInfor($student_id);
 

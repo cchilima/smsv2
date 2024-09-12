@@ -37,6 +37,8 @@ class CompleteApplication extends Component
     public $period_type_id;
     public $study_mode_id;
     public $academic_period_intake_id;
+    public $year_applying_for;
+
 
     public $results;
     public $secondary_school;
@@ -77,6 +79,7 @@ class CompleteApplication extends Component
         $this->province_id = $this->applicant->province_id;
         $this->country_id = $this->applicant->country_id;
         $this->program_id = $this->applicant->program_id;
+        $this->year_applying_for = $this->applicant->year_applying_for;
         $this->study_mode_id = $this->applicant->study_mode_id;
         $this->academic_period_intake_id = $this->applicant->academic_period_intake_id;
 
@@ -108,6 +111,7 @@ class CompleteApplication extends Component
     $this->province_id = $this->country_id ? ($this->province_id ?: null) : null;
     $this->town_id = $this->province_id ? ($this->town_id ?: null) : null;
 
+
     // Update applicant information
     $this->applicant->update([
         'applicant_code' => $this->applicant_code,
@@ -127,6 +131,7 @@ class CompleteApplication extends Component
         'program_id' => $this->program_id,
         'study_mode_id' => $this->study_mode_id,
         'academic_period_intake_id' => $this->academic_period_intake_id,
+        'year_applying_for' => $this->year_applying_for ,
     ]);
 
     // Set kin_country_id, kin_province_id, and kin_town_id to null if they are empty or if the higher-level field is empty
@@ -151,9 +156,7 @@ class CompleteApplication extends Component
             'province_id' => $this->kin_province_id,
             'relationship_id' => $this->kin_relationship_id,
         ]
-    );
-
-    $this->dispatch('progress-saved');
+    );    
 
     // Check the application completion status
     if($this->applicantRepo->checkApplicationCompletion($this->applicant->id)){
@@ -285,11 +288,39 @@ public function saveGrade()
             $kin_towns = [];
         }
 
+        $currentYear = date('Y'); // Get the current year
+        $years = [
+            (int)$currentYear,        // Current year
+            (int)$currentYear + 1,    // Next year
+            (int)$currentYear + 2,    // Year after next
+        ];
+        
+        if ($this->year_applying_for && $this->year_applying_for != null) {
+            // Fetch all intakes as an Eloquent Collection
+            $periodIntakes = $this->studentRepo->getPeriodIntakes();
+        
+            // If applying for the current year, filter intakes based on the current or future months
+            if ((int)$this->year_applying_for == $currentYear) {
+                $currentMonth = date('F'); // Get the current month (1-12)
+                // Use the `filter` method on the Eloquent Collection
+                $intakes = $periodIntakes->filter(function ($intake) use ($currentMonth) {
+                    // Assuming $intake has a 'month' field representing the intake month
+                    return $intake->name >= $currentMonth; // Adjust based on your data structure
+                });
+            } else {
+                // If not the current year, return all intakes
+                $intakes = $periodIntakes;
+            }
+        } else {
+            $intakes = collect(); // Use an empty collection if no year is selected
+        }
+        
+        
         return view('livewire.applications.complete-application', 
         [
             'programs' => $this->studentRepo->getPrograms(), 
             'studyModes' => $this->studentRepo->getStudyModes(), 
-            'periodIntakes' => $this->studentRepo->getPeriodIntakes(), 
+            'periodIntakes' => $intakes, 
             'relationships' => $this->studentRepo->getRelationships(), 
             'marital_statuses' => $this->studentRepo->getMaritalStatuses(), 
             'countries' => $this->studentRepo->getCountries(), 
@@ -299,7 +330,8 @@ public function saveGrade()
             'kin_provinces' => $kin_provinces, 
             'kin_towns' => $kin_towns, 
             'schools' => $this->studentRepo->getSchools(), 
-            'subjects' => $this->studentRepo->getSubjects()
+            'subjects' => $this->studentRepo->getSubjects(),
+            'years' => $years,
         ]);
     }
 }
