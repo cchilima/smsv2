@@ -4,7 +4,8 @@ namespace App\Repositories\Accounting;
 
 use App\Models\Academics\{AcademicPeriodClass, AcademicPeriodFee, AcademicPeriod};
 use App\Repositories\Academics\{StudentRegistrationRepository};
-use App\Models\Accounting\{Invoice, InvoiceDetail, Receipt};
+use App\Repositories\Admissions\{StudentRepository};
+use App\Models\Accounting\{Invoice, InvoiceDetail, Receipt, Fee};
 use App\Models\Enrollments\Enrollment;
 use App\Models\Admissions\Student;
 use Auth;
@@ -14,11 +15,13 @@ class InvoiceRepository
 {
     protected $statementRepo;
     protected $registrationRepo;
+    protected $studentRepo;
 
-    public function __construct(StatementRepository $statementRepo, StudentRegistrationRepository $registrationRepo)
+    public function __construct(StatementRepository $statementRepo, StudentRegistrationRepository $registrationRepo, StudentRepository $studentRepo)
     {
         $this->statementRepo = $statementRepo;
         $this->registrationRepo = $registrationRepo;
+        $this->studentRepo = $studentRepo;
     }
 
     public function getInvoice($invoice_id)
@@ -434,6 +437,10 @@ class InvoiceRepository
         // Get the student's current academic period
         $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
 
+        if(!$academicPeriod){
+            return 0;
+        }
+
         // Get the student's cumulative academic period fees
         $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
 
@@ -444,15 +451,70 @@ class InvoiceRepository
             $acPastFeesTotal > 0
         );
 
+
+        // get custom invoiced fee that arent attached to academic period fees
+        $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriod->academic_period_id);
+
         // Calculate total fees for the current academic period
-        $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount'));
+        $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount') + $customFeeTotal);
 
         // Calculate total payments made by the student
         $totalPayments = $student->receipts->sum('amount') - $acPastFeesTotal;
 
         // Calculate and return the payment percentage
         return $this->calculatePercentage($totalPayments, $acCurrentFeesTotal);
+        
     }
+
+
+
+    private function customInvoicedFeeTotal($student, $ac_period_id)
+    {
+
+        // Get the fees associated with the student
+        $fees = $this->getFees($student);
+
+        // Extract fee IDs from the fees collection
+        $feeIds = $fees->pluck('id')->toArray();
+
+        // Initialize total fee amount
+        $totalFee = 0;
+
+        // Cycle through student's invoices
+        foreach ($student->invoices as $invoice) {
+            // Check if the invoice matches the given academic period ID
+            if ($invoice->academic_period_id == $ac_period_id) {
+                // Filter invoice details where the fee_id is in the list of fee IDs
+                $filteredDetails = $invoice->details->filter(function ($detail) use ($feeIds) {
+                    return in_array($detail->fee_id, $feeIds);
+                });
+
+                // Sum the amounts of the filtered details
+                $totalFee += $filteredDetails->sum('amount'); // Assuming 'amount' is the field to sum
+            }
+        }
+
+        return $totalFee;
+    }
+
+
+
+    public function getFees($student)
+    {
+
+        // get current academic period fees
+        $academic_period_fees = $student->academic_info ? $student->academic_info->academic_period->academic_period_fees : [];
+
+        // extract only the fee ids
+        $academic_period_fee_ids = $academic_period_fees ? $academic_period_fees->pluck('fee_id') : [];
+
+        // get all fees minus the fees in current academic period
+        $fees = Fee::whereNotIn('id', $academic_period_fee_ids)->get();
+
+        return $fees;
+    }
+
+
 
     public function getStudentPaymentBalance($student_id)
     {
