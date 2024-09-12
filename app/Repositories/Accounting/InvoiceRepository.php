@@ -422,22 +422,19 @@ class InvoiceRepository
 
     private function calculatePercentage($cumulativeAmount, $total)
     {
-        if ($total == 0) {
-            return 0;
-        }
-
-        return (($cumulativeAmount / $total) * 100);
+        return $total == 0 ? 0 : (($cumulativeAmount / $total) * 100);
     }
 
     public function paymentPercentage($student_id)
     {
+
         // Get the student
         $student = $this->getStudent($student_id);
 
         // Get the student's current academic period
         $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
 
-        if(!$academicPeriod){
+        if (!$academicPeriod) {
             return 0;
         }
 
@@ -451,7 +448,6 @@ class InvoiceRepository
             $acPastFeesTotal > 0
         );
 
-
         // Get custom invoiced fee that arent attached to academic period fees
         $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriod->academic_period_id);
 
@@ -463,7 +459,6 @@ class InvoiceRepository
 
         // Calculate and return the payment percentage
         return $this->calculatePercentage($totalPayments, $acCurrentFeesTotal);
-
     }
 
 
@@ -534,8 +529,11 @@ class InvoiceRepository
             $acPastFeesTotal > 0
         );
 
+        // Get custom invoiced fee that arent attached to academic period fees
+        $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriod->academic_period_id);
+
         // Calculate total fees for the current academic period
-        $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount'));
+        $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount')) + $customFeeTotal;
 
         // Calculate total payments made by the student
         $totalPayments = $student->receipts->sum('amount') - $acPastFeesTotal;
