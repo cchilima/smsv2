@@ -118,7 +118,7 @@ class CompletedApplication extends Component
             $studentData = $this->studentRepo->addStudentId($studentData);
     
             // Create the student record
-            $student = $user->student()->create($studentData);
+            $student = $user->student()->create($studentData);  
 
             // Update application status
             $applicantObj->update(['status' => 'accepted']);
@@ -127,7 +127,7 @@ class CompletedApplication extends Component
             $action_status = 'accepted';
 
             // queue the email
-            Mail::to($applicantObj->email)->bcc(['stembo@zut.edu.zm'])->queue(new ApplicationVerdit($applicantObj, $action_status));
+            Mail::to($applicantObj->email)->bcc(['stembo@zut.edu.zm'])->queue(new ApplicationVerdit($applicantObj, $user->student , $action_status));
 
             $this->dispatch('accepted');
 

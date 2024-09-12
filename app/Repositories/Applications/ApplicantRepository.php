@@ -176,11 +176,14 @@ class ApplicantRepository
         // Check if application has an attachments
         $hasAttachments = $application->attachment()->count() > 0;
 
+        // Check if atleast 5 subjects were entered
+        $grades = $application->grades()->count();
+
         // Check if application has payment(s)
         $feePaid = $application->payment->sum('amount');
 
         // Update status to pending if all fields except status are filled
-        if (empty($allFieldsFilled) && $hasAttachments && $feePaid < 150) {
+        if (empty($allFieldsFilled) && $hasAttachments && $feePaid < 150 && $grades >=5) {
             $application->status = 'pending';
             $application->save();
 

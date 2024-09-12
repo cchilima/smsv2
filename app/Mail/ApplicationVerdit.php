@@ -13,14 +13,16 @@ class ApplicationVerdit extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $student;
     public $application;
     public $application_status;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($application, $application_status)
+    public function __construct($application, $student, $application_status)
     {
+        $this->student = $student;
         $this->application = $application;
         $this->application_status = $application_status;
     }

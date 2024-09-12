@@ -166,7 +166,7 @@
                             <div class="row">
 
                                 <div class="col m12 s12">
-                                    <label class="active">Year applying forlabel>
+                                    <label class="active">Year applying for <label>
                                     <select wire:model.live="year_applying_for"
                                         class="browser-default custom-select ">
                                         <option></option>

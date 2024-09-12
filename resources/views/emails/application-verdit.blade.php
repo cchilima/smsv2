@@ -22,7 +22,11 @@
                 We were highly impressed with your qualifications and experience, and we believe you will be a valuable addition to our program. 
                 Please look out for further instructions in the coming days regarding the next steps.
                 <br><br>
-                Welcome to the {{ $application->program->name }} program. 
+                Welcome to the {{ $application->program->name }} program. Your login details are as follows : <br><br>
+                
+                Student portal : http://localhost:8000/login
+                Student number : {{ $student->id }} <br>
+                Default password : secret
 
                 <br><br>
 
