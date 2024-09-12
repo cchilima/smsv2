@@ -448,7 +448,7 @@ class InvoiceRepository
         );
 
 
-        // get custom invoiced fee that arent attached to academic period fees
+        // Get custom invoiced fee that arent attached to academic period fees
         $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriod->academic_period_id);
 
         // Calculate total fees for the current academic period
@@ -459,7 +459,7 @@ class InvoiceRepository
 
         // Calculate and return the payment percentage
         return $this->calculatePercentage($totalPayments, $acCurrentFeesTotal);
-        
+
     }
 
 
@@ -558,8 +558,12 @@ class InvoiceRepository
             $acPastFeesTotal > 0
         );
 
+
+        // Get custom invoiced fee that arent attached to academic period fees
+        $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriod->academic_period_id);
+
         // Calculate total fees for the current academic period
-        $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount'));
+        $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount')) + $customFeeTotal;
 
         // Calculate and return the fees total
         return $acCurrentFeesTotal;
