@@ -554,7 +554,8 @@
                 <ul wire:ignore class="nav nav-tabs nav-tabs-highlight">
 
                     <li class="nav-item">
-                        <a href="#percentage" class="nav-link" data-toggle="tab">{{ 'Payment Percentage' }}</a>
+                        <a href="#financial-stats-overview" class="nav-link"
+                            data-toggle="tab">{{ 'Financial Stats Overview' }}</a>
                     </li>
                     <li class="nav-item">
                         <a href="#invoice" class="nav-link"
@@ -649,10 +650,25 @@
                         @endif
                     </div>
 
-                    <div class="tab-pane fade show" id="percentage">
+                    <div class="tab-pane fade show" id="financial-stats-overview">
 
-                        <div class="container">
-                            <p>{{ number_format($percentage, 2) }}%</p>
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <span class="font-weight-semibold">Fees Total: </span>
+                                K{{ number_format($feesTotal, 2) }}
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <span class="font-weight-semibold">Payments Total: </span>
+                                K{{ number_format($paymentsTotal, 2) }}
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <span class="font-weight-semibold">Payment Percentage: </span>
+                                {{ number_format($paymentPercentage, 2) }}%
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <span class="font-weight-semibold">Payment Balance: </span>
+                                K{{ number_format($paymentBalance, 2) }}
+                            </div>
                         </div>
 
                     </div>
@@ -1022,23 +1038,27 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Email: <span class="text-danger">*</span></label>
-                                                <input value="{{ $student->user->email }}" required
-                                                    type="text" name="email" placeholder="Email"
-                                                    class="form-control">
+                                                <input value="{{ $student->user->email }}" required type="text"
+                                                    name="email" placeholder="Email" class="form-control">
                                             </div>
                                         </div>
 
                                         <!-- Add more rows as needed -->
                                         <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="lga_id">Gender <span class="text-danger">*</span></label>
-                                            <select data-placeholder="Select Gender" required
-                                                class="select-search form-control" name="gender" id="lga_id">
-                                                <option value="Male"  {{  $student->user->userPersonalInfo?->gender == 'Male'? 'selected' : '' }}>Male</option>
-                                                <option value="Female"  {{  $student->user->userPersonalInfo?->gender == 'Female'? 'selected' : '' }}>Female</option>
-                                            </select>
+                                            <div class="form-group">
+                                                <label for="lga_id">Gender <span
+                                                        class="text-danger">*</span></label>
+                                                <select data-placeholder="Select Gender" required
+                                                    class="select-search form-control" name="gender" id="lga_id">
+                                                    <option value="Male"
+                                                        {{ $student->user->userPersonalInfo?->gender == 'Male' ? 'selected' : '' }}>
+                                                        Male</option>
+                                                    <option value="Female"
+                                                        {{ $student->user->userPersonalInfo?->gender == 'Female' ? 'selected' : '' }}>
+                                                        Female</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
 
                                         <!-- Add more rows as needed -->
                                         <div class="col-md-6">
@@ -1567,9 +1587,6 @@
 
     @endif
 
-
-
-
     <div class="card card-collapsed">
 
         <div class="card-header header-elements-inline">
@@ -1579,37 +1596,36 @@
 
         <div class="card-body">
 
+            @if (count($enrolled_courses) > 0)
 
-            @if(count($enrolled_courses) > 0)
+                <div class="text-right ">
+                    <a href="{{ route('students.add-drop-course', $student->id) }}"
+                        class="btn btn-primary mt-2 mb-2 right text-white">Course Add \ Drop</a>
+                </div>
 
-            <div class="text-right ">
-                <a href="{{ route('students.add-drop-course', $student->id ) }}" class="btn btn-primary mt-2 mb-2 right text-white">Course Add \ Drop</a>
-             </div>
-
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>S/N</th>
-                        <th>Code</th>
-                        <th>Name</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($enrolled_courses as $course)
+                <table class="table table-bordered">
+                    <thead>
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $course['course']->code }}</td>
-                            <td>{{ $course['course']->name }}</td>
+                            <th>S/N</th>
+                            <th>Code</th>
+                            <th>Name</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-
+                    </thead>
+                    <tbody>
+                        @foreach ($enrolled_courses as $course)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $course['course']->code }}</td>
+                                <td>{{ $course['course']->name }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             @else
-            <div class="container ">
-                <p>No course available</p>
-            </div>
-        @endif
+                <div class="container ">
+                    <p>No course available</p>
+                </div>
+            @endif
 
         </div>
     </div>
