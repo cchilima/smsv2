@@ -32,10 +32,18 @@
 
                 <!-- Link Button -->
                  <div>
-                 <a href="{{ route('application.download_provisional', ['applicant_id' => $application->id]) }}" class="download-button">
-                     <span>&#x2193;</span> Provisional Letter
-                </a>
+                    <a href="{{ route('application.download_provisional', ['applicant_id' => $application->id]) }}" class="download-button">
+                        <span>&#x2193;</span> Provisional Letter
+                    </a>
                  </div>
+
+                 <br><br>
+
+
+                 For any questions email us on admissions@zut.edu.zm, otherwise once you login into the student portal
+                details on how to make payments and listed under the "how to make payments" link.
+
+               
 
 
                   <br><br><br>
