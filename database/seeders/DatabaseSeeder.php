@@ -434,7 +434,8 @@ class DatabaseSeeder extends Seeder
 
         DB::table('settings')->insert($settings);
 
-        $usage_instructions = "Step 1: Dial *115# \n"
+        $payment_methods_usage_instructions['airtel_money'] = "You can make payments using Airtel Money via USSD as follows: \n"
+            . "Step 1: Dial *115# \n"
             . "Step 2: Select option 4 \"Make Payment\" \n"
             . "Step 3: Select option 7 \"School fee payments\" \n"
             . "Step 4: Select option 1 \"School Pay\" \n"
@@ -443,12 +444,23 @@ class DatabaseSeeder extends Seeder
             . "Step 7: Enter amount in Kwacha \n"
             . "Step 8: Enter your 4-digit PIN to confirm payment";
 
+        $payment_methods_usage_instructions['indo_zambia_bank'] = "Indo Zambia Bank has three options for making payments: "
+            . "Walk-in, Agency Banking and Mobile Banking. To make payments using any of the three options:\n"
+            . "Step 1: Provide or enter your valid student number \n"
+            . "Step 2: Confirm your student number and name \n"
+            . "Step 3: Enter the amount or provide cash for payment \n"
+            . "Step 4: Collect your receipt or download your e-receipt for your records";
+
         // Seed Payment Methods table
         $paymentMethods = [
             [
                 'name' => 'Airtel Money',
-                'usage_instructions' => $usage_instructions,
+                'usage_instructions' => $payment_methods_usage_instructions['airtel_money'],
             ],
+            [
+                'name' => 'Indo Zambia Bank',
+                'usage_instructions' => $payment_methods_usage_instructions['indo_zambia_bank'],
+            ]
         ];
 
         DB::table('payment_methods')->insert($paymentMethods);
