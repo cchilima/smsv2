@@ -42,7 +42,23 @@ class StudentRegistrationController extends Controller
         $isRegistered = $this->registrationRepo->getRegistrationStatus($student_id);
         $isWithinRegistrationPeriod = $this->registrationRepo->checkIfWithinRegistrationPeriod($student_id);
         $courses = $this->registrationRepo->getAll();
+
+        // Fetch academic period information (e.g., academic year, term, etc.)
         $academicInfo = $this->registrationRepo->getAcademicInfo();
+
+        // Assuming $academicInfo contains details such as 'academic_year' or 'period_id'
+        $academicPeriodId = $academicInfo->academic_period_id; // Adjust this based on actual structure of $academicInfo
+
+        // Check if the student has been invoiced for the specific academic period
+        $isInvoiced = Auth::user()->student->invoices->contains(function ($invoice) use ($academicPeriodId) {
+            // Assuming each invoice has a field 'period_id' matching the academic period
+            return $invoice->academic_period_id === $academicPeriodId; // Adjust this based on your data structure
+        });
+
+        if (!$isInvoiced) {
+            // Student has been invoiced for the academic period
+            $academicInfo = [];
+        } 
 
         return view('pages.studentRegistration.index', compact('courses', 'academicInfo', 'isRegistered', 'isWithinRegistrationPeriod'));
     }

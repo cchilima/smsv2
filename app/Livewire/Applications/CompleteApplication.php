@@ -110,6 +110,12 @@ class CompleteApplication extends Component
     $this->country_id = $this->country_id ?: null;
     $this->province_id = $this->country_id ? ($this->province_id ?: null) : null;
     $this->town_id = $this->province_id ? ($this->town_id ?: null) : null;
+    $this->year_applying_for = $this->year_applying_for ?: null;
+    $this->academic_period_intake_id = $this->academic_period_intake_id ?: null;
+    $this->study_mode_id = $this->study_mode_id ?: null;
+    $this->program_id = $this->program_id ?: null;
+    $this->marital_status_id = $this->marital_status_id ?: null;
+
 
 
     // Update applicant information
@@ -131,7 +137,7 @@ class CompleteApplication extends Component
         'program_id' => $this->program_id,
         'study_mode_id' => $this->study_mode_id,
         'academic_period_intake_id' => $this->academic_period_intake_id,
-        'year_applying_for' => $this->year_applying_for ,
+        'year_applying_for' => $this->year_applying_for,
     ]);
 
     // Set kin_country_id, kin_province_id, and kin_town_id to null if they are empty or if the higher-level field is empty
@@ -289,13 +295,22 @@ public function saveGrade()
         }
 
         $currentYear = date('Y'); // Get the current year
+        $currentMonth = date('n'); // Get the current month as a number (1 = January, 12 = December)
+        
+        // Initialize the years array with the mandatory next year
         $years = [
-            (int)$currentYear,        // Current year
-            (int)$currentYear + 1,    // Next year
-            (int)$currentYear + 2,    // Year after next
+            (int)$currentYear + 1, // Next year is always included
         ];
         
-        if ($this->year_applying_for && $this->year_applying_for != null) {
+        // Include the current year only if the month is before June
+        if ($currentMonth < 7) {
+            $years[] = (int)$currentYear;
+        }
+        
+        // Sort the years to maintain order if necessary (optional)
+        sort($years);
+        
+        if ($this->year_applying_for && $this->year_applying_for != null && $this->year_applying_for != '' ) {
             // Fetch all intakes as an Eloquent Collection
             $periodIntakes = $this->studentRepo->getPeriodIntakes();
         

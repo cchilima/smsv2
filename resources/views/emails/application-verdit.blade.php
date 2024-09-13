@@ -1,12 +1,18 @@
+<?php
+
+use App\Helpers\Qs;
+
+?>
+
 @extends('layouts.email_template')
 @section('content')
 
         <div class="content">
-            <p class="flow-text light-deca">ZUT Application</p>
+            <p class="flow-text light-deca">{{ Qs::getSystemName() }} Application</p>
 
             @if($application_status == 'rejected')
             <p class="light-deca">
-                Hi {{ $application->first_name }} {{ $application->last_name }} ,we regret to inform you that your application to the ZUT program has not been successful this time. 
+                Hi {{ $application->first_name }} {{ $application->last_name }} ,we regret to inform you that your application to the {{ Qs::getSystemName() }}program has not been successful this time. 
                 <br><br>
                 We received a large number of applications, and while your profile was impressive, we are unable to move forward with your application. 
                 We encourage you to apply again in the future and wish you the best in your future endeavors.
@@ -24,7 +30,7 @@
                 <br><br>
                 Welcome to the {{ $application->program->name }} program. Your login details are as follows : <br><br>
                 
-                Student portal : http://localhost:8000/login
+                Student portal : http://localhost:8000/login <br>
                 Student number : {{ $student->id }} <br>
                 Default password : secret
 
@@ -52,7 +58,7 @@
                 <b class="light-deca">
       
                         NOTE <br>
-                        ZUT will never solicit money from students for admissions or any other services. Be vigilant and beware of scammers posing as university representatives. All official communication will come directly from the university. If you have any doubts, please contact the university through official channels.
+                        {{ Qs::getSystemName() }} will never solicit money from students for admissions or any other services. Be vigilant and beware of scammers posing as university representatives. All official communication will come directly from the university. If you have any doubts, please contact the university through official channels.
        
                 </b>
                 </div>

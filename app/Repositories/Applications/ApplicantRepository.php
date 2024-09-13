@@ -72,7 +72,7 @@ class ApplicantRepository
             if($application->payment->sum('amount') >= 150){
 
                 // queue the email for applicant
-                Mail::to($application->email)->bcc(['stembo@zut.edu.zm'])->queue(new ApplicationReceived($application, 'applicant'));
+                Mail::to($application->email)->queue(new ApplicationReceived($application, 'applicant'));
 
                 // queue the email for admissions admissions@zut.edu.zm
                 Mail::to('stembo@zut.edu.zm')->bcc(['stembo@zut.edu.zm'])->queue(new ApplicationReceived($application, 'admissions'));
