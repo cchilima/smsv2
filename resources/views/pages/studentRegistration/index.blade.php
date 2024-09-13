@@ -38,7 +38,7 @@
                     </tr>
                     <tr>
                         <td><b>Registration Threshold : </b></td>
-                        <td>{{ $academicInfo ? number_format($academicInfo->registration_threshold, 0)  : '0'}} %</td>
+                        <td>{{ $academicInfo ? number_format($academicInfo->registration_threshold, 0) : '0' }} %</td>
                     </tr>
 
                     <tr>

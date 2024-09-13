@@ -30,7 +30,7 @@ class PaymentMethodController extends Controller
     public function store(PaymentMethodRequest $request)
     {
         try {
-            $data = $request->only(['name']);
+            $data = $request->only(['name', 'usage_instructions']);
             $this->paymentMethodRepo->create($data);
 
             return Qs::jsonStoreOk('Payment method created successfully');
@@ -53,7 +53,7 @@ class PaymentMethodController extends Controller
     public function update(PaymentMethodRequest $request, PaymentMethod $paymentMethod)
     {
         try {
-            $data = $request->only(['name']);
+            $data = $request->only(['name', 'usage_instructions']);
             $this->paymentMethodRepo->update($paymentMethod, $data);
 
             return Qs::jsonUpdateOk();

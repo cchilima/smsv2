@@ -39,9 +39,9 @@
 <script src="{{ asset('global_assets/js/demo_pages/fullcalendar_basic.js') }}"></script>
 
 {{-- Editable table rows --}}
-<script
+{{-- <script
     src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/jquery-editable/js/jquery-editable-poshytip.min.js">
-</script>
+</script> --}}
 
 <!-- /theme JS files -->
 

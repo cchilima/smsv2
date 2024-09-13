@@ -358,6 +358,10 @@ Route::group(['prefix' => 'student'], function () {
     Route::get('/profile', [UsersStudentController::class, 'profile'])->name('student.profile');
     Route::get('/finances', [UsersStudentController::class, 'finances'])->name('student.finances');
 
+    Route::group(['prefix' => 'help'], function () {
+        Route::get('/how-to-make-payments', [UsersStudentController::class, 'howToMakePayments'])->name('students.help.make-payments');
+    });
+
     // Financial statements generator/download routes
     Route::get('/invoices/{invoice}/download/', [InvoiceController::class, 'downloadInvoice'])->name('student.download-invoice');
     Route::get('/invoices/{student}/export/', [InvoiceController::class, 'exportInvoices'])->name('student.export-invoices');
@@ -366,4 +370,4 @@ Route::group(['prefix' => 'student'], function () {
 });
 
 // Student Grades Routes
-Route::post('/grades/{id}/edit', [GradeContoller::class, 'update']);
+Route::post('/grades/{id}/edit', [GradeContoller::class, 'update'])->name('grades.edit');

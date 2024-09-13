@@ -1393,14 +1393,14 @@ class ClassAssessmentsRepo
         $student_id = Student::where('user_id', $id)->first();
         $student = $student_id->id;
 
-        $grades = Grade::where('student_id', $student)->where('publication_status', 1)
-            ->with(['academicPeriods', 'student'])
-            ->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
-            ->selectRaw('SUM(total) as total_sum')
-            ->groupBy('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
-            ->orderBy('academic_period_id')
-            ->orderBy('course_code')
-            ->get();
+        // $grades = Grade::where('student_id', $student)->where('publication_status', 1)
+        //     ->with(['academicPeriods', 'student'])
+        //     ->select('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+        //     ->selectRaw('SUM(total) as total_sum')
+        //     ->groupBy('course_id', 'academic_period_id', 'course_code', 'course_title', 'student_id')
+        //     ->orderBy('academic_period_id')
+        //     ->orderBy('course_code')
+        //     ->get();
         //        $grades = Grade::where('student_id', $student)
         //            ->where('publication_status', 1)
         //            ->whereIn('course_id', function($query) use ($student) {
@@ -1458,6 +1458,7 @@ class ClassAssessmentsRepo
                 $academicPeriodId = $grade->academic_period_id;
                 //$academicPeriodId = 'courses';
                 $course = [
+                    'publication_status' => $grade->publication_status,
                     'grade_id' => $grade->id,
                     'course_code' => $grade->course_code,
                     'course_title' => $grade->course_title,

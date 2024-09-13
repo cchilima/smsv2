@@ -8,6 +8,7 @@ use App\Models\Academics\PeriodType;
 use App\Models\Academics\Program;
 use App\Repositories\Academics\ClassAssessmentsRepo;
 use App\Traits\CanShowAlerts;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
@@ -50,6 +51,11 @@ final class CAResultsReviewBoard extends PowerGridComponent
         );
 
         return $studentGrades;
+    }
+
+    public function noDataLabel(): string|View
+    {
+        return 'Results not entered or already published';
     }
 
     #[On('publish-results.{tableName}')]

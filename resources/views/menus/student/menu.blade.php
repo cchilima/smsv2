@@ -52,19 +52,6 @@
     </ul>
 </li>
 
-{{-- <li
-    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['student.exam.slip.download', 'student.transcript.download', 'student.enrollments']) ? 'nav-item-expanded nav-item-open' : '' }} ">
-    <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Academics </span></a>
-    <ul class="nav nav-group-sub" data-submenu-title="Manage Academics">
-        <li class="nav-item">
-            <a href="{{ route('student.enrollments') }}"
-                class="nav-link {{ in_array(Route::currentRouteName(), ['student.enrollments']) ? 'active' : '' }}">
-                Enrollment Information
-            </a>
-        </li>
-    </ul>
-</li> --}}
-
 <li class="nav-item">
     <a href="{{ route('student.finances') }}"
         class="nav-link {{ in_array(Route::currentRouteName(), ['student.finances']) ? 'active' : '' }}"><i
@@ -78,4 +65,17 @@
             class="icon-bed2">
         </i> <span>Accommodation </span>
     </a>
+</li>
+
+<li
+    class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['students.help.make-payments']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+    <a href="#" class="nav-link"><i class="icon-question3"></i> <span>Help Section</span></a>
+    <ul class="nav nav-group-sub" data-submenu-title="Manage Academics">
+        <li class="nav-item">
+            <a href="{{ route('students.help.make-payments') }}"
+                class="nav-link {{ in_array(Route::currentRouteName(), ['students.help.make-payments']) ? 'active' : '' }}">
+                How to Make Payments
+            </a>
+        </li>
+    </ul>
 </li>

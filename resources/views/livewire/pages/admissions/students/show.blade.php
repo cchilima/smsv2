@@ -77,7 +77,7 @@
 
                 <div class="tab-content">
                     {{-- Basic Info --}}
-                    <div class="tab-pane fade show active" id="account-info">
+                    <div wire:ignore class="tab-pane fade show active" id="account-info">
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
@@ -100,9 +100,10 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Registered Academic Year</td>
-                                    <td>{{ count($student->invoices) > 0  ? $student->invoices->last()->period->name : 'Not registered' }}</td>
+                                    <td>{{ count($student->invoices) > 0 ? $student->invoices->last()->period->name : 'Not registered' }}
+                                    </td>
                                 </tr>
-                                                                <tr>
+                                <tr>
                                     <td class="font-weight-bold text-justify">Semester</td>
                                     <td>{{ $student->semester }}</td>
                                 </tr>
@@ -174,13 +175,13 @@
                             </tbody>
                         </table>
                         <div class="text-right mb-1 mt-4">
-                            <button id="ajax-btn" type="button" onclick="manageAcademicInfor('{{ $student->id }}')"
-                                class="btn btn-primary">Update
+                            <button id="ajax-btn" type="button"
+                                onclick="manageAcademicInfor('{{ $student->id }}')" class="btn btn-primary">Update
                                 Information <i class="icon-pencil ml-2"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="tab-pane fade show" id="next-kin">
+                    <div wire:ignore class="tab-pane fade show" id="next-kin">
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
@@ -281,7 +282,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="tab-pane fade show" id="profile-info">
+                    <div wire:ignore class="tab-pane fade show" id="profile-info">
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
@@ -454,7 +455,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="tab-pane fade show" id="downloads-info">
+                    <div wire:ignore class="tab-pane fade show" id="downloads-info">
                         {{--                            <form class="ajax-store" method="post" action="{{ route('student.id.download') }}"> --}}
                         {{--                                @csrf --}}
                         {{--                                <input name="student_id" hidden value="{{ $student->id }}" type="text"> --}}
@@ -493,7 +494,8 @@
                 <div class="tab-content">
                     {{-- Basic Info --}}
                     @foreach ($enrollments as $innerIndex => $academicData)
-                        <div class="tab-pane fade show" id="account-{{ $academicData['academic_period_id'] }}">
+                        <div wire:ignore class="tab-pane fade show"
+                            id="account-{{ $academicData['academic_period_id'] }}">
 
                             <table class="table table-hover table-striped-columns mb-3">
                                 <div class="d-flex justify-content-between">
@@ -553,7 +555,7 @@
             <div class="card-body">
                 <ul wire:ignore class="nav nav-tabs nav-tabs-highlight">
 
-                    <li class="nav-item">
+                    <li class="nav-item" wire:click="refreshFinancialStatsOverview">
                         <a href="#financial-stats-overview" class="nav-link"
                             data-toggle="tab">{{ 'Financial Stats Overview' }}</a>
                     </li>
@@ -582,9 +584,9 @@
                     </li>
                 </ul>
 
-                <div wire:ignore class="tab-content">
+                <div class="tab-content">
 
-                    <div class="tab-pane fade show" id="invoice-custom">
+                    <div wire:ignore class="tab-pane fade show" id="invoice-custom">
                         <form class="ajax-store" method="post" action="{{ route('invoices.custom-invoice') }}">
                             @csrf
 
@@ -621,7 +623,7 @@
                         </form>
                     </div>
 
-                    <div class="tab-pane fade show" id="invoice">
+                    <div wire:ignore class="tab-pane fade show" id="invoice">
                         @if (!$isInvoiced && $student->academic_info)
                             <form class="ajax-store" method="post" action="{{ route('invoices.invoice') }}">
                                 @csrf
@@ -650,7 +652,7 @@
                         @endif
                     </div>
 
-                    <div class="tab-pane fade show" id="financial-stats-overview">
+                    <div wire:ignore.self class="tab-pane fade show" id="financial-stats-overview">
 
                         <div class="row">
                             <div class="col-12 col-md-6 col-lg-3">
@@ -673,7 +675,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade show" id="collect-payment">
+                    <div wire:ignore class="tab-pane fade show" id="collect-payment">
                         @if ($student->academic_info)
                             <form class="ajax-store" method="post" action="{{ route('statements.store') }}">
                                 @csrf
@@ -716,7 +718,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade show" id="credit">
+                    <div wire:ignore class="tab-pane fade show" id="credit">
 
                         <table class="table table-bordered mb-3 mb-lg-4">
                             <thead>
@@ -748,7 +750,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade show" id="statements">
+                    <div wire:ignore class="tab-pane fade show" id="statements">
                         <div class="mb-2 d-flex justify-content-end">
                             <form action="{{ route('student.export-statements', $student->id) }}" method="get">
                                 @csrf
@@ -763,7 +765,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade show" id="invoices">
+                    <div wire:ignore class="tab-pane fade show" id="invoices">
 
                         <div>
                             <h4 class="d-flex align-items-center justify-content-between">
@@ -788,7 +790,7 @@
                         ])
                     </div>
 
-                    <div class="tab-pane fade show" id="payment-history">
+                    <div wire:ignore class="tab-pane fade show" id="payment-history">
                         @livewire('datatables.admissions.students.payment-history', [
                             'studentId' => $student->id,
                         ])
@@ -817,7 +819,7 @@
                 </ul>
 
                 <div class="tab-content">
-                    <div class="tab-pane fade show active" id="account-information">
+                    <div wire:ignore class="tab-pane fade show active" id="account-information">
                         <!-- Add your account info content here -->
                         <div class="row">
                             <div class="col-md-12">
@@ -871,7 +873,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade" id="academic-info">
+                    <div wire:ignore class="tab-pane fade" id="academic-info">
 
                         <!-- Add your academic info content here -->
                         <div class="row">
@@ -997,7 +999,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade" id="profile-information">
+                    <div wire:ignore class="tab-pane fade" id="profile-information">
 
                         <!-- Add your profile info content here -->
                         <div class="row">
@@ -1133,7 +1135,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade" id="next-of-kin-info">
+                    <div wire:ignore class="tab-pane fade" id="next-of-kin-info">
 
                         <!-- Add your next of kin info content here -->
                         <div class="row">
@@ -1271,7 +1273,7 @@
                 <div class="tab-content">
                     {{-- Basic Info --}}
                     @foreach ($results as $innerIndex => $academicData)
-                        <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
+                        <div wire:ignore class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
                             id="results-{{ $academicData['academic_period_id'] }}">
                             <h5 class="p-2">
                                 <strong>{{ $academicData['academic_period_code'] . ' - ' . $academicData['academic_period_name'] }}</strong>
@@ -1375,7 +1377,9 @@
                                                 <td>{{ $course['course_code'] }}</td>
                                                 <td>{{ $course['course_title'] }}</td>
                                                 <td>
-                                                    @php
+                                                    {{ $course['total'] }}
+
+                                                    {{-- @php
                                                         $apStartDate = \Carbon\Carbon::make(
                                                             $academicData['academic_period_start_date'],
                                                         );
@@ -1388,13 +1392,13 @@
                                                     @if ($apIsOngoing)
                                                         <a class="editable" id="{{ $loop->iteration }}"
                                                             data-type="number" data-pk="{{ $course['grade_id'] }}"
-                                                            data-url="/grades/{{ $course['grade_id'] }}/edit"
+                                                            data-url="{{ route('grades.edit', $course['grade_id']) }}"
                                                             data-name="total" data-title="Enter total marks">
                                                             {{ $course['total'] }}
                                                         </a>
                                                     @else
                                                         {{ $course['total'] }}
-                                                    @endif
+                                                    @endif --}}
                                                 </td>
                                                 <td>{{ $course['grade'] }}</td>
                                             </tr>
@@ -1419,7 +1423,9 @@
                                             <td>{{ $gra['course_code'] }}</td>
                                             <td>{{ $gra['course_title'] }}</td>
                                             <td>
-                                                @php
+                                                {{ $gra['total_score'] }}
+
+                                                {{-- @php
                                                     $apStartDate = \Carbon\Carbon::make(
                                                         $academicData['academic_period_start_date'],
                                                     );
@@ -1429,16 +1435,17 @@
                                                     $apIsOngoing = $apStartDate <= now() && now() <= $apEndDate;
                                                 @endphp
 
+                                                @dd($gra)
                                                 @if ($apIsOngoing)
                                                     <a class="editable" id="{{ $loop->iteration }}"
-                                                        data-type="number" data-pk=""
-                                                        data-url="/grades/{{ $gra['course_code'] }}/edit"
+                                                        data-type="number" data-pk="{{ $gra['grade_id'] }}"
+                                                        data-url="{{ route('grades.edit', $gra['grade_id']) }}"
                                                         data-name="total" data-title="Enter total marks">
                                                         {{ $gra['total_score'] }}
                                                     </a>
                                                 @else
                                                     {{ $gra['total_score'] }}
-                                                @endif
+                                                @endif --}}
                                             </td>
                                             <td>NE</td>
                                         </tr>
@@ -1448,8 +1455,21 @@
                             </tbody>
 
                         </table>
-                        <p class="bg-success p-3 align-bottom">Comment
-                            : {{ $academicData['comments']['comment'] }}</p>
+
+                        @php
+                            $commentLower = str()->lower($academicData['comments']['comment']);
+
+                            $commentBgColor = match (true) {
+                                str()->startsWith($commentLower, 'proceed & repeat') => 'bg-warning',
+                                str()->startsWith($commentLower, 'part time') => 'bg-danger',
+                                default => 'bg-success',
+                            };
+                        @endphp
+
+                        <p class="{{ $commentBgColor }} p-3 align-bottom">
+                            Comment : {{ $academicData['comments']['comment'] }}
+                        </p>
+
                         <hr>
 
                     </div>
@@ -1479,7 +1499,7 @@
             <div class="tab-content">
                 {{-- Basic Info --}}
                 @foreach ($caresults as $innerIndex => $academicData)
-                    <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
+                    <div wire:ignore class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
                         id="results-cs{{ $academicData['academic_period_id'] }}">
                         <h5 class="p-2">
                             <strong>{{ $academicData['academic_period_code'] . ' - ' . $academicData['academic_period_name'] }}</strong>

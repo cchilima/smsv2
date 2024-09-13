@@ -42,13 +42,13 @@ class EnrollmentController extends Controller
             // Get courses student can register for
             $courseToRegister = $this->studentRepo->getAll($studentNumber);
 
-            // Register and enrollment student in the above courses.
+            // Register and enroll student in the above courses.
             $this->enrollmentRepo->create($courseToRegister, $studentNumber);
 
             // Give student feedback
-            return Qs::goBackWithSuccess('Enrollment successful');
+            return Qs::goBackWithSuccess('Registration successful');
         } catch (\Throwable $th) {
-            return Qs::jsonError('Enrollment failed');
+            return Qs::jsonError('Registration failed');
         }
     }
 }

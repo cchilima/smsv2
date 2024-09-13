@@ -24,24 +24,24 @@ class GradeContoller extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
-    {
-        try {
-            if ($request->ajax()) {
-                if ($request->value > 100 || $request->value < 0) {
-                    throw new \Exception('Total must be a number from 0 to 100.');
-                }
+    // public function update(Request $request)
+    // {
+    //     try {
+    //         if ($request->ajax()) {
+    //             if ($request->value > 100 || $request->value < 0) {
+    //                 throw new \Exception('Total must be a number from 0 to 100.');
+    //             }
 
-                // Get grade
-                $grade = $this->gradeRepo->find($request->pk);
+    //             // Get grade
+    //             $grade = $this->gradeRepo->find($request->pk);
 
-                // Update grade
-                $grade->update(['total' => $request->value]);
+    //             // Update grade
+    //             $grade->update(['total' => $request->value]);
 
-                return Qs::jsonUpdateOk('Marks updated successfully');
-            }
-        } catch (\Exception $e) {
-            return Qs::jsonError('Failed to update marks: ' . $e->getMessage());
-        }
-    }
+    //             return Qs::jsonUpdateOk('Marks updated successfully');
+    //         }
+    //     } catch (\Exception $e) {
+    //         return Qs::jsonError('Failed to update marks: ' . $e->getMessage());
+    //     }
+    // }
 }
