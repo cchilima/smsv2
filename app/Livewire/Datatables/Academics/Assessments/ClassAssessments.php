@@ -94,7 +94,7 @@ final class ClassAssessments extends PowerGridComponent
 
             Column::make('Assessment Details', 'assessmentDetails'),
 
-            Column::action('Action')
+            // Column::action('Action')
         ];
     }
 
@@ -108,11 +108,11 @@ final class ClassAssessments extends PowerGridComponent
         ];
     }
 
-    public function actions(AcademicPeriodClass $row): array
-    {
-        return [
-            Button::add('actions')
-                ->bladeComponent('table-actions.academics.assessments.class-assessments', ['row' => $row])
-        ];
-    }
+    // public function actions(AcademicPeriodClass $row): array
+    // {
+    //     return [
+    //         Button::add('actions')
+    //             ->bladeComponent('table-actions.academics.assessments.class-assessments', ['row' => $row])
+    //     ];
+    // }
 }
