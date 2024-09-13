@@ -97,10 +97,16 @@
 
                                 <tbody>
                                     <tr>
-                                        <p class="bg-warning p-3 align-bottom">
-                                            Clear your balance of <strong>K{{ $viewResultsBalance }}</strong> to
-                                            view results for this academic period.
-                                        </p>
+                                        @if ($viewResultsBalance > 0)
+                                            <p class="bg-warning p-3 align-bottom">
+                                                Clear your balance of <strong>K{{ $viewResultsBalance }}</strong> to
+                                                view results for this academic period.
+                                            </p>
+                                        @else
+                                            <p class="bg-info p-3 align-bottom">
+                                                You have not yet been invoiced for this academic period.
+                                            </p>
+                                        @endif
                                     </tr>
                                 </tbody>
                             @endif

@@ -77,7 +77,7 @@
 
                 <div class="tab-content">
                     {{-- Basic Info --}}
-                    <div class="tab-pane fade show active" id="account-info">
+                    <div wire:ignore class="tab-pane fade show active" id="account-info">
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
@@ -175,13 +175,13 @@
                             </tbody>
                         </table>
                         <div class="text-right mb-1 mt-4">
-                            <button id="ajax-btn" type="button" onclick="manageAcademicInfor('{{ $student->id }}')"
-                                class="btn btn-primary">Update
+                            <button id="ajax-btn" type="button"
+                                onclick="manageAcademicInfor('{{ $student->id }}')" class="btn btn-primary">Update
                                 Information <i class="icon-pencil ml-2"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="tab-pane fade show" id="next-kin">
+                    <div wire:ignore class="tab-pane fade show" id="next-kin">
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
@@ -282,7 +282,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="tab-pane fade show" id="profile-info">
+                    <div wire:ignore class="tab-pane fade show" id="profile-info">
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
@@ -455,7 +455,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="tab-pane fade show" id="downloads-info">
+                    <div wire:ignore class="tab-pane fade show" id="downloads-info">
                         {{--                            <form class="ajax-store" method="post" action="{{ route('student.id.download') }}"> --}}
                         {{--                                @csrf --}}
                         {{--                                <input name="student_id" hidden value="{{ $student->id }}" type="text"> --}}
@@ -494,7 +494,8 @@
                 <div class="tab-content">
                     {{-- Basic Info --}}
                     @foreach ($enrollments as $innerIndex => $academicData)
-                        <div class="tab-pane fade show" id="account-{{ $academicData['academic_period_id'] }}">
+                        <div wire:ignore class="tab-pane fade show"
+                            id="account-{{ $academicData['academic_period_id'] }}">
 
                             <table class="table table-hover table-striped-columns mb-3">
                                 <div class="d-flex justify-content-between">
@@ -554,7 +555,7 @@
             <div class="card-body">
                 <ul wire:ignore class="nav nav-tabs nav-tabs-highlight">
 
-                    <li class="nav-item">
+                    <li class="nav-item" wire:click="refreshFinancialStatsOverview">
                         <a href="#financial-stats-overview" class="nav-link"
                             data-toggle="tab">{{ 'Financial Stats Overview' }}</a>
                     </li>
@@ -583,9 +584,9 @@
                     </li>
                 </ul>
 
-                <div wire:ignore class="tab-content">
+                <div class="tab-content">
 
-                    <div class="tab-pane fade show" id="invoice-custom">
+                    <div wire:ignore class="tab-pane fade show" id="invoice-custom">
                         <form class="ajax-store" method="post" action="{{ route('invoices.custom-invoice') }}">
                             @csrf
 
@@ -622,7 +623,7 @@
                         </form>
                     </div>
 
-                    <div class="tab-pane fade show" id="invoice">
+                    <div wire:ignore class="tab-pane fade show" id="invoice">
                         @if (!$isInvoiced && $student->academic_info)
                             <form class="ajax-store" method="post" action="{{ route('invoices.invoice') }}">
                                 @csrf
@@ -651,7 +652,7 @@
                         @endif
                     </div>
 
-                    <div class="tab-pane fade show" id="financial-stats-overview">
+                    <div wire:ignore.self class="tab-pane fade show" id="financial-stats-overview">
 
                         <div class="row">
                             <div class="col-12 col-md-6 col-lg-3">
@@ -674,7 +675,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade show" id="collect-payment">
+                    <div wire:ignore class="tab-pane fade show" id="collect-payment">
                         @if ($student->academic_info)
                             <form class="ajax-store" method="post" action="{{ route('statements.store') }}">
                                 @csrf
@@ -717,7 +718,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade show" id="credit">
+                    <div wire:ignore class="tab-pane fade show" id="credit">
 
                         <table class="table table-bordered mb-3 mb-lg-4">
                             <thead>
@@ -749,7 +750,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade show" id="statements">
+                    <div wire:ignore class="tab-pane fade show" id="statements">
                         <div class="mb-2 d-flex justify-content-end">
                             <form action="{{ route('student.export-statements', $student->id) }}" method="get">
                                 @csrf
@@ -764,7 +765,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade show" id="invoices">
+                    <div wire:ignore class="tab-pane fade show" id="invoices">
 
                         <div>
                             <h4 class="d-flex align-items-center justify-content-between">
@@ -789,7 +790,7 @@
                         ])
                     </div>
 
-                    <div class="tab-pane fade show" id="payment-history">
+                    <div wire:ignore class="tab-pane fade show" id="payment-history">
                         @livewire('datatables.admissions.students.payment-history', [
                             'studentId' => $student->id,
                         ])
@@ -818,7 +819,7 @@
                 </ul>
 
                 <div class="tab-content">
-                    <div class="tab-pane fade show active" id="account-information">
+                    <div wire:ignore class="tab-pane fade show active" id="account-information">
                         <!-- Add your account info content here -->
                         <div class="row">
                             <div class="col-md-12">
@@ -872,7 +873,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade" id="academic-info">
+                    <div wire:ignore class="tab-pane fade" id="academic-info">
 
                         <!-- Add your academic info content here -->
                         <div class="row">
@@ -998,7 +999,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade" id="profile-information">
+                    <div wire:ignore class="tab-pane fade" id="profile-information">
 
                         <!-- Add your profile info content here -->
                         <div class="row">
@@ -1134,7 +1135,7 @@
 
                     </div>
 
-                    <div class="tab-pane fade" id="next-of-kin-info">
+                    <div wire:ignore class="tab-pane fade" id="next-of-kin-info">
 
                         <!-- Add your next of kin info content here -->
                         <div class="row">
@@ -1272,7 +1273,7 @@
                 <div class="tab-content">
                     {{-- Basic Info --}}
                     @foreach ($results as $innerIndex => $academicData)
-                        <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
+                        <div wire:ignore class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
                             id="results-{{ $academicData['academic_period_id'] }}">
                             <h5 class="p-2">
                                 <strong>{{ $academicData['academic_period_code'] . ' - ' . $academicData['academic_period_name'] }}</strong>
@@ -1498,7 +1499,7 @@
             <div class="tab-content">
                 {{-- Basic Info --}}
                 @foreach ($caresults as $innerIndex => $academicData)
-                    <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
+                    <div wire:ignore class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
                         id="results-cs{{ $academicData['academic_period_id'] }}">
                         <h5 class="p-2">
                             <strong>{{ $academicData['academic_period_code'] . ' - ' . $academicData['academic_period_name'] }}</strong>

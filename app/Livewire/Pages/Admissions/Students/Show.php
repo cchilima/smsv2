@@ -25,6 +25,10 @@ class Show extends Component
         WithFileUploads;
 
     public $data;
+    public $paymentPercentage;
+    public $paymentsTotal;
+    public $feesTotal;
+    public $paymentBalance;
     public $passportPhoto;
 
     protected UserRepository $userRepo;
@@ -67,23 +71,29 @@ class Show extends Component
         $this->data['paymentMethods'] = $this->studentRepo->getPaymentMethods();
         $this->data['fees'] = $this->studentRepo->getFees($userId);
 
-        // Find student
-        $student = $this->studentRepo->findUser($userId);
+        $this->data['courses'] = $this->studentRegistrationRepo->getAll($this->data['student']->id);
+        $this->data['isRegistered'] = $this->studentRegistrationRepo->getRegistrationStatus($this->data['student']->id);
+        $this->data['isWithinRegistrationPeriod'] = $this->studentRegistrationRepo->checkIfWithinRegistrationPeriod($this->data['student']->id);
 
-        $this->data['courses'] = $this->studentRegistrationRepo->getAll($student->student->id);
-        $this->data['isRegistered'] = $this->studentRegistrationRepo->getRegistrationStatus($student->student->id);
-        $this->data['isWithinRegistrationPeriod'] = $this->studentRegistrationRepo->checkIfWithinRegistrationPeriod($student->student->id);
-
-        $this->data['isInvoiced'] = $this->studentRegistrationRepo->checkIfInvoiced($student->student->id);
-        $this->data['enrollments'] = $this->enrollmentRepo->getEnrollments($student->student->id);
+        $this->data['isInvoiced'] = $this->studentRegistrationRepo->checkIfInvoiced($this->data['student']->id);
+        $this->data['enrollments'] = $this->enrollmentRepo->getEnrollments($this->data['student']->id);
         $this->data['results'] = $this->classaAsessmentRepo->GetExamGrades($userId);
         $this->data['caresults'] = $this->classaAsessmentRepo->GetCaStudentGrades($userId);
 
-        $this->data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($student->student->id);
-        $this->data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($student->student->id);
-        $this->data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($student->student->id);
-        $this->data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($student->student->id);
-        $this->data['enrolled_courses'] = $this->studentRegistrationRepo->curentEnrolledClasses($student->student->id);
+        $this->data['enrolled_courses'] = $this->studentRegistrationRepo->curentEnrolledClasses($this->data['student']->id);
+
+        $this->paymentPercentage = $this->invoiceRepo->paymentPercentage($this->data['student']->id);
+        $this->paymentsTotal = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($this->data['student']->id);
+        $this->feesTotal = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($this->data['student']->id);
+        $this->paymentBalance = $this->invoiceRepo->getStudentPaymentBalance($this->data['student']->id);
+    }
+
+    public function refreshFinancialStatsOverview()
+    {
+        $this->paymentPercentage = $this->invoiceRepo->paymentPercentage($this->data['student']->id);
+        $this->paymentsTotal = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($this->data['student']->id);
+        $this->feesTotal = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($this->data['student']->id);
+        $this->paymentBalance = $this->invoiceRepo->getStudentPaymentBalance($this->data['student']->id);
     }
 
     public function uploadPassportPhoto()
@@ -128,6 +138,14 @@ class Show extends Component
     #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
-        return view('livewire.pages.admissions.students.show', $this->data);
+        return view('livewire.pages.admissions.students.show', array_merge(
+            $this->data,
+            [
+                'paymentPercentage' => $this->paymentPercentage,
+                'paymentsTotal' => $this->paymentsTotal,
+                'feesTotal' => $this->feesTotal,
+                'paymentBalance' => $this->paymentBalance
+            ]
+        ));
     }
 }
