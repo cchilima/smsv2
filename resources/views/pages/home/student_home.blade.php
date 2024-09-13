@@ -214,10 +214,9 @@
     <style>
         .cover-container {
             height: 175px;
-            background-image: linear-gradient(to top right, rgba(13, 29, 105, .5), rgba(1, 4, 28, .5)),
+            background-image: linear-gradient(to top right, rgba(13, 29, 105, .75), rgba(1, 4, 28, .5)),
                 url({{ $passportPhotoUrl }});
             background-size: auto 175px;
-            position: relative;
             z-index: 1;
         }
 
@@ -228,7 +227,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(7.5px);
             z-index: -1;
         }
 
