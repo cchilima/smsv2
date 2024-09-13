@@ -331,23 +331,6 @@ class ClassAssessmentsController extends Controller
         return view('pages.class_assessments.edit', compact('academicPeriod'));
     }
 
-    // Moved to Livewire page component
-    // public function GetProgramResultsLevelCas(Request $request)
-    // {
-    //     $aid = $request->query('aid');
-    //     $pid = $request->query('pid');
-    //     $level = $request->query('level');
-    //     $aid = Qs::decodeHash($aid);
-    //     $pid = Qs::decodeHash($pid);
-    //     $level = Qs::decodeHash($level);
-    //     $grades = $this->classaAsessmentRepo->getCaGrades($level, $pid, $aid);
-    //     $data['period'] = $this->academic->find($aid);
-    //     $data['program_data'] = $this->programsRepo->findOne($pid);
-    //     $data['level'] = $this->levels->find($level);
-    //     $data['students'] = $this->classaAsessmentRepo->total_students($level, $pid, $aid);
-
-    //     return view('pages.cas.results_review_board', compact('grades'), $data);
-    // }
     public function LoadMoreResultsCas(Request $request)
     {
         $aid = $request->input('academic');
@@ -380,26 +363,6 @@ class ClassAssessmentsController extends Controller
         //dd($level, $pid, $aid,$current_page,$last_page,$per_page);
         return response()->json($grades);
     }
-
-    // ? Moved to Livewire component
-    // public function GetProgramResultsLevel(Request $request)
-    // {
-    //     $aid = $request->query('aid');
-    //     $pid = $request->query('pid');
-    //     $level = $request->query('level');
-    //     $aid = Qs::decodeHash($aid);
-    //     $pid = Qs::decodeHash($pid);
-    //     $level = Qs::decodeHash($level);
-
-    //     $grades = $this->classaAsessmentRepo->getGrades($level, $pid, $aid);
-
-    //     $data['period'] = $this->academic->find($aid);
-    //     $data['program_data'] = $this->programsRepo->findOne($pid);
-    //     $data['level'] = $this->levels->find($level);
-    //     $data['students'] = $this->classaAsessmentRepo->total_students($level, $pid, $aid);
-
-    //     return view('pages.class_assessments.results_review_board', compact('grades'), $data);
-    // }
 
     public function BoardofExaminersUpdateResults(Request $request)
     {

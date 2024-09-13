@@ -28,7 +28,7 @@
 <script src="{{ 'https://cdn.jsdelivr.net/npm/chart.js' }}"></script>
 
 {{-- Editable table rows --}}
-<link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/jquery-editable/css/jquery-editable.css"
-    rel="stylesheet" />
+{{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/jquery-editable/css/jquery-editable.css"
+    rel="stylesheet" /> --}}
 
 @stack('css')

@@ -100,9 +100,10 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Registered Academic Year</td>
-                                    <td>{{ count($student->invoices) > 0  ? $student->invoices->last()->period->name : 'Not registered' }}</td>
+                                    <td>{{ count($student->invoices) > 0 ? $student->invoices->last()->period->name : 'Not registered' }}
+                                    </td>
                                 </tr>
-                                                                <tr>
+                                <tr>
                                     <td class="font-weight-bold text-justify">Semester</td>
                                     <td>{{ $student->semester }}</td>
                                 </tr>
@@ -1375,7 +1376,9 @@
                                                 <td>{{ $course['course_code'] }}</td>
                                                 <td>{{ $course['course_title'] }}</td>
                                                 <td>
-                                                    @php
+                                                    {{ $course['total'] }}
+
+                                                    {{-- @php
                                                         $apStartDate = \Carbon\Carbon::make(
                                                             $academicData['academic_period_start_date'],
                                                         );
@@ -1388,13 +1391,13 @@
                                                     @if ($apIsOngoing)
                                                         <a class="editable" id="{{ $loop->iteration }}"
                                                             data-type="number" data-pk="{{ $course['grade_id'] }}"
-                                                            data-url="/grades/{{ $course['grade_id'] }}/edit"
+                                                            data-url="{{ route('grades.edit', $course['grade_id']) }}"
                                                             data-name="total" data-title="Enter total marks">
                                                             {{ $course['total'] }}
                                                         </a>
                                                     @else
                                                         {{ $course['total'] }}
-                                                    @endif
+                                                    @endif --}}
                                                 </td>
                                                 <td>{{ $course['grade'] }}</td>
                                             </tr>
@@ -1419,7 +1422,9 @@
                                             <td>{{ $gra['course_code'] }}</td>
                                             <td>{{ $gra['course_title'] }}</td>
                                             <td>
-                                                @php
+                                                {{ $gra['total_score'] }}
+
+                                                {{-- @php
                                                     $apStartDate = \Carbon\Carbon::make(
                                                         $academicData['academic_period_start_date'],
                                                     );
@@ -1429,16 +1434,17 @@
                                                     $apIsOngoing = $apStartDate <= now() && now() <= $apEndDate;
                                                 @endphp
 
+                                                @dd($gra)
                                                 @if ($apIsOngoing)
                                                     <a class="editable" id="{{ $loop->iteration }}"
-                                                        data-type="number" data-pk=""
-                                                        data-url="/grades/{{ $gra['course_code'] }}/edit"
+                                                        data-type="number" data-pk="{{ $gra['grade_id'] }}"
+                                                        data-url="{{ route('grades.edit', $gra['grade_id']) }}"
                                                         data-name="total" data-title="Enter total marks">
                                                         {{ $gra['total_score'] }}
                                                     </a>
                                                 @else
                                                     {{ $gra['total_score'] }}
-                                                @endif
+                                                @endif --}}
                                             </td>
                                             <td>NE</td>
                                         </tr>
@@ -1448,8 +1454,21 @@
                             </tbody>
 
                         </table>
-                        <p class="bg-success p-3 align-bottom">Comment
-                            : {{ $academicData['comments']['comment'] }}</p>
+
+                        @php
+                            $commentLower = str()->lower($academicData['comments']['comment']);
+
+                            $commentBgColor = match (true) {
+                                str()->startsWith($commentLower, 'proceed & repeat') => 'bg-warning',
+                                str()->startsWith($commentLower, 'part time') => 'bg-danger',
+                                default => 'bg-success',
+                            };
+                        @endphp
+
+                        <p class="{{ $commentBgColor }} p-3 align-bottom">
+                            Comment : {{ $academicData['comments']['comment'] }}
+                        </p>
+
                         <hr>
 
                     </div>

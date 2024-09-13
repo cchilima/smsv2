@@ -370,4 +370,4 @@ Route::group(['prefix' => 'student'], function () {
 });
 
 // Student Grades Routes
-Route::post('/grades/{id}/edit', [GradeContoller::class, 'update']);
+Route::post('/grades/{id}/edit', [GradeContoller::class, 'update'])->name('grades.edit');

@@ -43,7 +43,6 @@ class ExamResultsReviewBoard extends Component
         $level = Qs::decodeHash($level);
 
         $this->data['grades'] = $this->classAssessmentRepo->getGrades($level, $pid, $aid);
-
         $this->data['period'] = $this->academicPeriodRepo->find($aid);
         $this->data['program_data'] = $this->programRepo->findOne($pid);
         $this->data['level'] = $this->courseLevelRepo->find($level);
