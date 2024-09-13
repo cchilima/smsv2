@@ -1,3 +1,7 @@
+@php
+    use app\Helpers\Qs;
+@endphp
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -121,7 +125,7 @@
 
         <!-- Footer -->
         <div class="footer light-deca">
-            <p>&copy; {{ date('Y') }} ZUT All rights reserved. <br> 3J4W+J7Q, Kalewa Rd, Ndola, Zambia. <br> <a href="https://zut.ac.zm" style="color: #2196F3; text-decoration: none;">zut.ac.zm</a></p>
+            <p>&copy; {{ date('Y') }} {{ Qs::getSystemName() }} All rights reserved. <br> {{ Qs::getSetting('address') }} <br> <a href="https://zut.ac.zm" style="color: #2196F3; text-decoration: none;">zut.ac.zm</a></p>
         </div>
     </div>
 </body>

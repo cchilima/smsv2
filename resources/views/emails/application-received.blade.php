@@ -1,11 +1,13 @@
-@php
-    use app\Helpers\Qs;
-@endphp
+<?php
+
+use App\Helpers\Qs;
+
+?>
 
 @extends('layouts.email_template')
 @section('content')
     <div class="content">
-        <p class="flow-text light-deca">ZUT Application</p>
+        <p class="flow-text light-deca"> {{ Qs::getSystemName() }} Application</p>
 
         @if ($addressed_to == 'admissions')
             <p class="light-deca">
@@ -20,7 +22,7 @@
                 <strong>Application Code:</strong> {{ $application->applicant_code }}
                 <br><br>
                 Best regards,<br>
-                ZUT.
+                {{ Qs::getSystemName() }}.
             </p>
         @else
             <p class="light-deca">
@@ -29,10 +31,10 @@
                 We have received your application for the {{ $application->program->name }} program. Our admissions team is
                 currently reviewing your submission, and we will notify you of our decision in the coming days.
                 <br><br>
-                Thank you for your interest in ZUT. We appreciate your patience during this process.
+                Thank you for your interest in {{ Qs::getSystemName() }} . We appreciate your patience during this process.
                 <br><br>
                 Best regards,<br>
-                The ZUT Admissions Team
+                The {{ Qs::getSystemName() }}  Admissions Team
 
 
                 <br><br><br>
@@ -41,7 +43,7 @@
 <b class="light-deca">
 
         NOTE <br>
-        ZUT will never solicit money from students for admissions or any other services. Be vigilant and beware of scammers posing as university representatives. All official communication will come directly from the university. If you have any doubts, please contact the university through official channels.
+        {{ Qs::getSystemName() }} will never solicit money from students for admissions or any other services. Be vigilant and beware of scammers posing as university representatives. All official communication will come directly from the university. If you have any doubts, please contact the university through official channels.
 
 </b>
 </div>

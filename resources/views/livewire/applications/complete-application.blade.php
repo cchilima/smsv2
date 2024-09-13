@@ -167,9 +167,8 @@
 
                                 <div class="col m12 s12">
                                     <label class="active">Year applying for <label>
-                                    <select wire:model.live="year_applying_for"
-                                        class="browser-default custom-select ">
-                                        <option></option>
+                                    <select wire:model.live="year_applying_for" class="browser-default custom-select ">
+                                        <option ></option>
                                         @foreach ($years as $year)
                                             <option value="{{ $year }}"  @if ($year == $year_applying_for) selected @endif>
                                             {{ $year }} 

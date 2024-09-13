@@ -22,33 +22,33 @@
                 <tbody>
                     <tr>
                         <td><b>Academic Period Type :</b></td>
-                        <td>{{ $academicInfo->academic_period->period_types->name }}</td>
+                        <td>{{ $academicInfo ? $academicInfo->academic_period->period_types->name : 'Not available' }}</td>
                     </tr>
                     <tr>
                         <td><b>Academic Period : </b></td>
-                        <td>{{ $academicInfo->academic_period->name }}</td>
+                        <td>{{ $academicInfo ? $academicInfo->academic_period->name : 'Not available' }}</td>
                     </tr>
                     <tr>
                         <td><b>Academic Period Code : </b></td>
-                        <td>{{ $academicInfo->academic_period->code }} </td>
+                        <td>{{ $academicInfo ? $academicInfo->academic_period->code : 'Not available' }} </td>
                     </tr>
                     <tr>
                         <td><b>Study Mode : </b></td>
-                        <td>{{ $academicInfo->study_mode->name }}</td>
+                        <td>{{ $academicInfo ? $academicInfo->study_mode->name : 'Not available' }}</td>
                     </tr>
                     <tr>
                         <td><b>Registration Threshold : </b></td>
-                        <td>{{ number_format($academicInfo->registration_threshold, 0) }} %</td>
+                        <td>{{ $academicInfo ? number_format($academicInfo->registration_threshold, 0)  : '0'}} %</td>
                     </tr>
 
                     <tr>
                         <td><b>Examslip Threshold : </b></td>
-                        <td>{{ number_format($academicInfo->exam_slip_threshold, 0) }} %</td>
+                        <td>{{ $academicInfo ? number_format($academicInfo->exam_slip_threshold, 0) : '0' }} %</td>
                     </tr>
 
                     <tr>
                         <td><b>View Results Threshold : </b></td>
-                        <td>{{ number_format($academicInfo->view_results_threshold, 0) }} %</td>
+                        <td>{{ $academicInfo ? number_format($academicInfo->view_results_threshold, 0) : '0' }} %</td>
                     </tr>
 
                 </tbody>
