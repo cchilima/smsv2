@@ -8,8 +8,8 @@ use App\Repositories\Admissions\{StudentRepository};
 use App\Models\Accounting\{Invoice, InvoiceDetail, Receipt, Fee};
 use App\Models\Enrollments\Enrollment;
 use App\Models\Admissions\Student;
-use Auth;
-use DB;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class InvoiceRepository
 {

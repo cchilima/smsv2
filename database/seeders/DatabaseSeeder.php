@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use DB;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Users\{User, UserPersonalInformation, UserType};
@@ -11,6 +10,7 @@ use App\Models\Residency\{Country, Province, Town};
 use App\Models\Profile\{MaritalStatus, Relationship};
 use App\Models\Admissions\{AcademicPeriodIntake};
 use App\Models\Academics\{Program, Course, StudyMode, CourseLevel, Qualification, Department, School, AssessmentType, PeriodType, Prerequisite, ProgramCourses};
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
