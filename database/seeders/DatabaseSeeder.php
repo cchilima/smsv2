@@ -433,5 +433,24 @@ class DatabaseSeeder extends Seeder
         ];
 
         DB::table('settings')->insert($settings);
+
+        $usage_instructions = "Step 1: Dial *115# \n"
+            . "Step 2: Select option 4 \"Make Payment\" \n"
+            . "Step 3: Select option 7 \"School fee payments\" \n"
+            . "Step 4: Select option 1 \"School Pay\" \n"
+            . "Step 5: Select option 1 \"Pay fees\" \n"
+            . "Step 6: Enter student number in the format \"ZUT-XXXXXXX\" \n"
+            . "Step 7: Enter amount in Kwacha \n"
+            . "Step 8: Enter your 4-digit PIN to confirm payment";
+
+        // Seed Payment Methods table
+        $paymentMethods = [
+            [
+                'name' => 'Airtel Money',
+                'usage_instructions' => $usage_instructions,
+            ],
+        ];
+
+        DB::table('payment_methods')->insert($paymentMethods);
     }
 }

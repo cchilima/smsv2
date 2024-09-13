@@ -10,6 +10,7 @@ use App\Http\Middleware\Custom\TeamSAT;
 use App\Models\Accounting\Invoice;
 use App\Repositories\Academics\ClassAssessmentsRepo;
 use App\Repositories\Academics\StudentRegistrationRepository;
+use App\Repositories\Accounting\PaymentMethodRepository;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Enrollments\EnrollmentRepository;
 use App\Repositories\Users\userNextOfKinRepository;
@@ -28,7 +29,8 @@ class StudentController extends Controller
         $userRepo,
         $userNextOfKinRepo,
         $enrollmentRepo,
-        $classaAsessmentRepo;
+        $classaAsessmentRepo,
+        $paymentMethodRepo;
 
     public function __construct(
         StudentRepository $studentRepo,
@@ -37,7 +39,8 @@ class StudentController extends Controller
         UserRepository $userRepo,
         userNextOfKinRepository $userNextOfKinRepo,
         EnrollmentRepository $enrollmentRepo,
-        ClassAssessmentsRepo $classaAsessmentRepo
+        ClassAssessmentsRepo $classaAsessmentRepo,
+        PaymentMethodRepository $paymentMethodRepo
     ) {
         //        $this->middleware(TeamSA::class, ['except' => ['destroy']]);
         //        $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
@@ -50,6 +53,7 @@ class StudentController extends Controller
         $this->userNextOfKinRepo = $userNextOfKinRepo;
         $this->enrollmentRepo = $enrollmentRepo;
         $this->classaAsessmentRepo = $classaAsessmentRepo;
+        $this->paymentMethodRepo = $paymentMethodRepo;
     }
 
     public function profile()
@@ -70,5 +74,11 @@ class StudentController extends Controller
         $student = Auth::user()->student;
 
         return view('pages.students.finances', compact('student'));
+    }
+
+    public function howToMakePayments()
+    {
+        $paymentMethods = $this->paymentMethodRepo->getAll();
+        return view('pages.students.help.make-payments', compact('paymentMethods'));
     }
 }

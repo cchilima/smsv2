@@ -11,5 +11,8 @@ class PaymentMethod extends Model implements AuditableContract
 {
     use HasFactory, Auditable;
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'name',
+        'usage_instructions'
+    ];
 }

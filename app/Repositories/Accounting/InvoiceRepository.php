@@ -519,6 +519,8 @@ class InvoiceRepository
         // Get the student's current academic period
         $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
 
+        if ($academicPeriod == null) return 0;
+
         // Get the student's cumulative academic period fees
         $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
 
@@ -550,6 +552,8 @@ class InvoiceRepository
         // Get the student's current academic period
         $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
 
+        if ($academicPeriod == null) return 0;
+
         // Get the student's cumulative academic period fees
         $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
 
@@ -578,6 +582,8 @@ class InvoiceRepository
 
         // Get the student's current academic period
         $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+
+        if ($academicPeriod == null) return 0;
 
         // Get the student's cumulative academic period fees
         $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);

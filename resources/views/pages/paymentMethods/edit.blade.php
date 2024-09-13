@@ -25,6 +25,15 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label font-weight-semibold">Usage Instructions<span
+                                    class="text-danger">*</span></label>
+                            <div class="col-lg-9">
+                                <textarea name="usage_instructions" required type="text" class="form-control"
+                                    placeholder="Instructions on how to use payment method">{{ $paymentMethod->usage_instructions }}</textarea>
+                            </div>
+                        </div>
+
                         <div class="text-right">
                             <button id="ajax-btn" type="submit" class="btn btn-primary">Update form <i
                                     class="icon-paperplane ml-2"></i></button>

@@ -28,7 +28,8 @@ class PaymentMethod extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('payment_methods', 'name')->ignore($this->payment_method)
-            ]
+            ],
+            'usage_instructions' => 'required|string|max:16383'
         ];
     }
 }

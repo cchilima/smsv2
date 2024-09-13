@@ -68,8 +68,8 @@
         $commentLower = str()->lower($entry->calculated_grade['comment']);
 
         $commentBgColor = match (true) {
-            str()->startsWith($commentLower, 'proceed & repeat') => 'bg-danger',
-            str()->startsWith($commentLower, 'part time') => 'bg-warning',
+            str()->startsWith($commentLower, 'proceed & repeat') => 'bg-warning',
+            str()->startsWith($commentLower, 'part time') => 'bg-danger',
             default => 'bg-success',
         };
     @endphp

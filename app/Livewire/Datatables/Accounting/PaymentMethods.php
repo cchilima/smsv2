@@ -4,8 +4,9 @@ namespace App\Livewire\Datatables\Accounting;
 
 use App\Models\Accounting\PaymentMethod;
 use App\Repositories\Accounting\PaymentMethodRepository;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Exportable;
@@ -13,8 +14,8 @@ use PowerComponents\LivewirePowerGrid\Facades\Filter;
 use PowerComponents\LivewirePowerGrid\Footer;
 use PowerComponents\LivewirePowerGrid\Header;
 use PowerComponents\LivewirePowerGrid\PowerGrid;
-use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
+use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
 final class PaymentMethods extends PowerGridComponent
@@ -62,7 +63,9 @@ final class PaymentMethods extends PowerGridComponent
         return PowerGrid::fields()
             ->add('id')
             ->add('name')
-            ->add('created_at');
+            ->add('usage_instructions', function ($row) {
+                return Str::limit($row->usage_instructions, 75);
+            });
     }
 
     public function columns(): array
@@ -71,6 +74,8 @@ final class PaymentMethods extends PowerGridComponent
             Column::make('Name', 'name')
                 ->sortable()
                 ->searchable(),
+
+            Column::make('Usage Instructions', 'usage_instructions'),
 
             Column::action('Action')
         ];

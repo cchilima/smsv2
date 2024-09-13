@@ -38,6 +38,15 @@
                                 </div>
                             </div>
 
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-form-label font-weight-semibold">Usage Instructions<span
+                                        class="text-danger">*</span></label>
+                                <div class="col-lg-9">
+                                    <textarea name="usage_instructions" value="{{ old('usage_instructions') }}" required type="text" class="form-control"
+                                        placeholder="Instructions on how to use payment method">{{ old('usage_instructions') }}</textarea>
+                                </div>
+                            </div>
+
                             <div class="text-right">
                                 <button wire:click.debounce.1000ms="refreshTable('PaymentMethodsTable')" id="ajax-btn"
                                     type="submit" class="btn btn-primary">Submit form <i

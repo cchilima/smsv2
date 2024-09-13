@@ -21,6 +21,8 @@ use App\Repositories\Academics\ClassAssessmentsRepo;
 use App\Repositories\Academics\CourseLevelsRepository;
 use App\Repositories\Academics\CourseRepository;
 use App\Repositories\Academics\ProgramsRepository;
+use App\Repositories\Academics\StudentRegistrationRepository;
+use App\Repositories\Accounting\InvoiceRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +35,15 @@ class ClassAssessmentsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $classaAsessmentRepo, $academic, $assessmentTypes, $programsRepo, $levels, $periodClasses, $coursesRepo;
+    protected $classaAsessmentRepo,
+        $academic,
+        $assessmentTypes,
+        $programsRepo,
+        $levels,
+        $periodClasses,
+        $coursesRepo,
+        $invoiceRepo,
+        $studentRegistrationRepo;
 
     public function __construct(
         ClassAssessmentsRepo $classaAsessmentRepo,
@@ -42,7 +52,9 @@ class ClassAssessmentsController extends Controller
         ProgramsRepository   $programsRepo,
         CourseLevelsRepository $levels,
         AcademicPeriodClassRepository $periodClasses,
-        CourseRepository $courseRepository
+        CourseRepository $courseRepository,
+        InvoiceRepository $invoiceRepository,
+        StudentRegistrationRepository $studentRegistrationRepo
     ) {
         //        $this->middleware(TeamSA::class, ['except' => ['destroy','']]);
         //        $this->middleware(TeamSAT::class, ['except' => ['destroy','']]);
@@ -56,6 +68,8 @@ class ClassAssessmentsController extends Controller
         $this->levels = $levels;
         $this->periodClasses = $periodClasses;
         $this->coursesRepo = $courseRepository;
+        $this->invoiceRepo = $invoiceRepository;
+        $this->studentRegistrationRepo = $studentRegistrationRepo;
     }
 
     // public function index()
@@ -476,16 +490,20 @@ class ClassAssessmentsController extends Controller
         $user = Auth::user();
         $results = $this->classaAsessmentRepo->GetCaStudentGrades($user->id);
         $student = $this->classaAsessmentRepo->getStudentDetails($user->id);
-        //dd($results);
+
         return view('pages.students.exams.ca_results', compact('results', 'student'));
     }
     public function MyResults()
     {
         $user = Auth::user();
-        $results = $this->classaAsessmentRepo->GetExamGrades($user->id);
-        $student = $this->classaAsessmentRepo->getStudentDetails($user->id);
-        //dd($results);
-        return view('pages.students.exams.exam_results', compact('results', 'student'));
+        $data['results'] = $this->classaAsessmentRepo->GetExamGrades($user->id);
+        $data['student'] = $this->classaAsessmentRepo->getStudentDetails($user->id);
+        $data['academicPeriod'] = $this->studentRegistrationRepo->getNextAcademicPeriod($data['student'], now());
+        $data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($data['student']->id);
+        $data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($data['student']->id);
+        $data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($data['student']->id);
+
+        return view('pages.students.exams.exam_results', $data);
     }
 
     public function PostStudentResults(Request $request)

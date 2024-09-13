@@ -7,6 +7,29 @@
     @endphp
 
     <div class="row">
+        @if (count($announcements) > 0)
+            <div class="col-12">
+                @foreach ($announcements as $announcement)
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                        <a class="d-block h-100" href="{{ route('announcement.fullview', $announcement->id) }}">
+                            <i class="icon icon-alert mr-2"></i>
+                            <span class="mr-2">{{ str()->limit($announcement->title, 100) }}</span>
+                            <span class="alert-link">Read more &rarr;</span>
+                            <form action="{{ route('announcement.dismiss', $announcement->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="close" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </form>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
+    </div>
+
+    <div class="row">
         <section class="col-12">
             <div class="row d-flex justify-content-center">
                 <div class="col">
@@ -164,26 +187,25 @@
     </div>
 
     <div class="row">
-        @if (count($announcements) > 0)
-            <div class="col-12">
-                @foreach ($announcements as $announcement)
-                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                        <a class="d-block h-100" href="{{ route('announcement.fullview', $announcement->id) }}">
-                            <i class="icon icon-alert mr-2"></i>
-                            <span class="mr-2">{{ str()->limit($announcement->title, 100) }}</span>
-                            <span class="alert-link">Read more &rarr;</span>
-                            <form action="{{ route('announcement.dismiss', $announcement->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="close" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </form>
-                        </a>
-                    </div>
-                @endforeach
-            </div>
-        @endif
+        <div class="col-12">
+            <h4>Help Section</h4>
+        </div>
 
+        <div class="col-sm-6 col-xl-3 cursor-pointer">
+            <a href="{{ route('students.help.make-payments') }}" class="d-block link">
+                <div class="card px-3 py-2">
+                    <div class="media align-items-center">
+                        <div class="media-body">
+                            <p class="mb-0">How to Make Payments</p>
+                        </div>
+
+                        <div class="ml-3 align-self-center">
+                            <i class="icon-question3 icon-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
     </div>
 
 @endsection
