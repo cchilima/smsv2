@@ -46,7 +46,7 @@ class APinformation extends FormRequest
                 'integer',
                 'exists:academic_periods,id',
                 function ($attribute, $value, $fail) {
-                    $this->academicPeriodRepo->validateAcademicPeriod(
+                    $this->academicPeriodRepo->validateOverlappingAcademicPeriod(
                         $value,
                         $fail,
                         $this->input('study_mode_id'),

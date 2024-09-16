@@ -169,34 +169,33 @@ class AcademicPeriodRepository
         }
     }
 
-    // Custom unique validation rule for academic period information requests
-    public function validateAcademicPeriod($academicPeriodId, $fail, $studyModeId, $academicPeriodIntakeId)
+    /**
+     * Validates if an academic period overlaps with any existing academic periods. Used in Academic Period Information creation request.
+     *
+     * @param int $academicPeriodId The ID of the academic period being validated
+     * @param Closure $fail The validation failure callback. Used to return a validation error message.
+     * @param int $studyModeId The study mode ID of the academic period being validated
+     * @param int $academicPeriodIntakeId The academic period intake ID of the academic period being validated
+     * @return void
+     */
+    public function validateOverlappingAcademicPeriod($academicPeriodId, $fail, $studyModeId, $academicPeriodIntakeId)
     {
-        // Check if academic period information exists for academic period       
-        $existingInfo = AcademicPeriodInformation::where('academic_period_id', $academicPeriodId)
-            ->first();
+        // Academic period being validated
+        $academicPeriod = AcademicPeriod::find($academicPeriodId);
 
-        if ($existingInfo) {
-            return $fail('Academic period information already exists for this academic period. Kindly update it to make changes.');
-        }
+        // Check if any existing academic periods with dates that overlap academic period being validated
+        $existingOverlappingAcademicPeriod = AcademicPeriod::where('id', '!=', $academicPeriodId)
+            ->whereDate('ac_start_date', '<=', $academicPeriod->ac_start_date)
+            ->whereDate('ac_end_date', '>=', $academicPeriod->ac_start_date)
+            ->where('period_type_id', $academicPeriod->period_type_id)
+            ->whereHas('academic_period_information', function ($query) use ($studyModeId, $academicPeriodIntakeId) {
+                $query->where('academic_period_information.study_mode_id', $studyModeId)
+                    ->where('academic_period_information.academic_period_intake_id', $academicPeriodIntakeId);
+            })->first();
 
-        // Check if academic period information exists with the same study_mode_id and academic_period_intake_id
-        $existingInfoFromAnotherPeriod = AcademicPeriodInformation::where('study_mode_id', $studyModeId)
-            ->where('academic_period_intake_id', $academicPeriodIntakeId)
-            ->where('academic_period_id', '!=', $academicPeriodId)
-            ->first();
-
-        if ($existingInfoFromAnotherPeriod) {
-            // Check if another academic period exists with the same start and end date and period type
-            $existingPeriod = AcademicPeriod::where('ac_start_date', $existingInfoFromAnotherPeriod->academic_period->ac_start_date)
-                ->where('ac_end_date', $existingInfoFromAnotherPeriod->academic_period->ac_end_date)
-                ->where('period_type_id', $existingInfoFromAnotherPeriod->academic_period->period_type_id)
-                ->where('id', '!=', $academicPeriodId)
-                ->exists();
-
-            if ($existingPeriod) {
-                return $fail('An academic period with the same start date, end date and period type already exists for the selected study mode and intake.');
-            }
+        // If overlapping period exists, fail validation
+        if ($existingOverlappingAcademicPeriod) {
+            return $fail('An academic period with overlapping start and end date (' . $existingOverlappingAcademicPeriod->code . ') already exists for the selected study mode and intake.');
         }
     }
 }

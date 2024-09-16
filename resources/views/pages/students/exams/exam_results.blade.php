@@ -77,7 +77,7 @@
                                 </table>
 
                                 @php
-                                    $commentLower = str()->lower($entry->calculated_grade['comment']);
+                                    $commentLower = str()->lower($academicDate['comments']['comment']);
 
                                     $commentBgColor = match (true) {
                                         str()->startsWith($commentLower, 'proceed & repeat') => 'bg-warning',
