@@ -147,13 +147,18 @@ class ClassAssessmentsRepo
         }
     }
 
-    public function publishAvailableProgramsCas($id)
+    /**
+     * Get list of available programs whose CA results to publish
+     * 
+     * @param int $academicPeriodId The academic period to which the programs' CA grades belong
+     */
+    public function publishAvailableProgramsCas($academicPeriodId)
     {
-        $courseIdsWithGrades = Grade::where('academic_period_id', $id)->whereNot('assessment_type_id', 1)
+        $courseIdsWithGrades = Grade::where('academic_period_id', $academicPeriodId)->whereNot('assessment_type_id', 1)
             ->distinct('course_id')
             ->pluck('course_id');
 
-        $studentIds = Grade::where('academic_period_id', $id)->whereNot('assessment_type_id', 1)
+        $studentIds = Grade::where('academic_period_id', $academicPeriodId)->whereNot('assessment_type_id', 1)
             ->distinct('student_id')
             ->pluck('student_id');
 
@@ -186,7 +191,7 @@ class ClassAssessmentsRepo
                 // Add students count to total students for the program
 
                 // Check if publication status is 0 for any student in the course
-                $publicationStatus = Grade::where('academic_period_id', $id)->whereNot('assessment_type_id', 1)
+                $publicationStatus = Grade::where('academic_period_id', $academicPeriodId)->whereNot('assessment_type_id', 1)
                     ->where('course_id', $course->id)
                     ->where('publication_status', 0)
                     ->exists();
@@ -227,12 +232,17 @@ class ClassAssessmentsRepo
         return array_values($organizedData);
     }
 
-    public function publishAvailablePrograms($id)
+    /**
+     * Get list of available programs whose exam results to publish
+     * 
+     * @param int $academicPeriodId The academic period to which the programs' exam grades belong
+     */
+    public function publishAvailablePrograms($academicPeriodId)
     {
-        $courseIdsWithGrades = Grade::where('academic_period_id', $id)
+        $courseIdsWithGrades = Grade::where('academic_period_id', $academicPeriodId)
             ->distinct('course_id')
             ->pluck('course_id');
-        $studentIds = Grade::where('academic_period_id', $id)->where('assessment_type_id', 1)
+        $studentIds = Grade::where('academic_period_id', $academicPeriodId)->where('assessment_type_id', 1)
             ->distinct('student_id')
             ->pluck('student_id');
 
@@ -269,7 +279,7 @@ class ClassAssessmentsRepo
 
 
                 // Check if publication status is 0 for any student in the course
-                $publicationStatus = Grade::where('academic_period_id', $id)
+                $publicationStatus = Grade::where('academic_period_id', $academicPeriodId)
                     ->where('course_id', $course->id)
                     ->where('publication_status', 0)
                     ->exists();
@@ -1386,6 +1396,27 @@ class ClassAssessmentsRepo
         }
 
         return $organizedResults;
+    }
+
+    /**
+     * Check if a student's results for a given academic period have been published
+     * 
+     * @param int $studentId The ID of the student
+     * @param int $academicPeriodId The ID of the academic period
+     * @return bool True if the results have been published, false otherwise
+     */
+    public function checkStudentAcademicPeriodResultsPublicationStatus($studentId, $academicPeriodId)
+    {
+        $studentAcademicPeriodGrades = Grade::select('publication_status')
+            ->where('student_id', $studentId)
+            // ->where('publication_status', 1)
+            ->where('academic_period_id', $academicPeriodId)
+            ->pluck('publication_status');
+        // ->count() > 0 ? true : false;
+
+        if ($studentAcademicPeriodGrades) {
+            // If any of the grades is 0, return false, else 1
+        }
     }
 
     public function GetExamGrades($id)

@@ -39,9 +39,9 @@
                                 </strong>
                             </h5>
 
-                            @if ( $canSeeResults
-                               {{--   $academicPeriod?->academic_period_id == $academicData['academic_period_id'] && 
-                                    $paymentPercentage >= $academicPeriod->view_results_threshold --}})
+                            @if ($canSeeResults)
+                                {{-- $academicPeriod?->academic_period_id == $academicData['academic_period_id'] && 
+                                    $paymentPercentage >= $academicPeriod->view_results_threshold --}}
                                 <table class="table table-hover table-striped-columns mb-3">
                                     {{-- <h5 class="p-2"><strong>{{ $student->id }}</strong></h5> --}}
 

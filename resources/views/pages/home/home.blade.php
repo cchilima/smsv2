@@ -195,7 +195,7 @@
                     @foreach ($announcements as $announcement)
                         <div class="alert alert-primary alert-dismissible fade show" role="alert">
                             <a class="d-block h-100" href="{{ route('announcement.fullview', $announcement->id) }}">
-                                <i class="icon icon-alert mr-2"></i>
+                                <i class="icon icon-info22 mr-2"></i>
                                 <span class="mr-2">{{ str()->limit($announcement->title, 100) }}</span>
                                 <span class="alert-link">Read more &rarr;</span>
                                 <form action="{{ route('announcement.dismiss', $announcement->id) }}" method="POST">

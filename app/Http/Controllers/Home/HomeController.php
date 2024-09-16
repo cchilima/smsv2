@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\Academics\StudentRegistrationRepository;
 use App\Repositories\Accounting\InvoiceRepository;
 use App\Repositories\Reports\enrollments\EnrollmentRepository;
 use App\Repositories\Announcements\AnnouncementRepository;
@@ -12,28 +13,31 @@ use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
+    protected $enrollmentRepository;
+    protected $announcementRepo;
+    protected $applicantRepo;
+    protected $invoiceRepo;
+    protected $studentRegistrationRepo;
+
     /**
      * Create a new controller instance.
      *
      * @return void
      *
      */
-    protected $enrollmentRepository;
-    protected $announcementRepo;
-    protected $applicantRepo;
-    protected $invoiceRepo;
-
     public function __construct(
         EnrollmentRepository $enrollmentRepository,
         AnnouncementRepository $announcementRepo,
         ApplicantRepository $applicantRepo,
-        InvoiceRepository $invoiceRepo
+        InvoiceRepository $invoiceRepo,
+        StudentRegistrationRepository $studentRegistrationRepo
     ) {
         $this->middleware('auth');
         $this->enrollmentRepository = $enrollmentRepository;
         $this->announcementRepo = $announcementRepo;
         $this->applicantRepo = $applicantRepo;
         $this->invoiceRepo = $invoiceRepo;
+        $this->studentRegistrationRepo = $studentRegistrationRepo;
     }
 
     /**
@@ -53,6 +57,8 @@ class HomeController extends Controller
             $data['totalPayments'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($user->student->id);
             $data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($user->student->id);
             $data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($user->student->id);
+            $data['registrationStatus'] = $this->studentRegistrationRepo->getRegistrationStatus($user->student->id);
+            $data['academicPeriod'] = $this->studentRegistrationRepo->getNextAcademicPeriod($user->student, now());
 
             return view('pages.home.student_home', $data);
         } else if ($user->userType->title == 'instructor') {

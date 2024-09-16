@@ -7,12 +7,27 @@
     @endphp
 
     <div class="row">
+        @if (!$registrationStatus)
+            @php
+                $registrationBalance = ($academicPeriod?->registration_threshold / 100) * $totalFees - $totalPayments;
+            @endphp
+
+            <div class="col-12">
+                <div class="alert alert-warning" role="alert">
+                    <i class="icon icon-alert mr-2"></i>
+                    You are not registered. Clear your balance of K{{ $registrationBalance }} to <a class="alert-link"
+                        href="{{ route('registration.index') }}" class="alert-link">register now</a>
+
+                </div>
+            </div>
+        @endif
+
         @if (count($announcements) > 0)
             <div class="col-12">
                 @foreach ($announcements as $announcement)
                     <div class="alert alert-primary alert-dismissible fade show" role="alert">
                         <a class="d-block h-100" href="{{ route('announcement.fullview', $announcement->id) }}">
-                            <i class="icon icon-alert mr-2"></i>
+                            <i class="icon icon-info22 mr-2"></i>
                             <span class="mr-2">{{ str()->limit($announcement->title, 100) }}</span>
                             <span class="alert-link">Read more &rarr;</span>
                             <form action="{{ route('announcement.dismiss', $announcement->id) }}" method="POST">
