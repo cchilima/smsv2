@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\Academics\ClassAssessmentsRepo;
 use App\Repositories\Academics\StudentRegistrationRepository;
 use App\Repositories\Accounting\InvoiceRepository;
 use App\Repositories\Reports\enrollments\EnrollmentRepository;
@@ -18,6 +19,7 @@ class HomeController extends Controller
     protected $applicantRepo;
     protected $invoiceRepo;
     protected $studentRegistrationRepo;
+    protected $classAssessmentsRepo;
 
     /**
      * Create a new controller instance.
@@ -30,7 +32,8 @@ class HomeController extends Controller
         AnnouncementRepository $announcementRepo,
         ApplicantRepository $applicantRepo,
         InvoiceRepository $invoiceRepo,
-        StudentRegistrationRepository $studentRegistrationRepo
+        StudentRegistrationRepository $studentRegistrationRepo,
+        ClassAssessmentsRepo $classAssessmentsRepo
     ) {
         $this->middleware('auth');
         $this->enrollmentRepository = $enrollmentRepository;
@@ -38,6 +41,7 @@ class HomeController extends Controller
         $this->applicantRepo = $applicantRepo;
         $this->invoiceRepo = $invoiceRepo;
         $this->studentRegistrationRepo = $studentRegistrationRepo;
+        $this->classAssessmentsRepo = $classAssessmentsRepo;
     }
 
     /**
@@ -52,13 +56,23 @@ class HomeController extends Controller
 
         if ($user->userType->title == 'student') {
 
+            $data['academicPeriod'] = $this->studentRegistrationRepo->getNextAcademicPeriod($user->student, now());
             $data['announcements'] = $this->announcementRepo->getAllByUserType('Student');
             $data['totalFees'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($user->student->id);
             $data['totalPayments'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($user->student->id);
             $data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($user->student->id);
             $data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($user->student->id);
             $data['registrationStatus'] = $this->studentRegistrationRepo->getRegistrationStatus($user->student->id);
-            $data['academicPeriod'] = $this->studentRegistrationRepo->getNextAcademicPeriod($user->student, now());
+
+            $data['registrationBalance'] = ($data['academicPeriod']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
+
+            $data['viewResultsBalance'] = ($data['academicPeriod']?->view_results_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
+
+            $data['resultsPublicationStatus'] = $this->classAssessmentsRepo
+                ->getStudentAcademicPeriodResultsPublicationStatus(
+                    $user->student->id,
+                    $data['academicPeriod']->academic_period_id
+                );
 
             return view('pages.home.student_home', $data);
         } else if ($user->userType->title == 'instructor') {

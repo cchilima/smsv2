@@ -1405,18 +1405,23 @@ class ClassAssessmentsRepo
      * @param int $academicPeriodId The ID of the academic period
      * @return bool True if the results have been published, false otherwise
      */
-    public function checkStudentAcademicPeriodResultsPublicationStatus($studentId, $academicPeriodId)
+    public function getStudentAcademicPeriodResultsPublicationStatus($studentId, $academicPeriodId)
     {
-        $studentAcademicPeriodGrades = Grade::select('publication_status')
-            ->where('student_id', $studentId)
-            // ->where('publication_status', 1)
+        $studentAcademicPeriodGrades = Grade::where('student_id', $studentId)
             ->where('academic_period_id', $academicPeriodId)
             ->pluck('publication_status');
-        // ->count() > 0 ? true : false;
 
-        if ($studentAcademicPeriodGrades) {
-            // If any of the grades is 0, return false, else 1
+        // If no grades are found, return 0
+        if ($studentAcademicPeriodGrades->isEmpty()) {
+            return false;
         }
+
+        // If any of the grades has a publication_status of 0, return false
+        if ($studentAcademicPeriodGrades->contains(0)) {
+            return false;
+        }
+
+        return true;
     }
 
     public function GetExamGrades($id)

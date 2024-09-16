@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class InvoiceRepository
 {
-    protected $statementRepo;
+    protected StatementRepository $statementRepo;
     protected $registrationRepo;
     protected $studentRepo;
 

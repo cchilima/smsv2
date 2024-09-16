@@ -7,17 +7,23 @@
     @endphp
 
     <div class="row">
-        @if (!$registrationStatus)
-            @php
-                $registrationBalance = ($academicPeriod?->registration_threshold / 100) * $totalFees - $totalPayments;
-            @endphp
-
+        @if ($registrationStatus)
             <div class="col-12">
                 <div class="alert alert-warning" role="alert">
                     <i class="icon icon-alert mr-2"></i>
                     You are not registered. Clear your balance of K{{ $registrationBalance }} to <a class="alert-link"
-                        href="{{ route('registration.index') }}" class="alert-link">register now</a>
+                        href="{{ route('registration.index') }}" class="alert-link">register</a>
 
+                </div>
+            </div>
+        @endif
+
+        @if ($resultsPublicationStatus && $viewResultsBalance > 0)
+            <div class="col-12">
+                <div class="alert alert-warning" role="alert">
+                    <i class="icon icon-alert mr-2"></i>
+                    Results published. Clear your balance of K{{ $viewResultsBalance }} to <a class="alert-link"
+                        href="{{ route('student-exam_results') }}" class="alert-link">view results</a>
                 </div>
             </div>
         @endif
