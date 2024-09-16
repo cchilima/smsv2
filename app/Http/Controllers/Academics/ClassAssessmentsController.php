@@ -466,6 +466,22 @@ class ClassAssessmentsController extends Controller
         $data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($data['student']->id);
         $data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($data['student']->id);
 
+        // 
+
+        $balancePercentage = $this->invoiceRepo->paymentPercentageAllInvoices($data['student']->id);
+
+
+        if($data['academicPeriod'] == null || $balancePercentage < 100){
+
+            $data['academicPeriod'] = $this->invoiceRepo->latestPreviousAcademicPeriod($user->student);
+            $data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($data['student']->id, true);
+            $data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($data['student']->id, true);
+
+            $data['canSeeResults'] = false;
+
+        } else { $data['canSeeResults'] = true;}
+
+
         return view('pages.students.exams.exam_results', $data);
     }
 
