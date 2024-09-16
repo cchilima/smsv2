@@ -39,9 +39,9 @@
                                 </strong>
                             </h5>
 
-                            @if (
-                                $academicPeriod?->academic_period_id == $academicData['academic_period_id'] &&
-                                    $paymentPercentage >= $academicPeriod->view_results_threshold)
+                            @if ( $canSeeResults
+                               {{--   $academicPeriod?->academic_period_id == $academicData['academic_period_id'] && 
+                                    $paymentPercentage >= $academicPeriod->view_results_threshold --}})
                                 <table class="table table-hover table-striped-columns mb-3">
                                     {{-- <h5 class="p-2"><strong>{{ $student->id }}</strong></h5> --}}
 
@@ -77,7 +77,7 @@
                                 </table>
 
                                 @php
-                                    $commentLower = str()->lower($academicDate['comments']['comment']);
+                                    $commentLower = str()->lower($academicData['comments']['comment']);
 
                                     $commentBgColor = match (true) {
                                         str()->startsWith($commentLower, 'proceed & repeat') => 'bg-warning',
@@ -97,7 +97,7 @@
 
                                 <tbody>
                                     <tr>
-                                        @if ($viewResultsBalance > 0)
+                                        @if ($viewResultsBalance > 0 && !$canSeeResults)
                                             <p class="bg-warning p-3 align-bottom">
                                                 Clear your balance of <strong>K{{ $viewResultsBalance }}</strong> to
                                                 view results for this academic period.

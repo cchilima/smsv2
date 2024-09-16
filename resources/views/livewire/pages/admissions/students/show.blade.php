@@ -586,6 +586,7 @@
                 <div class="tab-content">
 
                     <div wire:ignore class="tab-pane fade show" id="invoice-custom">
+                    @if($allInvoicesBalance >= 100)
                         <form class="ajax-store" method="post" action="{{ route('invoices.custom-invoice') }}">
                             @csrf
 
@@ -620,6 +621,9 @@
                                         class="icon-paperplane ml-2"></i></button>
                             </div>
                         </form>
+                        @else
+                                       <p>Student has a balance</p>
+                                    @endif
                     </div>
 
                     <div wire:ignore class="tab-pane fade show" id="invoice">
@@ -631,9 +635,13 @@
                                     type="text">
                                 <input name="student_id" hidden value="{{ $student->id }}" type="text">
                                 <div class="text-left">
+                                    @if($allInvoicesBalance >= 100)
                                     <button wire:click.debounce.5000ms="refreshTable('StudentInvoicesTable')"
                                         id="ajax-btn" type="submit" class="btn btn-primary">invoice student<i
                                             class="icon-paperplane ml-2"></i></button>
+                                    @else
+                                       <p>Student has a balance</p>
+                                    @endif
                                 </div>
                             </form>
                         @elseif(!$isInvoiced && !$student->academic_info)

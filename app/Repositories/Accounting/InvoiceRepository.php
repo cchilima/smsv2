@@ -295,7 +295,7 @@ class InvoiceRepository
         return $nextAcademicPeriod;
     }
 
-    private function latestPreviousAcademicPeriod($student)
+    public function latestPreviousAcademicPeriod($student)
     {
         // Get the current date in 'YYYY-MM-DD' format
         $currentDate = date('Y-m-d');
@@ -327,9 +327,9 @@ class InvoiceRepository
             ->select('academic_period_fees.*', 'programs.id as program_id')
             ->get();
 
-        $universalFees = AcademicPeriodFee::doesntHave('programs')->whereHas('fee', function ($query) {
-            $query->where('type', 'recurring');
-        })->get();
+            $universalFees = AcademicPeriodFee::doesntHave('programs')->whereHas('fee', function ($query) {
+                $query->whereIn('type', ['recurring', 'once off']);
+            })->with('fee:type,id')->get();
 
         return ['fees' => $fees, 'universal_fees' => $universalFees];
     }
@@ -348,9 +348,11 @@ class InvoiceRepository
             ->select('academic_period_fees.*', 'programs.id as program_id', 'fees.type')
             ->get();
 
-        $universalFees = AcademicPeriodFee::doesntHave('programs')->whereHas('fee', function ($query) {
-            $query->whereIn('type', ['recurring', 'once off']);
-        })->get();
+            $universalFees = AcademicPeriodFee::doesntHave('programs')->whereHas('fee', function ($query) {
+                $query->whereIn('type', ['recurring', 'once off']);
+            })->with('fee:type,id')->get();
+            
+            
 
         return ['fees' => $fees, 'universal_fees' => $universalFees];
     }
@@ -412,8 +414,9 @@ class InvoiceRepository
             $acFees['fees'] = collect($acFees['fees'])->filter(function ($fee) {
                 return $fee->type != 'once off';
             });
+
             $acFees['universal_fees'] = collect($acFees['universal_fees'])->filter(function ($ufee) {
-                return $ufee->type != 'once off';
+                return $ufee->fee->type != 'once off';
             });
         }
 
@@ -544,18 +547,30 @@ class InvoiceRepository
         return $acCurrentFeesTotal - $totalPayments;
     }
 
-    public function getStudentAcademicPeriodFeesTotal($student_id)
+    public function getStudentAcademicPeriodFeesTotal($student_id, $getPrevious = null)
     {
         // Get the student
         $student = $this->getStudent($student_id);
 
+        if($getPrevious){
+
         // Get the student's current academic period
-        $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+        $academicPeriod = $this->latestPreviousAcademicPeriod($student);
+
+        } else {
+            // Get the student's current academic period
+            $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+        }
 
         if ($academicPeriod == null) return 0;
 
+       // dd($academicPeriod);
+
         // Get the student's cumulative academic period fees
         $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
+
+
+       // dd( $academicPeriod->academic_period_id);
 
         // Get current academic period fees and filter one-time fees if needed
         $acFees = $this->getFilteredStudentAcademicPeriodFees(
@@ -575,13 +590,20 @@ class InvoiceRepository
         return $acCurrentFeesTotal;
     }
 
-    public function getStudentAcademicPeriodPaymentsTotal($student_id)
+    public function getStudentAcademicPeriodPaymentsTotal($student_id, $getPrevious = null)
     {
         // Get the student
         $student = $this->getStudent($student_id);
 
-        // Get the student's current academic period
-        $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+        if($getPrevious){
+
+            // Get the student's current academic period
+            $academicPeriod = $this->latestPreviousAcademicPeriod($student);
+    
+            } else {
+                // Get the student's current academic period
+                $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+            }
 
         if ($academicPeriod == null) return 0;
 
