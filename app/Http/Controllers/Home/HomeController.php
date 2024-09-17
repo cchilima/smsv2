@@ -56,7 +56,7 @@ class HomeController extends Controller
 
         if ($user->userType->title == 'student') {
 
-            $data['academicPeriod'] = $this->studentRegistrationRepo->getNextAcademicPeriod($user->student, now());
+            $data['academicPeriod'] = $this->studentRegistrationRepo->getNextAcademicPeriod($user->student, date('Y-m-d'));
             $data['announcements'] = $this->announcementRepo->getAllByUserType('Student');
             $data['totalFees'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($user->student->id);
             $data['totalPayments'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($user->student->id);
@@ -71,7 +71,7 @@ class HomeController extends Controller
             $data['resultsPublicationStatus'] = $this->classAssessmentsRepo
                 ->getStudentAcademicPeriodResultsPublicationStatus(
                     $user->student->id,
-                    $data['academicPeriod']->academic_period_id
+                    $data['academicPeriod']?->academic_period_id
                 );
 
             return view('pages.home.student_home', $data);
