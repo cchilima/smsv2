@@ -14,7 +14,7 @@
             <div class="col-12">
                 <div class="alert alert-warning" role="alert">
                     <i class="icon icon-alert mr-2"></i>
-                    You are not registered. Clear your previous balance of K{{ $paymentsBalance }} to be eligible for the
+                    You are not registered. Clear your pending balance of K{{ $paymentsBalance }} to be eligible for the
                     next academic period
 
                 </div>

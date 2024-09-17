@@ -66,7 +66,7 @@ class HomeController extends Controller
             $data['registrationStatus'] = $this->studentRegistrationRepo->getRegistrationStatus($user->student->id);
             $data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($user->student->id);
 
-            $studentInvoicedForCurrentAcademicPeriod = $user->student->invoices()->where('academic_period_id', $data['academicPeriod']->academic_period_id)->exists();
+            $studentInvoicedForCurrentAcademicPeriod = $user->student->invoices()->where('academic_period_id', $data['academicPeriod']?->academic_period_id)->exists();
 
             if (!$studentInvoicedForCurrentAcademicPeriod) {
                 $data['totalFees'] = 0;
@@ -76,15 +76,34 @@ class HomeController extends Controller
             $data['registrationBalance'] = 0;
             $data['viewResultsBalance'] = 0;
 
-            // dd($data['balancePercentage']);
-
-            if ($data['balancePercentage'] < 100) {
+            if ($data['balancePercentage'] < 100 && !$studentInvoicedForCurrentAcademicPeriod) {
                 $data['academicPeriod'] = $this->invoiceRepo->latestPreviousAcademicPeriod($user->student);
                 $data['totalFees'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($user->student->id, true);
                 $data['totalPayments'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($user->student->id, true);
                 $data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($user->student->id, true);
                 $data['registrationStatus'] = true;
                 $data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($user->student->id, true);
+
+                $data['registrationBalance'] = ($data['academicPeriod']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
+
+                $data['viewResultsBalance'] = ($data['academicPeriod']?->view_results_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
+            }
+
+            if ($studentInvoicedForCurrentAcademicPeriod) {
+                $invoices = $user->student->invoices()->where('academic_period_id', $data['academicPeriod']->academic_period_id)->get();
+
+                $total = 0;
+
+                foreach ($invoices as $invoice) {
+                    $total += $invoice->details->sum('amount');
+                }
+
+                $data['totalFees'] = $total;
+
+                $academicPeriodPaymentsTotal =
+                    $this->invoiceRepo->studentPaymentsAgainstInvoice($user->student, $data['academicPeriod']->academic_period_id);
+
+                $data['paymentBalance'] = $total - $academicPeriodPaymentsTotal;
 
                 $data['registrationBalance'] = ($data['academicPeriod']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
 
