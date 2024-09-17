@@ -125,6 +125,7 @@ class InvoiceRepository
 
             DB::commit();
             return true;
+            
         } catch (\Exception $e) {
             DB::rollback();
             dd($e);
@@ -363,12 +364,14 @@ class InvoiceRepository
             ->select('academic_period_fees.*', 'programs.id as program_id', 'fees.type')
             ->get();
 
-            $universalFees = AcademicPeriodFee::doesntHave('programs')->whereHas('fee', function ($query) {
+            $universalFees = AcademicPeriodFee::doesntHave('programs')
+            ->where('academic_period_id', $academic_period_id) // Added condition for academic_period_id
+            ->whereHas('fee', function ($query) {
                 $query->whereIn('type', ['recurring', 'once off']);
-            })->with('fee:type,id')->get();
-            
-            
-
+            })
+            ->with('fee:type,id')
+            ->get();
+    
         return ['fees' => $fees, 'universal_fees' => $universalFees];
     }
 
