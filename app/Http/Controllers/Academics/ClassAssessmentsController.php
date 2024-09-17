@@ -466,11 +466,7 @@ class ClassAssessmentsController extends Controller
         $data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($data['student']->id);
         $data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($data['student']->id);
 
-        // dd($data['academicPeriod']);
-
         $balancePercentage = $this->invoiceRepo->paymentPercentageAllInvoices($data['student']->id);
-
-        // dd($balancePercentage);
 
         if ($data['academicPeriod'] == null && $balancePercentage < 100) {
 

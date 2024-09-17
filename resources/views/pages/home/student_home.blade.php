@@ -7,7 +7,7 @@
     @endphp
 
     <div class="row">
-        @if (!$registrationStatus)
+        @if ($balancePercentage < 100)
             <div class="col-12">
                 <div class="alert alert-warning" role="alert">
                     <i class="icon icon-alert mr-2"></i>

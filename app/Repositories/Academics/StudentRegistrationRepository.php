@@ -6,9 +6,10 @@ use App\Models\Academics\{Course, AcademicPeriodClass, AcademicPeriodInformation
 use App\Models\Accounting\{Invoice};
 use App\Models\Admissions\{Student};
 use App\Models\Enrollments\{Enrollment};
+use App\Repositories\Accounting\InvoiceRepository;
 use Carbon\Carbon;
-use Auth;
 use DB;
+use Illuminate\Support\Facades\Auth;
 
 class StudentRegistrationRepository
 {
