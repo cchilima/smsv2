@@ -70,11 +70,14 @@ class InvoiceRepository
             // Get next academic period
             $periodInfo = $this->openAcademicPeriod($student);
 
+           // return dd($periodInfo);
+
             // Process the student invoice using the helper function
             $this->processStudentInvoice($student, $periodInfo);
 
             DB::commit();
             return true;
+
         } catch (\Exception $e) {
             DB::rollback();
             dd($e);  // Or handle the exception as needed
@@ -148,11 +151,23 @@ class InvoiceRepository
 
         if ($previousPeriod) {
             // Get fees from the previous academic period
-            $previousFees = $this->getLastAcademicPeriodFees($student, $previousPeriod->academic_period_id);
+            //$previousFees = $this->getLastAcademicPeriodFees($student, $previousPeriod->academic_period_id);
+
+            // filter out once off fees
+
+             // Get current academic period fees and filter one-time fees if needed
+             $previousFees = $this->getFilteredStudentAcademicPeriodFees(
+                    $student,
+                    $previousPeriod->academic_period_id,
+                    true
+                );
+
+
             if (!$exists) {
                 // Create an invoice based on previous fees
                 $this->createInvoiceFromPreviousFees($student, $periodInfo, $previousFees);
             }
+
         } else {
             if (!$exists) {
                 // Create an invoice based on current academic period fees
@@ -564,13 +579,8 @@ class InvoiceRepository
 
         if ($academicPeriod == null) return 0;
 
-       // dd($academicPeriod);
-
         // Get the student's cumulative academic period fees
         $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
-
-
-       // dd( $academicPeriod->academic_period_id);
 
         // Get current academic period fees and filter one-time fees if needed
         $acFees = $this->getFilteredStudentAcademicPeriodFees(
