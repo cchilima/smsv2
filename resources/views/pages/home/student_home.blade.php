@@ -7,7 +7,7 @@
     @endphp
 
     <div class="row">
-        @if ($registrationStatus)
+        @if (!$registrationStatus)
             <div class="col-12">
                 <div class="alert alert-warning" role="alert">
                     <i class="icon icon-alert mr-2"></i>

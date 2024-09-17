@@ -586,44 +586,46 @@
                 <div class="tab-content">
 
                     <div wire:ignore class="tab-pane fade show" id="invoice-custom">
-                    @if($allInvoicesBalance >= 100)
-                        <form class="ajax-store" method="post" action="{{ route('invoices.custom-invoice') }}">
-                            @csrf
+                        @if ($allInvoicesBalance >= 100 || $allInvoicesBalance == 0)
+                            <form class="ajax-store" method="post"
+                                action="{{ route('invoices.custom-invoice') }}">
+                                @csrf
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="fee">Fees: <span class="text-danger">*</span></label>
-                                        <select data-placeholder="Select Fee" required
-                                            class="select-search form-control" name="fee_id" id="fee">
-                                            <option value=""></option>
-                                            @foreach ($fees as $fee)
-                                                <option value="{{ $fee->id }}">{{ $fee->name }}</option>
-                                            @endforeach
-                                        </select>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="fee">Fees: <span class="text-danger">*</span></label>
+                                            <select data-placeholder="Select Fee" required
+                                                class="select-search form-control" name="fee_id" id="fee">
+                                                <option value=""></option>
+                                                @foreach ($fees as $fee)
+                                                    <option value="{{ $fee->id }}">{{ $fee->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="invoice-amount">Enter Amount</label>
+                                            <input type="number" class="form-control" id="invoice-amount"
+                                                name="amount" placeholder="ZMW" required>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="invoice-amount">Enter Amount</label>
-                                        <input type="number" class="form-control" id="invoice-amount"
-                                            name="amount" placeholder="ZMW" required>
-                                    </div>
+                                <input name="student_id" type="hidden" value="{{ $student->id }}">
+
+                                <div class="form-group text-left">
+                                    <button wire:click.debounce.1000ms="refreshTable('StudentInvoicesTable')"
+                                        id="ajax-btn" type="submit" class="btn btn-primary">Invoice Student <i
+                                            class="icon-paperplane ml-2"></i></button>
                                 </div>
-                            </div>
-
-                            <input name="student_id" type="hidden" value="{{ $student->id }}">
-
-                            <div class="form-group text-left">
-                                <button wire:click.debounce.1000ms="refreshTable('StudentInvoicesTable')"
-                                    id="ajax-btn" type="submit" class="btn btn-primary">Invoice Student <i
-                                        class="icon-paperplane ml-2"></i></button>
-                            </div>
-                        </form>
+                            </form>
                         @else
-                                       <p>Student has a balance</p>
-                                    @endif
+                            <p>Student has a balance or is not eligible to be invoiced</p>
+                        @endif
                     </div>
 
                     <div wire:ignore class="tab-pane fade show" id="invoice">
@@ -635,12 +637,12 @@
                                     type="text">
                                 <input name="student_id" hidden value="{{ $student->id }}" type="text">
                                 <div class="text-left">
-                                    @if($allInvoicesBalance >= 100)
-                                    <button wire:click.debounce.5000ms="refreshTable('StudentInvoicesTable')"
-                                        id="ajax-btn" type="submit" class="btn btn-primary">invoice student<i
-                                            class="icon-paperplane ml-2"></i></button>
+                                    @if ($allInvoicesBalance >= 100 || $allInvoicesBalance == 0)
+                                        <button wire:click.debounce.5000ms="refreshTable('StudentInvoicesTable')"
+                                            id="ajax-btn" type="submit" class="btn btn-primary">invoice student<i
+                                                class="icon-paperplane ml-2"></i></button>
                                     @else
-                                       <p>Student has a balance</p>
+                                        <p>Student has a balance or is not eligible to be invoiced</p>
                                     @endif
                                 </div>
                             </form>
@@ -1593,16 +1595,16 @@
                         </tbody>
                     </table>
 
-                    {{-- @if ($isWithinRegistrationPeriod) --}}
-                    @if (!$isRegistered)
-                        <form action="{{ route('enrollments.store') }}" method="post">
-                            @csrf
-                            <input name="student_number" type="hidden" value="{{ $student->id }}" />
-                            <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register
-                            </button>
-                        </form>
+                    @if ($isWithinRegistrationPeriod)
+                        @if (!$isRegistered)
+                            <form action="{{ route('enrollments.store') }}" method="post">
+                                @csrf
+                                <input name="student_number" type="hidden" value="{{ $student->id }}" />
+                                <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register
+                                </button>
+                            </form>
+                        @endif
                     @endif
-                    {{-- @endif --}}
                 </div>
             @else
                 <div class="container ">

@@ -70,14 +70,13 @@ class InvoiceRepository
             // Get next academic period
             $periodInfo = $this->openAcademicPeriod($student);
 
-           // return dd($periodInfo);
+            // return dd($periodInfo);
 
             // Process the student invoice using the helper function
             $this->processStudentInvoice($student, $periodInfo);
 
             DB::commit();
             return true;
-
         } catch (\Exception $e) {
             DB::rollback();
             dd($e);  // Or handle the exception as needed
@@ -155,19 +154,18 @@ class InvoiceRepository
 
             // filter out once off fees
 
-             // Get current academic period fees and filter one-time fees if needed
-             $previousFees = $this->getFilteredStudentAcademicPeriodFees(
-                    $student,
-                    $previousPeriod->academic_period_id,
-                    true
-                );
+            // Get current academic period fees and filter one-time fees if needed
+            $previousFees = $this->getFilteredStudentAcademicPeriodFees(
+                $student,
+                $previousPeriod->academic_period_id,
+                true
+            );
 
 
             if (!$exists) {
                 // Create an invoice based on previous fees
                 $this->createInvoiceFromPreviousFees($student, $periodInfo, $previousFees);
             }
-
         } else {
             if (!$exists) {
                 // Create an invoice based on current academic period fees
@@ -342,9 +340,9 @@ class InvoiceRepository
             ->select('academic_period_fees.*', 'programs.id as program_id')
             ->get();
 
-            $universalFees = AcademicPeriodFee::doesntHave('programs')->whereHas('fee', function ($query) {
-                $query->whereIn('type', ['recurring', 'once off']);
-            })->with('fee:type,id')->get();
+        $universalFees = AcademicPeriodFee::doesntHave('programs')->whereHas('fee', function ($query) {
+            $query->whereIn('type', ['recurring', 'once off']);
+        })->with('fee:type,id')->get();
 
         return ['fees' => $fees, 'universal_fees' => $universalFees];
     }
@@ -363,11 +361,11 @@ class InvoiceRepository
             ->select('academic_period_fees.*', 'programs.id as program_id', 'fees.type')
             ->get();
 
-            $universalFees = AcademicPeriodFee::doesntHave('programs')->whereHas('fee', function ($query) {
-                $query->whereIn('type', ['recurring', 'once off']);
-            })->with('fee:type,id')->get();
-            
-            
+        $universalFees = AcademicPeriodFee::doesntHave('programs')->whereHas('fee', function ($query) {
+            $query->whereIn('type', ['recurring', 'once off']);
+        })->with('fee:type,id')->get();
+
+
 
         return ['fees' => $fees, 'universal_fees' => $universalFees];
     }
@@ -567,11 +565,10 @@ class InvoiceRepository
         // Get the student
         $student = $this->getStudent($student_id);
 
-        if($getPrevious){
+        if ($getPrevious) {
 
-        // Get the student's current academic period
-        $academicPeriod = $this->latestPreviousAcademicPeriod($student);
-
+            // Get the student's current academic period
+            $academicPeriod = $this->latestPreviousAcademicPeriod($student);
         } else {
             // Get the student's current academic period
             $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
@@ -605,15 +602,14 @@ class InvoiceRepository
         // Get the student
         $student = $this->getStudent($student_id);
 
-        if($getPrevious){
+        if ($getPrevious) {
 
             // Get the student's current academic period
             $academicPeriod = $this->latestPreviousAcademicPeriod($student);
-    
-            } else {
-                // Get the student's current academic period
-                $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
-            }
+        } else {
+            // Get the student's current academic period
+            $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+        }
 
         if ($academicPeriod == null) return 0;
 
