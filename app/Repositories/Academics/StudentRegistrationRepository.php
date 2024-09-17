@@ -67,12 +67,11 @@ class StudentRegistrationRepository
                 $filteredCourseIds = $this->filterCourses($currentCourses, $failedCoursesPrerequisites, $allPassedCourseIds);
 
                 // Step 9: Determine course results to return
-                if(!$study_mode_change){
+                if (!$study_mode_change) {
                     return $this->getCourseResults($student->id, $currentAcademicPeriodId, $allFailedCourseIds, $allPassedCourseIds, $filteredCourseIds);
                 } else {
                     return $this->getCourseResultsStudyModeVariation($student->id, $currentAcademicPeriodId, $allFailedCourseIds, $allPassedCourseIds, $filteredCourseIds);
                 }
-                
             }
         }
     }
@@ -80,26 +79,26 @@ class StudentRegistrationRepository
     private function checkIfInvoiceV1Support($student_id)
     {
         $student = $this->getStudent($student_id);
-    
+
         // enrollments is a relationship, use '->latest()->first()' to get the most recent enrollment
         $enrollment = $student->enrollments()->latest()->first();
-    
+
         if (!$enrollment) {
-            return false; 
+            return false;
         }
 
         $is_open = $this->openAcademicPeriodV1Support($enrollment->class->academic_period_id);
-    
-        if($is_open){
+
+        if ($is_open) {
 
             $exists = Invoice::where('student_id', $student_id)
-            ->where('academic_period_id', $enrollment->class->academic_period_id)
-            ->exists();
+                ->where('academic_period_id', $enrollment->class->academic_period_id)
+                ->exists();
 
             return $exists;
-
-        } else { return false; }
-
+        } else {
+            return false;
+        }
     }
 
 
@@ -119,7 +118,7 @@ class StudentRegistrationRepository
 
         return $academicPeriodExists;
     }
-    
+
 
     public function getStudentById($student_id)
     {
@@ -289,7 +288,7 @@ class StudentRegistrationRepository
         }
 
         // Return the courses 
-            return $currentCourses;
+        return $currentCourses;
     }
 
 
@@ -379,19 +378,24 @@ class StudentRegistrationRepository
         // check if invoiced as per SMS v1 support
         $invoiced = $this->checkIfInvoiceV1Support($student_id);
 
-        if(!$invoiced){
+        if (!$invoiced) {
 
             $academicInfo = $this->getAcademicInfo($student_id);
 
             if ($academicInfo) {
 
                 $invoice = $this->getInvoice($student_id, $academicInfo->academic_period_id);
-                if($invoice) { return true; } else { return false; }
-
-            } else { return false; }
-
-        } else { return true; }
-
+                if ($invoice) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 
     private function paymentStanding($invoice_id)
@@ -520,15 +524,15 @@ class StudentRegistrationRepository
             },
             'enrollments.class.course' // Eager load enrollments with classes and their courses
         ]);
-    
+
         // Get the latest invoice
         $invoice = $student->invoices->first(); // Assuming `latest()` was already called in eager load
-    
+
         // Return empty array if no latest invoice found
         if (!$invoice) {
             return [];
         }
-    
+
         // Filter enrollments where the class's academic period matches the latest invoice
         $courses = $student->enrollments
             ->filter(function ($enrollment) use ($invoice) {
@@ -541,10 +545,8 @@ class StudentRegistrationRepository
                     'course' => $enrollment->class->course
                 ];
             })
-            ->all(); 
-    
+            ->all();
+
         return $courses;
     }
-    
-    
 }

@@ -100,6 +100,12 @@ class Show extends Component
         $this->paymentBalance = $this->invoiceRepo->getStudentPaymentBalance($this->data['student']->id);
     }
 
+    public function refreshTablesAndStats(array $tableNames): void
+    {
+        $this->refreshTables($tableNames);
+        $this->refreshFinancialStatsOverview();
+    }
+
     public function uploadPassportPhoto()
     {
         try {
