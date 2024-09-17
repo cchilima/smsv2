@@ -30,8 +30,8 @@
             </div>
         </div>
 
-        <div class="card">
-            <div wire:ignore class="card-body p-4">
+        <div wire:ignore class="card">
+            <div class="card-body p-4">
                 <form wire:submit="uploadPassportPhoto">
 
                     <h6 class="card-title">Update Student Photo:</h6>
@@ -54,7 +54,7 @@
 
     </div>
     <div class="col-md-9">
-        <div class="card">
+        <div wire:ignore class="card">
             <div class="card-header header-elements-inline">
                 <h6 class="card-title">Student General Information</h6>
                 {!! Qs::getPanelOptions() !!}
@@ -77,7 +77,7 @@
 
                 <div class="tab-content">
                     {{-- Basic Info --}}
-                    <div wire:ignore class="tab-pane fade show active" id="account-info">
+                    <div class="tab-pane fade show active" id="account-info">
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
@@ -175,13 +175,13 @@
                             </tbody>
                         </table>
                         <div class="text-right mb-1 mt-4">
-                            <button id="ajax-btn" type="button"
-                                onclick="manageAcademicInfor('{{ $student->id }}')" class="btn btn-primary">Update
+                            <button id="ajax-btn" type="button" onclick="manageAcademicInfor('{{ $student->id }}')"
+                                class="btn btn-primary">Update
                                 Information <i class="icon-pencil ml-2"></i>
                             </button>
                         </div>
                     </div>
-                    <div wire:ignore class="tab-pane fade show" id="next-kin">
+                    <div class="tab-pane fade show" id="next-kin">
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
@@ -282,7 +282,7 @@
                             </button>
                         </div>
                     </div>
-                    <div wire:ignore class="tab-pane fade show" id="profile-info">
+                    <div class="tab-pane fade show" id="profile-info">
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
@@ -455,7 +455,7 @@
                             </button>
                         </div>
                     </div>
-                    <div wire:ignore class="tab-pane fade show" id="downloads-info">
+                    <div class="tab-pane fade show" id="downloads-info">
                         {{--                            <form class="ajax-store" method="post" action="{{ route('student.id.download') }}"> --}}
                         {{--                                @csrf --}}
                         {{--                                <input name="student_id" hidden value="{{ $student->id }}" type="text"> --}}
@@ -476,7 +476,7 @@
             </div>
         </div>
 
-        <div class="card card-collapsed">
+        <div wire:ignore wire:ignore class="card card-collapsed">
             <div class="card-header header-elements-inline">
                 <h6 class="card-title">Enrollments Information</h6>
                 {!! Qs::getPanelOptions() !!}
@@ -494,8 +494,7 @@
                 <div class="tab-content">
                     {{-- Basic Info --}}
                     @foreach ($enrollments as $innerIndex => $academicData)
-                        <div wire:ignore class="tab-pane fade show"
-                            id="account-{{ $academicData['academic_period_id'] }}">
+                        <div class="tab-pane fade show" id="account-{{ $academicData['academic_period_id'] }}">
 
                             <table class="table table-hover table-striped-columns mb-3">
                                 <div class="d-flex justify-content-between">
@@ -547,7 +546,7 @@
             </div>
         </div>
 
-        <div class="card card-collapsed">
+        <div wire:ignore.self class="card card-collapsed">
             <div class="card-header header-elements-inline">
                 <h6 class="card-title">Financial Information</h6>
                 {!! Qs::getPanelOptions() !!}
@@ -555,7 +554,7 @@
             <div class="card-body">
                 <ul wire:ignore class="nav nav-tabs nav-tabs-highlight">
 
-                    <li class="nav-item" wire:click="refreshFinancialStatsOverview">
+                    <li class="nav-item">
                         <a href="#financial-stats-overview" class="nav-link"
                             data-toggle="tab">{{ 'Financial Stats Overview' }}</a>
                     </li>
@@ -716,7 +715,7 @@
 
                                 <div class="text-left">
                                     <button
-                                        wire:click.debounce.1000ms="refreshTables([ 'StudentPaymentHistoryTable'
+                                        wire:click.debounce.1000ms="refreshTablesAndStats([ 'StudentPaymentHistoryTable'
                                         , 'StudentStatementsTable' ])"
                                         id="ajax-btn" type="submit" class="btn btn-primary">Submit <i
                                             class="icon-paperplane ml-2"></i></button>
@@ -726,7 +725,7 @@
 
                     </div>
 
-                    <div wire:ignore class="tab-pane fade show" id="credit">
+                    <div wire:ignore.self class="tab-pane fade show" id="credit">
 
                         <table class="table table-bordered mb-3 mb-lg-4">
                             <thead>
@@ -798,7 +797,7 @@
                         ])
                     </div>
 
-                    <div wire:ignore class="tab-pane fade show" id="payment-history">
+                    <div class="tab-pane fade show" id="payment-history">
                         @livewire('datatables.admissions.students.payment-history', [
                             'studentId' => $student->id,
                         ])
@@ -808,7 +807,7 @@
             </div>
         </div>
 
-        <div class="card card-collapsed">
+        <div wire:ignore class="card card-collapsed">
             <div class="card-header header-elements-inline">
                 <h6 class="card-title">Manage user information</h6>
                 {!! Qs::getPanelOptions() !!}
@@ -827,7 +826,7 @@
                 </ul>
 
                 <div class="tab-content">
-                    <div wire:ignore class="tab-pane fade show active" id="account-information">
+                    <div class="tab-pane fade show active" id="account-information">
                         <!-- Add your account info content here -->
                         <div class="row">
                             <div class="col-md-12">
@@ -881,7 +880,7 @@
 
                     </div>
 
-                    <div wire:ignore class="tab-pane fade" id="academic-info">
+                    <div class="tab-pane fade" id="academic-info">
 
                         <!-- Add your academic info content here -->
                         <div class="row">
@@ -1007,7 +1006,7 @@
 
                     </div>
 
-                    <div wire:ignore class="tab-pane fade" id="profile-information">
+                    <div class="tab-pane fade" id="profile-information">
 
                         <!-- Add your profile info content here -->
                         <div class="row">
@@ -1143,7 +1142,7 @@
 
                     </div>
 
-                    <div wire:ignore class="tab-pane fade" id="next-of-kin-info">
+                    <div class="tab-pane fade" id="next-of-kin-info">
 
                         <!-- Add your next of kin info content here -->
                         <div class="row">
@@ -1263,7 +1262,7 @@
             </div>
         </div>
 
-        <div class="card card-collapsed">
+        <div wire:ignore class="card card-collapsed">
             <div class="card-header header-elements-inline">
                 <h6 class="card-title">Results Information</h6>
                 {!! Qs::getPanelOptions() !!}
@@ -1281,7 +1280,7 @@
                 <div class="tab-content">
                     {{-- Basic Info --}}
                     @foreach ($results as $innerIndex => $academicData)
-                        <div wire:ignore class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
+                        <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
                             id="results-{{ $academicData['academic_period_id'] }}">
                             <h5 class="p-2">
                                 <strong>{{ $academicData['academic_period_code'] . ' - ' . $academicData['academic_period_name'] }}</strong>
@@ -1486,7 +1485,7 @@
         </div>
     </div>
 
-    <div class="card card-collapsed">
+    <div wire:ignore class="card card-collapsed">
         <div class="card-header header-elements-inline">
             <h6 class="card-title">CA Results Information </h6>
             {!! Qs::getPanelOptions() !!}
@@ -1507,7 +1506,7 @@
             <div class="tab-content">
                 {{-- Basic Info --}}
                 @foreach ($caresults as $innerIndex => $academicData)
-                    <div wire:ignore class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
+                    <div class="tab-pane fade {{ $innerIndex == 0 ? 'show active' : '' }}"
                         id="results-cs{{ $academicData['academic_period_id'] }}">
                         <h5 class="p-2">
                             <strong>{{ $academicData['academic_period_code'] . ' - ' . $academicData['academic_period_name'] }}</strong>
@@ -1548,7 +1547,7 @@
 
     @if ($isRegistered)
 
-        <div class="card card-collapsed">
+        <div wire:ignore class="card card-collapsed">
 
             <div class="card-header header-elements-inline">
                 <h6 class="card-title">Registration Summary</h6>
@@ -1567,7 +1566,7 @@
             </div>
         </div>
     @else
-        <div class="card card-collapsed">
+        <div wire:ignore class="card card-collapsed">
             <div class="card-header header-elements-inline">
                 <h6 class="card-title">Courses available for registration</h6>
                 {!! Qs::getPanelOptions() !!}
@@ -1615,7 +1614,7 @@
 
     @endif
 
-    <div class="card card-collapsed">
+    <div wire:ignore class="card card-collapsed">
 
         <div class="card-header header-elements-inline">
             <h6 class="card-title">Course Management</h6>
