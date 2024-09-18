@@ -52,6 +52,8 @@ class StudentRegistrationController extends Controller
         $totalPayments = 0;
         $paymentsBalance = 0;
 
+        // dd($isRegistered, $isWithinRegistrationPeriod);
+
         // Fetch academic period information (e.g., academic year, term, etc.)
         $academicInfo = $this->registrationRepo->getAcademicInfo();
 

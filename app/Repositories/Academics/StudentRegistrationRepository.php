@@ -421,7 +421,7 @@ class StudentRegistrationRepository
         // Calculate the percentage of payments against the invoice
         $percentage_paid = ($receipted_total_amount / $invoice_total_amount) * 100;
 
-        return $percentage_paid;
+        return round($percentage_paid);
     }
 
     private function getInvoice($student_id, $academic_period)

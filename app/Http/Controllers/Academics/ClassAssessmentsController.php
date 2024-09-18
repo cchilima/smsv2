@@ -475,9 +475,13 @@ class ClassAssessmentsController extends Controller
             $data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($data['student']->id, true);
 
             $data['canSeeResults'] = false;
-        } elseif ($balancePercentage < 100) {
-            $data['canSeeResults'] = false;
-        } else {
+        }
+
+        // elseif ($balancePercentage < 100) {
+        //     $data['canSeeResults'] = false;
+        // } 
+
+        else {
             $data['canSeeResults'] = true;
         }
 

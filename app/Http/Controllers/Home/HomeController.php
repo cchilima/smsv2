@@ -92,23 +92,26 @@ class HomeController extends Controller
             if ($studentInvoicedForCurrentAcademicPeriod) {
                 $invoices = $user->student->invoices()->where('academic_period_id', $data['academicPeriod']->academic_period_id)->get();
 
-                $total = 0;
+                $totalFees = 0;
 
                 foreach ($invoices as $invoice) {
-                    $total += $invoice->details->sum('amount');
+                    $totalFees += $invoice->details->sum('amount');
                 }
 
-                $data['totalFees'] = $total;
+                $data['totalFees'] = $totalFees;
 
                 $academicPeriodPaymentsTotal =
                     $this->invoiceRepo->studentPaymentsAgainstInvoice($user->student, $data['academicPeriod']->academic_period_id);
 
-                $data['paymentBalance'] = $total - $academicPeriodPaymentsTotal;
+                $data['paymentBalance'] = $totalFees - $academicPeriodPaymentsTotal;
 
                 $data['registrationBalance'] = ($data['academicPeriod']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
 
                 $data['viewResultsBalance'] = ($data['academicPeriod']?->view_results_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
+
+                $data['paymentPercentage'] = $academicPeriodPaymentsTotal / $totalFees * 100;
             }
+
 
             $data['announcements'] = $this->announcementRepo->getAllByUserType('Student');
 

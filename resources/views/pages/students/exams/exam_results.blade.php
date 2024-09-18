@@ -33,13 +33,14 @@
                         {{-- <p>{{ Auth::user()->first_name . ' ' . Auth::user()->last_name }} </p> --}}
 
                         @foreach ($results as $innerIndex => $academicData)
+
                             <h5>
                                 <strong>
                                     {{ $academicData['academic_period_name'] . ' (' . $academicData['academic_period_code'] . ')' }}
                                 </strong>
                             </h5>
 
-                            @if ($canSeeResults)
+                            @if ($academicPeriod?->academic_period_id != $academicData['academic_period_id'])
                                 {{-- $academicPeriod?->academic_period_id == $academicData['academic_period_id'] && 
                                     $paymentPercentage >= $academicPeriod->view_results_threshold --}}
                                 <table class="table table-hover table-striped-columns mb-3">
@@ -93,11 +94,14 @@
                                 @php
                                     $viewResultsBalance =
                                         ($academicPeriod?->view_results_threshold / 100) * $feesTotal - $paymentsTotal;
+
+                                    dd($feesTotal, $paymentsTotal);
                                 @endphp
 
                                 <tbody>
                                     <tr>
-                                        @if ($viewResultsBalance > 0 && !$canSeeResults)
+                                        {{-- @if ($viewResultsBalance > 0 && !$canSeeResults) --}}
+                                        @if ($viewResultsBalance > 0)
                                             <p class="bg-warning p-3 align-bottom">
                                                 Clear your balance of <strong>K{{ $viewResultsBalance }}</strong> to
                                                 view results for this academic period.
