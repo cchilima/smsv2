@@ -457,6 +457,7 @@ class StudentRegistrationRepository
     {
         // Fetching all courses associated with the student's enrollments
         $student = Student::with(['enrollments.class.course'])->find($student_id);
+
         $courses = [];
 
         foreach ($student->enrollments as $enrollment) {

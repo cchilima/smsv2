@@ -40,7 +40,24 @@
                                 </strong>
                             </h5>
 
-                            @if ($academicPeriod?->academic_period_id != $academicData['academic_period_id'])
+                            @php
+                                $invoices = auth()
+                                    ->user()
+                                    ->student->invoices()
+                                    ->where('academic_period_id', $academicData['academic_period_id'])
+                                    ->get();
+
+                                $feesTotal = 0;
+
+                                foreach ($invoices as $invoice) {
+                                    $feesTotal += $invoice->details->sum('amount');
+                                }
+
+                                $viewResultsBalance =
+                                    ($academicPeriod?->view_results_threshold / 100) * $feesTotal - $paymentsTotal;
+                            @endphp
+
+                            @if ($academicPeriod?->academic_period_id != $academicData['academic_period_id'] || $viewResultsBalance <= 0)
                                 {{-- $academicPeriod?->academic_period_id == $academicData['academic_period_id'] && 
                                     $paymentPercentage >= $academicPeriod->view_results_threshold --}}
                                 <table class="table table-hover table-striped-columns mb-3">
@@ -91,23 +108,6 @@
                                     : {{ $academicData['comments']['comment'] }}</p>
                                 <hr>
                             @else
-                                @php
-                                    $invoices = auth()
-                                        ->user()
-                                        ->student->invoices()
-                                        ->where('academic_period_id', $academicData['academic_period_id'])
-                                        ->get();
-
-                                    $feesTotal = 0;
-
-                                    foreach ($invoices as $invoice) {
-                                        $feesTotal += $invoice->details->sum('amount');
-                                    }
-
-                                    $viewResultsBalance =
-                                        ($academicPeriod?->view_results_threshold / 100) * $feesTotal - $paymentsTotal;
-                                @endphp
-
                                 <tbody>
                                     <tr>
                                         {{-- @if ($viewResultsBalance > 0 && !$canSeeResults) --}}

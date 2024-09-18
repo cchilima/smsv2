@@ -66,11 +66,14 @@ class HomeController extends Controller
             $data['registrationStatus'] = $this->studentRegistrationRepo->getRegistrationStatus($user->student->id);
             $data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($user->student->id);
 
+
             $studentInvoicedForCurrentAcademicPeriod = $user->student->invoices()->where('academic_period_id', $data['academicPeriod']?->academic_period_id)->exists();
 
             if (!$studentInvoicedForCurrentAcademicPeriod) {
                 $data['totalFees'] = 0;
                 $data['paymentBalance'] = 0;
+                $data['paymentPercentage'] = 0;
+                $data['totalPayments'] = 0;
             }
 
             $data['registrationBalance'] = 0;
@@ -81,6 +84,8 @@ class HomeController extends Controller
                 $data['totalFees'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($user->student->id, true);
                 $data['totalPayments'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($user->student->id, true);
                 $data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($user->student->id, true);
+
+
                 $data['registrationStatus'] = true;
                 $data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($user->student->id, true);
 

@@ -139,14 +139,15 @@ class InvoiceRepository
         if ($previousPeriod) {
             // Review previous academic period results
             $resultsReview = $this->registrationRepo->results($student->id, $previousPeriod->academic_period_id);
+
+            dd($resultsReview);
+
             if ($resultsReview && count($resultsReview['coursesFailed']) >= 3) {
                 // Create an invoice for course repeats if applicable
                 $this->createCourseRepeatInvoice($student, $periodInfo, $resultsReview);
                 return;
             }
-        }
 
-        if ($previousPeriod) {
             // Get fees from the previous academic period
             //$previousFees = $this->getLastAcademicPeriodFees($student, $previousPeriod->academic_period_id);
 
@@ -192,12 +193,26 @@ class InvoiceRepository
 
     private function createCourseRepeatInvoice($student, $periodInfo, $resultsReview)
     {
+        // dd($periodInfo);
+
         // Get the course repeat fee
         $crf = AcademicPeriodFee::doesntHave('programs')
+            ->where('academic_period_id', $periodInfo['academic_period_id'])
             ->whereHas('fee', function ($query) {
                 $query->where('type', 'course repeat fee');
             })
             ->first();
+
+        if (!$crf) {
+            $crf = AcademicPeriodFee::with('programs')
+                ->where('academic_period_id', $periodInfo['academic_period_id'])
+                ->whereHas('fee', function ($query) {
+                    $query->where('type', 'course repeat fee');
+                })->whereHas('programs', function ($query) use ($student) {
+                    $query->where('program_id', $student->program_id);
+                })
+                ->first();
+        }
 
         // Calculate the total amount for course repeats
         $bill = $crf->amount * count($resultsReview['coursesFailed']);
@@ -338,6 +353,8 @@ class InvoiceRepository
             })
             ->orderBy('academic_periods.created_at', 'desc')
             ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
+            ->skip(1)
+            ->take(1)
             ->first();
 
         return $latestClosedAcademicPeriod;
