@@ -70,8 +70,6 @@ class InvoiceRepository
             // Get next academic period
             $periodInfo = $this->openAcademicPeriod($student);
 
-            // return dd($periodInfo);
-
             // Process the student invoice using the helper function
             $this->processStudentInvoice($student, $periodInfo);
 
@@ -124,7 +122,6 @@ class InvoiceRepository
 
             DB::commit();
             return true;
-            
         } catch (\Exception $e) {
             DB::rollback();
             dd($e);
@@ -134,7 +131,7 @@ class InvoiceRepository
     private function processStudentInvoice($student, $periodInfo)
     {
         // Check if the student has already been invoiced for the new period
-        $exists = Invoice::where('student_id', $student->id)->where('academic_period_id', $periodInfo->academic_period_id)->exists();
+        $invoiceExists = Invoice::where('student_id', $student->id)->where('academic_period_id', $periodInfo->academic_period_id)->exists();
 
         // Get the latest previous academic period
         $previousPeriod = $this->latestPreviousAcademicPeriod($student);
@@ -142,14 +139,15 @@ class InvoiceRepository
         if ($previousPeriod) {
             // Review previous academic period results
             $resultsReview = $this->registrationRepo->results($student->id, $previousPeriod->academic_period_id);
+
+            dd($resultsReview);
+
             if ($resultsReview && count($resultsReview['coursesFailed']) >= 3) {
                 // Create an invoice for course repeats if applicable
                 $this->createCourseRepeatInvoice($student, $periodInfo, $resultsReview);
                 return;
             }
-        }
 
-        if ($previousPeriod) {
             // Get fees from the previous academic period
             //$previousFees = $this->getLastAcademicPeriodFees($student, $previousPeriod->academic_period_id);
 
@@ -162,13 +160,31 @@ class InvoiceRepository
                 true
             );
 
+            if (!$invoiceExists) {
+                // Get current academic period fees (once-off)
+                $acFees = $this->getAcademicPeriodFees($student, $periodInfo->academic_period_id);
 
-            if (!$exists) {
+                $filteredFees = $acFees['fees']->filter(function ($fee) {
+                    return $fee->type == 'once off';
+                });
+
+                $filteredUniversalFees = $acFees['universal_fees']->filter(function ($fee) {
+                    return $fee->fee->type == 'once off';
+                });
+
+                // Merge the collections for both 'fees' and 'universal_fees'
+                $mergedFees = $previousFees['fees']->merge($filteredFees);
+                $mergedUniversalFees = $previousFees['universal_fees']->merge($filteredUniversalFees);
+
+                // Update the $previousFees structure
+                $previousFees['fees'] = $mergedFees;
+                $previousFees['universal_fees'] = $mergedUniversalFees;
+
                 // Create an invoice based on previous fees
                 $this->createInvoiceFromPreviousFees($student, $periodInfo, $previousFees);
             }
         } else {
-            if (!$exists) {
+            if (!$invoiceExists) {
                 // Create an invoice based on current academic period fees
                 $this->createInvoiceFromCurrentPeriodFees($student, $periodInfo);
             }
@@ -177,12 +193,26 @@ class InvoiceRepository
 
     private function createCourseRepeatInvoice($student, $periodInfo, $resultsReview)
     {
+        // dd($periodInfo);
+
         // Get the course repeat fee
         $crf = AcademicPeriodFee::doesntHave('programs')
+            ->where('academic_period_id', $periodInfo['academic_period_id'])
             ->whereHas('fee', function ($query) {
                 $query->where('type', 'course repeat fee');
             })
             ->first();
+
+        if (!$crf) {
+            $crf = AcademicPeriodFee::with('programs')
+                ->where('academic_period_id', $periodInfo['academic_period_id'])
+                ->whereHas('fee', function ($query) {
+                    $query->where('type', 'course repeat fee');
+                })->whereHas('programs', function ($query) use ($student) {
+                    $query->where('program_id', $student->program_id);
+                })
+                ->first();
+        }
 
         // Calculate the total amount for course repeats
         $bill = $crf->amount * count($resultsReview['coursesFailed']);
@@ -323,6 +353,8 @@ class InvoiceRepository
             })
             ->orderBy('academic_periods.created_at', 'desc')
             ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
+            ->skip(1)
+            ->take(1)
             ->first();
 
         return $latestClosedAcademicPeriod;
@@ -362,14 +394,14 @@ class InvoiceRepository
             ->select('academic_period_fees.*', 'programs.id as program_id', 'fees.type')
             ->get();
 
-            $universalFees = AcademicPeriodFee::doesntHave('programs')
+        $universalFees = AcademicPeriodFee::doesntHave('programs')
             ->where('academic_period_id', $academic_period_id) // Added condition for academic_period_id
             ->whereHas('fee', function ($query) {
                 $query->whereIn('type', ['recurring', 'once off']);
             })
             ->with('fee:type,id')
             ->get();
-    
+
         return ['fees' => $fees, 'universal_fees' => $universalFees];
     }
 
@@ -393,6 +425,21 @@ class InvoiceRepository
         return $accumulative_total;
     }
 
+    public function studentPaymentsAgainstInvoice($student, $academic_period_id)
+    {
+        $total = 0;
+
+        $invoices = $student->invoices()->where('academic_period_id', $academic_period_id)->get();
+
+        foreach ($invoices as $invoice) {
+            $total += $invoice->statements->sum('amount');
+        }
+
+        return $total;
+    }
+
+
+
     public function paymentAgainstInvoice($invoice_id)
     {
         $invoice = $this->getInvoice($invoice_id);
@@ -400,6 +447,7 @@ class InvoiceRepository
 
         return $accumulative_payments;
     }
+
 
     public function paymentPercentageAllInvoices($student_id)
     {
@@ -444,14 +492,19 @@ class InvoiceRepository
         return $total == 0 ? 0 : (($cumulativeAmount / $total) * 100);
     }
 
-    public function paymentPercentage($student_id)
+    public function paymentPercentage($student_id, $getPrevious = null)
     {
-
         // Get the student
         $student = $this->getStudent($student_id);
 
-        // Get the student's current academic period
-        $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+        if ($getPrevious) {
+
+            // Get the student's current academic period
+            $academicPeriod = $this->latestPreviousAcademicPeriod($student);
+        } else {
+            // Get the student's current academic period
+            $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+        }
 
         if (!$academicPeriod) {
             return 0;
@@ -530,13 +583,18 @@ class InvoiceRepository
 
 
 
-    public function getStudentPaymentBalance($student_id)
+    public function getStudentPaymentBalance($student_id, $getPrevious = null)
     {
         // Get the student
         $student = $this->getStudent($student_id);
 
-        // Get the student's current academic period
-        $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+        if ($getPrevious) {
+            // Get the student's current academic period
+            $academicPeriod = $this->latestPreviousAcademicPeriod($student);
+        } else {
+            // Get the student's current academic period
+            $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
+        }
 
         if ($academicPeriod == null) return 0;
 
@@ -588,7 +646,6 @@ class InvoiceRepository
             $academicPeriod->academic_period_id,
             $acPastFeesTotal > 0
         );
-
 
         // Get custom invoiced fee that arent attached to academic period fees
         $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriod->academic_period_id);

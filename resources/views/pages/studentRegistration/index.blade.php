@@ -9,6 +9,19 @@
         <?php Qs::goBackWithSuccess(session('status')); ?>
     @endif
 
+    <div class="row">
+        @if ($balancePercentage < 100)
+            <div class="col-12">
+                <div class="alert alert-warning" role="alert">
+                    <i class="icon icon-alert mr-2"></i>
+                    You are not registered. Clear your pending balance of K{{ $paymentsBalance }} to be eligible for the
+                    next academic period
+
+                </div>
+            </div>
+        @endif
+    </div>
+
     <div class="card">
 
         <div class="card-header header-elements-inline">

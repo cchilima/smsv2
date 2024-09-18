@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
 use App\Repositories\Academics\StudentRegistrationRepository;
+use App\Repositories\Accounting\InvoiceRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,18 +18,22 @@ class StudentRegistrationController extends Controller
 {
 
     protected $registrationRepo;
+    protected $invoiceRepo;
 
     /**
      * Display a listing of the resource.
      */
 
-    public function __construct(StudentRegistrationRepository $registrationRepo)
-    {
+    public function __construct(
+        StudentRegistrationRepository $registrationRepo,
+        InvoiceRepository $invoiceRepository
+    ) {
         // $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
         // $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
         $this->middleware(TeamSAT::class, ['except' => ['destroy',]]);
 
         $this->registrationRepo = $registrationRepo;
+        $this->invoiceRepo = $invoiceRepository;
     }
 
 
@@ -42,9 +47,20 @@ class StudentRegistrationController extends Controller
         $isRegistered = $this->registrationRepo->getRegistrationStatus($student_id);
         $isWithinRegistrationPeriod = $this->registrationRepo->checkIfWithinRegistrationPeriod($student_id);
         $courses = $this->registrationRepo->getAll();
+        $balancePercentage = $this->invoiceRepo->paymentPercentageAllInvoices($student_id);
+        $totalFees = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($student_id);
+        $totalPayments = 0;
+        $paymentsBalance = 0;
+
+        // dd($isRegistered, $isWithinRegistrationPeriod);
 
         // Fetch academic period information (e.g., academic year, term, etc.)
         $academicInfo = $this->registrationRepo->getAcademicInfo();
+
+        if ($balancePercentage < 100) {
+            $totalPayments = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($student_id, true);
+            $paymentsBalance = $this->invoiceRepo->getStudentPaymentBalance($student_id, true);
+        }
 
         // Assuming $academicInfo contains details such as 'academic_year' or 'period_id'
         $academicPeriodId = $academicInfo?->academic_period_id; // Adjust this based on actual structure of $academicInfo
@@ -60,7 +76,7 @@ class StudentRegistrationController extends Controller
             $academicInfo = [];
         }
 
-        return view('pages.studentRegistration.index', compact('courses', 'academicInfo', 'isRegistered', 'isWithinRegistrationPeriod'));
+        return view('pages.studentRegistration.index', compact('courses', 'academicInfo', 'balancePercentage', 'isRegistered', 'isWithinRegistrationPeriod', 'paymentsBalance'));
     }
 
     /**

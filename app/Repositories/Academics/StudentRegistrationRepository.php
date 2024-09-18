@@ -6,9 +6,10 @@ use App\Models\Academics\{Course, AcademicPeriodClass, AcademicPeriodInformation
 use App\Models\Accounting\{Invoice};
 use App\Models\Admissions\{Student};
 use App\Models\Enrollments\{Enrollment};
+use App\Repositories\Accounting\InvoiceRepository;
 use Carbon\Carbon;
-use Auth;
 use DB;
+use Illuminate\Support\Facades\Auth;
 
 class StudentRegistrationRepository
 {
@@ -420,7 +421,7 @@ class StudentRegistrationRepository
         // Calculate the percentage of payments against the invoice
         $percentage_paid = ($receipted_total_amount / $invoice_total_amount) * 100;
 
-        return $percentage_paid;
+        return round($percentage_paid);
     }
 
     private function getInvoice($student_id, $academic_period)
@@ -456,6 +457,7 @@ class StudentRegistrationRepository
     {
         // Fetching all courses associated with the student's enrollments
         $student = Student::with(['enrollments.class.course'])->find($student_id);
+
         $courses = [];
 
         foreach ($student->enrollments as $enrollment) {
