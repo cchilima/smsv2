@@ -92,10 +92,20 @@
                                 <hr>
                             @else
                                 @php
+                                    $invoices = auth()
+                                        ->user()
+                                        ->student->invoices()
+                                        ->where('academic_period_id', $academicData['academic_period_id'])
+                                        ->get();
+
+                                    $feesTotal = 0;
+
+                                    foreach ($invoices as $invoice) {
+                                        $feesTotal += $invoice->details->sum('amount');
+                                    }
+
                                     $viewResultsBalance =
                                         ($academicPeriod?->view_results_threshold / 100) * $feesTotal - $paymentsTotal;
-
-                                    dd($feesTotal, $paymentsTotal);
                                 @endphp
 
                                 <tbody>

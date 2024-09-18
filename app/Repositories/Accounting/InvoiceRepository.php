@@ -630,8 +630,6 @@ class InvoiceRepository
             $acPastFeesTotal > 0
         );
 
-        dd($acFees);
-
         // Get custom invoiced fee that arent attached to academic period fees
         $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriod->academic_period_id);
 
