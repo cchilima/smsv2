@@ -110,6 +110,8 @@ class HomeController extends Controller
 
                 $data['paymentBalance'] = $totalFees - $academicPeriodPaymentsTotal;
 
+                $data['totalPayments'] = $academicPeriodPaymentsTotal;
+
                 $data['registrationBalance'] = ($data['academicPeriod']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
 
                 $data['viewResultsBalance'] = ($data['academicPeriod']?->view_results_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
