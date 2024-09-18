@@ -56,17 +56,69 @@ class HomeController extends Controller
 
         if ($user->userType->title == 'student') {
 
+            $data['balancePercentage'] = $this->invoiceRepo->paymentPercentageAllInvoices($user->student->id);
+
             $data['academicPeriod'] = $this->studentRegistrationRepo->getNextAcademicPeriod($user->student, date('Y-m-d'));
-            $data['announcements'] = $this->announcementRepo->getAllByUserType('Student');
+
             $data['totalFees'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($user->student->id);
             $data['totalPayments'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($user->student->id);
             $data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($user->student->id);
-            $data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($user->student->id);
             $data['registrationStatus'] = $this->studentRegistrationRepo->getRegistrationStatus($user->student->id);
+            $data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($user->student->id);
 
-            $data['registrationBalance'] = ($data['academicPeriod']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
 
-            $data['viewResultsBalance'] = ($data['academicPeriod']?->view_results_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
+            $studentInvoicedForCurrentAcademicPeriod = $user->student->invoices()->where('academic_period_id', $data['academicPeriod']?->academic_period_id)->exists();
+
+            if (!$studentInvoicedForCurrentAcademicPeriod) {
+                $data['totalFees'] = 0;
+                $data['paymentBalance'] = 0;
+                $data['paymentPercentage'] = 0;
+                $data['totalPayments'] = 0;
+            }
+
+            $data['registrationBalance'] = 0;
+            $data['viewResultsBalance'] = 0;
+
+            if ($data['balancePercentage'] < 100 && !$studentInvoicedForCurrentAcademicPeriod) {
+                $data['academicPeriod'] = $this->invoiceRepo->latestPreviousAcademicPeriod($user->student);
+                $data['totalFees'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($user->student->id, true);
+                $data['totalPayments'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($user->student->id, true);
+                $data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($user->student->id, true);
+
+
+                $data['registrationStatus'] = true;
+                $data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($user->student->id, true);
+
+                $data['registrationBalance'] = ($data['academicPeriod']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
+
+                $data['viewResultsBalance'] = ($data['academicPeriod']?->view_results_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
+            }
+
+            if ($studentInvoicedForCurrentAcademicPeriod) {
+                $invoices = $user->student->invoices()->where('academic_period_id', $data['academicPeriod']->academic_period_id)->get();
+
+                $totalFees = 0;
+
+                foreach ($invoices as $invoice) {
+                    $totalFees += $invoice->details->sum('amount');
+                }
+
+                $data['totalFees'] = $totalFees;
+
+                $academicPeriodPaymentsTotal =
+                    $this->invoiceRepo->studentPaymentsAgainstInvoice($user->student, $data['academicPeriod']->academic_period_id);
+
+                $data['paymentBalance'] = $totalFees - $academicPeriodPaymentsTotal;
+
+                $data['registrationBalance'] = ($data['academicPeriod']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
+
+                $data['viewResultsBalance'] = ($data['academicPeriod']?->view_results_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
+
+                $data['paymentPercentage'] = $academicPeriodPaymentsTotal / $totalFees * 100;
+            }
+
+
+            $data['announcements'] = $this->announcementRepo->getAllByUserType('Student');
 
             $data['resultsPublicationStatus'] = $this->classAssessmentsRepo
                 ->getStudentAcademicPeriodResultsPublicationStatus(
