@@ -479,7 +479,7 @@ class ClassAssessmentsController extends Controller
 
         // elseif ($balancePercentage < 100) {
         //     $data['canSeeResults'] = false;
-        // } 
+        // }
 
         else {
             $data['canSeeResults'] = true;
@@ -514,7 +514,7 @@ class ClassAssessmentsController extends Controller
             $course = $this->coursesRepo->find($course_id);
             $student = Student::find($student_id);
             $total = $request->input('total');
-            $existingRow = Grade::where('student_id', $student_id->where('academic_period_id',$ac_id)->where('assessment_type_id', $assess_type_id)->where('course_code', $course->code)->get()->first();
+            $existingRow = Grade::where('student_id', $student_id)->where('academic_period_id',$ac_id)->where('assessment_type_id', $assess_type_id)->where('course_code', $course->code)->get()->first();
 
             if ($existingRow) {
                 $existingRow->delete();
