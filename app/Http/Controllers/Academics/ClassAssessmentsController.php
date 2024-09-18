@@ -479,7 +479,7 @@ class ClassAssessmentsController extends Controller
 
         // elseif ($balancePercentage < 100) {
         //     $data['canSeeResults'] = false;
-        // } 
+        // }
 
         else {
             $data['canSeeResults'] = true;
