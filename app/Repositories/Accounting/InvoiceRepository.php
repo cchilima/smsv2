@@ -203,16 +203,24 @@ class InvoiceRepository
             })
             ->first();
 
-        if (!$crf) {
-            $crf = AcademicPeriodFee::with('programs')
-                ->where('academic_period_id', $periodInfo['academic_period_id'])
-                ->whereHas('fee', function ($query) {
-                    $query->where('type', 'course repeat fee');
-                })->whereHas('programs', function ($query) use ($student) {
-                    $query->where('program_id', $student->program_id);
-                })
-                ->first();
-        }
+            if (!$crf) {
+
+                $crf = AcademicPeriodFee::where('academic_period_id', $periodInfo['academic_period_id'])
+                    ->whereHas('fee', function ($query) {
+                        $query->where('type', 'course repeat fee');
+                    })
+                    ->whereHas('programs', function ($query) use ($student) {
+                        $query->where('program_id', $student->program_id);
+                    })
+                    ->first();
+            }
+
+
+            // cant bill student if theres no course repeat fee
+            if (!$crf) {
+                return false;
+            }
+            
 
         // Calculate the total amount for course repeats
         $bill = $crf->amount * count($resultsReview['coursesFailed']);
