@@ -134,7 +134,7 @@ class InvoiceRepository
         $invoiceExists = Invoice::where('student_id', $student->id)->where('academic_period_id', $periodInfo->academic_period_id)->exists();
 
         // Get the latest previous academic period
-        $previousPeriod = $this->latestPreviousAcademicPeriod($student);
+        $previousPeriod = $this->getOldestStudentAcademicPeriod($student);
 
         if ($previousPeriod) {
             // Review previous academic period results
@@ -364,6 +364,22 @@ class InvoiceRepository
         }
 
         return $latestClosedAcademicPeriod->first();
+    }
+
+    public function getOldestStudentAcademicPeriod($student)
+    {
+        // Get the current date in 'YYYY-MM-DD' format
+        $currentDate = date('Y-m-d');
+
+        // Get the all closed available
+        return DB::table('academic_period_information')
+            ->join('academic_periods', 'academic_period_information.academic_period_id', '=', 'academic_periods.id')
+            ->where('academic_period_information.study_mode_id', $student->study_mode_id)
+            ->where(function ($query) use ($currentDate) {
+                $query->where('academic_periods.ac_end_date', '<', $currentDate)->orWhere('academic_periods.ac_start_date', '>', $currentDate);
+            })->orderBy('academic_periods.created_at', 'asc')
+            ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
+            ->first();
     }
 
     private function getLastAcademicPeriodFees($student, $academic_period_id)
