@@ -263,7 +263,7 @@ class ClassAssessmentsController extends Controller
                 if (!empty($user)) {
                     $program = $user->program_id;
                     $student_level = $user->course_level_id;
-                    $existingRow = Grade::where('student_id', $studentID)->where('academic_period_id',$academicPeriodID)->where('assessment_type_id', $aseesID)->where('course_code', $code)->get()->first();
+                    $existingRow = Grade::where('student_id', $studentID)->where('academic_period_id', $academicPeriodID)->where('assessment_type_id', $aseesID)->where('course_code', $code)->get()->first();
 
                     if ($existingRow) {
                         $existingRow->delete();
@@ -514,7 +514,7 @@ class ClassAssessmentsController extends Controller
             $course = $this->coursesRepo->find($course_id);
             $student = Student::find($student_id);
             $total = $request->input('total');
-            $existingRow = Grade::where('student_id', $student_id)->where('academic_period_id',$ac_id)->where('assessment_type_id', $assess_type_id)->where('course_code', $course->code)->get()->first();
+            $existingRow = Grade::where('student_id', $student_id)->where('academic_period_id', $ac_id)->where('assessment_type_id', $assess_type_id)->where('course_code', $course->code)->get()->first();
 
             if ($existingRow) {
                 $existingRow->delete();

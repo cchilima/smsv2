@@ -134,13 +134,11 @@ class InvoiceRepository
         $invoiceExists = Invoice::where('student_id', $student->id)->where('academic_period_id', $periodInfo->academic_period_id)->exists();
 
         // Get the latest previous academic period
-        $previousPeriod = $this->latestPreviousAcademicPeriod($student);
+        $previousPeriod = $this->getOldestStudentAcademicPeriod($student);
 
         if ($previousPeriod) {
             // Review previous academic period results
             $resultsReview = $this->registrationRepo->results($student->id, $previousPeriod->academic_period_id);
-
-            dd($resultsReview);
 
             if ($resultsReview && count($resultsReview['coursesFailed']) >= 3) {
                 // Create an invoice for course repeats if applicable
@@ -193,34 +191,31 @@ class InvoiceRepository
 
     private function createCourseRepeatInvoice($student, $periodInfo, $resultsReview)
     {
-        // dd($periodInfo);
-
         // Get the course repeat fee
-        $crf = AcademicPeriodFee::doesntHave('programs')
-            ->where('academic_period_id', $periodInfo['academic_period_id'])
+        $crf = AcademicPeriodFee::where('academic_period_id', $periodInfo->academic_period_id)
             ->whereHas('fee', function ($query) {
                 $query->where('type', 'course repeat fee');
             })
+            ->whereHas('programs', function ($query) use ($student) {
+                $query->where('program_id', $student->program_id);
+            })
             ->first();
 
-            if (!$crf) {
+        if (!$crf) {
 
-                $crf = AcademicPeriodFee::where('academic_period_id', $periodInfo['academic_period_id'])
-                    ->whereHas('fee', function ($query) {
-                        $query->where('type', 'course repeat fee');
-                    })
-                    ->whereHas('programs', function ($query) use ($student) {
-                        $query->where('program_id', $student->program_id);
-                    })
-                    ->first();
-            }
+            $crf = AcademicPeriodFee::doesntHave('programs')
+                ->where('academic_period_id', $periodInfo->academic_period_id)
+                ->whereHas('fee', function ($query) {
+                    $query->where('type', 'course repeat fee');
+                })
+                ->first();
+        }
 
+        // cant bill student if theres no course repeat fee
+        if (!$crf) {
+            return false;
+        }
 
-            // cant bill student if theres no course repeat fee
-            if (!$crf) {
-                return false;
-            }
-            
 
         // Calculate the total amount for course repeats
         $bill = $crf->amount * count($resultsReview['coursesFailed']);
@@ -358,14 +353,33 @@ class InvoiceRepository
             ->where('academic_period_information.study_mode_id', $student->study_mode_id)
             ->where(function ($query) use ($currentDate) {
                 $query->where('academic_periods.ac_end_date', '<', $currentDate)->orWhere('academic_periods.ac_start_date', '>', $currentDate);
-            })
-            ->orderBy('academic_periods.created_at', 'desc')
-            ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
-            ->skip(1)
-            ->take(1)
-            ->first();
+            });
 
-        return $latestClosedAcademicPeriod;
+        if ($latestClosedAcademicPeriod->get()->count() > 1) {
+            return $latestClosedAcademicPeriod->orderBy('academic_periods.created_at', 'asc')
+                ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
+                ->skip(1)
+                ->take(1)
+                ->first();
+        }
+
+        return $latestClosedAcademicPeriod->first();
+    }
+
+    public function getOldestStudentAcademicPeriod($student)
+    {
+        // Get the current date in 'YYYY-MM-DD' format
+        $currentDate = date('Y-m-d');
+
+        // Get the all closed available
+        return DB::table('academic_period_information')
+            ->join('academic_periods', 'academic_period_information.academic_period_id', '=', 'academic_periods.id')
+            ->where('academic_period_information.study_mode_id', $student->study_mode_id)
+            ->where(function ($query) use ($currentDate) {
+                $query->where('academic_periods.ac_end_date', '<', $currentDate)->orWhere('academic_periods.ac_start_date', '>', $currentDate);
+            })->orderBy('academic_periods.created_at', 'asc')
+            ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
+            ->first();
     }
 
     private function getLastAcademicPeriodFees($student, $academic_period_id)
