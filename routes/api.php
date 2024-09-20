@@ -5,9 +5,11 @@ use App\Http\Controllers\Admissions\StudentController;
 use App\Http\Controllers\Apis\DepartmentController;
 use App\Http\Controllers\Apis\ProgramsController;
 use App\Http\Controllers\Apis\SchoolController;
+use App\Http\Controllers\Apis\SMSPaymentsIntergration;
 use App\Http\Controllers\Apis\StudentAdminissionController;
 use App\Repositories\Academics\ProgramsRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,3 +37,15 @@ Route::get('/schools', [SchoolController::class, 'getAll']);
 Route::get('/departments/{slug}', [DepartmentController::class, 'findBySlug']);
 
 Route::post('/new-student/admit', [StudentAdminissionController::class, 'store']);
+
+Route::post('/login', [SMSPaymentsIntergration::class, 'login']);
+//Route::middleware('auth:api')->group(function () {
+//    Route::post('/get-student-details', [SMSPaymentsIntergration::class, 'getStudentInfo']);
+//});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/get-student-details', [SMSPaymentsIntergration::class, 'getStudentInfo']);
+    Route::post('/student-payment', [SMSPaymentsIntergration::class, 'collectPaymentIndo']);
+    Route::post('/zanaco-student-payment', [SMSPaymentsIntergration::class, 'collectPaymentZanaco']);
+});
+
