@@ -6,6 +6,7 @@ use App\Models\Academics\AcademicPeriod;
 use App\Models\Academics\AcademicPeriodClass;
 use App\Models\Accomodation\BedSpace;
 use App\Models\Accomodation\Booking;
+use App\Models\Accomodation\Room;
 use App\Models\Admissions\Student;
 use App\Models\Enrollments\Enrollment;
 use Carbon\Carbon;
@@ -41,8 +42,10 @@ class BedSpaceRepository
     {
         return BedSpace::find($id);
     }
-    public function getActiveStudents($gender = null)
+    public function getActiveStudents($id)
     {
+        $room = Room::find($id);
+
         $ac = AcademicPeriod::whereDate('ac_end_date', '>=', now())
             ->whereHas('academic_period_information', function ($query) {
                 $query->where('study_mode_id', '=', 1);
@@ -51,6 +54,7 @@ class BedSpaceRepository
             ->pluck('id');
         $class = AcademicPeriodClass::whereIn('academic_period_id', $ac)->distinct('id')
             ->pluck('id');
+
         /*
         // Get the student IDs based on academic period class IDs
         $studentIdsFromEnrollment = Enrollment::whereIn('academic_period_class_id', $class)
@@ -83,20 +87,31 @@ class BedSpaceRepository
 
         // Combine the two sets of student IDs
         $combinedStudentIds = $studentIdsFromEnrollment->merge($studentIdsFromBooking)->unique();
+        //$uniqueStudentIds = $studentIdsFromEnrollment->merge($studentIdsFromBooking)->unique();
+
+            // Convert to array if needed
+
 
         // Get the student IDs whose expiration date has not passed and are in the enrollment
         $activeStudentIds = Booking::whereDate('expiration_date', '>=', $currentDateTime)
-            ->whereIn('student_id', $studentIdsFromEnrollment)
+            ->whereIn('student_id', $combinedStudentIds)
             ->pluck('student_id');
 
         // Remove active student IDs from the combined array
         $finalStudentIds = $combinedStudentIds->diff($activeStudentIds);
 
-        return Student::with('user')->whereHas('user', function ($query) use ($gender) {
-            $query->where('gender', '=', $gender);
+
+        $uniqueStudentIds = $combinedStudentIds->merge($finalStudentIds)->unique();
+        //$uniqueStudentIdsArray = $uniqueStudentIds->toArray();
+
+
+
+        return Student::with('user')->whereHas('user', function ($query) use ($room) {
+            $query->where('gender', '=', $room->gender);
         })
-            ->whereIn('id', $finalStudentIds)
+            ->whereIn('id', $uniqueStudentIds)
             ->get();
+        //dd($room->gender);
     }
     public function getActiveStudentOne($student_id, $gender = null)
     {

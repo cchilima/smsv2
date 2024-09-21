@@ -24,7 +24,7 @@ final class Bookings extends PowerGridComponent
 
     public string $tableName = 'BookingsTable';
     public bool $deferLoading = true;
-    public ?Student $student;
+    public ?Student $student = null;
 
     protected BookingRepository $bookingRepo;
 
