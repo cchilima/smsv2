@@ -9,19 +9,6 @@
         <?php Qs::goBackWithSuccess(session('status')); ?>
     @endif
 
-    <div class="row">
-        @if ($balancePercentage < 100)
-            <div class="col-12">
-                <div class="alert alert-warning" role="alert">
-                    <i class="icon icon-alert mr-2"></i>
-                    You are not registered. Clear your pending balance of K{{ $paymentsBalance }} to be eligible for the
-                    next academic period
-
-                </div>
-            </div>
-        @endif
-    </div>
-
     <div class="card">
 
         <div class="card-header header-elements-inline">
@@ -129,7 +116,7 @@
             @else
                 <div class="container ">
                     <h6> No courses available</h6>
-                    <p><i>tip - student either has no invoice or is not within the registration period.</i></p>
+                    <p><i>Student either has no invoice or is not within the registration period.</i></p>
                 </div>
             @endif
         </div>

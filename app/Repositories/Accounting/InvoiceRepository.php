@@ -735,4 +735,31 @@ class InvoiceRepository
             ->where('student_id', $studentId)
             ->get();
     }
+
+    /**
+     * Check if a student has been invoiced for the given academic period.
+     *
+     * @param  Student  $student The student model instance
+     * @param  int  $academicPeriodId The ID of the academic period
+     * @return bool
+     */
+    public function checkStudentAcademicPeriodInvoiceStatus($student, $academicPeriodId)
+    {
+        return $student->invoices()
+            ->where('academic_period_id', $academicPeriodId)
+            ->exists();
+    }
+
+    /**
+     * Get a student's invoices for a given academic period.
+     * 
+     * @param  Student  $student The student model instance
+     * @param  int  $academicPeriodId The ID of the academic period
+     */
+    public function getStudentAcademicPeriodInvoices($student, $academicPeriodId)
+    {
+        return $student->invoices()
+            ->where('academic_period_id', $academicPeriodId)
+            ->get();
+    }
 }

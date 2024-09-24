@@ -87,9 +87,7 @@ class Show extends Component
         $this->feesTotal = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($this->data['student']->id);
         $this->paymentBalance = $this->invoiceRepo->getStudentPaymentBalance($this->data['student']->id);
 
-
         $this->data['allInvoicesBalance'] = $this->invoiceRepo->paymentPercentageAllInvoices($this->data['student']->id);
-
     }
 
     public function refreshFinancialStatsOverview()

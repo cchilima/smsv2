@@ -105,8 +105,6 @@ class CompletedApplication extends Component
             $studentData['admission_year'] = date('Y');
             $studentData['semester'] = '1';
 
-            return;
-
             // Create user account
             $user = $this->studentRepo->createUser($userData);
 
