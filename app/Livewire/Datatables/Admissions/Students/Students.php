@@ -99,12 +99,13 @@ final class Students extends PowerGridComponent
 
             Column::make('Program Name', 'program.name'),
 
-            Column::make('Admission Year', 'admission_year'),
+            Column::make('Admission Year', 'admission_year')
+                ->sortable(),
 
             Column::make('Year of Study', 'level.name'),
 
             Column::action('Action')
-                ->visibleInExport(visible: false)
+                ->visibleInExport(false)
         ];
     }
 
@@ -116,8 +117,10 @@ final class Students extends PowerGridComponent
                 ->optionLabel('code')
                 ->optionValue('id'),
 
-            Filter::inputText('admission_year', 'admission_year')
-                ->operators(['is', 'is_not', 'contains', 'starts_with', 'ends_with']),
+            Filter::select('program.name', 'program_id')
+                ->dataSource($this->programRepo->getAll())
+                ->optionLabel('name')
+                ->optionValue('id'),
 
             Filter::select('level.name', 'course_level_id')
                 ->dataSource($this->levelRepo->getAll())
