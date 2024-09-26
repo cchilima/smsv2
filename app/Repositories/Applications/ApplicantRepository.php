@@ -175,7 +175,7 @@ class ApplicantRepository
         // Check if all mandatory fields are filled
         $fieldsToCheck = Arr::except($applicationArr, ['status', 'middle_name', 'period_type_id', 'application_date', 'nrc', 'passport', 'telephone']);
 
-        $allFieldsFilled = array_filter($fieldsToCheck, fn($value) => $value === null);
+        $unfilledManadatoryFields = array_filter($fieldsToCheck, fn($value) => $value === null);
 
         // Check if application has an attachments
         $hasAttachments = $application->attachment()->count() > 0;
@@ -187,7 +187,7 @@ class ApplicantRepository
         $feePaid = $application->payment->sum('amount');
 
         // Update status to pending if all fields except status are filled
-        if (empty($allFieldsFilled) && $hasAttachments && $feePaid < 150 && $grades >= 5) {
+        if (empty($unfilledManadatoryFields) && $hasAttachments && $feePaid < 150 && $grades >= 5) {
             $application->status = 'pending';
             $application->save();
 

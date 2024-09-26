@@ -2,15 +2,13 @@
 
 namespace App\Livewire\Applications;
 
-use DB;
-use Auth;
 use App\Mail\ApplicationVerdit;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Mail;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Applications\ApplicantRepository;
-
+use Illuminate\Support\Facades\DB;
 
 class CompletedApplication extends Component
 {
