@@ -175,7 +175,7 @@
 
                                     <select wire:model.live="year_applying_for"
                                         class="browser-default custom-select input-field">
-                                        <option></option>
+                                        <option selected>Select year</option>
                                         @foreach ($years as $year)
                                             <option value="{{ $year }}"
                                                 @if ($year == $year_applying_for) selected @endif>
@@ -190,7 +190,7 @@
                                     <label class="active">Program</label>
                                     <select wire:model.live="program_id"
                                         class="browser-default custom-select input-field">
-                                        <option></option>
+                                        <option selected>Select program</option>
                                         @foreach ($programs as $program)
                                             <option value="{{ $program->id }}">{{ $program->name }} </option>
                                         @endforeach
@@ -201,7 +201,7 @@
                                     <label class="active">Study mode</label>
                                     <select wire:model.live="study_mode_id"
                                         class="browser-default custom-select input-field">
-                                        <option></option>
+                                        <option selected>Select study mode</option>
                                         @foreach ($studyModes as $mode)
                                             <option value="{{ $mode->id }}">{{ $mode->name }} </option>
                                         @endforeach
@@ -216,7 +216,7 @@
                                     <label class="active">Intake</label>
                                     <select wire:model.live="academic_period_intake_id"
                                         class="browser-default custom-select input-field">
-                                        <option></option>
+                                        <option selected>Select intake</option>
                                         @foreach ($periodIntakes as $intake)
                                             <option value="{{ $intake->id }}">{{ $intake->name }} </option>
                                         @endforeach
@@ -224,7 +224,7 @@
                                 </div>
 
                                 <div class="col m6 s12">
-                                    <label>Upload Results</label>
+                                    <label>Upload Results (PDF, 5Mb max)</label>
                                     <div class="file-field input-field">
                                         <div class="btn btn-small grey">
                                             <span>Select File</span>
@@ -285,7 +285,7 @@
                                     <label class="active">Relationship</label>
                                     <select wire:model.live="kin_relationship_id"
                                         class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select relationship</option>
                                         @foreach ($relationships as $relationship)
                                             <option value="{{ $relationship->id }}">{{ $relationship->relationship }}
                                             </option>
@@ -340,7 +340,7 @@
                                 <div class="col m6 s12">
                                     <label class="active">Country</label>
                                     <select wire:model.live="kin_country_id" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select country</option>
                                         @foreach ($kin_countries as $country)
                                             <option value="{{ $country->id }}">{{ $country->country }} </option>
                                         @endforeach
@@ -354,7 +354,7 @@
                                 <div class="col m6 s12">
                                     <label class="active">Province</label>
                                     <select wire:model.live="kin_province_id" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select province</option>
                                         @foreach ($kin_provinces as $province)
                                             <option value="{{ $province->id }}">{{ $province->name }} </option>
                                         @endforeach
@@ -364,7 +364,7 @@
                                 <div class="col m6 s12">
                                     <label class="active">Town</label>
                                     <select wire:model.live="kin_town_id" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select town</option>
                                         @foreach ($kin_towns as $town)
                                             <option value="{{ $town->id }}">{{ $town->name }} </option>
                                         @endforeach
@@ -379,9 +379,9 @@
                         <div id="results">
                             <div class="row">
                                 <div class="col m12 s12">
-                                    <label class="active">Secondary school</label>
+                                    <label class="active">Secondary School</label>
                                     <select wire:model.live="secondary_school" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select secondary school</option>
                                         @foreach ($schools as $school)
                                             <option value="{{ $school['name'] }}">{{ $school['name'] }} </option>
                                         @endforeach
@@ -396,7 +396,7 @@
                                 <div class="input-field col m6 s12">
                                     <label class="active">Subject</label>
                                     <select wire:model.live="subject" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select subject</option>
                                         @foreach ($subjects as $subject)
                                             <option value="{{ $subject['name'] }}">{{ $subject['name'] }} </option>
                                         @endforeach

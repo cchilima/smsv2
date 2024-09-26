@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Applications;
 
+use App\Http\Requests\Applications\Attachment as AttachmentRequest;
 use App\Models\Applications\Applicant;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Applications\ApplicantRepository;
@@ -162,8 +163,6 @@ class CompleteApplication extends Component
         if ($this->applicantRepo->checkApplicationCompletion($this->applicant->id)) {
             $this->dispatch('application-completed');
         }
-
-        $this->dispatch('progress-saved');
     }
 
     public function saveGrade()
@@ -202,16 +201,23 @@ class CompleteApplication extends Component
 
     public function uploadDocument()
     {
-        if (is_file($this->results)) {
-            $this->applicantRepo->uploadAttachment($this->results, $this->applicant->id);
-            $this->reset(['results']);
+        $this->validate();
 
-            $this->dispatch('attachment-added');
+        try {
+            if (is_file($this->results)) {
 
-            return $this->mount($this->applicant->id);
-        } else {
-            // Handle the case where $this->results is not a file
-            $this->dispatch('attachment-failed');
+                $this->applicantRepo->uploadAttachment($this->results, $this->applicant->id);
+                $this->reset(['results']);
+
+                $this->dispatch('attachment-added');
+
+                return $this->mount($this->applicant->id);
+            } else {
+                // Handle the case where $this->results is not a file
+                $this->dispatch('attachment-failed');
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 
@@ -262,6 +268,14 @@ class CompleteApplication extends Component
     public function setSection(string $sectionName): void
     {
         $this->currentSection = $sectionName;
+    }
+
+    /**
+     * Validation rules
+     */
+    public function rules()
+    {
+        return (new AttachmentRequest())->rules();
     }
 
     #[Layout('components.layouts.administrator')]
