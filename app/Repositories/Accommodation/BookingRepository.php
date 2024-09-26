@@ -53,7 +53,7 @@ class BookingRepository
         $currentDateTime = Carbon::now();
 
         $query = Booking::with('student', 'bedSpace')->whereHas('bedSpace', function ($query) use ($currentDateTime) {
-            $query->where('is_available', '=', 'true');
+            $query->where('is_available', '=', 'false');
         });
 
         return $executeQuery ? $query->get() : $query;

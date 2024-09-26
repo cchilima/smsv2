@@ -146,8 +146,9 @@ class BookingController extends Controller
 
     public function getBedSpaces(string $id)
     {
-        $data['students'] = $this->bed_space_repository->getActiveStudents();
         $data['spaces'] = $this->bed_space_repository->getAvailable($id);
+        $data['students'] = $this->bed_space_repository->getActiveStudents($id);
+
         return $data;
     }
 }

@@ -64,8 +64,34 @@ class StudentRegistrationRepository
                 // Step 7: Filter courses for the current academic period
                 $currentCourses = $this->getCurrentCourses($courses, $currentAcademicPeriodId);
 
+                // dd($currentCourses);
+
                 // Step 8: Filter out courses based on unmet prerequisites
                 $filteredCourseIds = $this->filterCourses($currentCourses, $failedCoursesPrerequisites, $allPassedCourseIds);
+
+                // Check current courses prerequisites
+                $currentCoursesPrerequisites = $this->getCurrentCoursesPrerequisites($currentCourses->pluck('course_id'));
+
+                $coursesWithPrerequisiteIds = [];
+                $prerequisiteIds = [];
+
+                foreach ($currentCoursesPrerequisites as $prerequisite) {
+                    $coursesWithPrerequisiteIds[] = $prerequisite->course_id;
+                    $prerequisiteIds[] = $prerequisite->prerequisite_course_id;
+                }
+
+                $runningFailedPrerequisiteIds = AcademicPeriodClass::whereIn('course_id', $prerequisiteIds)
+                    ->whereNotIn('course_id', $allPassedCourseIds)
+                    ->where('academic_period_id', $currentAcademicPeriodId)
+                    ->pluck('course_id')
+                    ->toArray();
+
+                // Filter out courses that don't have prerequisites
+                $coursesWithoutPrerequisites = array_diff($filteredCourseIds, $coursesWithPrerequisiteIds);
+
+                if (count($runningFailedPrerequisiteIds) > 0) {
+                    $filteredCourseIds = array_merge($runningFailedPrerequisiteIds, $coursesWithoutPrerequisites);
+                }
 
                 // Step 9: Determine course results to return
                 if (!$study_mode_change) {
@@ -180,6 +206,11 @@ class StudentRegistrationRepository
             $history[] = $this->results($student_id, $period->academic_period_id);
         }
         return $history;
+    }
+
+    public function getCurrentCoursesPrerequisites($currentCourses)
+    {
+        return DB::table('prerequisites')->whereIn('course_id', $currentCourses)->get();
     }
 
     private function getFailedCoursesPrerequisites($history)

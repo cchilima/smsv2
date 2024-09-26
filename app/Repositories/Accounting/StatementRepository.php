@@ -153,7 +153,7 @@ class StatementRepository
 
             if($negative_total == $invoice_total){
 
-                // Get all statements to zero 
+                // Get all statements to zero
                 $statements_to_zero = $student->statementsWithoutInvoice->pluck('id');
 
                 // Proceed to zero statements
@@ -162,30 +162,30 @@ class StatementRepository
                 // Create new statement , to show that collective statement were applied to invoice
                 $this->createStatement($invoice->id, $negative_total, $student->id, $payment_method_id);
 
-                // Create a receipt 
+                // Create a receipt
                 $this->createReceipt($invoice->id, $negative_total, $student->id, $payment_method_id);
 
             } elseif ($negative_total < $invoice_total) {
 
-                // Create a receipt 
+                // Create a receipt
                 //$this->createReceipt($invoice->id, $negative_total, $student->id, $payment_method_id);
 
                 // Create new statement, to show that collective statement were applied to invoice
                 $this->createStatement($invoice->id, $negative_total, $student->id, $payment_method_id);
-            
+
                 $currentAmountRemaining = $negative_total;
-            
+
                 // Determine which statement to deduct amount from
                 foreach ($student->statementsWithoutInvoice as $statement) {
-            
+
                     if ($statement->amount == $currentAmountRemaining) {
                         $statement->update(['amount' => 0]);
                         break;
-            
+
                     } elseif ($statement->amount < $currentAmountRemaining) {
                         $currentAmountRemaining -= $statement->amount;
                         $statement->update(['amount' => 0]);
-            
+
                     } elseif ($statement->amount > $currentAmountRemaining) {
                         $statement->update(['amount' => ($statement->amount - $currentAmountRemaining)]);
                         break;
@@ -199,10 +199,10 @@ class StatementRepository
 
                 // Create new statement, to show that collective statement were applied to invoice
                 $this->createStatement($invoice->id, $invoice_total, $student->id, $payment_method_id);
-                
-                // Create a receipt 
+
+                // Create a receipt
                 $this->createReceipt($invoice->id, $invoice_total, $student->id, $payment_method_id);
-            
+
                 // Iterate over statements to distribute remaining negative total
                 foreach ($student->statementsWithoutInvoice as $statement) {
 
@@ -230,7 +230,7 @@ class StatementRepository
                     }
 
                     */
-                    
+
                 }
             }
 

@@ -189,11 +189,11 @@
                                         <span>Academic Period Classes</span></a>
                                 </li>
 
-                                <li class="nav-item">
-                                    <a href="{{ route('enrollments.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.index']) ? 'active' : '' }}">
-                                        <span>Enrollments</span></a>
-                                </li>
+{{--                                <li class="nav-item">--}}
+{{--                                    <a href="{{ route('enrollments.index') }}"--}}
+{{--                                        class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.index']) ? 'active' : '' }}">--}}
+{{--                                        <span>Enrollments</span></a>--}}
+{{--                                </li>--}}
                             </ul>
                         </li>
 
