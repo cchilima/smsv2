@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Datatables\Admissions\Students;
 
+use App\Http\Requests\Students\AcademicInfo;
+use App\Models\Academics\AcademicPeriod;
 use App\Models\Admissions\Student;
 use App\Repositories\Academics\AcademicPeriodRepository;
 use App\Repositories\Academics\CourseLevelsRepository;

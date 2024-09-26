@@ -223,24 +223,12 @@
                                     </select>
                                 </div>
 
-                                {{-- <div class="col m6 s12">
-                                    <label class="active">Upload Results.: PDF, JPG, PNG (Max
-                                        5MB)
-                                    </label>
-                                    <div class="file-field input-field">
-                                        <div class="file-path-wrapper">
-                                            <input class="file-path" wire:model="results" accept="pdf"
-                                                type="file" name="attachment">
-                                        </div>
-                                    </div>
-                                </div> --}}
-
                                 <div class="col m6 s12">
                                     <label>Upload Results</label>
                                     <div class="file-field input-field">
                                         <div class="btn btn-small grey">
                                             <span>Select File</span>
-                                            <input wire:model="results" type="file" required>
+                                            <input wire:model="results" type="file" accept="pdf" required>
                                         </div>
                                         <div class="file-path-wrapper">
                                             <input class="file-path validate" type="text">
