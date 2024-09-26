@@ -34,6 +34,11 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="reference">Payment Reference</label>
+                        <input type="text" class="form-control" id="reference" name="reference" placeholder="TXN">
+                    </div>
+
+                    <div class="form-group">
                         <label for="amount">Enter Amount</label>
                         <input type="number" class="form-control" id="amount" name="amount" placeholder="ZMW"
                             required>

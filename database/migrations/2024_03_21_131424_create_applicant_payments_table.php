@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('applicant_payments', function (Blueprint $table) {
             $table->id();
             $table->decimal('amount', 10, 2);
+            $table->string('reference')->nullable()->unique();
             $table->foreignUuid('applicant_id')->nullable()->constrained('applicants')->onDelete('restrict');
             $table->foreignId('payment_method_id')->constrained('payment_methods')->nullable();
             $table->timestamps();
