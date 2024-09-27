@@ -368,8 +368,11 @@ class DatabaseSeeder extends Seeder
         Relationship::insert([
             ['relationship' => 'Parent'],
             ['relationship' => 'Spouse'],
+            ['relationship' => 'Child'],
             ['relationship' => 'Uncle'],
             ['relationship' => 'Aunt'],
+            ['relationship' => 'Nephew'],
+            ['relationship' => 'Niece'],
             ['relationship' => 'Grandparent'],
             ['relationship' => 'Sibling'],
             ['relationship' => 'Cousin'],

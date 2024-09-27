@@ -204,7 +204,7 @@ class CompleteApplication extends Component
         $this->validate();
 
         try {
-            if (is_file($this->results)) {
+            if (!empty($this->results)) {
 
                 $this->applicantRepo->uploadAttachment($this->results, $this->applicant->id);
                 $this->reset(['results']);
@@ -213,7 +213,7 @@ class CompleteApplication extends Component
 
                 return $this->mount($this->applicant->id);
             } else {
-                // Handle the case where $this->results is not a file
+                // Handle the case where $this->results is empty
                 $this->dispatch('attachment-failed');
             }
         } catch (\Throwable $th) {
@@ -232,7 +232,7 @@ class CompleteApplication extends Component
     public function previousSection()
     {
         // If results file has been attached, upload it before navigating to the previous section
-        if (is_file($this->results)) $this->uploadDocument();
+        if (!empty($this->results)) $this->uploadDocument();
 
         // Get the current section index
         $currentIndex = array_search($this->currentSection, $this->sections);
@@ -249,7 +249,7 @@ class CompleteApplication extends Component
     public function nextSection()
     {
         // If results file has been attached, upload it before navigating to the next section
-        if (is_file($this->results)) $this->uploadDocument();
+        if (!empty($this->results)) $this->uploadDocument();
 
         // Get the current section index
         $currentIndex = array_search($this->currentSection, $this->sections);

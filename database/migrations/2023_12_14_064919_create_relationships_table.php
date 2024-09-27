@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('relationships', function (Blueprint $table) {
             $table->id();
-            $table->enum('relationship', ['Nephew', 'Cousin', 'Sibling', 'Spouse', 'Parent', 'Child', 'Other']); 
+            $table->enum('relationship', ['Parent', 'Spouse', 'Sibling', 'Child','Aunt','Uncle',  'Grandparent', 'Partner', 'Cousin','Nephew', 'Niece', 'Other']); 
             $table->mediumText('description')->nullable(); 
             $table->timestamps();
 
