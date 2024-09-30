@@ -40,9 +40,24 @@
                         <td><b>Registration Threshold : </b></td>
                         <td>{{ $academicInfo ? number_format($academicInfo->registration_threshold, 0) : '0' }} %</td>
                     </tr>
+                    <tr>
+                        <td><b>Registration Start Date : </b></td>
+                        <td>{{ $academicInfo ? date('d M Y', strtotime($academicInfo->registration_date)) : 'Not Available' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Late Registration Start Date : </b></td>
+                        <td>{{ $academicInfo ? date('d M Y', strtotime($academicInfo->late_registration_date)) : 'Not Available' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Late Registration End Date : </b></td>
+                        <td>{{ $academicInfo ? date('d M Y', strtotime($academicInfo->late_registration_end_date)) : 'Not Available' }}
+                        </td>
+                    </tr>
 
                     <tr>
-                        <td><b>Examslip Threshold : </b></td>
+                        <td><b>Download Exam Slip Threshold : </b></td>
                         <td>{{ $academicInfo ? number_format($academicInfo->exam_slip_threshold, 0) : '0' }} %</td>
                     </tr>
 
@@ -114,7 +129,7 @@
                     @endif
                 </div>
             @else
-                <div class="container ">
+                <div class="card-body">
                     <h6> No courses available</h6>
                     <p><i>Student either has no invoice or is not within the registration period.</i></p>
                 </div>

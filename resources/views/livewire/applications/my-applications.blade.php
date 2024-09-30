@@ -9,7 +9,7 @@
         <h6 class="mb-5">my applications </h6>
 
         <a class="btn btn-small black mb-5" wire:click="startNewApplication()" class="mb-5">start new <i class="material-icons right">add</i> </a>
-        <a class="right" href="{{ route('login') }}" class="mb-5">go to home </a>
+        <a class="right" href="{{ route('login') }}" class="mb-5">Go Home </a>
 
         <div class="white z-depth-1 rounded">
 

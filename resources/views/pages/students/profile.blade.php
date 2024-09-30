@@ -19,8 +19,7 @@
                         <img style="aspect-ratio: 1/1; object-fit: cover" src="{{ $passportPhotoUrl }}"
                             alt="User passport photo" class="rounded-circle w-100 h-100">
                     </div>
-                    <br>
-                    <h3 class="mt-3">{{ auth()->user()->first_name . ' ' . auth()->user()->last_name }}</h3>
+                    <h3 class="mt-2">{{ auth()->user()->first_name . ' ' . auth()->user()->last_name }}</h3>
                     <h6 class="mt-1">{{ auth()->user()->student?->id }}</h6>
                 </div>
             </div>
@@ -128,7 +127,8 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-justify">Registered Academic Period</td>
-                                        <td>{{ count($student->invoices) > 0 ? $student->invoices->last()->period->name : 'Not registered' }}</td>
+                                        <td>{{ count($student->invoices) > 0 ? $student->invoices->last()->period->name : 'Not registered' }}
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-justify">Semester</td>

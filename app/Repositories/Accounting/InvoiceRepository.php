@@ -649,7 +649,6 @@ class InvoiceRepository
         $student = $this->getStudent($student_id);
 
         if ($getPrevious) {
-
             // Get the student's current academic period
             $academicPeriod = $this->latestPreviousAcademicPeriod($student);
         } else {

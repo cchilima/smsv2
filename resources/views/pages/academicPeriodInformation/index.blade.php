@@ -204,9 +204,9 @@
                                 <div class="form-group row">
                                     <label for="program_id" class="col-lg-3 col-form-label font-weight-semibold">Program
                                         Name
-                                        (<span class="text-warning">optional</span>)</label>
+                                        (<span class="text-warning">Optional</span>)</label>
                                     <div class="col-lg-9">
-                                        <select data-placeholder="Select type" multiple
+                                        <select data-placeholder="Select program" multiple
                                             class="form-control select-search multiselect" name="program_id[]"
                                             id="program_id">
                                             <option value=""></option>

@@ -17,7 +17,8 @@ class UserPersonalInfoRepository
      *
      * @param  UploadedFile  $fileObject The uploaded file object.
      * @param  int  $userId The ID of the user.
-     * @return string The path to the uploaded newly stored file.
+     * @return string The path to the newly stored file.
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
      */
     public function uploadPassportPhoto(UploadedFile $fileObject, $userId)
     {

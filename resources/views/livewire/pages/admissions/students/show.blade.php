@@ -24,8 +24,7 @@
                     <img style="aspect-ratio: 1/1; object-fit: cover" src="{{ $passportPhotoUrl }}" alt="photo"
                         class="rounded-circle w-100 h-100">
                 </div>
-                <br>
-                <h3 class="mt-3">{{ $student->user->first_name . ' ' . $student->user->last_name }}</h3>
+                <h3 class="mt-2">{{ $student->user->first_name . ' ' . $student->user->last_name }}</h3>
                 <h6 class="mt-1">{{ $student->id }}</h6>
             </div>
         </div>
@@ -328,7 +327,7 @@
                 <ul wire:ignore class="nav nav-tabs nav-tabs-highlight">
 
                     <li class="nav-item">
-                        <a href="#financial-stats-overview" class="nav-link"
+                        <a href="#financial-stats-overview" class="nav-link  active show"
                             data-toggle="tab">{{ 'Financial Stats Overview' }}</a>
                     </li>
                     <li class="nav-item">
@@ -409,31 +408,35 @@
                                     type="text">
                                 <input name="student_id" hidden value="{{ $student->id }}" type="text">
                                 <div class="text-left">
-                                    @if ($allInvoicesBalance >= 100 || $allInvoicesBalance == 0)
-                                        <button wire:click.debounce.5000ms="refreshTable('StudentInvoicesTable')"
-                                            id="ajax-btn" type="submit" class="btn btn-primary">invoice student<i
-                                                class="icon-paperplane ml-2"></i></button>
+                                    @if ($hasOpenAcademicPeriod)
+                                        @if ($allInvoicesBalance >= 100 || $allInvoicesBalance == 0)
+                                            <button
+                                                wire:click.debounce.5000ms="invoiceStudentRefresh(['StudentInvoicesTable'])"
+                                                id="ajax-btn" type="submit" class="btn btn-primary">Invoice
+                                                student<i class="icon-paperplane ml-2"></i></button>
+                                        @else
+                                            <p>Student has a balance or is not eligible to be invoiced</p>
+                                        @endif
                                     @else
-                                        <p>Student has a balance or is not eligible to be invoiced</p>
+                                        <p>There is no open academic period for this student</p>
                                     @endif
+
                                 </div>
                             </form>
                         @elseif(!$isInvoiced && !$student->academic_info)
                             <div class="container">
                                 <p>{{ $student->user->first_name . ' ' . $student->user->last_name }}, has no
-                                    attached
-                                    academic information.</p>
+                                    attached academic information.</p>
                             </div>
                         @else
                             <div class="container">
                                 <p>{{ $student->user->first_name . ' ' . $student->user->last_name }}, has already
-                                    been
-                                    invoice for this academic period.</p>
+                                    been invoice for this academic period.</p>
                             </div>
                         @endif
                     </div>
 
-                    <div wire:ignore.self class="tab-pane fade show" id="financial-stats-overview">
+                    <div wire:ignore.self class="tab-pane fade active show" id="financial-stats-overview">
 
                         <div class="row">
                             <div class="col-12 col-md-6 col-lg-3">
@@ -489,7 +492,7 @@
 
                                 <div class="text-left">
                                     <button
-                                        wire:click.debounce.1000ms="refreshTablesAndStats([ 'StudentPaymentHistoryTable'
+                                        wire:click.debounce.1000ms="collectPaymentRefresh([ 'StudentPaymentHistoryTable'
                                         , 'StudentStatementsTable' ])"
                                         id="ajax-btn" type="submit" class="btn btn-primary">Submit <i
                                             class="icon-paperplane ml-2"></i></button>
@@ -1340,7 +1343,7 @@
             </div>
         </div>
     @else
-        <div wire:ignore class="card card-collapsed">
+        <div wire:ignore.self class="card card-collapsed">
             <div class="card-header header-elements-inline">
                 <h6 class="card-title">Courses available for registration</h6>
                 {!! Qs::getPanelOptions() !!}
@@ -1379,9 +1382,9 @@
                     @endif
                 </div>
             @else
-                <div class="container ">
+                <div class="card-body">
                     <h6> No courses available</h6>
-                    <p><i>tip - student either has no invoice or is not within the registration period.</i></p>
+                    <p><i>Student either has no invoice or is not within the registration period.</i></p>
                 </div>
             @endif
         </div>
