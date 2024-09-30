@@ -46,6 +46,22 @@ class ApplicantController extends Controller
     }
 
     /**
+     * Applications pending fee collection
+     */
+    public function applicationsPendingFeeCollection()
+    {
+
+        if (Qs::userIsTeamSAT() || Qs::userIsSuperAdmin()) {
+            $applications = $this->applicantRepo->getAll();
+            $paymentMethods = $this->studentRepo->getPaymentMethods();
+            // Application step 1
+            return view('pages.applications.collect_application_fee', compact('applications', 'paymentMethods'));
+        }
+
+        return redirect(route('home'));
+    }
+
+    /**
      * Collect application fee
      */
     public function collectFee(ApplicationPayment $request)

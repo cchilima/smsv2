@@ -36,11 +36,9 @@ class Qs
 
     public static function getPanelOptions()
     {
-        return '    <div class="header-elements">
+        return '<div class="header-elements">
                     <div class="list-icons">
-                        <a class="list-icons-item" data-action="collapse" aria-expanded="false"></a>
-                        <a class="list-icons-item reloadButton" data-action="reload"></a>
-                        <a class="list-icons-item" data-action="remove"></a>
+                        <a class="btn" data-action="collapse" aria-expanded="false"></a>
                     </div>
                 </div>';
     }

@@ -208,6 +208,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/applications/{status}/{id}', [ApplicantController::class, 'ApplicationsStatus'])->name('status.applications_reports');
 
     Route::get('/applications', ApplicationsIndex::class)->name('application.index');
+    Route::get('/applications-pending-fee-collection', [ApplicantController::class, 'applicationsPendingFeeCollection'])->name('application.pending_collection');
     Route::get('/applications/summary', [ApplicantController::class, 'ApplicationsSummary'])->name('application.summary_reports');
 
     Route::resource('courses', CourseController::class);
