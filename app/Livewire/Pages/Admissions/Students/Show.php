@@ -82,20 +82,25 @@ class Show extends Component
 
         $this->data['enrolled_courses'] = $this->studentRegistrationRepo->curentEnrolledClasses($this->data['student']->id);
 
-        $this->paymentPercentage = $this->invoiceRepo->paymentPercentage($this->data['student']->id);
-        $this->paymentsTotal = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($this->data['student']->id);
-        $this->feesTotal = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($this->data['student']->id);
-        $this->paymentBalance = $this->invoiceRepo->getStudentPaymentBalance($this->data['student']->id);
+        $this->data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($this->data['student']->id);
+        $this->data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($this->data['student']->id);
+        $this->data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($this->data['student']->id);
+        $this->data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($this->data['student']->id);
 
         $this->data['allInvoicesBalance'] = $this->invoiceRepo->paymentPercentageAllInvoices($this->data['student']->id);
     }
 
     public function refreshFinancialStatsOverview()
     {
-        $this->paymentPercentage = $this->invoiceRepo->paymentPercentage($this->data['student']->id);
-        $this->paymentsTotal = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($this->data['student']->id);
-        $this->feesTotal = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($this->data['student']->id);
-        $this->paymentBalance = $this->invoiceRepo->getStudentPaymentBalance($this->data['student']->id);
+        $this->data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($this->data['student']->id);
+        $this->data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($this->data['student']->id);
+        $this->data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($this->data['student']->id);
+        $this->data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($this->data['student']->id);
+    }
+
+    public function refreshCoursesAvailableForRegistration()
+    {
+        $this->data['courses'] = $this->studentRegistrationRepo->getAll($this->data['student']->id);
     }
 
     public function refreshTablesAndStats(array $tableNames): void
@@ -146,14 +151,6 @@ class Show extends Component
     #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
-        return view('livewire.pages.admissions.students.show', array_merge(
-            $this->data,
-            [
-                'paymentPercentage' => $this->paymentPercentage,
-                'paymentsTotal' => $this->paymentsTotal,
-                'feesTotal' => $this->feesTotal,
-                'paymentBalance' => $this->paymentBalance
-            ]
-        ));
+        return view('livewire.pages.admissions.students.show', $this->data);
     }
 }
