@@ -176,7 +176,7 @@ class StudentRegistrationRepository
             ->where('academic_periods.ac_start_date', '<=', $currentDate)
             ->where('academic_periods.ac_end_date', '>=', $currentDate)
             ->orderBy('academic_periods.created_at', 'asc')
-            ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
+            ->select('academic_period_information.*', 'academic_periods.name', 'academic_periods.code', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
             ->first();
     }
 

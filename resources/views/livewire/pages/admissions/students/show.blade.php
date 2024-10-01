@@ -441,11 +441,11 @@
                         <div class="row">
                             <div class="col-12 col-md-6 col-lg-3">
                                 <span class="font-weight-semibold">Fees Total: </span>
-                                K{{ number_format($feesTotal, 2) }}
+                                K{{ number_format($totalFees, 2) }}
                             </div>
                             <div class="col-12 col-md-6 col-lg-3">
                                 <span class="font-weight-semibold">Payments Total: </span>
-                                K{{ number_format($paymentsTotal, 2) }}
+                                K{{ number_format($totalPayments, 2) }}
                             </div>
                             <div class="col-12 col-md-6 col-lg-3">
                                 <span class="font-weight-semibold">Payment Percentage: </span>
@@ -1370,15 +1370,13 @@
                         </tbody>
                     </table>
 
-                    @if ($isWithinRegistrationPeriod)
-                        @if (!$isRegistered)
-                            <form action="{{ route('enrollments.store') }}" method="post">
-                                @csrf
-                                <input name="student_number" type="hidden" value="{{ $student->id }}" />
-                                <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register
-                                </button>
-                            </form>
-                        @endif
+                    @if ($isWithinRegistrationPeriod && !$isRegistered && $registrationBalance <= 0)
+                        <form action="{{ route('enrollments.store') }}" method="post">
+                            @csrf
+                            <input name="student_number" type="hidden" value="{{ $student->id }}" />
+                            <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register
+                            </button>
+                        </form>
                     @endif
                 </div>
             @else
