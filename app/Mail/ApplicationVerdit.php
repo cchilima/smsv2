@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Helpers\Qs;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -33,7 +34,7 @@ class ApplicationVerdit extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'ZUT Application',
+            subject: Qs::getSystemName() . ' Application',
         );
     }
 

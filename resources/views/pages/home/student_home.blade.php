@@ -11,9 +11,8 @@
             <div class="col-12">
                 <div class="alert alert-warning" role="alert">
                     <i class="icon icon-alert mr-2"></i>
-                    You are not registered. Clear your balance of K{{ $registrationBalance }} to <a class="alert-link"
-                        href="{{ route('registration.index') }}" class="alert-link">register</a>
-
+                    You are not registered. Clear your balance of <strong>
+                        K{{ number_format($registrationBalance, 2) }}</strong> to register
                 </div>
             </div>
         @endif
@@ -22,8 +21,8 @@
             <div class="col-12">
                 <div class="alert alert-warning" role="alert">
                     <i class="icon icon-alert mr-2"></i>
-                    Results published. Clear your balance of K{{ $viewResultsBalance }} to <a class="alert-link"
-                        href="{{ route('student-exam_results') }}" class="alert-link">view results</a>
+                    Results published. Clear your balance of <strong>K{{ number_format($viewResultsBalance, 2) }}</strong>
+                    to view your results for {{ $academicPeriodInfo->name }}
                 </div>
             </div>
         @endif

@@ -7,7 +7,7 @@
 
     <div class="card overflow-scroll">
         <div class="card-header header-elements-inline">
-            {{--            {!! Qs::getPanelOptions() !!} --}}
+            {{-- {!! Qs::getPanelOptions() !!} --}}
         </div>
 
         <div class="card-body">

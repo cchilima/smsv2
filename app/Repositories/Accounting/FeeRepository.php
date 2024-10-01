@@ -11,9 +11,9 @@ class FeeRepository
         return Fee::create($data);
     }
 
-    public function getAll($order = 'name', $executeQuery = true)
+    public function getAll($executeQuery = true)
     {
-        $query = Fee::orderBy($order, 'asc');
+        $query = Fee::query();
 
         return $executeQuery ? $query->get() : $query;
     }

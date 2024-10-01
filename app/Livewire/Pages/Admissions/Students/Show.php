@@ -6,6 +6,7 @@ use App\Helpers\Qs;
 use App\Repositories\Academics\ClassAssessmentsRepo;
 use App\Repositories\Academics\StudentRegistrationRepository;
 use App\Repositories\Accounting\InvoiceRepository;
+use App\Repositories\Accounting\StudentFinancesRepository;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Enrollments\EnrollmentRepository;
 use App\Repositories\Users\UserPersonalInfoRepository;
@@ -25,11 +26,7 @@ class Show extends Component
         WithFileUploads;
 
     public $data;
-    public $paymentPercentage;
-    public $paymentsTotal;
-    public $feesTotal;
-    public $paymentBalance;
-    public $passportPhoto;
+    public $financialInfo;
 
     protected UserRepository $userRepo;
     protected StudentRepository $studentRepo;
@@ -38,6 +35,7 @@ class Show extends Component
     protected ClassAssessmentsRepo $classaAsessmentRepo;
     protected InvoiceRepository $invoiceRepo;
     protected UserPersonalInfoRepository $userPersonalInfoRepo;
+    protected StudentFinancesRepository $studentFinancesRepo;
 
     public function boot()
     {
@@ -48,6 +46,7 @@ class Show extends Component
         $this->classaAsessmentRepo = app(ClassAssessmentsRepo::class);
         $this->invoiceRepo = app(InvoiceRepository::class);
         $this->userPersonalInfoRepo = app(UserPersonalInfoRepository::class);
+        $this->studentFinancesRepo = app(StudentFinancesRepository::class);
     }
 
     public function mount($userId)
@@ -82,30 +81,54 @@ class Show extends Component
 
         $this->data['enrolled_courses'] = $this->studentRegistrationRepo->curentEnrolledClasses($this->data['student']->id);
 
-        $this->paymentPercentage = $this->invoiceRepo->paymentPercentage($this->data['student']->id);
-        $this->paymentsTotal = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($this->data['student']->id);
-        $this->feesTotal = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($this->data['student']->id);
-        $this->paymentBalance = $this->invoiceRepo->getStudentPaymentBalance($this->data['student']->id);
+        // $this->data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($this->data['student']->id);
+        // $this->data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($this->data['student']->id);
+        // $this->data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($this->data['student']->id);
+        // $this->data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($this->data['student']->id);
 
+        $this->financialInfo = $this->studentFinancesRepo->getStudentFinancialInfo($this->data['student']);
 
         $this->data['allInvoicesBalance'] = $this->invoiceRepo->paymentPercentageAllInvoices($this->data['student']->id);
 
+        $this->data['hasOpenAcademicPeriod'] = $this->invoiceRepo->openAcademicPeriod($this->data['student']) != null;
     }
 
-    public function refreshFinancialStatsOverview()
+    public function updateFinancialStats()
     {
-        $this->paymentPercentage = $this->invoiceRepo->paymentPercentage($this->data['student']->id);
-        $this->paymentsTotal = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($this->data['student']->id);
-        $this->feesTotal = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($this->data['student']->id);
-        $this->paymentBalance = $this->invoiceRepo->getStudentPaymentBalance($this->data['student']->id);
+        $this->financialInfo = $this->studentFinancesRepo->getStudentFinancialInfo($this->data['student']);
     }
 
-    public function refreshTablesAndStats(array $tableNames): void
+    public function updateCoursesAvailableForRegistration()
+    {
+        $this->data['courses'] = $this->studentRegistrationRepo->getAll($this->data['student']->id);
+    }
+
+    /**
+     * Dynamically refresh specified Livewire component sections when a student is invoiced
+     * 
+     * @param array $tableNames Names of any PowerGrid datatables to refresh on the page
+     */
+    public function invoiceStudentRefresh(array $tableNames): void
     {
         $this->refreshTables($tableNames);
-        $this->refreshFinancialStatsOverview();
+        $this->updateFinancialStats();
+        $this->updateCoursesAvailableForRegistration();
     }
 
+    /**
+     * Dynamically refresh specified Livewire component sections when a payment is collected
+     * 
+     * @param array $tableNames Names of any PowerGrid datatables to refresh on the page
+     */
+    public function collectPaymentRefresh(array $tableNames): void
+    {
+        $this->refreshTables($tableNames);
+        $this->updateFinancialStats();
+    }
+
+    /**
+     * Handles uploads for passport photos
+     */
     public function uploadPassportPhoto()
     {
         try {
@@ -148,14 +171,6 @@ class Show extends Component
     #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
-        return view('livewire.pages.admissions.students.show', array_merge(
-            $this->data,
-            [
-                'paymentPercentage' => $this->paymentPercentage,
-                'paymentsTotal' => $this->paymentsTotal,
-                'feesTotal' => $this->feesTotal,
-                'paymentBalance' => $this->paymentBalance
-            ]
-        ));
+        return view('livewire.pages.admissions.students.show', array_merge($this->data, $this->financialInfo));
     }
 }

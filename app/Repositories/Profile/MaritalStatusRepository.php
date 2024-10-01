@@ -11,9 +11,9 @@ class MaritalStatusRepository
         return MaritalStatus::create($data);
     }
 
-    public function getAll($order = 'status', $executeQuery = true)
+    public function getAll($executeQuery = true)
     {
-        $query = MaritalStatus::orderBy($order, 'asc');
+        $query = MaritalStatus::query();
 
         return $executeQuery ? $query->get() : $query;
     }

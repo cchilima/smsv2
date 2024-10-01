@@ -53,12 +53,10 @@ final class Applications extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('applicant_code')
-            ->add('national_id', function ($row) {
-                return $row->nrc ? $row->nrc : ($row->passport ? $row->passport : '-');
-            })
+            ->add('nrc')
+            ->add('passport')
             ->add('first_name')
             ->add('last_name')
-            ->add('gender')
             ->add('date_of_birth')
             ->add('fee_paid', function (Applicant $row) {
                 return $row->payment->sum('amount');
@@ -81,9 +79,13 @@ final class Applications extends PowerGridComponent
                 ->searchable()
                 ->sortable(),
 
-            Column::make('Gender', 'gender')
-                ->sortable()
-                ->searchable(),
+            Column::make('NRC', 'nrc')
+                ->searchable()
+                ->sortable(),
+
+            Column::make('Passport', 'passport')
+                ->searchable()
+                ->sortable(),
 
             Column::make('Status', 'status')
                 ->sortable()

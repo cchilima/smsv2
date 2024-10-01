@@ -4,7 +4,7 @@ namespace App\Http\Requests\Applications;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class Attachment extends FormRequest
+class ApplicationPayment extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,10 @@ class Attachment extends FormRequest
     public function rules(): array
     {
         return [
-            'results' => 'nullable|file|mimes:pdf|max:5120'
+            'applicant' => 'required|string|max:255|exists:applicants,applicant_code',
+            'amount' => 'required|numeric|min:1',
+            'reference' => 'nullable|string|unique:applicant_payments,reference',
+            'payment_method_id' => 'required|exists:payment_methods,id'
         ];
     }
 }

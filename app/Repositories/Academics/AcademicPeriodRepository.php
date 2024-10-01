@@ -170,7 +170,7 @@ class AcademicPeriodRepository
     }
 
     /**
-     * Validates if an academic period overlaps with any existing academic periods. Used in Academic Period Information creation request.
+     * Validates if an academic period overlaps with any existing academic periods. Used in Academic Period Information creation requests.
      *
      * @param int $academicPeriodId The ID of the academic period being validated
      * @param Closure $fail The validation failure callback. Used to return a validation error message.
@@ -185,7 +185,9 @@ class AcademicPeriodRepository
 
         // Check if any existing academic periods with dates that overlap academic period being validated
         $existingOverlappingAcademicPeriod = AcademicPeriod::where('id', '!=', $academicPeriodId)
+            // Start date is on or before the start date of the academic period being validated
             ->whereDate('ac_start_date', '<=', $academicPeriod->ac_start_date)
+            // End date is on or after the end date of the academic period being validated
             ->whereDate('ac_end_date', '>=', $academicPeriod->ac_start_date)
             ->where('period_type_id', $academicPeriod->period_type_id)
             ->whereHas('academic_period_information', function ($query) use ($studyModeId, $academicPeriodIntakeId) {

@@ -39,14 +39,15 @@
         <div class="col-sm-6 col-xl-3">
             <div class="card card-body bg-primary has-bg-image">
                 <div class="media">
+                    <div class="media-body">
+                        <h3 class="mb-0">{{ 00 }}</h3>
+                        <span class="text-uppercase font-size-xs">Active students</span>
+                    </div>
+
                     <div class="mr-3 align-self-center">
                         <i class="icon-users icon-3x opacity-75"></i>
                     </div>
 
-                    <div class="media-body text-right">
-                        <h3 class="mb-0">{{ 00 }}</h3>
-                        <span class="text-uppercase font-size-xs">Active students</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -54,14 +55,15 @@
         <div class="col-sm-6 col-xl-3">
             <div class="card card-body bg-primary has-bg-image">
                 <div class="media">
+                    <div class="media-body">
+                        <h3 class="mb-0">{{ $registered }}</h3>
+                        <span class="text-uppercase font-size-xs">Registered Students</span>
+                    </div>
+
                     <div class="mr-3 align-self-center">
                         <i class="icon-user-check icon-3x opacity-75"></i>
                     </div>
 
-                    <div class="media-body text-right">
-                        <h3 class="mb-0">{{ $registered }}</h3>
-                        <span class="text-uppercase font-size-xs">Registered Students</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -99,14 +101,15 @@
         <div class="col-sm-6 col-xl-3">
             <div class="card card-body bg-primary has-bg-image">
                 <div class="media">
+                    <div class="media-body">
+                        <h3 class="mb-0">{{ $admin }}</h3>
+                        <span class="text-uppercase font-size-xs">Administrators</span>
+                    </div>
+
                     <div class="mr-3 align-self-center">
                         <i class="icon-user-lock icon-3x opacity-75"></i>
                     </div>
 
-                    <div class="media-body text-right">
-                        <h3 class="mb-0">{{ $admin }}</h3>
-                        <span class="text-uppercase font-size-xs">Administrators</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -114,14 +117,15 @@
         <div class="col-sm-6 col-xl-3">
             <div class="card card-body bg-primary has-bg-image">
                 <div class="media">
+                    <div class="media-body">
+                        <h3 class="mb-0">{{ $users }}</h3>
+                        <span class="text-uppercase font-size-xs">Users</span>
+                    </div>
+
                     <div class="mr-3 align-self-center">
                         <i class="icon-users icon-3x opacity-75"></i>
                     </div>
 
-                    <div class="media-body text-right">
-                        <h3 class="mb-0">{{ $users }}</h3>
-                        <span class="text-uppercase font-size-xs">Users</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -129,18 +133,20 @@
 
     <div class="row">
         <div class="col-sm-6 col-xl-3">
-            <div class="card card-body bg-primary has-bg-image">
-                <div class="media">
-                    <div class="media-body">
-                        <h3 class="mb-0">{{ $students }}</h3>
-                        <span class="text-uppercase font-size-xs font-weight-bold">Students</span>
-                    </div>
+            <a href="{{ route('students.list') }}">
+                <div class="card card-body bg-primary has-bg-image">
+                    <div class="media">
+                        <div class="media-body">
+                            <h3 class="mb-0">{{ $students }}</h3>
+                            <span class="text-uppercase font-size-xs font-weight-bold">Students</span>
+                        </div>
 
-                    <div class="ml-3 align-self-center">
-                        <i class="icon-users icon-3x opacity-75"></i>
+                        <div class="ml-3 align-self-center">
+                            <i class="icon-users icon-3x opacity-75"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-sm-6 col-xl-3">

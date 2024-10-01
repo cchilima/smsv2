@@ -10,13 +10,12 @@
     @endif
 
     <div class="row">
-        @if ($balancePercentage < 100)
+        @if ($balancePercentage < 100 && $registrationBalance > 0)
             <div class="col-12">
                 <div class="alert alert-warning" role="alert">
                     <i class="icon icon-alert mr-2"></i>
-                    You are not registered. Clear your pending balance of K{{ $paymentsBalance }} to be eligible for the
-                    next academic period
-
+                    Results published. Clear your balance of <strong>K{{ number_format($viewResultsBalance, 2) }}</strong>
+                    to view your results for {{ $academicPeriodInfo->name }}
                 </div>
             </div>
         @endif
@@ -53,9 +52,24 @@
                         <td><b>Registration Threshold : </b></td>
                         <td>{{ $academicInfo ? number_format($academicInfo->registration_threshold, 0) : '0' }} %</td>
                     </tr>
+                    <tr>
+                        <td><b>Registration Start Date : </b></td>
+                        <td>{{ $academicInfo ? date('d M Y', strtotime($academicInfo->registration_date)) : 'Not Available' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Late Registration Start Date : </b></td>
+                        <td>{{ $academicInfo ? date('d M Y', strtotime($academicInfo->late_registration_date)) : 'Not Available' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Late Registration End Date : </b></td>
+                        <td>{{ $academicInfo ? date('d M Y', strtotime($academicInfo->late_registration_end_date)) : 'Not Available' }}
+                        </td>
+                    </tr>
 
                     <tr>
-                        <td><b>Examslip Threshold : </b></td>
+                        <td><b>Download Exam Slip Threshold : </b></td>
                         <td>{{ $academicInfo ? number_format($academicInfo->exam_slip_threshold, 0) : '0' }} %</td>
                     </tr>
 
@@ -115,21 +129,19 @@
                         </tbody>
                     </table>
 
-                    @if ($isWithinRegistrationPeriod)
-                        @if (!$isRegistered)
-                            <form action="{{ route('enrollments.store') }}" method="post">
-                                @csrf
-                                <input name="student_number" type="hidden" value="{{ auth()->user()->student->id }}" />
-                                <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register
-                                </button>
-                            </form>
-                        @endif
+                    @if ($isWithinRegistrationPeriod && !$isRegistered && $registrationBalance <= 0)
+                        <form action="{{ route('enrollments.store') }}" method="post">
+                            @csrf
+                            <input name="student_number" type="hidden" value="{{ $student->id }}" />
+                            <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register
+                            </button>
+                        </form>
                     @endif
                 </div>
             @else
-                <div class="container ">
+                <div class="card-body">
                     <h6> No courses available</h6>
-                    <p><i>tip - student either has no invoice or is not within the registration period.</i></p>
+                    <p><i>Student either has no invoice or is not within the registration period.</i></p>
                 </div>
             @endif
         </div>

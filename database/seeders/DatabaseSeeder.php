@@ -363,25 +363,32 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-        // Seed marital statuses
+        // Seed next of kin relationships
 
-        $relationship = Relationship::create([
-            'relationship' => 'Parent',
+        Relationship::insert([
+            ['relationship' => 'Parent'],
+            ['relationship' => 'Spouse'],
+            ['relationship' => 'Child'],
+            ['relationship' => 'Uncle'],
+            ['relationship' => 'Aunt'],
+            ['relationship' => 'Nephew'],
+            ['relationship' => 'Niece'],
+            ['relationship' => 'Grandparent'],
+            ['relationship' => 'Sibling'],
+            ['relationship' => 'Cousin'],
+            ['relationship' => 'Partner'],
+            ['relationship' => 'Other'],
         ]);
-
-
 
         // Seed user
 
         $user = User::create([
-
             'first_name' => 'System',
             'last_name' => 'Generated',
             'email' => 'notice@zut.edu.zm',
             'user_type_id' => 1,
 
             'password' => bcrypt('secret'),
-
         ]);
 
 

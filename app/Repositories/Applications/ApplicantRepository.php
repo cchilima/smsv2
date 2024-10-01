@@ -37,13 +37,19 @@ class ApplicantRepository
     {
         $amount = $data->amount;
         $method = $data->payment_method_id;
+        $reference = $data->reference;
 
         try {
 
             DB::beginTransaction();
-            
+
             $applicant = Applicant::where('applicant_code', $data->applicant)->first();
-            $updated = ApplicantPayment::create(['applicant_id' => $applicant->id, 'amount' => $amount, 'payment_method_id' => $method]);
+            $updated = ApplicantPayment::create([
+                'applicant_id' => $applicant->id,
+                'amount' => $amount,
+                'reference' => $reference,
+                'payment_method_id' => $method
+            ]);
 
             DB::commit();
 
@@ -54,7 +60,6 @@ class ApplicantRepository
             }
 
             return true;
-
         } catch (\Throwable $th) {
 
             DB::rollback();
@@ -65,11 +70,11 @@ class ApplicantRepository
     private function fullApplicationReceived($application_id)
     {
 
-       try {
-        
+        try {
+
             $application = $this->getApplication($application_id);
 
-            if($application->payment->sum('amount') >= 150){
+            if ($application->payment->sum('amount') >= 150) {
 
                 // queue the email for applicant
                 Mail::to($application->email)->queue(new ApplicationReceived($application, 'applicant'));
@@ -78,11 +83,10 @@ class ApplicantRepository
                 Mail::to('stembo@zut.edu.zm')->bcc(['stembo@zut.edu.zm'])->queue(new ApplicationReceived($application, 'admissions'));
 
                 return true;
-          }
-
-       } catch (\Throwable $th) {
+            }
+        } catch (\Throwable $th) {
             return false;
-       }        
+        }
     }
 
     public function getAll()
@@ -171,7 +175,7 @@ class ApplicantRepository
         // Check if all mandatory fields are filled
         $fieldsToCheck = Arr::except($applicationArr, ['status', 'middle_name', 'period_type_id', 'application_date', 'nrc', 'passport', 'telephone']);
 
-        $allFieldsFilled = array_filter($fieldsToCheck, fn($value) => $value === null);
+        $unfilledManadatoryFields = array_filter($fieldsToCheck, fn($value) => $value === null);
 
         // Check if application has an attachments
         $hasAttachments = $application->attachment()->count() > 0;
@@ -183,7 +187,7 @@ class ApplicantRepository
         $feePaid = $application->payment->sum('amount');
 
         // Update status to pending if all fields except status are filled
-        if (empty($allFieldsFilled) && $hasAttachments && $feePaid < 150 && $grades >=5) {
+        if (empty($unfilledManadatoryFields) && $hasAttachments && $feePaid < 150 && $grades >= 5) {
             $application->status = 'pending';
             $application->save();
 
@@ -356,18 +360,18 @@ class ApplicantRepository
     {
         $application = $this->getApplication($application_id);
         $grades = $application->grades;
-    
+
         // Initialize counters and flags
         $credit_count = 0;
         $has_english = false;
         $has_math = false;
-    
+
         // Iterate through the grades
         foreach ($grades as $grade) {
             // Check if the grade is a credit or better
             if ($grade->grade <= 6) {
                 $credit_count++;
-    
+
                 // Check for English Language and Mathematics
                 if (strtolower($grade->subject) == 'english language') {
                     $has_english = true;
@@ -377,7 +381,7 @@ class ApplicantRepository
                 }
             }
         }
-    
+
         // Check if the criteria are met
         if ($credit_count >= 5 && $has_english && $has_math) {
             return true;
@@ -385,5 +389,4 @@ class ApplicantRepository
             return false;
         }
     }
-    
 }

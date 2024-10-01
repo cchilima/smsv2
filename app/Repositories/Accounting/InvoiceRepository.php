@@ -8,6 +8,7 @@ use App\Repositories\Admissions\{StudentRepository};
 use App\Models\Accounting\{Invoice, InvoiceDetail, Receipt, Fee};
 use App\Models\Enrollments\Enrollment;
 use App\Models\Admissions\Student;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -357,7 +358,7 @@ class InvoiceRepository
 
         if ($latestClosedAcademicPeriod->get()->count() > 1) {
             return $latestClosedAcademicPeriod->orderBy('academic_periods.created_at', 'asc')
-                ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
+                ->select('academic_period_information.*', 'academic_periods.name', 'academic_periods.code', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
                 ->skip(1)
                 ->take(1)
                 ->first();
@@ -649,7 +650,6 @@ class InvoiceRepository
         $student = $this->getStudent($student_id);
 
         if ($getPrevious) {
-
             // Get the student's current academic period
             $academicPeriod = $this->latestPreviousAcademicPeriod($student);
         } else {
@@ -728,11 +728,63 @@ class InvoiceRepository
      *
      * @param  int  $studentId The ID of the student.
      * @return \Illuminate\Database\Eloquent\Collection
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
      */
     public function getInvoicesByStudent($studentId)
     {
         return Invoice::with(['receipts', 'creditNotes'])
             ->where('student_id', $studentId)
             ->get();
+    }
+
+    /**
+     * Check if a student has been invoiced for the given academic period.
+     *
+     * @param  Student  $student The student model instance
+     * @param  int  $academicPeriodId The ID of the academic period
+     * @return bool
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function checkStudentAcademicPeriodInvoiceStatus($student, $academicPeriodId)
+    {
+        return $student->invoices()
+            ->where('academic_period_id', $academicPeriodId)
+            ->exists();
+    }
+
+    /**
+     * Get a student's invoices for a given academic period.
+     * 
+     * @param  Student  $student The student model instance
+     * @param  int  $academicPeriodId The ID of the academic period
+     * @return Illuminate\Database\Eloquent\Collection
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function getStudentAcademicPeriodInvoices($student, $academicPeriodId): Collection
+    {
+        return $student->invoices()
+            ->where('academic_period_id', $academicPeriodId)
+            ->get();
+    }
+
+    /**
+     * Get the sum of all invoices for a given student for an academic period.
+     * 
+     * @param  Student  $student The student model instance
+     * @param  int  $academicPeriodId The ID of the academic period
+     * @return int
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function getStudentAcademicPeriodInvoicesTotal($student, $academicPeriodId): int
+    {
+        $invoices = $this->getStudentAcademicPeriodInvoices($student, $academicPeriodId);
+
+        $invoicesTotal = 0;
+
+        foreach ($invoices as $invoice) {
+            $invoicesTotal += $invoice->details->sum('amount');
+        }
+
+        return $invoicesTotal;
     }
 }

@@ -2,23 +2,27 @@
     <div class="container p-10">
 
         <div class="form-wizard mt-10 mb-5 items-center">
-            <a class="{{ $currentSection === 'personal_info' ? 'active' : '' }}">Personal Info </a>
+            <a wire:click="setSection('personal_info')"
+                class="{{ $currentSection === 'personal_info' ? 'active' : '' }}">Personal Info </a>
 
             <span><i class="material-icons small grey-text">arrow_forward</i></span>
 
-            <a class="{{ $currentSection === 'academic_info' ? 'active' : '' }}">Program Applied for</a>
+            <a wire:click="setSection('academic_info')"
+                class="{{ $currentSection === 'academic_info' ? 'active' : '' }}">Program Applied for</a>
 
             <span><i class="material-icons small grey-text">arrow_forward</i></span>
 
-            <a class="{{ $currentSection === 'next_of_kin' ? 'active' : '' }}">Next of Kin </a>
+            <a wire:click="setSection('next_of_kin')" class="{{ $currentSection === 'next_of_kin' ? 'active' : '' }}">Next
+                of Kin </a>
 
             <span><i class="material-icons small grey-text ">arrow_forward</i></span>
 
-            <a class="{{ $currentSection === 'results' ? 'active' : '' }}">Results</a>
+            <a wire:click="setSection('results')"
+                class="{{ $currentSection === 'results' ? 'active' : '' }}">Results</a>
         </div>
 
         <div class="mb-5">
-            <h6>Application</h6>
+            <h6>Fill out application form</h6>
         </div>
 
         <div class="row">
@@ -84,26 +88,27 @@
                             </div>
 
                             <div class="row">
-                                <div class="input-field col m6 s12">
-                                    <select wire:model="gender" class="browser-default custom-select">
-                                        <option selected>Select Gender</option>
+                                <div class="col m6 s12">
+                                    <label class="active">Gender</label>
+                                    <select wire:model="gender" class="browser-default custom-select input-field">
+                                        <option selected>Select gender</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
                                     </select>
-                                    <label class="active"></label>
                                     @error('gender')
                                         <span class="red-text darken-4 error">{{ $message }}</span>
                                     @enderror
                                 </div>
 
-                                <div class="input-field col m6 s12">
-                                    <select wire:model="marital_status_id" class="browser-default custom-select">
-                                        <option selected>Marital Status</option>
+                                <div class="col m6 s12">
+                                    <label class="active">Marital Status</label>
+                                    <select wire:model="marital_status_id"
+                                        class="browser-default custom-select input-field ">
+                                        <option selected>Select marital status</option>
                                         @foreach ($marital_statuses as $status)
                                             <option value="{{ $status->id }}">{{ $status->status }} </option>
                                         @endforeach
                                     </select>
-                                    <label class="active"></label>
                                     @error('marital_status_id')
                                         <span class="red-text darken-4 error">{{ $message }}</span>
                                     @enderror
@@ -127,7 +132,7 @@
                                 <div class="col m12 s12">
                                     <label class="active">Country</label>
                                     <select wire:model.live="country_id" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select country</option>
                                         @foreach ($countries as $country)
                                             <option value="{{ $country->id }}">{{ $country->country }} </option>
                                         @endforeach
@@ -140,7 +145,7 @@
                                 <div class="col m6 s12">
                                     <label class="active">Province</label>
                                     <select wire:model.live="province_id" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select province</option>
                                         @foreach ($provinces as $province)
                                             <option value="{{ $province->id }}">{{ $province->name }} </option>
                                         @endforeach
@@ -150,7 +155,7 @@
                                 <div class="col m6 s12">
                                     <label class="active">Town</label>
                                     <select wire:model.live="town_id" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select town</option>
                                         @foreach ($towns as $town)
                                             <option value="{{ $town->id }}">{{ $town->name }} </option>
                                         @endforeach
@@ -166,12 +171,15 @@
                             <div class="row">
 
                                 <div class="col m12 s12">
-                                    <label class="active">Year applying for <label>
-                                    <select wire:model.live="year_applying_for" class="browser-default custom-select ">
-                                        <option ></option>
+                                    <label class="active">Year applying for </label>
+
+                                    <select wire:model.live="year_applying_for"
+                                        class="browser-default custom-select input-field">
+                                        <option selected>Select year</option>
                                         @foreach ($years as $year)
-                                            <option value="{{ $year }}"  @if ($year == $year_applying_for) selected @endif>
-                                            {{ $year }} 
+                                            <option value="{{ $year }}"
+                                                @if ($year == $year_applying_for) selected @endif>
+                                                {{ $year }}
                                             </option>
                                         @endforeach
 
@@ -180,8 +188,9 @@
 
                                 <div class="col m6 s12">
                                     <label class="active">Program</label>
-                                    <select wire:model.live="program_id" class="browser-default custom-select ">
-                                        <option></option>
+                                    <select wire:model.live="program_id"
+                                        class="browser-default custom-select input-field">
+                                        <option selected>Select program</option>
                                         @foreach ($programs as $program)
                                             <option value="{{ $program->id }}">{{ $program->name }} </option>
                                         @endforeach
@@ -190,8 +199,9 @@
 
                                 <div class="col m6 s12">
                                     <label class="active">Study mode</label>
-                                    <select wire:model.live="study_mode_id" class="browser-default custom-select ">
-                                        <option></option>
+                                    <select wire:model.live="study_mode_id"
+                                        class="browser-default custom-select input-field">
+                                        <option selected>Select study mode</option>
                                         @foreach ($studyModes as $mode)
                                             <option value="{{ $mode->id }}">{{ $mode->name }} </option>
                                         @endforeach
@@ -205,8 +215,8 @@
                                 <div class="col m6 s12">
                                     <label class="active">Intake</label>
                                     <select wire:model.live="academic_period_intake_id"
-                                        class="browser-default custom-select ">
-                                        <option></option>
+                                        class="browser-default custom-select input-field">
+                                        <option selected>Select intake</option>
                                         @foreach ($periodIntakes as $intake)
                                             <option value="{{ $intake->id }}">{{ $intake->name }} </option>
                                         @endforeach
@@ -214,16 +224,25 @@
                                 </div>
 
                                 <div class="col m6 s12">
-                                    <label class="active">Upload merged results : accepted Files: PDF (Max 5MB)</label>
-                                    <div class="form-group">
-                                        <input wire:model="results" accept="pdf" type="file" name="attachment">
+                                    <label>Upload Results (PDF, 5Mb max)</label>
+                                    <div class="file-field input-field">
+                                        <div class="btn btn-small grey">
+                                            <span>Select File</span>
+                                            <input wire:model="results" type="file" accept="pdf" required>
+                                        </div>
+                                        <div class="file-path-wrapper">
+                                            <input class="file-path validate" type="text">
+                                        </div>
+                                        @error('results')
+                                            <span class="red-text">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
 
                             <div class="p-2 ">
                                 <button wire:click="uploadDocument()" class="btn btn-small black"><i
-                                        class="material-icons right">arrow_upward</i>save attachment</button>
+                                        class="material-icons right">arrow_upward</i>Save Attachment</button>
                             </div>
 
                             @if ($applicant->attachment)
@@ -266,7 +285,7 @@
                                     <label class="active">Relationship</label>
                                     <select wire:model.live="kin_relationship_id"
                                         class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select relationship</option>
                                         @foreach ($relationships as $relationship)
                                             <option value="{{ $relationship->id }}">{{ $relationship->relationship }}
                                             </option>
@@ -321,7 +340,7 @@
                                 <div class="col m6 s12">
                                     <label class="active">Country</label>
                                     <select wire:model.live="kin_country_id" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select country</option>
                                         @foreach ($kin_countries as $country)
                                             <option value="{{ $country->id }}">{{ $country->country }} </option>
                                         @endforeach
@@ -335,7 +354,7 @@
                                 <div class="col m6 s12">
                                     <label class="active">Province</label>
                                     <select wire:model.live="kin_province_id" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select province</option>
                                         @foreach ($kin_provinces as $province)
                                             <option value="{{ $province->id }}">{{ $province->name }} </option>
                                         @endforeach
@@ -345,7 +364,7 @@
                                 <div class="col m6 s12">
                                     <label class="active">Town</label>
                                     <select wire:model.live="kin_town_id" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select town</option>
                                         @foreach ($kin_towns as $town)
                                             <option value="{{ $town->id }}">{{ $town->name }} </option>
                                         @endforeach
@@ -360,9 +379,9 @@
                         <div id="results">
                             <div class="row">
                                 <div class="col m12 s12">
-                                    <label class="active">Secondary school</label>
+                                    <label class="active">Secondary School</label>
                                     <select wire:model.live="secondary_school" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select secondary school</option>
                                         @foreach ($schools as $school)
                                             <option value="{{ $school['name'] }}">{{ $school['name'] }} </option>
                                         @endforeach
@@ -377,7 +396,7 @@
                                 <div class="input-field col m6 s12">
                                     <label class="active">Subject</label>
                                     <select wire:model.live="subject" class="browser-default custom-select ">
-                                        <option></option>
+                                        <option selected>Select subject</option>
                                         @foreach ($subjects as $subject)
                                             <option value="{{ $subject['name'] }}">{{ $subject['name'] }} </option>
                                         @endforeach
@@ -398,7 +417,7 @@
 
                                 <div class="p-2 ">
                                     <button wire:click="saveGrade()" class="btn btn-small black"><i
-                                            class="material-icons right">arrow_upward</i>save</button>
+                                            class="material-icons right">arrow_upward</i>Save Grade</button>
                                 </div>
 
                             </div>
@@ -441,24 +460,21 @@
             </div>
         </div>
 
-
         <div class="row mt-3">
             <div class="col s12 center-align">
                 <!-- Previous Button -->
-                <a class="btn-floating btn-large waves-effect waves-light white" wire:click="previousSection"
+                <a class="btn-floating waves-effect waves-light white" wire:click="previousSection"
                     {{ $currentSection === 'personal_info' ? 'disabled' : '' }}>
                     <i class="material-icons indigo-text">arrow_back</i>
                 </a>
 
                 <!-- Next Button -->
-                <a class="btn-floating btn-large waves-effect waves-light white" wire:click="nextSection"
+                <a class="btn-floating waves-effect waves-light white" wire:click="nextSection"
                     {{ $currentSection === 'results' ? 'disabled' : '' }}>
                     <i class="material-icons indigo-text">arrow_forward</i>
                 </a>
             </div>
         </div>
-
-
 
     </div>
 </div>

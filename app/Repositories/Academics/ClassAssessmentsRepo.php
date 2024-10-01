@@ -1404,6 +1404,7 @@ class ClassAssessmentsRepo
      * @param int $studentId The ID of the student
      * @param int $academicPeriodId The ID of the academic period
      * @return bool True if the results have been published, false otherwise
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
      */
     public function getStudentAcademicPeriodResultsPublicationStatus($studentId, $academicPeriodId)
     {
@@ -1411,7 +1412,7 @@ class ClassAssessmentsRepo
             ->where('academic_period_id', $academicPeriodId)
             ->pluck('publication_status');
 
-        // If no grades are found, return 0
+        // If no grades are found, return false
         if ($studentAcademicPeriodGrades->isEmpty()) {
             return false;
         }
