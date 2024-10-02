@@ -1509,11 +1509,11 @@ class ClassAssessmentsRepo
                         'academic_period_name' => $grade->academicPeriods->name,
                         'academic_period_code' => $grade->academicPeriods->code,
                         'academic_period_id' => $grade->academicPeriods->id,
+                        'academic_period_view_results_threshold' => (float) $grade->academicPeriods->academic_period_information->view_results_threshold,
                         'academic_period_start_date' => $grade->academicPeriods->ac_start_date,
                         'academic_period_end_date' => $grade->academicPeriods->ac_end_date,
                         'comments' => $this->comments($student, $grade->academicPeriods->id, 1),
                     ];
-                    // dd($this->comments($student, $grade->academicPeriods->id, 1));
                 }
 
                 $organizedResults[$academicPeriodId]['grades'][] = $course;

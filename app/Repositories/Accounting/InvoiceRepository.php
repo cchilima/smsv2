@@ -448,11 +448,11 @@ class InvoiceRepository
         return $accumulative_total;
     }
 
-    public function studentPaymentsAgainstInvoice($student, $academic_period_id)
+    public function studentPaymentsAgainstInvoice($student, $academicPeriodId)
     {
         $total = 0;
 
-        $invoices = $student->invoices()->where('academic_period_id', $academic_period_id)->get();
+        $invoices = $student->invoices()->where('academic_period_id', $academicPeriodId)->get();
 
         foreach ($invoices as $invoice) {
             $total += $invoice->statements->sum('amount');
@@ -515,36 +515,25 @@ class InvoiceRepository
         return $total == 0 ? 0 : (($cumulativeAmount / $total) * 100);
     }
 
-    public function paymentPercentage($student_id, $getPrevious = null)
+    public function getStudentAcademicPeriodPaymentPercentage($studentId, $academicPeriodId)
     {
         // Get the student
-        $student = $this->getStudent($student_id);
+        $student = $this->getStudent($studentId);
 
-        if ($getPrevious) {
-
-            // Get the student's current academic period
-            $academicPeriod = $this->latestPreviousAcademicPeriod($student);
-        } else {
-            // Get the student's current academic period
-            $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
-        }
-
-        if (!$academicPeriod) {
-            return 0;
-        }
+        if (!$academicPeriodId) return 0;
 
         // Get the student's cumulative academic period fees
-        $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
+        $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriodId);
 
         // Get current academic period fees and filter one-time fees if needed
         $acFees = $this->getFilteredStudentAcademicPeriodFees(
             $student,
-            $academicPeriod->academic_period_id,
+            $academicPeriodId,
             $acPastFeesTotal > 0
         );
 
         // Get custom invoiced fee that arent attached to academic period fees
-        $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriod->academic_period_id);
+        $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriodId);
 
         // Calculate total fees for the current academic period
         $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount') + $customFeeTotal);
@@ -555,8 +544,6 @@ class InvoiceRepository
         // Calculate and return the payment percentage
         return $this->calculatePercentage($totalPayments, $acCurrentFeesTotal);
     }
-
-
 
     private function customInvoicedFeeTotal($student, $ac_period_id)
     {
@@ -587,8 +574,6 @@ class InvoiceRepository
         return $totalFee;
     }
 
-
-
     public function getFees($student)
     {
 
@@ -604,35 +589,25 @@ class InvoiceRepository
         return $fees;
     }
 
-
-
-    public function getStudentPaymentBalance($student_id, $getPrevious = null)
+    public function getStudentAcademicPeriodPaymentBalance($student_id, $academicPeriodId)
     {
+        if ($academicPeriodId == null) return 0;
+
         // Get the student
         $student = $this->getStudent($student_id);
 
-        if ($getPrevious) {
-            // Get the student's current academic period
-            $academicPeriod = $this->latestPreviousAcademicPeriod($student);
-        } else {
-            // Get the student's current academic period
-            $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
-        }
-
-        if ($academicPeriod == null) return 0;
-
         // Get the student's cumulative academic period fees
-        $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
+        $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriodId);
 
         // Get current academic period fees and filter one-time fees if needed
         $acFees = $this->getFilteredStudentAcademicPeriodFees(
             $student,
-            $academicPeriod->academic_period_id,
+            $academicPeriodId,
             $acPastFeesTotal > 0
         );
 
         // Get custom invoiced fee that arent attached to academic period fees
-        $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriod->academic_period_id);
+        $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriodId);
 
         // Calculate total fees for the current academic period
         $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount')) + $customFeeTotal;
@@ -644,33 +619,25 @@ class InvoiceRepository
         return $acCurrentFeesTotal - $totalPayments;
     }
 
-    public function getStudentAcademicPeriodFeesTotal($student_id, $getPrevious = null)
+    public function getStudentAcademicPeriodFeesTotal($student_id, $academicPeriodId)
     {
+        if ($academicPeriodId == null) return 0;
+
         // Get the student
         $student = $this->getStudent($student_id);
 
-        if ($getPrevious) {
-            // Get the student's current academic period
-            $academicPeriod = $this->latestPreviousAcademicPeriod($student);
-        } else {
-            // Get the student's current academic period
-            $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
-        }
-
-        if ($academicPeriod == null) return 0;
-
         // Get the student's cumulative academic period fees
-        $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
+        $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriodId);
 
         // Get current academic period fees and filter one-time fees if needed
         $acFees = $this->getFilteredStudentAcademicPeriodFees(
             $student,
-            $academicPeriod->academic_period_id,
+            $academicPeriodId,
             $acPastFeesTotal > 0
         );
 
         // Get custom invoiced fee that arent attached to academic period fees
-        $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriod->academic_period_id);
+        $customFeeTotal = $this->customInvoicedFeeTotal($student, $academicPeriodId);
 
         // Calculate total fees for the current academic period
         $acCurrentFeesTotal = ($acFees['fees']->sum('amount')) + ($acFees['universal_fees']->sum('amount')) + $customFeeTotal;
@@ -679,24 +646,15 @@ class InvoiceRepository
         return $acCurrentFeesTotal;
     }
 
-    public function getStudentAcademicPeriodPaymentsTotal($student_id, $getPrevious = null)
+    public function getStudentAcademicPeriodPaymentsTotal($student_id, $academicPeriodId)
     {
+        if ($academicPeriodId == null) return 0;
+
         // Get the student
         $student = $this->getStudent($student_id);
 
-        if ($getPrevious) {
-
-            // Get the student's current academic period
-            $academicPeriod = $this->latestPreviousAcademicPeriod($student);
-        } else {
-            // Get the student's current academic period
-            $academicPeriod = $this->registrationRepo->getNextAcademicPeriod($student, now());
-        }
-
-        if ($academicPeriod == null) return 0;
-
         // Get the student's cumulative academic period fees
-        $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriod->academic_period_id);
+        $acPastFeesTotal = $this->getAllPastFees($student, $academicPeriodId);
 
         // Calculate total payments made by the student
         $totalPayments = $student->receipts->sum('amount') - $acPastFeesTotal;

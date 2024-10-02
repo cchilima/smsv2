@@ -461,29 +461,38 @@ class ClassAssessmentsController extends Controller
         $user = Auth::user();
         $data['results'] = $this->classaAsessmentRepo->GetExamGrades($user->id);
         $data['student'] = $this->classaAsessmentRepo->getStudentDetails($user->id);
-        $data['academicPeriod'] = $this->studentRegistrationRepo->getNextAcademicPeriod($data['student'], now());
-        $data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($data['student']->id);
-        $data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($data['student']->id);
-        $data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($data['student']->id);
 
-        $balancePercentage = $this->invoiceRepo->paymentPercentageAllInvoices($data['student']->id);
+        foreach ($data['results'] as &$resultsInfo) {
+            // Get total fees amount for academic period
+            $feesTotal = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($data['student']->id, $resultsInfo['academic_period_id']);
 
-        if ($data['academicPeriod'] == null && $balancePercentage < 100) {
+            // Get total amount student has paid for academic period
+            $paymentsTotal = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($data['student']->id, $resultsInfo['academic_period_id']);
 
-            $data['academicPeriod'] = $this->invoiceRepo->latestPreviousAcademicPeriod($user->student);
-            $data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($data['student']->id, true);
-            $data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($data['student']->id, true);
+            // Get student's payment percentage for academic period
+            $paymentPercentage = $this->invoiceRepo->getStudentAcademicPeriodPaymentPercentage($data['student']->id, $resultsInfo['academic_period_id']);
 
-            $data['canSeeResults'] = false;
+            // Calculate the balance left for the student to be able to view results
+            $resultsInfo['viewResultsBalance'] = ($resultsInfo['academic_period_view_results_threshold'] / 100) * $feesTotal - $paymentsTotal;
+
+            // Determine eligibility to view results by comparing their payment percentage to the threshold
+            $resultsInfo['canViewResults'] = $paymentPercentage >= $resultsInfo['academic_period_view_results_threshold'];
         }
 
-        // elseif ($balancePercentage < 100) {
+        // $data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($data['student']->id, $data['academicPeriod']?->academic_period_id);
+        // $data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($data['student']->id, $data['academicPeriod']?->academic_period_id);
+
+        // $balancePercentage = $this->invoiceRepo->paymentPercentageAllInvoices($data['student']->id);
+
+        // if ($data['academicPeriod'] == null && $balancePercentage < 100) {
+        //     $data['academicPeriod'] = $this->invoiceRepo->latestPreviousAcademicPeriod($user->student);
+        //     $data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($data['student']->id, $data['academicPeriod']?->academic_period_id);
+        //     $data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($data['student']->id, $data['academicPeriod']?->academic_period_id);
+
         //     $data['canSeeResults'] = false;
+        // } else {
+        //     $data['canSeeResults'] = true;
         // }
-
-        else {
-            $data['canSeeResults'] = true;
-        }
 
         return view('pages.students.exams.exam_results', $data);
     }
