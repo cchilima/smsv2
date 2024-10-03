@@ -114,8 +114,7 @@ class Show extends Component
      */
     public function collectPaymentRefresh(array $tableNames): void
     {
-        $this->refreshTables($tableNames);
-        $this->updateFinancialStats();
+        $this->invoiceStudentRefresh($tableNames);
     }
 
     /**

@@ -464,19 +464,19 @@ class ClassAssessmentsController extends Controller
 
         foreach ($data['results'] as &$resultsInfo) {
             // Get total fees amount for academic period
-            $feesTotal = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($data['student']->id, $resultsInfo['academic_period_id']);
+            $resultsInfo['fees_total'] = $this->invoiceRepo->getStudentAcademicPeriodInvoicesTotal($data['student'], $resultsInfo['academic_period_id']);
 
             // Get total amount student has paid for academic period
-            $paymentsTotal = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($data['student']->id, $resultsInfo['academic_period_id']);
+            $resultsInfo['payments_total'] = $this->invoiceRepo->getStudentAcademicPeriodStatementsTotal($data['student'], $resultsInfo['academic_period_id']);
 
             // Get student's payment percentage for academic period
-            $paymentPercentage = $this->invoiceRepo->getStudentAcademicPeriodPaymentPercentage($data['student']->id, $resultsInfo['academic_period_id']);
+            $resultsInfo['payment_percentage'] = $resultsInfo['fees_total'] == 0 ? 0 : ($resultsInfo['payments_total'] / $resultsInfo['fees_total']) * 100;
 
             // Calculate the balance left for the student to be able to view results
-            $resultsInfo['viewResultsBalance'] = ($resultsInfo['academic_period_view_results_threshold'] / 100) * $feesTotal - $paymentsTotal;
+            $resultsInfo['view_results_balance'] = ($resultsInfo['academic_period_view_results_threshold'] / 100) * $resultsInfo['fees_total'] - $resultsInfo['payments_total'];
 
             // Determine eligibility to view results by comparing their payment percentage to the threshold
-            $resultsInfo['canViewResults'] = $paymentPercentage >= $resultsInfo['academic_period_view_results_threshold'];
+            $resultsInfo['can_view_results'] = $resultsInfo['payment_percentage'] >= $resultsInfo['academic_period_view_results_threshold'];
         }
 
         // $data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($data['student']->id, $data['academicPeriod']?->academic_period_id);

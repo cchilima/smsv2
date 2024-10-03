@@ -9,6 +9,7 @@ use App\Models\Enrollments\{Enrollment};
 use App\Repositories\Accounting\InvoiceRepository;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 class StudentRegistrationRepository
@@ -100,6 +101,41 @@ class StudentRegistrationRepository
                     return $this->getCourseResultsStudyModeVariation($student->id, $currentAcademicPeriodId, $allFailedCourseIds, $allPassedCourseIds, $filteredCourseIds);
                 }
             }
+        }
+    }
+
+    /**
+     * Get a student's failed courses to include on their registration summary
+     * 
+     * @param string|int $student_id The ID of the student
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function getFailedCoursesToIncludeOnSummary($student_id)
+    {
+        $student = $this->getStudent($student_id);
+
+        // Get closed academic periods
+        $closedAcademicPeriods = $this->getClosedAcademicPeriods($student, now());
+
+        // Check if there is a next academic period
+        if ($this->getNextAcademicPeriod($student, now())) {
+            // Get the student's history for closed academic periods
+            $studentHistory = $this->getStudentHistory($student->id, $closedAcademicPeriods);
+
+            // Get all passed course IDs
+            $passedCourseIds = $this->getAllPassedCourseIds($studentHistory);
+
+            // Get all failed courses
+            $failedCourses = $this->getStudentHistory($student->id, $closedAcademicPeriods)[0]['coursesFailed'];
+
+            // Get all failed courses which haven't been re-written and passed at any point
+            $coursesToInclude =  collect($failedCourses)->map(function ($failedCourse) use ($passedCourseIds) {
+                if (!collect($passedCourseIds)->contains($failedCourse['course_id'])) {
+                    return $failedCourse;
+                }
+            })->toArray();
+
+            return $coursesToInclude;
         }
     }
 

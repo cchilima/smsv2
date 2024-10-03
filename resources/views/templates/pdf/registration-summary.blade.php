@@ -70,6 +70,25 @@ use App\Helpers\Qs;
             </tbody>
         </table>
     </div>
+
+    @if (count($failedCoursesToInclude) > 0)
+        <div class="margin-top">
+            <h3 class="v-spacer">Previous Failed Courses</h3>
+        </div>
+
+        <div class="margin-top">
+            <table class="table">
+                <tbody>
+                    @foreach ($failedCoursesToInclude as $key => $course)
+                        <tr class="items">
+                            <td>{{ $course['course_code'] }}</td>
+                            <td>{{ $course['course_title'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
 </body>
 
 </html>
