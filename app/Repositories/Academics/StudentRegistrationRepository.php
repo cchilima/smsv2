@@ -126,10 +126,13 @@ class StudentRegistrationRepository
             $passedCourseIds = $this->getAllPassedCourseIds($studentHistory);
 
             // Get all failed courses
-            $failedCourses = $this->getStudentHistory($student->id, $closedAcademicPeriods)[0]['coursesFailed'];
+            $failedCourses = collect($studentHistory)->flatMap(function ($academicPeriod) {
+                return collect($academicPeriod['coursesFailed']);
+            })->toArray();
 
             // Get all failed courses which haven't been re-written and passed at any point
             $coursesToInclude =  collect($failedCourses)->map(function ($failedCourse) use ($passedCourseIds) {
+                // If failed course ID is not in the list of passed course IDs, return the failed course
                 if (!collect($passedCourseIds)->contains($failedCourse['course_id'])) {
                     return $failedCourse;
                 }
@@ -413,8 +416,6 @@ class StudentRegistrationRepository
         // Get academic information
         $academicInfo = $this->getAcademicInfo($student_id);
 
-        // dd($academicInfo);
-
         if ($academicInfo) {
             // Parse registration dates into Carbon instances
             $registrationDate = Carbon::createFromFormat('Y-m-d', $academicInfo->registration_date);
@@ -471,7 +472,8 @@ class StudentRegistrationRepository
         $invoice = Invoice::find($invoice_id);
 
         // Calculate the total receipted amount for the invoice
-        $receipted_total_amount = $invoice->receipts->sum('amount');
+        // $receipted_total_amount = $invoice->receipts->sum('amount');
+        $receipted_total_amount = $invoice->statements->sum('amount');
 
         // Calculate the total amount of the invoice
         $invoice_total_amount = $invoice->details->sum('amount');
@@ -488,7 +490,7 @@ class StudentRegistrationRepository
         // Calculate the percentage of payments against the invoice
         $percentage_paid = ($receipted_total_amount / $invoice_total_amount) * 100;
 
-        return round($percentage_paid);
+        return $percentage_paid;
     }
 
     private function getInvoice($student_id, $academic_period)

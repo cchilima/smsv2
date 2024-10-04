@@ -23,6 +23,7 @@ use App\Repositories\Academics\CourseRepository;
 use App\Repositories\Academics\ProgramsRepository;
 use App\Repositories\Academics\StudentRegistrationRepository;
 use App\Repositories\Accounting\InvoiceRepository;
+use App\Repositories\Accounting\StatementRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,7 +44,8 @@ class ClassAssessmentsController extends Controller
         $periodClasses,
         $coursesRepo,
         $invoiceRepo,
-        $studentRegistrationRepo;
+        $studentRegistrationRepo,
+        $statementRepo;
 
     public function __construct(
         ClassAssessmentsRepo $classaAsessmentRepo,
@@ -54,7 +56,8 @@ class ClassAssessmentsController extends Controller
         AcademicPeriodClassRepository $periodClasses,
         CourseRepository $courseRepository,
         InvoiceRepository $invoiceRepository,
-        StudentRegistrationRepository $studentRegistrationRepo
+        StudentRegistrationRepository $studentRegistrationRepo,
+        StatementRepository $statementRepository
     ) {
         //        $this->middleware(TeamSA::class, ['except' => ['destroy','']]);
         //        $this->middleware(TeamSAT::class, ['except' => ['destroy','']]);
@@ -70,6 +73,7 @@ class ClassAssessmentsController extends Controller
         $this->coursesRepo = $courseRepository;
         $this->invoiceRepo = $invoiceRepository;
         $this->studentRegistrationRepo = $studentRegistrationRepo;
+        $this->statementRepo = $statementRepository;
     }
 
     // public function index()
@@ -467,7 +471,7 @@ class ClassAssessmentsController extends Controller
             $resultsInfo['fees_total'] = $this->invoiceRepo->getStudentAcademicPeriodInvoicesTotal($data['student'], $resultsInfo['academic_period_id']);
 
             // Get total amount student has paid for academic period
-            $resultsInfo['payments_total'] = $this->invoiceRepo->getStudentAcademicPeriodStatementsTotal($data['student'], $resultsInfo['academic_period_id']);
+            $resultsInfo['payments_total'] = $this->statementRepo->getStudentAcademicPeriodStatementsTotal($data['student'], $resultsInfo['academic_period_id']);
 
             // Get student's payment percentage for academic period
             $resultsInfo['payment_percentage'] = $resultsInfo['fees_total'] == 0 ? 0 : ($resultsInfo['payments_total'] / $resultsInfo['fees_total']) * 100;

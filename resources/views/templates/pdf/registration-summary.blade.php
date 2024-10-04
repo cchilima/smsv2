@@ -73,7 +73,7 @@ use App\Helpers\Qs;
 
     @if (count($failedCoursesToInclude) > 0)
         <div class="margin-top">
-            <h3 class="v-spacer">Previous Failed Courses</h3>
+            <h3 class="v-spacer">Previously Failed Courses</h3>
         </div>
 
         <div class="margin-top">

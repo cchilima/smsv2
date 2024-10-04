@@ -6,6 +6,7 @@ use App\Model\Admission\Student;
 use App\Models\Accounting\{Statement, Invoice, Receipt, PaymentMethod};
 use Auth;
 use DB;
+use Illuminate\Database\Eloquent\Collection;
 
 class StatementRepository
 {
@@ -36,7 +37,7 @@ class StatementRepository
                         ->groupBy('statements.invoice_id');
                 }, 'statements_total')
                 ->where('student_id', $student_id)
-                ->groupBy('invoices.id','invoices.student_id', 'invoices.academic_period_id', 'invoices.raised_by', 'invoices.cancelled', 'invoices.created_at', 'invoices.updated_at' )
+                ->groupBy('invoices.id', 'invoices.student_id', 'invoices.academic_period_id', 'invoices.raised_by', 'invoices.cancelled', 'invoices.created_at', 'invoices.updated_at')
                 ->orderBy('invoices.created_at')
                 ->get();
 
@@ -58,7 +59,6 @@ class StatementRepository
 
                 // create receipt
                 $amount_collected > 0 ? $this->createReceipt(null, $original_amount_collected, $student_id, $payment_method_id) : '';
-
             } else {
                 // loop through invoices and determine which invoice to attached received amount.
 
@@ -70,7 +70,6 @@ class StatementRepository
                             $amount_collected = $amount_collected - $invoice_balance;
 
                             $this->createStatement($invoice->id, $invoice_balance, $student_id, $payment_method_id);
-
                         } else {
 
                             if ($amount_collected != 0) {
@@ -99,7 +98,6 @@ class StatementRepository
             DB::commit();
 
             return true;
-
         } catch (\Exception $e) {
             dd($e);
             DB::rollback();
@@ -133,7 +131,8 @@ class StatementRepository
         return $receipt;
     }
 
-    public function applyNegativeAmountToInvoice($student, $invoice) {
+    public function applyNegativeAmountToInvoice($student, $invoice)
+    {
 
         // Get amount in negative
         $negative_total = $student->statementsWithoutInvoice->sum('amount');
@@ -142,7 +141,7 @@ class StatementRepository
         $invoice_total = $invoice->details->sum('amount');
 
         // If amount greater than 0 continue computation
-        if($negative_total > 0 ){
+        if ($negative_total > 0) {
 
             // Determine payment method
             $pay_method_ids = $student->statementsWithoutInvoice->pluck('payment_method_id');
@@ -151,7 +150,7 @@ class StatementRepository
             $payment_method_id = array_keys(array_count_values($pay_method_ids->toArray()), max(array_count_values($pay_method_ids->toArray())))[0];
             $payment_method_id = (int)$payment_method_id;
 
-            if($negative_total == $invoice_total){
+            if ($negative_total == $invoice_total) {
 
                 // Get all statements to zero
                 $statements_to_zero = $student->statementsWithoutInvoice->pluck('id');
@@ -164,7 +163,6 @@ class StatementRepository
 
                 // Create a receipt
                 $this->createReceipt($invoice->id, $negative_total, $student->id, $payment_method_id);
-
             } elseif ($negative_total < $invoice_total) {
 
                 // Create a receipt
@@ -181,17 +179,14 @@ class StatementRepository
                     if ($statement->amount == $currentAmountRemaining) {
                         $statement->update(['amount' => 0]);
                         break;
-
                     } elseif ($statement->amount < $currentAmountRemaining) {
                         $currentAmountRemaining -= $statement->amount;
                         $statement->update(['amount' => 0]);
-
                     } elseif ($statement->amount > $currentAmountRemaining) {
                         $statement->update(['amount' => ($statement->amount - $currentAmountRemaining)]);
                         break;
                     }
                 }
-
             } elseif ($negative_total > $invoice_total) {
 
                 // Calculate remaining negative total after applying invoice total
@@ -210,7 +205,7 @@ class StatementRepository
                         break; // No more amount remaining to distribute
                     }
 
-                    if($statement->amount > $invoice_total ){
+                    if ($statement->amount > $invoice_total) {
                         $statement->update(['amount' => $remainingNegativeTotal]);
                         break;
                     }
@@ -230,15 +225,45 @@ class StatementRepository
                     }
 
                     */
-
                 }
             }
-
         }
-   }
+    }
 
     public function removeZeroStatementAmounts()
     {
         Statement::where('amount', 0.0)->delete();
+    }
+
+    /**
+     * Get a student's statements for a given academic period.
+     * 
+     * @param  App\Models\Admissions\Student  $student The student model instance
+     * @param  int  $academicPeriodId The ID of the academic period
+     * @return Illuminate\Database\Eloquent\Collection
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function getStudentAcademicPeriodStatements($student, $academicPeriodId): Collection
+    {
+        return $student->statements()
+            ->whereHas('invoice', function ($query) use ($academicPeriodId) {
+                $query->where('invoices.academic_period_id', $academicPeriodId);
+            })
+            ->get();
+    }
+
+    /**
+     * Get the sum of all statements for a given student for an academic period.
+     * 
+     * @param  App\Models\Admissions\Student  $student The student model instance
+     * @param  int  $academicPeriodId The ID of the academic period
+     * @return float
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function getStudentAcademicPeriodStatementsTotal($student, $academicPeriodId): float
+    {
+        $statements = $this->getStudentAcademicPeriodStatements($student, $academicPeriodId);
+
+        return $statements->sum('amount');
     }
 }

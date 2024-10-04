@@ -64,17 +64,25 @@ class StudentFinancesRepository
     protected function adjustFinancialDataForPreviousAcademicPeriod(&$data, $student)
     {
         // Adjust data if a student is not invoiced in the current period
-        // if ($data['balancePercentage'] < 100) {
         $data['academicPeriodInfo'] = $this->invoiceRepo->latestPreviousAcademicPeriod($student);
-        $data['totalFees'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($student->id, $data['academicPeriodInfo']?->academic_period_id);
-        $data['totalPayments'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($student->id, $data['academicPeriodInfo']?->academic_period_id);
-        $data['paymentPercentage'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentPercentage($student->id, $data['academicPeriodInfo']?->academic_period_id);
-        $data['paymentBalance'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentBalance($student->id, $data['academicPeriodInfo']?->academic_period_id);
 
-        // Calculate thresholds for registration and viewing results
-        $data['registrationBalance'] = ($data['academicPeriodInfo']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
-        $data['viewResultsBalance'] = ($data['academicPeriodInfo']?->view_results_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
-        // }
+        $data['totalFees'] = 0;
+        $data['totalPayments'] = 0;
+        $data['paymentPercentage'] = 0;
+        $data['paymentBalance'] = 0;
+
+        // If they have an updaid balance from previous periods
+        if ($data['balancePercentage'] < 100) {
+            $data['totalFees'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($student->id, $data['academicPeriodInfo']?->academic_period_id);
+
+            $data['totalPayments'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($student->id, $data['academicPeriodInfo']?->academic_period_id);
+            $data['paymentPercentage'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentPercentage($student->id, $data['academicPeriodInfo']?->academic_period_id);
+            $data['paymentBalance'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentBalance($student->id, $data['academicPeriodInfo']?->academic_period_id);
+
+            // Calculate thresholds for registration and viewing results
+            $data['registrationBalance'] = ($data['academicPeriodInfo']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
+            $data['viewResultsBalance'] = ($data['academicPeriodInfo']?->view_results_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
+        }
     }
 
     protected function adjustFinancialDataForCurrentAcademicPeriod(&$data, $student)

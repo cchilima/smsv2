@@ -688,7 +688,7 @@ class InvoiceRepository
      * @return \Illuminate\Database\Eloquent\Collection
      * @author Blessed Zulu <bzulu@zut.edu.zm>
      */
-    public function getInvoicesByStudent($studentId)
+    public function getInvoicesByStudent($studentId): Collection
     {
         return Invoice::with(['receipts', 'creditNotes'])
             ->where('student_id', $studentId)
@@ -703,7 +703,7 @@ class InvoiceRepository
      * @return bool
      * @author Blessed Zulu <bzulu@zut.edu.zm>
      */
-    public function checkStudentAcademicPeriodInvoiceStatus($student, $academicPeriodId)
+    public function checkStudentAcademicPeriodInvoiceStatus($student, $academicPeriodId): bool
     {
         return $student->invoices()
             ->where('academic_period_id', $academicPeriodId)
@@ -744,37 +744,5 @@ class InvoiceRepository
         }
 
         return $invoicesTotal;
-    }
-
-    /**
-     * Get a student's statements for a given academic period.
-     * 
-     * @param  App\Models\Admissions\Student  $student The student model instance
-     * @param  int  $academicPeriodId The ID of the academic period
-     * @return Illuminate\Database\Eloquent\Collection
-     * @author Blessed Zulu <bzulu@zut.edu.zm>
-     */
-    public function getStudentAcademicPeriodStatements($student, $academicPeriodId): Collection
-    {
-        return $student->statements()
-            ->whereHas('invoice', function ($query) use ($academicPeriodId) {
-                $query->where('invoices.academic_period_id', $academicPeriodId);
-            })
-            ->get();
-    }
-
-    /**
-     * Get the sum of all statements for a given student for an academic period.
-     * 
-     * @param  App\Models\Admissions\Student  $student The student model instance
-     * @param  int  $academicPeriodId The ID of the academic period
-     * @return float
-     * @author Blessed Zulu <bzulu@zut.edu.zm>
-     */
-    public function getStudentAcademicPeriodStatementsTotal($student, $academicPeriodId): float
-    {
-        $statements = $this->getStudentAcademicPeriodStatements($student, $academicPeriodId);
-
-        return $statements->sum('amount');
     }
 }
