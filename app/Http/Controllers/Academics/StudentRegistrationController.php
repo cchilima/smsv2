@@ -82,7 +82,9 @@ class StudentRegistrationController extends Controller
             // If request is from student
             if (!$studentNumber) {
                 $studentNumber = Auth::user()->student->id;
-                $academicPeriodId = Auth::user()->student->academic_info->academic_period->id;
+
+                // TODO: Refactor to use student->academic_info->academic_period_id (Consult with Steph)
+                $academicPeriodId = Auth::user()->student->invoices()->latest('created_at')->first()->academic_period_id;
             }
 
             $courses = $this->registrationRepo->getSummaryCourses($studentNumber, $academicPeriodId);
@@ -113,7 +115,10 @@ class StudentRegistrationController extends Controller
                 'Year of Study' => $student->level->name
             ];
 
-            $pdf = Pdf::loadView('templates.pdf.registration-summary', compact('studentInfo', 'admissionInfo', 'courses'));
+            // Get any failed courses that must appear on registration summary
+            $failedCoursesToInclude = $this->registrationRepo->getFailedCoursesToIncludeOnSummary($student->id);
+
+            $pdf = Pdf::loadView('templates.pdf.registration-summary', compact('studentInfo', 'admissionInfo', 'courses', 'failedCoursesToInclude'));
 
             return $pdf->download($fileName);
         } catch (\Throwable $th) {

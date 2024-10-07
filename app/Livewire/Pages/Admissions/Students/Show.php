@@ -78,19 +78,11 @@ class Show extends Component
         $this->data['enrollments'] = $this->enrollmentRepo->getEnrollments($this->data['student']->id);
         $this->data['results'] = $this->classaAsessmentRepo->GetExamGrades($userId);
         $this->data['caresults'] = $this->classaAsessmentRepo->GetCaStudentGrades($userId);
-
         $this->data['enrolled_courses'] = $this->studentRegistrationRepo->curentEnrolledClasses($this->data['student']->id);
-
-        // $this->data['paymentPercentage'] = $this->invoiceRepo->paymentPercentage($this->data['student']->id);
-        // $this->data['paymentsTotal'] = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($this->data['student']->id);
-        // $this->data['feesTotal'] = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($this->data['student']->id);
-        // $this->data['paymentBalance'] = $this->invoiceRepo->getStudentPaymentBalance($this->data['student']->id);
+        $this->data['allInvoicesBalance'] = $this->invoiceRepo->paymentPercentageAllInvoices($this->data['student']->id);
+        $this->data['hasOpenAcademicPeriod'] = $this->invoiceRepo->openAcademicPeriod($this->data['student']) != null;
 
         $this->financialInfo = $this->studentFinancesRepo->getStudentFinancialInfo($this->data['student']);
-
-        $this->data['allInvoicesBalance'] = $this->invoiceRepo->paymentPercentageAllInvoices($this->data['student']->id);
-
-        $this->data['hasOpenAcademicPeriod'] = $this->invoiceRepo->openAcademicPeriod($this->data['student']) != null;
     }
 
     public function updateFinancialStats()
@@ -122,8 +114,7 @@ class Show extends Component
      */
     public function collectPaymentRefresh(array $tableNames): void
     {
-        $this->refreshTables($tableNames);
-        $this->updateFinancialStats();
+        $this->invoiceStudentRefresh($tableNames);
     }
 
     /**

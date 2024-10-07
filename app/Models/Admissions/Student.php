@@ -41,7 +41,18 @@ class Student extends Model implements AuditableContract
         return $affectedRows;
     }
 
-    protected $fillable = ['id', 'graduated', 'program_id', 'academic_period_intake_id', 'study_mode_id', 'course_level_id', 'period_type_id', 'user_id', 'admission_year', 'semester'];
+    protected $fillable = [
+        'id',
+        'graduated',
+        'program_id',
+        'academic_period_intake_id',
+        'study_mode_id',
+        'course_level_id',
+        'period_type_id',
+        'user_id',
+        'admission_year',
+        'semester'
+    ];
 
     public function user()
     {
