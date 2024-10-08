@@ -1404,6 +1404,7 @@ class ClassAssessmentsRepo
      * @param int $studentId The ID of the student
      * @param int $academicPeriodId The ID of the academic period
      * @return bool True if the results have been published, false otherwise
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
      */
     public function getStudentAcademicPeriodResultsPublicationStatus($studentId, $academicPeriodId)
     {
@@ -1411,7 +1412,7 @@ class ClassAssessmentsRepo
             ->where('academic_period_id', $academicPeriodId)
             ->pluck('publication_status');
 
-        // If no grades are found, return 0
+        // If no grades are found, return false
         if ($studentAcademicPeriodGrades->isEmpty()) {
             return false;
         }
@@ -1508,11 +1509,11 @@ class ClassAssessmentsRepo
                         'academic_period_name' => $grade->academicPeriods->name,
                         'academic_period_code' => $grade->academicPeriods->code,
                         'academic_period_id' => $grade->academicPeriods->id,
+                        'academic_period_view_results_threshold' => (float) $grade->academicPeriods->academic_period_information->view_results_threshold,
                         'academic_period_start_date' => $grade->academicPeriods->ac_start_date,
                         'academic_period_end_date' => $grade->academicPeriods->ac_end_date,
                         'comments' => $this->comments($student, $grade->academicPeriods->id, 1),
                     ];
-                    // dd($this->comments($student, $grade->academicPeriods->id, 1));
                 }
 
                 $organizedResults[$academicPeriodId]['grades'][] = $course;

@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Applications;
 
 use App\Helpers\Qs;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Applications\{Application as ApplicationRequest, ApplicationStep1};
+use App\Http\Requests\Applications\{Application as ApplicationRequest, ApplicationPayment, ApplicationStep1};
+use App\Models\Applications\ApplicantPayment;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Applications\ApplicantAttachmentRepository;
 use App\Repositories\Applications\ApplicantRepository;
@@ -63,12 +64,13 @@ class ApplicantController extends Controller
     /**
      * Collect application fee
      */
-    public function collectFee(Request $request)
+    public function collectFee(ApplicationPayment $request)
     {
         try {
             if (Qs::userIsTeamSAT() || Qs::userIsSuperAdmin()) {
 
                 $data = $request;
+
                 $collected = $this->applicantRepo->collectApplicantFee($data);
 
                 return Qs::jsonStoreOk('Fee collected successfully');

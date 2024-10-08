@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('applicant_payments', function (Blueprint $table) {
+        Schema::create('quotation_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('quotation_id')->constrained('quotations')->onDelete('restrict');
+            $table->foreignId('fee_id')->constrained('fees')->onDelete('restrict');
             $table->decimal('amount', 10, 2);
-            $table->string('reference')->nullable()->unique();
-            $table->foreignUuid('applicant_id')->nullable()->constrained('applicants')->onDelete('restrict');
-            $table->foreignId('payment_method_id')->constrained('payment_methods')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('applicant_payments');
+        Schema::dropIfExists('quotation_details');
     }
 };

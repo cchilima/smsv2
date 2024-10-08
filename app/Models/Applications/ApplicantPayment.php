@@ -10,6 +10,11 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 class ApplicantPayment extends Model implements AuditableContract
 {
     use HasFactory, Auditable;
-    
-    protected  $fillable = ['applicant_id', 'amount', 'payment_method_id'];
+
+    protected  $fillable = [
+        'applicant_id',
+        'amount',
+        'reference',
+        'payment_method_id'
+    ];
 }

@@ -49,7 +49,7 @@ final class Fees extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return $this->feeRepo->getAll('name', false);
+        return $this->feeRepo->getAll(false);
     }
 
     public function relationSearch(): array

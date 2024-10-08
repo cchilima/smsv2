@@ -50,7 +50,7 @@ final class MaritalStatuses extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return $this->maritalStatusRepo->getAll('status', false);
+        return $this->maritalStatusRepo->getAll(false);
     }
 
     public function fields(): PowerGridFields

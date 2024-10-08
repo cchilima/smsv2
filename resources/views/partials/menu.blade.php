@@ -189,11 +189,11 @@
                                         <span>Academic Period Classes</span></a>
                                 </li>
 
-{{--                                <li class="nav-item">--}}
-{{--                                    <a href="{{ route('enrollments.index') }}"--}}
-{{--                                        class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.index']) ? 'active' : '' }}">--}}
-{{--                                        <span>Enrollments</span></a>--}}
-{{--                                </li>--}}
+                                {{--                                <li class="nav-item"> --}}
+                                {{--                                    <a href="{{ route('enrollments.index') }}" --}}
+                                {{--                                        class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.index']) ? 'active' : '' }}"> --}}
+                                {{--                                        <span>Enrollments</span></a> --}}
+                                {{--                                </li> --}}
                             </ul>
                         </li>
 
@@ -451,11 +451,11 @@
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['student.list.reports']) ? 'active' : '' }}">Student
                                         List</a>
                                 </li>
-                                <li class="nav-item">
+                                {{-- <li class="nav-item">
                                     <a href="{{ route('audit.trail.reports') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['audit.trail.reports']) ? 'active' : '' }}">
                                         <span>Audit Trail</span></a>
-                                </li>
+                                </li> --}}
 
                             </ul>
                         </li>
@@ -522,7 +522,7 @@
                                 <li class="nav-item">
                                     <a href="{{ route('audits.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['audits.create', 'audits.edit', 'audits.index']) ? 'active' : '' }}">
-                                        <span>Audit Reports</span></a>
+                                        <span>Audit Trail</span></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="#"

@@ -11,6 +11,7 @@ use App\Http\Middleware\Custom\SuperAdmin;
 use App\Http\Middleware\Custom\TeamSA;
 use App\Repositories\Academics\StudentRegistrationRepository;
 use App\Repositories\Accounting\InvoiceRepository;
+use App\Repositories\Accounting\StudentFinancesRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,6 +20,7 @@ class StudentRegistrationController extends Controller
 
     protected $registrationRepo;
     protected $invoiceRepo;
+    protected $studentFinancesRepo;
 
     /**
      * Display a listing of the resource.
@@ -26,7 +28,8 @@ class StudentRegistrationController extends Controller
 
     public function __construct(
         StudentRegistrationRepository $registrationRepo,
-        InvoiceRepository $invoiceRepository
+        InvoiceRepository $invoiceRepository,
+        StudentFinancesRepository $studentFinancesRepo
     ) {
         // $this->middleware(TeamSA::class, ['except' => ['destroy',] ]);
         // $this->middleware(SuperAdmin::class, ['only' => ['destroy',] ]);
@@ -34,6 +37,7 @@ class StudentRegistrationController extends Controller
 
         $this->registrationRepo = $registrationRepo;
         $this->invoiceRepo = $invoiceRepository;
+        $this->studentFinancesRepo = $studentFinancesRepo;
     }
 
 
@@ -42,89 +46,27 @@ class StudentRegistrationController extends Controller
      */
     public function index()
     {
-        $student_id = Auth::user()->student->id;
+        $student = Auth::user()->student;
 
-        $isRegistered = $this->registrationRepo->getRegistrationStatus($student_id);
-        $isWithinRegistrationPeriod = $this->registrationRepo->checkIfWithinRegistrationPeriod($student_id);
-        $courses = $this->registrationRepo->getAll();
-        $balancePercentage = $this->invoiceRepo->paymentPercentageAllInvoices($student_id);
-        $totalFees = $this->invoiceRepo->getStudentAcademicPeriodFeesTotal($student_id);
-        $totalPayments = 0;
-        $paymentsBalance = 0;
+        $data['isRegistered'] = $this->registrationRepo->getRegistrationStatus($student->id);
+        $data['isWithinRegistrationPeriod'] = $this->registrationRepo->checkIfWithinRegistrationPeriod($student->id);
+        $data['courses'] = $this->registrationRepo->getAll();
 
-        // dd($isRegistered, $isWithinRegistrationPeriod);
+        // Financial info
+        $financialInfo = $this->studentFinancesRepo->getStudentFinancialInfo($student);
 
-        // Fetch academic period information (e.g., academic year, term, etc.)
-        $academicInfo = $this->registrationRepo->getAcademicInfo();
+        // Academic info
+        $data['academicInfo'] = $this->registrationRepo->getAcademicInfo();
+        $academicPeriodId = $data['academicInfo']?->academic_period_id;
 
-        if ($balancePercentage < 100) {
-            $totalPayments = $this->invoiceRepo->getStudentAcademicPeriodPaymentsTotal($student_id, true);
-            $paymentsBalance = $this->invoiceRepo->getStudentPaymentBalance($student_id, true);
-        }
-
-        // Assuming $academicInfo contains details such as 'academic_year' or 'period_id'
-        $academicPeriodId = $academicInfo?->academic_period_id; // Adjust this based on actual structure of $academicInfo
-
-        // Check if the student has been invoiced for the specific academic period
-        $isInvoiced = Auth::user()->student->invoices->contains(function ($invoice) use ($academicPeriodId) {
-            // Assuming each invoice has a field 'period_id' matching the academic period
-            return $invoice->academic_period_id === $academicPeriodId; // Adjust this based on your data structure
-        });
+        $isInvoiced = $this->invoiceRepo->checkStudentAcademicPeriodInvoiceStatus($student, $academicPeriodId);
 
         if (!$isInvoiced) {
-            // Student has been invoiced for the academic period
-            $academicInfo = [];
+            // Student has not been invoiced for the academic period
+            $data['academicInfo'] = [];
         }
 
-        return view('pages.studentRegistration.index', compact('courses', 'academicInfo', 'balancePercentage', 'isRegistered', 'isWithinRegistrationPeriod', 'paymentsBalance'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('pages.studentRegistration.index', array_merge($data, $financialInfo));
     }
 
     /**
@@ -140,7 +82,9 @@ class StudentRegistrationController extends Controller
             // If request is from student
             if (!$studentNumber) {
                 $studentNumber = Auth::user()->student->id;
-                $academicPeriodId = Auth::user()->student->academic_info->academic_period->id;
+
+                // TODO: Refactor to use student->academic_info->academic_period_id (Consult with Steph)
+                $academicPeriodId = Auth::user()->student->invoices()->latest('created_at')->first()->academic_period_id;
             }
 
             $courses = $this->registrationRepo->getSummaryCourses($studentNumber, $academicPeriodId);
@@ -171,7 +115,10 @@ class StudentRegistrationController extends Controller
                 'Year of Study' => $student->level->name
             ];
 
-            $pdf = Pdf::loadView('templates.pdf.registration-summary', compact('studentInfo', 'admissionInfo', 'courses'));
+            // Get any failed courses that must appear on registration summary
+            $failedCoursesToInclude = $this->registrationRepo->getFailedCoursesToIncludeOnSummary($student->id);
+
+            $pdf = Pdf::loadView('templates.pdf.registration-summary', compact('studentInfo', 'admissionInfo', 'courses', 'failedCoursesToInclude'));
 
             return $pdf->download($fileName);
         } catch (\Throwable $th) {

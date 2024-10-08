@@ -9,6 +9,7 @@ use App\Models\Enrollments\{Enrollment};
 use App\Repositories\Accounting\InvoiceRepository;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 class StudentRegistrationRepository
@@ -103,6 +104,44 @@ class StudentRegistrationRepository
         }
     }
 
+    /**
+     * Get a student's failed courses to include on their registration summary
+     * 
+     * @param string|int $student_id The ID of the student
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function getFailedCoursesToIncludeOnSummary($student_id)
+    {
+        $student = $this->getStudent($student_id);
+
+        // Get closed academic periods
+        $closedAcademicPeriods = $this->getClosedAcademicPeriods($student, now());
+
+        // Check if there is a next academic period
+        if ($this->getNextAcademicPeriod($student, now())) {
+            // Get the student's history for closed academic periods
+            $studentHistory = $this->getStudentHistory($student->id, $closedAcademicPeriods);
+
+            // Get all passed course IDs
+            $passedCourseIds = $this->getAllPassedCourseIds($studentHistory);
+
+            // Get all failed courses
+            $failedCourses = collect($studentHistory)->flatMap(function ($academicPeriod) {
+                return collect($academicPeriod['coursesFailed']);
+            })->toArray();
+
+            // Get all failed courses which haven't been re-written and passed at any point
+            $coursesToInclude =  collect($failedCourses)->map(function ($failedCourse) use ($passedCourseIds) {
+                // If failed course ID is not in the list of passed course IDs, return the failed course
+                if (!collect($passedCourseIds)->contains($failedCourse['course_id'])) {
+                    return $failedCourse;
+                }
+            })->toArray();
+
+            return $coursesToInclude;
+        }
+    }
+
     private function checkIfInvoiceV1Support($student_id)
     {
         $student = $this->getStudent($student_id);
@@ -176,7 +215,7 @@ class StudentRegistrationRepository
             ->where('academic_periods.ac_start_date', '<=', $currentDate)
             ->where('academic_periods.ac_end_date', '>=', $currentDate)
             ->orderBy('academic_periods.created_at', 'asc')
-            ->select('academic_period_information.*', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
+            ->select('academic_period_information.*', 'academic_periods.name', 'academic_periods.code', 'academic_periods.ac_start_date', 'academic_periods.ac_end_date')
             ->first();
     }
 
@@ -377,8 +416,6 @@ class StudentRegistrationRepository
         // Get academic information
         $academicInfo = $this->getAcademicInfo($student_id);
 
-        // dd($academicInfo);
-
         if ($academicInfo) {
             // Parse registration dates into Carbon instances
             $registrationDate = Carbon::createFromFormat('Y-m-d', $academicInfo->registration_date);
@@ -435,7 +472,8 @@ class StudentRegistrationRepository
         $invoice = Invoice::find($invoice_id);
 
         // Calculate the total receipted amount for the invoice
-        $receipted_total_amount = $invoice->receipts->sum('amount');
+        // $receipted_total_amount = $invoice->receipts->sum('amount');
+        $receipted_total_amount = $invoice->statements->sum('amount');
 
         // Calculate the total amount of the invoice
         $invoice_total_amount = $invoice->details->sum('amount');
@@ -452,7 +490,7 @@ class StudentRegistrationRepository
         // Calculate the percentage of payments against the invoice
         $percentage_paid = ($receipted_total_amount / $invoice_total_amount) * 100;
 
-        return round($percentage_paid);
+        return $percentage_paid;
     }
 
     private function getInvoice($student_id, $academic_period)

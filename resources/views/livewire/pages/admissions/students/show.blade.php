@@ -24,8 +24,7 @@
                     <img style="aspect-ratio: 1/1; object-fit: cover" src="{{ $passportPhotoUrl }}" alt="photo"
                         class="rounded-circle w-100 h-100">
                 </div>
-                <br>
-                <h3 class="mt-3">{{ $student->user->first_name . ' ' . $student->user->last_name }}</h3>
+                <h3 class="mt-2">{{ $student->user->first_name . ' ' . $student->user->last_name }}</h3>
                 <h6 class="mt-1">{{ $student->id }}</h6>
             </div>
         </div>
@@ -89,20 +88,10 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Year of Study</td>
-                                    <td class="academic-infor">
-                                        <span>{{ $student->level->name }}</span>
-                                        <select class="form-control" name="course_level_id"
-                                            id="course_level_id-{{ $student->id }}" style="display: none;">
-                                            <option selected value="{{ $student->level->id }}">
-                                                {{ $student->level->name }}</option>
-                                            @foreach ($course_levels as $level)
-                                                <option value="{{ $level->id }}">{{ $level->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
+                                    <td class="academic-infor">{{ $student->level->name }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-weight-bold text-justify">Registered Academic Year</td>
+                                    <td class="font-weight-bold text-justify">Registered Academic Period</td>
                                     <td>{{ count($student->invoices) > 0 ? $student->invoices->last()->period->name : 'Not registered' }}
                                     </td>
                                 </tr>
@@ -112,17 +101,7 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Study Category</td>
-                                    <td class="academic-infor">
-                                        <span>{{ $student->study_mode->name }}</span>
-                                        <select class="form-control" name="study_mode_id"
-                                            id="study_mode_id-{{ $student->id }}" style="display: none;">
-                                            <option selected value="{{ $student->study_mode->id }}">
-                                                {{ $student->study_mode->name }}</option>
-                                            @foreach ($studyModes as $mode)
-                                                <option value="{{ $mode->id }}">{{ $mode->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
+                                    <td class="academic-infor">{{ $student->study_mode->name }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Status</td>
@@ -130,17 +109,7 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Programme Name</td>
-                                    <td class="academic-infor">
-                                        <span>{{ $student->program->name }}</span>
-                                        <select class="form-control" name="program_id"
-                                            id="program_id-{{ $student->id }}" style="display: none;">
-                                            <option selected value="{{ $student->program->id }}">
-                                                {{ $student->program->name }}</option>
-                                            @foreach ($programs as $program)
-                                                <option value="{{ $program->id }}">{{ $program->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
+                                    <td class="academic-infor">{{ $student->program->name }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Programme Code</td>
@@ -148,41 +117,17 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Intake</td>
-                                    <td class="academic-infor">
-                                        <span>{{ $student->intake->name }}</span>
-                                        <select class="form-control" name="academic_period_intake_id"
-                                            id="academic_period_intake_id-{{ $student->id }}" style="display: none;">
-                                            <option selected value="{{ $student->intake->id }}">
-                                                {{ $student->intake->name }}</option>
-                                            @foreach ($periodIntakes as $intake)
-                                                <option value="{{ $intake->id }}">{{ $intake->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
+                                    <td class="academic-infor">{{ $student->intake->name }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Period Type</td>
                                     <td class="academic-infor">
                                         <span>{{ $student->period_type->name }}</span>
-                                        <select class="form-control" name="period_type_id"
-                                            id="period_type_id-{{ $student->id }}" style="display: none;">
-                                            <option selected value="{{ $student->period_type->id }}">
-                                                {{ $student->period_type->name }}</option>
-                                            @foreach ($periodTypes as $type)
-                                                <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                            @endforeach
-                                        </select>
                                     </td>
                                 </tr>
 
                             </tbody>
                         </table>
-                        <div class="text-right mb-1 mt-4">
-                            <button id="ajax-btn" type="button" onclick="manageAcademicInfor('{{ $student->id }}')"
-                                class="btn btn-primary">Update
-                                Information <i class="icon-pencil ml-2"></i>
-                            </button>
-                        </div>
                     </div>
                     <div class="tab-pane fade show" id="sponsor">
                         <table class="table table-bordered">
@@ -230,284 +175,111 @@
                             <tbody>
                                 <tr>
                                     <td class="font-weight-bold">Full Name</td>
-                                    <td class="next-of-kin-infor">
-                                        <span>{{ $student->user->userNextOfKin->full_name }}</span>
-                                        <input value="{{ $student->user->userNextOfKin->full_name }}"
-                                            id="name{{ $student->user->userNextOfKin->id }}" type="text"
-                                            name="kin_full_name" class="form-control d-none">
-
+                                    <td class="next-of-kin-infor">{{ $student->user->userNextOfKin->full_name }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Mobile</td>
-                                    <td class="next-of-kin-infor">
-                                        <span>{{ $student->user->userNextOfKin->mobile }}</span>
-                                        <input value="{{ $student->user->userNextOfKin->mobile }}"
-                                            id="mobile{{ $student->user->userNextOfKin->id }}" type="text"
-                                            name="kin_mobile" class="form-control d-none" required>
-                                    </td>
+                                    <td class="next-of-kin-infor">{{ $student->user->userNextOfKin->mobile }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Telephone</td>
-                                    <td class="next-of-kin-infor">
-                                        <span>{{ $student->user->userNextOfKin->telephone }}</span>
-                                        <input value="{{ $student->user->userNextOfKin->telephone }}"
-                                            id="telephone{{ $student->user->userNextOfKin->id }}" type="text"
-                                            name="kin_telephone" class="d-none form-control">
-
-                                    </td>
+                                    <td class="next-of-kin-infor">{{ $student->user->userNextOfKin->telephone }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Relationship</td>
                                     <td class="next-of-kin-infor">
-                                        <span>{{ $student->user->userNextOfKin->relationship->relationship }}</span>
-
-                                        <select class="form-control d-none" name="kin_relationship_id"
-                                            id="kin_relationship_id{{ $student->user->userNextOfKin->id }}">
-                                            <option selected
-                                                value="{{ $student->user->userNextOfKin->relationship->id }}">
-                                                {{ $student->user->userNextOfKin->relationship->relationship }}
-                                            </option>
-                                            @foreach ($relationships as $relationship)
-                                                <option value="{{ $relationship->id }}">
-                                                    {{ $relationship->relationship }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
+                                        {{ $student->user->userNextOfKin->relationship->relationship }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Town</td>
-                                    <td class="next-of-kin-infor">
-                                        <span>{{ $student->user->userNextOfKin->town->name }}</span>
-                                        <select class="form-control d-none" name="kin_town_id"
-                                            id="kin_town_id{{ $student->user->userNextOfKin->id }}">
-                                            <option value="{{ $student->user->userNextOfKin->town->id }}">
-                                                {{ $student->user->userNextOfKin->town->name }}</option>
-                                            @foreach ($towns as $town)
-                                                <option value="{{ $town->id }}">{{ $town->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
+                                    <td class="next-of-kin-infor">{{ $student->user->userNextOfKin->town->name }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Province</td>
-                                    <td class="next-of-kin-infor">
-                                        <span>{{ $student->user->userNextOfKin->province->name }}</span>
-                                        <select class="form-control d-none" name="kin_province_id"
-                                            id="kin_province_id{{ $student->user->userNextOfKin->id }}">
-                                            <option value="{{ $student->user->userNextOfKin->province->id }}">
-                                                {{ $student->user->userNextOfKin->province->name }}</option>
-                                            @foreach ($provinces as $province)
-                                                <option value="{{ $province->id }}">{{ $province->name }}</option>
-                                            @endforeach
-                                        </select>
+                                    <td class="next-of-kin-infor">{{ $student->user->userNextOfKin->province->name }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Country</td>
-                                    <td class="next-of-kin-infor">
-                                        <span>{{ $student->user->userNextOfKin->country->country }}</span>
-                                        <select class="form-control d-none" name="kin_country_id"
-                                            id="kin_country_id{{ $student->user->userNextOfKin->id }}">
-                                            <option value="{{ $student->user->userNextOfKin->country->id }}">
-                                                {{ $student->user->userNextOfKin->country->country }}</option>
-                                            @foreach ($countries as $country)
-                                                <option value="{{ $country->id }}">{{ $country->country }}</option>
-                                            @endforeach
-                                        </select>
+                                    <td class="next-of-kin-infor">{{ $student->user->userNextOfKin->country->country }}
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="text-right mb-1 mt-4">
-                            <button id="ajax-btn" type="button"
-                                onclick="UpdateNkininformation('{{ $student->user->userNextOfKin->id }}')"
-                                class="btn btn-primary">Update Information <i class="icon-pencil ml-2"></i>
-                            </button>
-                        </div>
                     </div>
                     <div class="tab-pane fade show" id="profile-info">
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
                                     <td class="font-weight-bold">First Name</td>
-                                    <td class="personal-infor">
-                                        <span>{{ $student->user->first_name }}</span>
-                                        <input value="{{ $student->user->first_name }}"
-                                            id="fname{{ $student->user->id }}" required type="text"
-                                            name="first_name" placeholder="First Name" class="form-control d-none">
-                                    </td>
+                                    <td class="personal-infor">{{ $student->user->first_name }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Middle Name</td>
-                                    <td class="personal-infor"><span>{{ $student->user->middle_name }}</span>
-                                        <input value="{{ $student->user->middle_name }}" type="text"
-                                            id="mname{{ $student->user->id }}" name="middle_name"
-                                            placeholder="Middle Name" class="form-control d-none">
-                                    </td>
+                                    <td class="personal-infor">{{ $student->user->middle_name }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Last Names</td>
-                                    <td class="personal-infor"><span>{{ $student->user->last_name }}</span>
-                                        <input value="{{ $student->user->last_name }}" required type="text"
-                                            id="lname{{ $student->user->id }}" name="last_name"
-                                            placeholder="Last Name" class="form-control d-none">
-                                    </td>
+                                    <td class="personal-infor">{{ $student->user->last_name }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Gender</td>
-                                    <td class="personal-infor"><span>{{ $student->user->gender }}</span>
-                                        <select class="form-control d-none" required
-                                            id="gender{{ $student->user->id }}" name="gender"
-                                            data-placeholder="Choose..">
-                                            <option value="$student->user->gender">{{ $student->user->gender }}
-                                            </option>
-                                            <option {{ old('gender') == 'Male' ? 'selected' : '' }} value="Male">
-                                                Male
-                                            </option>
-                                            <option {{ old('gender') == 'Female' ? 'selected' : '' }} value="Female">
-                                                Female
-                                            </option>
-                                        </select>
-                                    </td>
+                                    <td class="personal-infor">{{ $student->user->gender }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Email</td>
-                                    <td class="personal-infor"><span>{{ $student->user->email }}</span>
-                                        <input value="{{ $student->user->email }}" required
-                                            class="form-control d-none" placeholder="Email Address"
-                                            id="email{{ $student->user->id }}" name="email" type="text">
-                                    </td>
+                                    <td class="personal-infor">{{ $student->user->email }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">NRC</td>
-                                    <td class="personal-infor">
-                                        <span>{{ $student->user->userPersonalInfo?->nrc }}</span>
-                                        <input type="text" value="{{ $student->user->userPersonalInfo?->nrc }}"
-                                            required name="nrc" class="form-control d-none"
-                                            id="nrc{{ $student->user->id }}" placeholder="NRC Number xxxxxx/xx/x">
-                                    </td>
+                                    <td class="personal-infor">{{ $student->user->userPersonalInfo?->nrc }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Passport Number</td>
-                                    <td class="personal-infor">
-                                        <span>{{ $student->user->userPersonalInfo?->passport }}</span>
-                                        <input type="text"
-                                            value="{{ $student->user->userPersonalInfo?->passport }}" name="passport"
-                                            class="form-control d-none" id="passport{{ $student->user->id }}"
-                                            placeholder="Passport Number">
-                                    </td>
+                                    <td class="personal-infor">{{ $student->user->userPersonalInfo?->passport }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Date of Birth</td>
                                     <td class="personal-infor">
-                                        <span>{{ date('j F Y', strtotime($student->user->userPersonalInfo?->date_of_birth)) }}</span>
-                                        <input name="date_of_birth"
-                                            value="{{ $student->user->userPersonalInfo?->date_of_birth }}" required
-                                            type="text" class="form-control date-pick d-none"
-                                            id="dob{{ $student->user->id }}" placeholder="Select Date...">
+                                        {{ date('j F Y', strtotime($student->user->userPersonalInfo?->date_of_birth)) }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Marital Status</td>
                                     <td class="personal-infor">
-                                        <span>{{ $student->user->userPersonalInfo?->userMaritalStatus->status }}</span>
-                                        <select class="form-control d-none" required
-                                            id="marital_status{{ $student->user->id }}" name="marital_status_id"
-                                            data-placeholder="Choose..">
-                                            <option
-                                                value="{{ $student->user->userPersonalInfo?->userMaritalStatus->id }}">
-                                                {{ $student->user->userPersonalInfo?->userMaritalStatus->status }}
-                                            </option>
-                                            @foreach ($maritalStatuses as $maritalStatus)
-                                                <option value="{{ $maritalStatus->id }}">
-                                                    {{ $maritalStatus->status }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
+                                        {{ $student->user->userPersonalInfo?->userMaritalStatus->status }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Mobile</td>
-                                    <td class="personal-infor">
-                                        <span>{{ $student->user->userPersonalInfo?->mobile }}</span>
-                                        <input value="{{ $student->user->userPersonalInfo?->mobile }}" required
-                                            id="mobile{{ $student->user->id }}" type="text" name="mobile"
-                                            class="form-control d-none" placeholder="">
-                                    </td>
+                                    <td class="personal-infor">{{ $student->user->userPersonalInfo?->mobile }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Street</td>
-                                    <td class="personal-infor">
-                                        <span>{{ $student->user->userPersonalInfo?->street_main }}</span>
-                                        <input value="{{ $student->user->userPersonalInfo?->street_main }}" required
-                                            type="text" name="street_main" class="form-control d-none"
-                                            id="street{{ $student->user->id }}" placeholder="">
+                                    <td class="personal-infor">{{ $student->user->userPersonalInfo?->street_main }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Town</td>
-                                    <td class="personal-infor">
-                                        <span>{{ $student->user->userPersonalInfo?->town->name }}</span>
-                                        <select data-placeholder="Select Town" required class="form-control d-none"
-                                            name="town_id" id="town{{ $student->user->id }}">
-                                            <option value="{{ $student->user->userPersonalInfo?->town->id }}">
-                                                {{ $student->user->userPersonalInfo?->town->name }}</option>
-                                            @foreach ($towns as $town)
-                                                <option value="{{ $town->id }}">{{ $town->name }}</option>
-                                            @endforeach
-                                        </select>
+                                    <td class="personal-infor">{{ $student->user->userPersonalInfo?->town->name }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Province</td>
                                     <td class="personal-infor">
                                         <span>{{ $student->user->userPersonalInfo?->province->name }}</span>
-                                        <select data-placeholder="Select Province" required
-                                            class="d-none form-control" name="province_id"
-                                            id="province_id{{ $student->user->id }}">
-                                            <option value="{{ $student->user->userPersonalInfo?->province->id }}">
-                                                {{ $student->user->userPersonalInfo?->province->name }}</option>
-                                            @foreach ($provinces as $province)
-                                                <option value="{{ $province->id }}">{{ $province->name }}</option>
-                                            @endforeach
-                                        </select>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Country</td>
                                     <td class="personal-infor">
-                                        <span>{{ $student->user->userPersonalInfo?->country->country }}</span>
-                                        <select data-placeholder="Select Country" required class="d-none form-control"
-                                            name="country_id" id="country_id{{ $student->user->id }}">
-                                            <option selected
-                                                value="{{ $student->user->userPersonalInfo?->country->id }}">
-                                                {{ $student->user->userPersonalInfo?->country->country }}</option>
-                                            @foreach ($countries as $country)
-                                                <option value="{{ $country->id }}">{{ $country->country }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </td>
+                                        {{ $student->user->userPersonalInfo?->country->country }}</td>
                                 </tr>
 
                             </tbody>
                         </table>
-                        <div class="text-right mb-1 mt-4">
-                            <button id="ajax-btn" type="button"
-                                onclick="prepareUserinfor('{{ $student->user->id }}')"
-                                class="btn btn-primary">Update Information <i class="icon-pencil ml-2"></i>
-                            </button>
-                        </div>
                     </div>
                     <div class="tab-pane fade show" id="downloads-info">
-                        {{--                            <form class="ajax-store" method="post" action="{{ route('student.id.download') }}"> --}}
-                        {{--                                @csrf --}}
-                        {{--                                <input name="student_id" hidden value="{{ $student->id }}" type="text"> --}}
-                        {{--                                <div class="text-left"> --}}
-                        {{--                                    <button id="ajax-btn" type="submit" class="btn btn-primary">Download Student ID<i --}}
-                        {{--                                            class="icon-paperplane ml-2"></i></button> --}}
-                        {{--                                </div> --}}
-                        {{--                            </form> --}}
                         <a href="{{ route('student.id.download', $student->id) }}" class="btn btn-primary"
                             type="button">Download ID</a>
                         <a href="{{ route('student.transcript.download', $student->id) }}" class="btn btn-primary"
@@ -599,7 +371,7 @@
                 <ul wire:ignore class="nav nav-tabs nav-tabs-highlight">
 
                     <li class="nav-item">
-                        <a href="#financial-stats-overview" class="nav-link"
+                        <a href="#financial-stats-overview" class="nav-link  active show"
                             data-toggle="tab">{{ 'Financial Stats Overview' }}</a>
                     </li>
                     <li class="nav-item">
@@ -631,8 +403,7 @@
 
                     <div wire:ignore class="tab-pane fade show" id="invoice-custom">
                         @if ($allInvoicesBalance >= 100 || $allInvoicesBalance == 0)
-                            <form class="ajax-store" method="post"
-                                action="{{ route('invoices.custom-invoice') }}">
+                            <form class="ajax-store" method="post" action="{{ route('invoices.custom-invoice') }}">
                                 @csrf
 
                                 <div class="row">
@@ -681,40 +452,44 @@
                                     type="text">
                                 <input name="student_id" hidden value="{{ $student->id }}" type="text">
                                 <div class="text-left">
-                                    @if ($allInvoicesBalance >= 100 || $allInvoicesBalance == 0)
-                                        <button wire:click.debounce.5000ms="refreshTable('StudentInvoicesTable')"
-                                            id="ajax-btn" type="submit" class="btn btn-primary">invoice student<i
-                                                class="icon-paperplane ml-2"></i></button>
+                                    @if ($hasOpenAcademicPeriod)
+                                        @if ($allInvoicesBalance >= 100 || $allInvoicesBalance == 0)
+                                            <button
+                                                wire:click.debounce.5000ms="invoiceStudentRefresh(['StudentInvoicesTable'])"
+                                                id="ajax-btn" type="submit" class="btn btn-primary">Invoice
+                                                student<i class="icon-paperplane ml-2"></i></button>
+                                        @else
+                                            <p>Student has a balance or is not eligible to be invoiced</p>
+                                        @endif
                                     @else
-                                        <p>Student has a balance or is not eligible to be invoiced</p>
+                                        <p>There is no open academic period for this student</p>
                                     @endif
+
                                 </div>
                             </form>
                         @elseif(!$isInvoiced && !$student->academic_info)
                             <div class="container">
                                 <p>{{ $student->user->first_name . ' ' . $student->user->last_name }}, has no
-                                    attached
-                                    academic information.</p>
+                                    attached academic information.</p>
                             </div>
                         @else
                             <div class="container">
                                 <p>{{ $student->user->first_name . ' ' . $student->user->last_name }}, has already
-                                    been
-                                    invoice for this academic period.</p>
+                                    been invoice for this academic period.</p>
                             </div>
                         @endif
                     </div>
 
-                    <div wire:ignore.self class="tab-pane fade show" id="financial-stats-overview">
+                    <div wire:ignore.self class="tab-pane fade active show" id="financial-stats-overview">
 
                         <div class="row">
                             <div class="col-12 col-md-6 col-lg-3">
                                 <span class="font-weight-semibold">Fees Total: </span>
-                                K{{ number_format($feesTotal, 2) }}
+                                K{{ number_format($totalFees, 2) }}
                             </div>
                             <div class="col-12 col-md-6 col-lg-3">
                                 <span class="font-weight-semibold">Payments Total: </span>
-                                K{{ number_format($paymentsTotal, 2) }}
+                                K{{ number_format($totalPayments, 2) }}
                             </div>
                             <div class="col-12 col-md-6 col-lg-3">
                                 <span class="font-weight-semibold">Payment Percentage: </span>
@@ -761,7 +536,7 @@
 
                                 <div class="text-left">
                                     <button
-                                        wire:click.debounce.1000ms="refreshTablesAndStats([ 'StudentPaymentHistoryTable'
+                                        wire:click.debounce.1000ms="collectPaymentRefresh([ 'StudentPaymentHistoryTable'
                                         , 'StudentStatementsTable' ])"
                                         id="ajax-btn" type="submit" class="btn btn-primary">Submit <i
                                             class="icon-paperplane ml-2"></i></button>
@@ -1612,7 +1387,7 @@
             </div>
         </div>
     @else
-        <div wire:ignore class="card card-collapsed">
+        <div wire:ignore.self class="card card-collapsed">
             <div class="card-header header-elements-inline">
                 <h6 class="card-title">Courses available for registration</h6>
                 {!! Qs::getPanelOptions() !!}
@@ -1639,21 +1414,19 @@
                         </tbody>
                     </table>
 
-                    @if ($isWithinRegistrationPeriod)
-                        @if (!$isRegistered)
-                            <form action="{{ route('enrollments.store') }}" method="post">
-                                @csrf
-                                <input name="student_number" type="hidden" value="{{ $student->id }}" />
-                                <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register
-                                </button>
-                            </form>
-                        @endif
+                    @if ($isWithinRegistrationPeriod && !$isRegistered && $registrationBalance <= 0)
+                        <form action="{{ route('enrollments.store') }}" method="post">
+                            @csrf
+                            <input name="student_number" type="hidden" value="{{ $student->id }}" />
+                            <button id="ajax-btn" type="submit" class="btn btn-primary mt-2">Register
+                            </button>
+                        </form>
                     @endif
                 </div>
             @else
-                <div class="container ">
+                <div class="card-body">
                     <h6> No courses available</h6>
-                    <p><i>tip - student either has no invoice or is not within the registration period.</i></p>
+                    <p><i>Student either has no invoice or is not within the registration period.</i></p>
                 </div>
             @endif
         </div>

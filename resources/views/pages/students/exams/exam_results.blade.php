@@ -7,7 +7,7 @@
 
     <div class="card overflow-scroll">
         <div class="card-header header-elements-inline">
-            {{--            {!! Qs::getPanelOptions() !!} --}}
+            {{-- {!! Qs::getPanelOptions() !!} --}}
         </div>
 
         <div class="card-body">
@@ -40,24 +40,7 @@
                                 </strong>
                             </h5>
 
-                            @php
-                                $invoices = auth()
-                                    ->user()
-                                    ->student->invoices()
-                                    ->where('academic_period_id', $academicData['academic_period_id'])
-                                    ->get();
-
-                                $feesTotal = 0;
-
-                                foreach ($invoices as $invoice) {
-                                    $feesTotal += $invoice->details->sum('amount');
-                                }
-
-                                $viewResultsBalance =
-                                    ($academicPeriod?->view_results_threshold / 100) * $feesTotal - $paymentsTotal;
-                            @endphp
-
-                            @if (true)
+                            @if ($academicData['can_view_results'])
                                 {{-- $academicPeriod?->academic_period_id == $academicData['academic_period_id'] && 
                                     $paymentPercentage >= $academicPeriod->view_results_threshold --}}
                                 <table class="table table-hover table-striped-columns mb-3">
@@ -111,16 +94,11 @@
                                 <tbody>
                                     <tr>
                                         {{-- @if ($viewResultsBalance > 0 && !$canSeeResults) --}}
-                                        @if ($viewResultsBalance > 0)
-                                            <p class="bg-warning p-3 align-bottom">
-                                                Clear your balance of <strong>K{{ $viewResultsBalance }}</strong> to
-                                                view results for this academic period.
-                                            </p>
-                                        @else
-                                            <p class="bg-info p-3 align-bottom">
-                                                You have not yet been invoiced for this academic period.
-                                            </p>
-                                        @endif
+                                        <p class="bg-warning p-3 align-bottom">
+                                            Clear your balance of
+                                            <strong>K{{ $academicData['view_results_balance'] }}</strong> to
+                                            view results for this academic period.
+                                        </p>
                                     </tr>
                                 </tbody>
                             @endif

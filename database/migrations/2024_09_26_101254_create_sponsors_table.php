@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('relationships', function (Blueprint $table) {
+        Schema::create('sponsors', function (Blueprint $table) {
             $table->id();
-            $table->enum('relationship', ['Parent', 'Spouse', 'Sibling', 'Child','Aunt','Uncle',  'Grandparent', 'Partner', 'Cousin','Nephew', 'Niece', 'Other']); 
-            $table->mediumText('description')->nullable(); 
+            $table->text('name');
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
             $table->timestamps();
 
             // Add indexes
-            $table->index('id');
-            $table->index('relationship');
-
+            $table->index('name');
+            $table->index('email');
         });
     }
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('relationships');
+        Schema::dropIfExists('sponsors');
     }
 };
