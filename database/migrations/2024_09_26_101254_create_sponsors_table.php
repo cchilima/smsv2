@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('sponsors', function (Blueprint $table) {
             $table->id();
-            $table->text('name');
+            $table->string('name');
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->timestamps();

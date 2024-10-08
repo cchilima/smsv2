@@ -65,8 +65,6 @@ class StudentRegistrationRepository
                 // Step 7: Filter courses for the current academic period
                 $currentCourses = $this->getCurrentCourses($courses, $currentAcademicPeriodId);
 
-                // dd($currentCourses);
-
                 // Step 8: Filter out courses based on unmet prerequisites
                 $filteredCourseIds = $this->filterCourses($currentCourses, $failedCoursesPrerequisites, $allPassedCourseIds);
 
@@ -105,7 +103,7 @@ class StudentRegistrationRepository
     }
 
     /**
-     * Get a student's failed courses to include on their registration summary
+     * Get a the failed courses to include on a student's registration summary
      * 
      * @param string|int $student_id The ID of the student
      * @author Blessed Zulu <bzulu@zut.edu.zm>

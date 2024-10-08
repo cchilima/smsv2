@@ -66,7 +66,7 @@ class HomeController extends Controller
             $data['resultsPublicationStatus'] = $this->classAssessmentsRepo
                 ->getStudentAcademicPeriodResultsPublicationStatus(
                     $user->student->id,
-                    $financialInfo['academicPeriodInfo']->academic_period_id
+                    $financialInfo['academicPeriodInfo']?->academic_period_id
                 );
 
             return view('pages.home.student_home', array_merge($data, $financialInfo));

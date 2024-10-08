@@ -28,7 +28,7 @@
                     @csrf
 
                     <div class="form-group">
-                        <label for="applicant">Applicant Code</label>
+                        <label for="applicant">Applicant Code <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="applicant" name="applicant"
                             placeholder="Applicant Code" required>
                     </div>
@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="amount">Enter Amount</label>
+                        <label for="amount">Enter Amount <span class="text-danger">*</span></label>
                         <input type="number" class="form-control" id="amount" name="amount" placeholder="ZMW"
                             required>
                     </div>
