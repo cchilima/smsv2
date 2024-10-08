@@ -474,6 +474,9 @@
                                 'towns.index',
                                 'towns.edit',
                                 'audits.index',
+                                'sponsor.index',
+                                'sponsor.edit',
+
                             ])
                                 ? 'nav-item-expanded nav-item-open'
                                 : '' }} ">
@@ -519,6 +522,11 @@
                                 <li class="nav-item">
                                     <a href="{{ route('audits.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['audits.create', 'audits.edit', 'audits.index']) ? 'active' : '' }}">
+                                        <span>Audit Reports</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['sponsor.create', 'sponsor.edit', 'sponsor.index']) ? 'active' : '' }}">
                                         <span>Audit Reports</span></a>
                                 </li>
 

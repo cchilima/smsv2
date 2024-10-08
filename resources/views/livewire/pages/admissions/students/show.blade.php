@@ -68,7 +68,10 @@
                         <a href="#profile-info" class="nav-link" data-toggle="tab">Personal Information</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#next-kin" class="nav-link" data-toggle="tab">Sponsor Information</a>
+                        <a href="#next-kin" class="nav-link" data-toggle="tab">Next of Kin Information</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#sponsor" class="nav-link" data-toggle="tab">Sponsor Information</a>
                     </li>
                     <li class="nav-item">
                         <a href="#downloads-info" class="nav-link" data-toggle="tab">Student Downloads</a>
@@ -178,6 +181,47 @@
                             <button id="ajax-btn" type="button" onclick="manageAcademicInfor('{{ $student->id }}')"
                                 class="btn btn-primary">Update
                                 Information <i class="icon-pencil ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade show" id="sponsor">
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <td class="font-weight-bold">Full Name</td>
+                                <td class="next-of-kin-infor">
+                                    <span>{{ $student->user->userNextOfKin->full_name }}</span>
+                                    <input value="{{ $student->user->userNextOfKin->full_name }}"
+                                           id="name{{ $student->user->userNextOfKin->id }}" type="text"
+                                           name="kin_full_name" class="form-control d-none">
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold text-justify">Mobile</td>
+                                <td class="next-of-kin-infor">
+                                    <span>{{ $student->user->userNextOfKin->mobile }}</span>
+                                    <input value="{{ $student->user->userNextOfKin->mobile }}"
+                                           id="mobile{{ $student->user->userNextOfKin->id }}" type="text"
+                                           name="kin_mobile" class="form-control d-none" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold text-justify">Email</td>
+                                <td class="next-of-kin-infor">
+                                    <span>{{ $student->user->userNextOfKin->telephone }}</span>
+                                    <input value="{{ $student->user->userNextOfKin->telephone }}"
+                                           id="telephone{{ $student->user->userNextOfKin->id }}" type="text"
+                                           name="kin_telephone" class="d-none form-control">
+
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-right mb-1 mt-4">
+                            <button id="ajax-btn" type="button"
+                                    onclick="UpdateNkininformation('{{ $student->user->userNextOfKin->id }}')"
+                                    class="btn btn-primary">Update Information <i class="icon-pencil ml-2"></i>
                             </button>
                         </div>
                     </div>

@@ -23,7 +23,10 @@ use App\Http\Controllers\Accomodation\BedSpaceController;
 use App\Http\Controllers\Accomodation\BookingController;
 use App\Http\Controllers\Accomodation\HostelController;
 use App\Http\Controllers\Accomodation\RoomController;
-use App\Http\Controllers\Accounting\{InvoiceController, PaymentMethodController, StatementController};
+use App\Http\Controllers\Accounting\{InvoiceController,
+    PaymentMethodController,
+    SponsorController,
+    StatementController};
 use App\Http\Controllers\Accounting\FeeController;
 use App\Http\Controllers\Admissions\StudentController;
 use App\Http\Controllers\Applications\ApplicantController;
@@ -328,7 +331,8 @@ Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->n
 
 Route::resource('enrollments', EnrollmentController::class);
 Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
-
+//sponsors
+Route::resource('sponsors', SponsorController::class);
 // Residency Routes
 Route::get('/countries/{countryId}/provinces/', [CountryController::class, 'getProvincesByCountry'])->name('provinces.getProvincesByCountry');
 Route::resource('countries', CountryController::class);
