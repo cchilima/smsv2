@@ -73,6 +73,8 @@ class DatabaseSeeder extends Seeder
 
         ]);
 
+        $this->call(ResidencySeeder::class);
+
         // Seed qualification
         $qualification = Qualification::create(['name' => 'Degree', 'slug' => 'degree']);
 
@@ -326,42 +328,26 @@ class DatabaseSeeder extends Seeder
         User::insert($instructors);
 
         // Seed province
+        $province = Province::where('country_id', $country->id)->first();
 
-        Province::insert(
-            [
-                'name' => 'Copperbelt',
-                'country_id' => $country->id
-            ],
-            [
-                'name' => 'Other',
-                'country_id' => null,
-            ]
-        );
-
-        $province = Province::first();
+        // Create "Other" province
+        Province::create(['name' => 'Other', 'country_id' => null]);
 
         // Seed town
+        $town = Town::where('province_id', $province->id)->first();
 
-        Town::insert(
-            [
-
-                'name' => 'Kitwe',
-                'province_id' => $province->id
-            ],
-            [
-                'name' => 'Other',
-                'province_id' => null,
-            ]
-        );
-
-        $town = Town::first();
+        // Create "Other" town
+        Town::create(['name' => 'Other', 'province_id' => null]);
 
         // Seed marital statuses
 
-        $maritalStatus = MaritalStatus::create([
-            'status' => 'Single',
+        MaritalStatus::insert([
+            ['status' => 'Single'],
+            ['status' => 'Divorced'],
+            ['status' => 'Married'],
+            ['status' => 'Widowed'],
+            ['status' => 'Separated'],
         ]);
-
 
         // Seed next of kin relationships
 
@@ -391,9 +377,9 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('secret'),
         ]);
 
-
-
         // Seed user personal information
+
+        $maritalStatus = MaritalStatus::first();
 
         $userPersonInfo = UserPersonalInformation::create([
 

@@ -51,7 +51,7 @@
                                             <th>S/N</th>
                                             <th>Course Code</th>
                                             <th>Course Name</th>
-                                            <th>Mark</th>
+                                            {{-- <th>Mark</th> --}}
                                             <th>Grade</th>
                                         </tr>
                                     </thead>
@@ -62,7 +62,7 @@
                                                     <th>{{ $loop->iteration }}</th>
                                                     <td>{{ $course['course_code'] }}</td>
                                                     <td>{{ $course['course_title'] }}</td>
-                                                    <td>{{ $course['total'] }}</td>
+                                                    {{-- <td>{{ $course['total'] }}</td> --}}
                                                     <td>{{ $course['grade'] }}</td>
                                                 </tr>
                                             @endforeach
@@ -96,7 +96,8 @@
                                         {{-- @if ($viewResultsBalance > 0 && !$canSeeResults) --}}
                                         <p class="bg-warning p-3 align-bottom">
                                             Clear your balance of
-                                            <strong>K{{ $academicData['view_results_balance'] }}</strong> to
+                                            <strong>K{{ number_format($academicData['view_results_balance'], 2) }}</strong>
+                                            to
                                             view results for this academic period.
                                         </p>
                                     </tr>

@@ -14,8 +14,9 @@
             <div class="col-12">
                 <div class="alert alert-warning" role="alert">
                     <i class="icon icon-alert mr-2"></i>
-                    Results published. Clear your balance of <strong>K{{ number_format($viewResultsBalance, 2) }}</strong>
-                    to view your results for {{ $academicPeriodInfo->name }}
+                    You are not registered. Clear your balance of <strong>
+                        K{{ number_format($registrationBalance, 2) }}</strong> to register for
+                    {{ $academicPeriodInfo?->name }}
                 </div>
             </div>
         @endif

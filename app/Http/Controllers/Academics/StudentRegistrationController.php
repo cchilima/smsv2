@@ -101,10 +101,10 @@ class StudentRegistrationController extends Controller
                 'Student Name' => $studentUser->first_name . ' ' . $studentUser->last_name,
                 'Student ID' => $student->id,
                 'Gender' => $studentUser->gender,
-                'NRC Number' => $studentUserPersonalInfo->nrc,
-                'Next of Kin' => $nextOfKin->full_name,
-                'Next of Kin Relationship' => $nextOfKin->relationship->relationship,
-                'Next of Kin Contact' => $nextOfKin->mobile,
+                // 'NRC Number' => $studentUserPersonalInfo->nrc,
+                // 'Next of Kin' => $nextOfKin->full_name,
+                // 'Next of Kin Relationship' => $nextOfKin->relationship->relationship,
+                // 'Next of Kin Contact' => $nextOfKin->mobile,
             ];
 
             $admissionInfo = [
@@ -112,7 +112,8 @@ class StudentRegistrationController extends Controller
                 'Mode of Study' => $student->study_mode->name,
                 'Registration Date' => $latestEnrollment->created_at->format('d F Y H:i'),
                 'Academic Period' => $academicInfo->academic_period->name,
-                'Year of Study' => $student->level->name
+                'Year of Study' => $student->level->name,
+                'Semester' => $student->semester
             ];
 
             // Get any failed courses that must appear on registration summary
