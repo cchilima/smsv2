@@ -24,7 +24,7 @@ use App\Http\Controllers\Accomodation\BookingController;
 use App\Http\Controllers\Accomodation\HostelController;
 use App\Http\Controllers\Accomodation\RoomController;
 use App\Http\Controllers\Accounting\{InvoiceController,
-    PaymentMethodController,
+    QuotationController, PaymentMethodController,
     SponsorController,
     StatementController};
 use App\Http\Controllers\Accounting\FeeController;
@@ -43,7 +43,7 @@ use App\Http\Controllers\Users\MyAccountController;
 use App\Http\Controllers\Users\StudentController as UsersStudentController;
 use App\Http\Controllers\Users\UserController;
 use App\Livewire\Students\{AddDropCourse};
-use App\Livewire\Accounting\{ViewInvoiceDetails, ApproveCreditNotes};
+use App\Livewire\Accounting\{ViewInvoiceDetails, ViewQuotationDetails, ApproveCreditNotes};
 use App\Livewire\Applications\{InitiateApplication, CompleteApplication, CompletedApplication, MyApplications};
 
 // Reactive Livewire Pages
@@ -198,9 +198,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/exam-registration', [ClassAssessmentsController::class, 'ExamRegistration'])->name('student-exam_registration');
     });
 
-    // Accounting livewire routes
-    Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
-    Route::get('/approve-credit-notes', ApproveCreditNotes::class)->name('accounting.approve_credit_notes');
+// Accounting livewire routes
+Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
+Route::get('/approve-credit-notes', ApproveCreditNotes::class)->name('accounting.approve_credit_notes');
 
     // Add drop courses
     Route::get('/add-drop-course/{student_id}', AddDropCourse::class)->name('students.add-drop-course');
@@ -306,10 +306,13 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('statements', StatementController::class);
 
-    Route::resource('invoices', InvoiceController::class);
-    Route::post('custom-invoice', [InvoiceController::class, 'customInvoice'])->name('invoices.custom-invoice');
-    Route::post('batch-invoice-process', [InvoiceController::class, 'batchInvoicing'])->name('invoices.batchInvoicing');
-    Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->name('invoices.invoice');
+Route::resource('invoices', InvoiceController::class);
+Route::post('custom-invoice', [InvoiceController::class, 'customInvoice'])->name('invoices.custom-invoice');
+Route::post('batch-invoice-process', [InvoiceController::class, 'batchInvoicing'])->name('invoices.batchInvoicing');
+Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->name('invoices.invoice');
+
+
+Route::post('student-quotation-process', [QuotationController::class, 'quotation'])->name('quotations.quotation');
 
     Route::resource('enrollments', EnrollmentController::class);
     Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');

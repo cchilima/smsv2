@@ -61,7 +61,9 @@ class StudentRegistrationRepository
             // Get the academic period ID
             $currentAcademicPeriodId = $nextAcademicPeriod->academic_period_id;
 
+
             if ($currentAcademicPeriodId) {
+                
                 // Step 7: Filter courses for the current academic period
                 $currentCourses = $this->getCurrentCourses($courses, $currentAcademicPeriodId);
 

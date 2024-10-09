@@ -3,7 +3,7 @@
 namespace App\Repositories\Admissions;
 
 use App\Models\Academics\{AcademicPeriod, Program, CourseLevel, StudyMode, PeriodType};
-use App\Models\Accounting\{Fee, Invoice, PaymentMethod};
+use App\Models\Accounting\{Fee, Quotation, Invoice, PaymentMethod};
 use App\Models\Admissions\{Student, AcademicPeriodIntake};
 use App\Models\Profile\{MaritalStatus, Relationship};
 use App\Models\Residency\{Town, Province, Country};
@@ -393,6 +393,22 @@ class StudentRepository
     public function getInvoicesByStudent(string $studentId, bool $executeQuery = true)
     {
         $query = Invoice::with(['period', 'raisedBy', 'details'])
+            ->where('student_id', $studentId);
+
+        return $executeQuery ? $query->get() : $query;
+    }
+
+
+    /**
+     * Get all quotations for a student.
+     *
+     * @param  string  $studentId The ID of the student
+     * @param  bool  $executeQuery Whether to return a collection or the query builder
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Collection
+     */
+    public function getQuotationsByStudent(string $studentId, bool $executeQuery = true)
+    {
+        $query = Quotation::with(['period', 'raisedBy', 'details'])
             ->where('student_id', $studentId);
 
         return $executeQuery ? $query->get() : $query;
