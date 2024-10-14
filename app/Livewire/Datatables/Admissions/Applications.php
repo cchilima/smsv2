@@ -21,6 +21,7 @@ final class Applications extends PowerGridComponent
 {
     use WithExport;
 
+    public ?array $applicantIdentifiers;
     public string $tableName = 'ApplicationsTable';
     public bool $deferLoading = true;
 
@@ -41,12 +42,12 @@ final class Applications extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Applicant::query();
-    }
+        if ($this->applicantIdentifiers) {
+            return Applicant::where('nrc', $this->applicantIdentifiers['nrc'])
+                ->orWhere('passport', $this->applicantIdentifiers['passport']);
+        }
 
-    public function relationSearch(): array
-    {
-        return [];
+        return Applicant::query();
     }
 
     public function fields(): PowerGridFields

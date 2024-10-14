@@ -1,290 +1,278 @@
-<div>
-    <div class="container p-10">
+@section('page_title', 'New Student Application')
 
-        <div class="form-wizard mt-10 mb-5 items-center">
-            <a wire:click="setSection('personal_info')"
-                class="{{ $currentSection === 'personal_info' ? 'active' : '' }}">Personal Info </a>
+@php
+    use App\Helpers\Qs;
+@endphp
 
-            <span><i class="material-icons small grey-text">arrow_forward</i></span>
+<div class="container p-10">
 
-            <a wire:click="setSection('academic_info')"
-                class="{{ $currentSection === 'academic_info' ? 'active' : '' }}">Program Applied for</a>
+    <div class="card">
+        <div class="card-body">
+            <div class="mb-4 d-flex justify-content-between align-items-center">
+                <a wire:click="setSection('personal_info')"
+                    class="{{ $currentSection === 'personal_info' ? 'active btn-small' : '' }} btn">Personal
+                    Information </a>
+                <span><i class="icon-arrow-right8 text-muted"></i></span>
+                <a wire:click="setSection('academic_info')"
+                    class="{{ $currentSection === 'academic_info' ? 'active btn-small' : '' }} btn">Program
+                    Information</a>
+                <span><i class="icon-arrow-right8 text-muted"></i></span>
+                <a wire:click="setSection('next_of_kin')"
+                    class="{{ $currentSection === 'next_of_kin' ? 'active btn-small' : '' }} btn">Next
+                    of Kin Information </a>
+                <span><i class="icon-arrow-right8 text-muted"></i></span>
+                <a wire:click="setSection('results')"
+                    class="{{ $currentSection === 'results' ? 'active btn-small' : '' }} btn">Results
+                    Information</a>
+            </div>
 
-            <span><i class="material-icons small grey-text">arrow_forward</i></span>
+            <div class="mb-4">
+                <h5>Fill out the form to apply</h5>
+            </div>
 
-            <a wire:click="setSection('next_of_kin')" class="{{ $currentSection === 'next_of_kin' ? 'active' : '' }}">Next
-                of Kin </a>
-
-            <span><i class="material-icons small grey-text ">arrow_forward</i></span>
-
-            <a wire:click="setSection('results')"
-                class="{{ $currentSection === 'results' ? 'active' : '' }}">Results</a>
-        </div>
-
-        <div class="mb-5">
-            <h6>Fill out application form</h6>
-        </div>
-
-        <div class="row">
-            <div style="padding:15px; border-radius:9px;" class="col s12 white z-depth-1">
-
-                <form wire:submit.prevent="saveProgress" class="col s12">
-
-                    @if ($currentSection === 'personal_info')
-                        <div id="personal_info">
-                            <div class="row">
-                                <div class="input-field col m6 s12">
-                                    <input wire:model="first_name" placeholder="First Name" type="text"
-                                        class="validate">
-                                    <label class="active">First Name</label>
+            <form wire:submit.prevent="saveProgress" class="">
+                @if ($currentSection === 'personal_info')
+                    <div id="personal_info">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>First Name <span class="text-danger">*</span></label>
+                                    <input wire:model="first_name" type="text" placeholder="First Name"
+                                        class="form-control">
                                     @error('first_name')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="input-field col m6 s12">
-                                    <input wire:model="last_name" placeholder="Last Name" type="text"
-                                        class="validate">
-                                    <label class="active">Last Name</label>
-                                    @error('last_name')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="input-field col m6 s12">
-                                    <input wire:model="middle_name" placeholder="Middle Name" type="text"
-                                        class="validate">
-                                    <label class="active">Middle Name</label>
-                                    @error('middle_name')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="input-field col m6 s12">
-                                    <input wire:model="date_of_birth" placeholder="Date of Birth" type="date"
-                                        class="validate">
-                                    <label class="active">Date of Birth</label>
-                                    @error('date_of_birth')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
+                                        <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="input-field col m6 s12">
-                                    <input wire:model="email" placeholder="Email" type="email" class="validate">
-                                    <label class="active">Email</label>
-                                    @error('email')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="input-field col m6 s12">
-                                    <input wire:model="phone_number" placeholder="Phone" type="text"
-                                        class="validate">
-                                    <label class="active">Phone</label>
-                                    @error('phone_number')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Middle Name</label>
+                                    <input wire:model="middle_name" type="text" placeholder="Middle Name"
+                                        class="form-control">
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col m6 s12">
-                                    <label class="active">Gender</label>
-                                    <select wire:model="gender" class="browser-default custom-select input-field">
-                                        <option selected>Select gender</option>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Last Name <span class="text-danger">*</span></label>
+                                    <input wire:model="last_name" type="text" placeholder="Last Name"
+                                        class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="gender">Gender <span class="text-danger">*</span></label>
+                                    <select wire:model="gender" class="form-control" id="gender">
+                                        <option disabled selected>Select gender</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
-                                    </select>
-                                    @error('gender')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
-                                </div>
 
-                                <div class="col m6 s12">
-                                    <label class="active">Marital Status</label>
-                                    <select wire:model="marital_status_id"
-                                        class="browser-default custom-select input-field ">
-                                        <option selected>Select marital status</option>
-                                        @foreach ($marital_statuses as $status)
-                                            <option value="{{ $status->id }}">{{ $status->status }} </option>
-                                        @endforeach
                                     </select>
-                                    @error('marital_status_id')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
                                 </div>
-
                             </div>
 
-                            <div class="row">
-
-                                <div class="input-field col m12 s12">
-                                    <input wire:model="address" placeholder="Address" type="text" class="validate">
-                                    <label class="active">Address</label>
-                                    @error('address')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Date of Birth <span class="text-danger">*</span></label>
+                                    <input name="date_of_birth" wire:model="date_of_birth" type="date"
+                                        class="form-control">
                                 </div>
-
                             </div>
 
-                            <div class="row">
-                                <div class="col m12 s12">
-                                    <label class="active">Country</label>
-                                    <select wire:model.live="country_id" class="browser-default custom-select ">
+                            <div class="col-md-4">
+                                <label for="marital_status">Marital Status <span class="text-danger">*</span></label>
+                                <select class="form-control" id="marital_status" wire:model="marital_status_id"
+                                    data-placeholder="Select marital status">
+                                    <option selected>Select marital status</option>
+                                    @foreach ($marital_statuses as $marital_status)
+                                        <option value="{{ $marital_status->id }}">{{ $marital_status->status }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Email Address <span class="text-danger">*</span></label>
+                                    <input wire:model="email" type="email" placeholder="Email Address"
+                                        class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Phone Number <span class="text-danger">*</span></label>
+                                    <input wire:model="phone_number" type="text" placeholder="Phone Number"
+                                        class="form-control" x-mask="+9999999999999">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="country">Country <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="country" wire:model.live="country_id">
                                         <option selected>Select country</option>
                                         @foreach ($countries as $country)
-                                            <option value="{{ $country->id }}">{{ $country->country }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row">
-
-                                <div class="col m6 s12">
-                                    <label class="active">Province</label>
-                                    <select wire:model.live="province_id" class="browser-default custom-select ">
-                                        <option selected>Select province</option>
-                                        @foreach ($provinces as $province)
-                                            <option value="{{ $province->id }}">{{ $province->name }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col m6 s12">
-                                    <label class="active">Town</label>
-                                    <select wire:model.live="town_id" class="browser-default custom-select ">
-                                        <option selected>Select town</option>
-                                        @foreach ($towns as $town)
-                                            <option value="{{ $town->id }}">{{ $town->name }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                            </div>
-                        </div>
-                    @endif
-
-                    @if ($currentSection === 'academic_info')
-                        <div id="academic_info">
-                            <div class="row">
-
-                                <div class="col m12 s12">
-                                    <label class="active">Year applying for </label>
-
-                                    <select wire:model.live="year_applying_for"
-                                        class="browser-default custom-select input-field">
-                                        <option selected>Select year</option>
-                                        @foreach ($years as $year)
-                                            <option value="{{ $year }}"
-                                                @if ($year == $year_applying_for) selected @endif>
-                                                {{ $year }}
+                                            <option value="{{ $country->id }}">{{ $country->country }}
                                             </option>
                                         @endforeach
-
                                     </select>
                                 </div>
-
-                                <div class="col m6 s12">
-                                    <label class="active">Program</label>
-                                    <select wire:model.live="program_id"
-                                        class="browser-default custom-select input-field">
-                                        <option selected>Select program</option>
-                                        @foreach ($programs as $program)
-                                            <option value="{{ $program->id }}">{{ $program->name }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col m6 s12">
-                                    <label class="active">Study mode</label>
-                                    <select wire:model.live="study_mode_id"
-                                        class="browser-default custom-select input-field">
-                                        <option selected>Select study mode</option>
-                                        @foreach ($studyModes as $mode)
-                                            <option value="{{ $mode->id }}">{{ $mode->name }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
                             </div>
 
-                            <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="province">Province <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="province" wire:model.live="province_id">
+                                        <option selected>Select province</option>
+                                        @foreach ($provinces as $province)
+                                            <option value="{{ $province->id }}">{{ $province->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
 
-                                <div class="col m6 s12">
-                                    <label class="active">Intake</label>
-                                    <select wire:model.live="academic_period_intake_id"
-                                        class="browser-default custom-select input-field">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="town">Town <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="town" wire:model="town_id">
+                                        <option selected>Select town</option>
+                                        @foreach ($towns as $town)
+                                            <option value="{{ $town->id }}">{{ $town->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="address">Address <span class="text-danger">*</span></label>
+                                    <input wire:model="address" id="address" type="text" placeholder="Address"
+                                        class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                @if ($currentSection === 'academic_info')
+                    <div id="academic_info">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="year-applying-for">Year Applying For <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-control" id="year-applying-for"
+                                        wire:model.live="year_applying_for">
+                                        <option selected>Select year of admission</option>
+                                        @foreach ($years as $year)
+                                            <option value="{{ $year }}">{{ $year }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="intake">Intake <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="intake"
+                                        wire:model.live="academic_period_intake_id">
                                         <option selected>Select intake</option>
                                         @foreach ($periodIntakes as $intake)
-                                            <option value="{{ $intake->id }}">{{ $intake->name }} </option>
+                                            <option value="{{ $intake->id }}">{{ $intake->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
+                            </div>
 
-                                <div class="col m6 s12">
-                                    <label>Upload Results (PDF, 5Mb max)</label>
-                                    <div class="file-field input-field">
-                                        <div class="btn btn-small grey">
-                                            <span>Select File</span>
-                                            <input wire:model="results" type="file" accept="pdf" required>
-                                        </div>
-                                        <div class="file-path-wrapper">
-                                            <input class="file-path validate" type="text">
-                                        </div>
-                                        @error('results')
-                                            <span class="red-text">{{ $message }}</span>
-                                        @enderror
-                                    </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="program">Program <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="program" wire:model.live="program_id">
+                                        <option selected>Select program</option>
+                                        @foreach ($programs as $program)
+                                            <option value="{{ $program->id }}">{{ $program->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 
-                            <div class="p-2 ">
-                                <button wire:click="uploadDocument()" class="btn btn-small black"><i
-                                        class="material-icons right">arrow_upward</i>Save Attachment</button>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="study-mode">Study Mode <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="study-mode" wire:model.live="study_mode_id">
+                                        <option selected>Select mode of study</option>
+                                        @foreach ($studyModes as $studyMode)
+                                            <option value="{{ $studyMode->id }}">{{ $studyMode->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
 
-                            @if ($applicant->attachment)
-                                <h5>Single results & ID file</h5>
-
-                                <table class="rounded white z-depth-0 centered striped">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Type</th>
-                                            <th></th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody class="light-deca">
-
-                                        <tr>
-                                            <td>1. </td>
-                                            <td>{{ $applicant->attachment->type }}</td>
-                                            <td>{{ $applicant->attachment->attachment }}</td>
-                                            <td><a href="{{ asset('storage/uploads/attachments/applications/' . $applicant->attachment->attachment) }}"
-                                                    target="_blank">open</a></td>
-
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                            @endif
-
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="d-block">Upload Results</label>
+                                    <input wire:model="results" accept="pdf" type="file" name="results"
+                                        class="form-control form-input-styled">
+                                    @error('results')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="d-block" for="">&nbsp;</label>
+                                    <button wire:click="uploadDocument()" class="btn btn-primary">Upload
+                                        Results</button>
+                                </div>
+                            </div>
                         </div>
-                    @endif
 
-                    @if ($currentSection === 'next_of_kin')
-                        <div id="next_of_kin">
-
-                            <div class="row">
-
-                                <div class="col m12 s12">
-                                    <label class="active">Relationship</label>
-                                    <select wire:model.live="kin_relationship_id"
-                                        class="browser-default custom-select ">
+                        @if ($applicant->attachment)
+                            <h6>Uploaded Attachments</h6>
+                            <table class="table table-bordered table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Type</th>
+                                        <th>Filename</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="light-deca">
+                                    <tr>
+                                        <td>1. </td>
+                                        <td>{{ $applicant->attachment->type }}</td>
+                                        <td>{{ $applicant->attachment->attachment }}</td>
+                                        <td><a class=""
+                                                href="{{ asset('storage/uploads/attachments/applications/' . $applicant->attachment->attachment) }}"
+                                                target="_blank">Download</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        @endif
+                    </div>
+                @endif
+                @if ($currentSection === 'next_of_kin')
+                    <div id="next_of_kin">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="relationship">Relationship<span class="text-danger">*</span></label>
+                                    <select class="form-control" id="relationship"
+                                        wire:model.live="kin_relationship_id">
                                         <option selected>Select relationship</option>
                                         @foreach ($relationships as $relationship)
                                             <option value="{{ $relationship->id }}">{{ $relationship->relationship }}
@@ -292,236 +280,191 @@
                                         @endforeach
                                     </select>
                                 </div>
-
                             </div>
-                            <div class="row">
-                                <div class="input-field col m12 s12">
-                                    <input wire:model="kin_full_name" placeholder="Name" type="text"
-                                        class="validate">
-                                    <label class="active">Name</label>
-                                    @error('name')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
-                            </div>
-
-                            <div class="row">
-                                <div class="input-field col m6 s12">
-                                    <input wire:model="kin_mobile" placeholder="Mobile 1" type="text"
-                                        class="validate">
-                                    <label class="active">Mobile</label>
-                                    @error('kin_mobile')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
-                                <div class="input-field col m6 s12">
-                                    <input wire:model="kin_telephone" placeholder="Mobile 2" type="text"
-                                        class="validate">
-                                    <label class="active"></label>
-                                    @error('kin_telephone')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Full Name<span class="text-danger">*</span></label>
+                                    <input wire:model="kin_full_name" type="text" placeholder="Full Name"
+                                        class="form-control">
                                 </div>
                             </div>
 
-                            <div class="row">
-
-                                <div class="input-field col m6 s12">
-                                    <input wire:model="kin_address" placeholder="Address" type="text"
-                                        class="validate">
-                                    <label class="active">Address</label>
-                                    @error('address')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Phone Number<span class="text-danger">*</span></label>
+                                    <input wire:model="kin_mobile" x-mask="+9999999999999" type="text"
+                                        placeholder="Mobile number" class="form-control">
                                 </div>
+                            </div>
 
-                                <div class="col m6 s12">
-                                    <label class="active">Country</label>
-                                    <select wire:model.live="kin_country_id" class="browser-default custom-select ">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Telephone Number</label>
+                                    <input wire:model="kin_telephone" type="text" placeholder="Telephone number"
+                                        class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="kin_country">Country <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="kin_country" wire:model.live="kin_country_id">
                                         <option selected>Select country</option>
                                         @foreach ($kin_countries as $country)
-                                            <option value="{{ $country->id }}">{{ $country->country }} </option>
+                                            <option value="{{ $country->id }}">{{ $country->country }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
-
                             </div>
 
-                            <div class="row">
-
-                                <div class="col m6 s12">
-                                    <label class="active">Province</label>
-                                    <select wire:model.live="kin_province_id" class="browser-default custom-select ">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="kin_province">Province <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="kin_province" wire:model.live="kin_province_id">
                                         <option selected>Select province</option>
                                         @foreach ($kin_provinces as $province)
-                                            <option value="{{ $province->id }}">{{ $province->name }} </option>
+                                            <option value="{{ $province->id }}">{{ $province->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
+                            </div>
 
-                                <div class="col m6 s12">
-                                    <label class="active">Town</label>
-                                    <select wire:model.live="kin_town_id" class="browser-default custom-select ">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="kin_town">Town <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="kin_town" wire:model="kin_town_id">
                                         <option selected>Select town</option>
                                         @foreach ($kin_towns as $town)
-                                            <option value="{{ $town->id }}">{{ $town->name }} </option>
+                                            <option value="{{ $town->id }}">{{ $town->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
-
                             </div>
                         </div>
-                    @endif
-
-                    @if ($currentSection === 'results')
-                        <div id="results">
-                            <div class="row">
-                                <div class="col m12 s12">
-                                    <label class="active">Secondary School</label>
-                                    <select wire:model.live="secondary_school" class="browser-default custom-select ">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="kin_address">Address <span class="text-danger">*</span></label>
+                                    <input wire:model="kin_address" id="kin_address" type="text"
+                                        placeholder="Address" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                @if ($currentSection === 'results')
+                    <div id="results">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="secondary_school">Secondary School <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-control" id="secondary_school"
+                                        wire:model.live="secondary_school">
                                         <option selected>Select secondary school</option>
                                         @foreach ($schools as $school)
-                                            <option value="{{ $school['name'] }}">{{ $school['name'] }} </option>
+                                            <option value="{{ $school['name'] }}">{{ $school['name'] }}
+                                            </option>
                                         @endforeach
                                     </select>
-                                    @error('secondary_school')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
                                 </div>
                             </div>
-                            <div class="row">
-
-                                <div class="input-field col m6 s12">
-                                    <label class="active">Subject</label>
-                                    <select wire:model.live="subject" class="browser-default custom-select ">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="subject">Subject <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="subject" wire:model.live="subject">
                                         <option selected>Select subject</option>
                                         @foreach ($subjects as $subject)
-                                            <option value="{{ $subject['name'] }}">{{ $subject['name'] }} </option>
+                                            <option value="{{ $subject['name'] }}">{{ $subject['name'] }}
+                                            </option>
                                         @endforeach
                                     </select>
-                                    @error('subject')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
                                 </div>
-
-                                <div class="input-field col m6 s12">
-                                    <input wire:model="grade" placeholder="Grade" type="number" pattern="[1-9]"
-                                        class="validate">
-                                    <label class="active">Grade</label>
-                                    @error('grade')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
-                                <div class="p-2 ">
-                                    <button wire:click="saveGrade()" class="btn btn-small black"><i
-                                            class="material-icons right">arrow_upward</i>Save Grade</button>
-                                </div>
-
                             </div>
 
-                            @if (count($applicant->grades) > 0)
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="grade">Grade <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="grade" wire:model.live="grade">
+                                        <option selected>Select grade</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                    </select>
+                                </div>
+                            </div>
 
-                                <h5>Grades</h5>
-
-                                <table class="rounded white z-depth-0 centered striped">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Subject</th>
-                                            <th>Grade</th>
-
-                                        </tr>
-                                    </thead>
-
-                                    <tbody class="light-deca">
-                                        @foreach ($applicant->grades as $key => $grade)
-                                            <tr>
-                                                <td>{{ ++$key }}</td>
-                                                <td>{{ $grade->subject }}</td>
-                                                <td>{{ $grade->grade }}</td>
-                                            </tr>
-                                        @endforeach
-
-                                    </tbody>
-                                </table>
-
-                            @endif
-
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="d-block" for="">&nbsp;</label>
+                                    <button wire:click="saveGrade()" class="btn btn-primary">Save Grade</button>
+                                </div>
+                            </div>
                         </div>
-                    @endif
-
-                    <button type="submit" class="btn btn-small black mt-10 rounded">Save Progress</button>
+                        @if (count($applicant->grades) > 0)
+                            <div class="row">
+                                <div class="col">
+                                    <h5>Grades</h5>
+                                    <table class="table table-bordered table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Subject</th>
+                                                <th>Grade</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($applicant->grades as $key => $grade)
+                                                <tr>
+                                                    <td>{{ ++$key }}</td>
+                                                    <td>{{ $grade->subject }}</td>
+                                                    <td>{{ $grade->grade }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                @endif
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary rounded">Save Progress</button>
                     <a href="{{ route('application.my-applications', $this->applicant->id) }}"
-                        class="btn btn-small black mt-10 rounded">My Applications</a>
-                </form>
+                        class="ml-2 rounded">My
+                        Applications</a>
+
+                </div>
+            </form>
+            <div class="row mt-3">
+                <div class="col s12 d-flex justify-content-center">
+                    <!-- Previous Button -->
+                    <a class="mr-2 btn {{ $currentSection === 'personal_info' ? 'text-secondary disabled' : 'btn-primary text-white d-flex' }} align-items-center"
+                        @disabled($currentSection === 'personal_info') wire:click="previousSection">
+                        <i class="icon-arrow-left8 mr-2"></i>Previous Section
+                    </a>
+                    <!-- Next Button -->
+                    <a class="btn {{ $currentSection === 'results' ? 'text-secondary disabled' : 'btn-primary text-white d-flex' }} align-items-center"
+                        wire:click="nextSection" @disabled($currentSection === 'results')>Next
+                        Section
+                        <i class="icon-arrow-right8 ml-2"></i>
+                    </a>
+                </div>
             </div>
         </div>
-
-        <div class="row mt-3">
-            <div class="col s12 center-align">
-                <!-- Previous Button -->
-                <a class="btn-floating waves-effect waves-light white" wire:click="previousSection"
-                    {{ $currentSection === 'personal_info' ? 'disabled' : '' }}>
-                    <i class="material-icons indigo-text">arrow_back</i>
-                </a>
-
-                <!-- Next Button -->
-                <a class="btn-floating waves-effect waves-light white" wire:click="nextSection"
-                    {{ $currentSection === 'results' ? 'disabled' : '' }}>
-                    <i class="material-icons indigo-text">arrow_forward</i>
-                </a>
-            </div>
-        </div>
-
     </div>
 </div>
-
-@script
-    <script>
-        $wire.on('grade-added', () => {
-            M.toast({
-                html: 'grade uploaded successfully'
-            })
-        });
-
-        $wire.on('grade-failed', () => {
-            M.toast({
-                html: 'grade upload unsuccessful'
-            })
-        });
-
-        $wire.on('fill-all-fields', () => {
-            M.toast({
-                html: 'Please provide all required information.'
-            })
-        });
-
-        $wire.on('attachment-added', () => {
-            M.toast({
-                html: 'attachment uploaded successfully'
-            })
-        });
-
-        $wire.on('attachment-failed', () => {
-            M.toast({
-                html: 'attachment upload unsuccessful'
-            })
-        });
-
-        $wire.on('progress-saved', () => {
-            M.toast({
-                html: 'progress saved successfully'
-            })
-        });
-
-
-        $wire.on('application-completed', () => {
-            M.toast({
-                html: 'application completed'
-            })
-        });
-    </script>
-@endscript

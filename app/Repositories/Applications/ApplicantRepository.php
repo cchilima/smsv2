@@ -202,46 +202,30 @@ class ApplicantRepository
         return false;
     }
 
-    public function uploadAttachment($document, $application_id)
+    public function uploadAttachment($attachment, $application_id)
     {
-        if ($document) {
+        if ($attachment) {
             $application = Applicant::find($application_id);
 
-            $exists = $application->attachment;
+            // Generate a unique filename
+            $filename = $application->applicant_code . '-results-' . now()->format('Y-m-d-H-i-s') . '.' . $attachment->getClientOriginalExtension();
 
-            if (!$exists) {
-                // Retrieve the uploaded file
-                $attachment = $document;  // $request->file('attachment');
+            // Store the file in the storage disk
+            $attachment->storeAs('uploads/attachments/applications', $filename, 'public');
 
-                // Generate a unique filename
-                $filename = time() . '.' . $attachment->getClientOriginalExtension();
-
-                // Store the file in the storage disk
-                $path = $attachment->storeAs('uploads/attachments/applications', $filename, 'public');
-
-                return $application->attachment()->create(['type' => 'Results', 'attachment' => $filename]);
-            } else {
+            if ($application->attachment) {
                 // Delete previous file using unlink
                 $previousFile = public_path('storage/uploads/attachments/applications/' . $application->attachment->attachment);
+
                 if (file_exists($previousFile)) {
                     unlink($previousFile);
                 }
 
-                // Retrieve the uploaded file
-                $attachment = $document;  // $request->file('attachment');
-
-                // Generate a unique filename
-                $filename = time() . '.' . $attachment->getClientOriginalExtension();
-
-                // Store the file in the storage disk
-                $path = $attachment->storeAs('uploads/attachments/applications', $filename, 'public');
-
-                // Update the existing attachment record with the new file details
                 return $application->attachment()->update(['type' => 'Results', 'attachment' => $filename]);
             }
-        }
 
-        return null;  // Return null if no file is uploaded
+            return $application->attachment()->create(['type' => 'Results', 'attachment' => $filename]);
+        }
     }
 
     public function changeDBOFromat($data)

@@ -11,7 +11,6 @@
     <title> @yield('page_title') | {{ config('app.name') }} </title>
 
     @include('partials.inc_top')
-    @livewireStyles()
 </head>
 
 <body
@@ -23,6 +22,8 @@
             @include('partials.menu')
         @endauth
         <div class="content-wrapper">
+            @auth
+            @endauth
             @include('partials.header')
 
             <div class="content">
@@ -48,7 +49,6 @@
 
     @include('partials.inc_bottom')
     @stack('scripts')
-    @livewireScripts
 </body>
 
 </html>

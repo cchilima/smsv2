@@ -1,19 +1,35 @@
+@section('page_title', 'My Applications')
+
 @php
     use App\Helpers\Qs;
 @endphp
 
-<div class="container mt-10">
-    <div>
+<div class="">
+    <div class="card">
+        <div class="card-header">
+            {{-- <h6 class="card-title">My Applications</h6> --}}
+            {{-- {!! Qs::getPanelOptions() !!} --}}
+            <a class="btn btn-primary text-white" wire:click="startNewApplication()" class="">Start New Application
+            </a>
+            <a class="ml-2" href="{{ route('login') }}" class="mb-5">Go Home </a>
+        </div>
 
+        <div class="card-body">
+            <div wire:ignore.self class="tab-pane fade show active" id="applications">
+                <livewire:datatables.admissions.applications :applicantIdentifiers="$applicantIdentifiers" />
+            </div>
+        </div>
+    </div>
+
+    {{-- <div>
 
         <h6 class="mb-5">my applications </h6>
 
-        <a class="btn btn-small black mb-5" wire:click="startNewApplication()" class="mb-5">start new <i class="material-icons right">add</i> </a>
+        <a class="btn btn-small black mb-5" wire:click="startNewApplication()" class="mb-5">start new <i
+                class="material-icons right">add</i> </a>
         <a class="right" href="{{ route('login') }}" class="mb-5">Go Home </a>
 
         <div class="white z-depth-1 rounded">
-
-
 
             <table class="table centered">
                 <thead>
@@ -38,19 +54,20 @@
 
                             <td>{{ $application->created_at ? $application->created_at->format('d M Y') : '' }}</td>
 
+                            <td>
 
-                            <td >
+                                <a class='dropdown-trigger btn btn-small btn-floating black' href='#'
+                                    data-target="dropdown{{ $key }}"><i
+                                        class="material-icons">more_vert</i></a>
 
-                            <a class='dropdown-trigger btn btn-small btn-floating black' href='#' data-target="dropdown{{$key}}"><i class="material-icons">more_vert</i></a>
-
-                                <ul id='dropdown{{$key}}' class='dropdown-content'>
+                                <ul id='dropdown{{ $key }}' class='dropdown-content'>
                                     <li> <a href="{{ route('application.show', $application->id) }}"
                                             class="dropdown-item black-text">view</a></li>
                                     <li>
                                         @if ($application->status === 'incomplete')
                                             <a href="/application/step-2/{{ $application->id }}"
                                                 class="dropdown-item black-text">continue
-                                                </a>
+                                            </a>
                                         @endif
                                     </li>
 
@@ -64,5 +81,5 @@
 
         </div>
 
-    </div>
+    </div> --}}
 </div>
