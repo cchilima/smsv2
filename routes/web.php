@@ -202,6 +202,9 @@ Route::group(['middleware' => 'auth'], function () {
 Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
 Route::get('/approve-credit-notes', ApproveCreditNotes::class)->name('accounting.approve_credit_notes');
 
+
+Route::get('/quotation-details/{quotation_id}', ViewQuotationDetails::class)->name('accounting.quotation_details');
+
     // Add drop courses
     Route::get('/add-drop-course/{student_id}', AddDropCourse::class)->name('students.add-drop-course');
 
@@ -313,6 +316,7 @@ Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->n
 
 
 Route::post('student-quotation-process', [QuotationController::class, 'quotation'])->name('quotations.quotation');
+
 
     Route::resource('enrollments', EnrollmentController::class);
     Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');

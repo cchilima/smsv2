@@ -33,6 +33,12 @@ class QuotationRepository
     }
 
 
+    public function getQuotation($quotation_id)
+    {
+        return Quotation::find($quotation_id);
+    }
+
+
     public function getStudentQuotation($academic_period_id, $student_id)
     {
         DB::beginTransaction();
@@ -347,10 +353,8 @@ class QuotationRepository
 
     private function finalizeQuotation($student, $quotation)
     {
-
         // Commit the transaction
         DB::commit();
-
         return true;
     }
 
