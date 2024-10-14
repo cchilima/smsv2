@@ -411,7 +411,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="d-block" for="">&nbsp;</label>
-                                    <button wire:click="saveGrade()" class="btn btn-primary">Save Grade</button>
+                                    <a wire:click="saveGrade()" class="text-white btn btn-primary">Save Grade</a>
                                 </div>
                             </div>
                         </div>

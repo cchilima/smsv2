@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Applications;
 
+use App\Helpers\Qs;
 use App\Models\Applications\{ApplicantAttachment, ApplicantPayment};
 use App\Http\Requests\Applications\Attachment;
 use Illuminate\Support\Facades\Mail;
@@ -10,6 +11,7 @@ use App\Models\Applications\Applicant;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
 use DB;
+use Exception;
 
 class ApplicantRepository
 {
@@ -43,25 +45,26 @@ class ApplicantRepository
 
             DB::beginTransaction();
 
-            $applicant = Applicant::where('applicant_code', $data->applicant)->first();
+            $application = $this->getApplicationByApplicantCode($data->applicant);
+
             $updated = ApplicantPayment::create([
-                'applicant_id' => $applicant->id,
+                'applicant_id' => $application->id,
                 'amount' => $amount,
                 'reference' => $reference,
                 'payment_method_id' => $method
             ]);
 
-            DB::commit();
-
             if ($updated) {
 
-                $this->checkApplicationCompletion($applicant->id);
-                $this->fullApplicationReceived($applicant->id);
+                $this->checkApplicationCompletion($application->id);
+                $this->fullApplicationReceived($application->id);
             }
+
+            DB::commit();
 
             return true;
         } catch (\Throwable $th) {
-
+            Qs::jsonError('Failed to collect payment');
             DB::rollback();
             return false;
         }
@@ -200,6 +203,19 @@ class ApplicantRepository
         }
 
         return false;
+    }
+
+    /**
+     * Get an application by the applicant code
+     *
+     * @param string $applicantCode The code of the applicant.
+     * @return App\Models\Applications\Applicant
+     * 
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function getApplicationByApplicantCode($applicantCode): Applicant
+    {
+        return Applicant::where('applicant_code', $applicantCode)->first();
     }
 
     public function uploadAttachment($attachment, $application_id)

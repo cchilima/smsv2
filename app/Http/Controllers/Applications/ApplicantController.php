@@ -71,6 +71,13 @@ class ApplicantController extends Controller
 
                 $data = $request;
 
+                $application = $this->applicantRepo->getApplicationByApplicantCode($request->applicant);
+
+                // Check for application completion
+                if ($application->status === 'incomplete') {
+                    throw new \Exception('Cannot collect payment for an incomplete application');
+                }
+
                 $collected = $this->applicantRepo->collectApplicantFee($data);
 
                 return Qs::jsonStoreOk('Fee collected successfully');
