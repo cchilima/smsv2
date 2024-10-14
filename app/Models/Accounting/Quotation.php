@@ -4,6 +4,10 @@ namespace App\Models\Accounting;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Academics\AcademicPeriod;
+use App\Models\Academics\Program;
+use App\Models\Admissions\Student;
+use App\Models\Users\User;
 
 class Quotation extends Model
 {
@@ -29,6 +33,11 @@ class Quotation extends Model
     public function period()
     {
         return $this->belongsTo(AcademicPeriod::class, 'academic_period_id');
+    }
+
+    public function raisedBy()
+    {
+        return $this->belongsTo(User::class, 'raised_by', 'id');
     }
 
 }

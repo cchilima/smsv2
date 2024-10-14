@@ -49,6 +49,7 @@ class StudentRegistrationController extends Controller
         $student = Auth::user()->student;
 
         $data['isRegistered'] = $this->registrationRepo->getRegistrationStatus($student->id);
+
         $data['isWithinRegistrationPeriod'] = $this->registrationRepo->checkIfWithinRegistrationPeriod($student->id);
         $data['courses'] = $this->registrationRepo->getAll();
 
