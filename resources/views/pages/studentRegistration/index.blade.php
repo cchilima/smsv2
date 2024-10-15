@@ -150,4 +150,5 @@
     @endif
 
     {{-- Course List Ends --}}
+
 @endsection

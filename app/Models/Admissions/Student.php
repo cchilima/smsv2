@@ -10,7 +10,7 @@ use App\Models\Academics\Program;
 use App\Models\Academics\ProgramCourses;
 use App\Models\Academics\StudyMode;
 use App\Models\Academics\AcademicPeriodInformation;
-use App\Models\Accounting\{Invoice, InvoiceDetail, Statement, Receipt};
+use App\Models\Accounting\{Invoice, InvoiceDetail, Quotation, QuotationDetail, Statement, Receipt};
 use App\Models\Enrollments\Enrollment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -87,6 +87,11 @@ class Student extends Model implements AuditableContract
     public function invoices()
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    public function quotations()
+    {
+        return $this->hasMany(Quotation::class);
     }
 
     public function invoicesDetails()
