@@ -55,7 +55,7 @@
                         </select>
                     </div>
                     <div class="text-left">
-                        <button wire:click.debounce.1000ms="refreshTable('ApplicationsTable')" id="ajax-btn"
+                        <button wire:click.debounce.7500ms="refreshTable('ApplicationsTable')" id="ajax-btn"
                             type="submit" class="btn btn-primary">Submit <i class="icon-paperplane ml-2"></i></button>
                     </div>
                 </form>

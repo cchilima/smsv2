@@ -8,18 +8,18 @@ use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Mail;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Applications\ApplicantRepository;
+use App\Traits\CanShowAlerts;
 use Illuminate\Support\Facades\DB;
 
 class CompletedApplication extends Component
 {
+    use CanShowAlerts;
 
     private ApplicantRepository $applicantRepo;
     private StudentRepository $studentRepo;
 
-    public $currentSection = 'application';
     public $application_id;
     public $isEligibleForProvisonal = false;
-
 
     public function mount($application_id)
     {
@@ -47,7 +47,7 @@ class CompletedApplication extends Component
         Mail::to($applicantObj->email)->bcc(['stembo@zut.edu.zm'])->queue(new ApplicationVerdit($applicantObj, $action_status));
 
         // give feedback
-        $this->dispatch('rejected');
+        $this->flash('Prospective student formally rejected', 'warning');
     }
 
     public function accept()
@@ -128,7 +128,7 @@ class CompletedApplication extends Component
             // queue the email
             Mail::to($applicantObj->email)->bcc(['stembo@zut.edu.zm'])->queue(new ApplicationVerdit($applicantObj, $user->student, $action_status));
 
-            $this->dispatch('accepted');
+            $this->flash('Prospective student formally accepted');
         } catch (\Throwable $th) {
             dd($th);
             DB::rollback();
@@ -137,13 +137,7 @@ class CompletedApplication extends Component
         DB::commit();
     }
 
-
-    public function setSection($section)
-    {
-        $this->currentSection = $section;
-    }
-
-    #[Layout('components.layouts.administrator')]
+    #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
         $this->isEligibleForProvisonal = $this->applicantRepo->checkProvisionalEligibility($this->application_id);

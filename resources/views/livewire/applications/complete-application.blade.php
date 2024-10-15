@@ -67,7 +67,7 @@
                                 <div class="form-group">
                                     <label for="gender">Gender <span class="text-danger">*</span></label>
                                     <select wire:model="gender" class="form-control" id="gender">
-                                        <option disabled selected>Select gender</option>
+                                        <option selected>Select gender</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
 
@@ -131,7 +131,8 @@
                                 <div class="form-group">
                                     <label for="province">Province <span class="text-danger">*</span></label>
                                     <select class="form-control" id="province" wire:model.live="province_id">
-                                        <option selected>Select province</option>
+                                        <option selected>{{ $country_id ? 'Select province' : 'Select country first' }}
+                                        </option>
                                         @foreach ($provinces as $province)
                                             <option value="{{ $province->id }}">{{ $province->name }}
                                             </option>
@@ -144,7 +145,8 @@
                                 <div class="form-group">
                                     <label for="town">Town <span class="text-danger">*</span></label>
                                     <select class="form-control" id="town" wire:model="town_id">
-                                        <option selected>Select town</option>
+                                        <option selected>{{ $province_id ? 'Select town' : 'Select province first' }}
+                                        </option>
                                         @foreach ($towns as $town)
                                             <option value="{{ $town->id }}">{{ $town->name }}
                                             </option>
@@ -223,7 +225,7 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="d-block">Upload Results</label>
+                                    <label class="d-block">Upload Results <span class="text-danger">*</span></label>
                                     <input wire:model="results" accept="pdf" type="file" name="results"
                                         class="form-control form-input-styled">
                                     @error('results')
@@ -234,8 +236,8 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="d-block" for="">&nbsp;</label>
-                                    <button wire:click="uploadDocument()" class="btn btn-primary">Upload
-                                        Results</button>
+                                    <a wire:click="uploadDocument()" class="btn btn-primary text-white">Upload
+                                        Results</a>
                                 </div>
                             </div>
                         </div>
@@ -270,7 +272,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="relationship">Relationship<span class="text-danger">*</span></label>
+                                    <label for="relationship">Relationship <span class="text-danger">*</span></label>
                                     <select class="form-control" id="relationship"
                                         wire:model.live="kin_relationship_id">
                                         <option selected>Select relationship</option>
@@ -285,7 +287,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Full Name<span class="text-danger">*</span></label>
+                                    <label>Full Name <span class="text-danger">*</span></label>
                                     <input wire:model="kin_full_name" type="text" placeholder="Full Name"
                                         class="form-control">
                                 </div>
@@ -293,7 +295,7 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Phone Number<span class="text-danger">*</span></label>
+                                    <label>Phone Number <span class="text-danger">*</span></label>
                                     <input wire:model="kin_mobile" x-mask="+9999999999999" type="text"
                                         placeholder="Mobile number" class="form-control">
                                 </div>

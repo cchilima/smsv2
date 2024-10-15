@@ -10,8 +10,7 @@ use App\Mail\ApplicationReceived;
 use App\Models\Applications\Applicant;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
-use DB;
-use Exception;
+use Illuminate\Support\Facades\DB;
 
 class ApplicantRepository
 {
@@ -55,7 +54,6 @@ class ApplicantRepository
             ]);
 
             if ($updated) {
-
                 $this->checkApplicationCompletion($application->id);
                 $this->fullApplicationReceived($application->id);
             }
@@ -184,18 +182,18 @@ class ApplicantRepository
         $hasAttachments = $application->attachment()->count() > 0;
 
         // Check if atleast 5 subjects were entered
-        $grades = $application->grades()->count();
+        $hasGrades = $application->grades()->count() >= 5;
 
         // Check if application has payment(s)
-        $feePaid = $application->payment->sum('amount');
+        $feePaid = $application->payment->sum('amount') >= Qs::getSetting('application_fee');
 
         // Update status to pending if all fields except status are filled
-        if (empty($unfilledManadatoryFields) && $hasAttachments && $feePaid < 150 && $grades >= 5) {
+        if (empty($unfilledManadatoryFields) && $hasAttachments && !$feePaid && $hasGrades) {
             $application->status = 'pending';
             $application->save();
 
             return true;
-        } elseif (empty($allFieldsFilled) && $hasAttachments && $feePaid >= 150) {
+        } elseif (empty($unfilledManadatoryFields) && $hasAttachments && $hasGrades && $feePaid) {
             $application->status = 'complete';
             $application->save();
 
@@ -253,6 +251,13 @@ class ApplicantRepository
         return $data;
     }
 
+    /**
+     * Get an application model instance by ID
+     * 
+     * @param string\int $application_id The ID of the application to get
+     * @return App\Models\Applications\Applicant
+     * @author Stephen Tembo <stembo@zut.edu.zm>
+     */
     public function getApplication($application_id)
     {
         return Applicant::find($application_id);

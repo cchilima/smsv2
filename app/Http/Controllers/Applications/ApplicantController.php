@@ -73,9 +73,17 @@ class ApplicantController extends Controller
 
                 $application = $this->applicantRepo->getApplicationByApplicantCode($request->applicant);
 
-                // Check for application completion
+                // Check and handle application fee
                 if ($application->status === 'incomplete') {
                     throw new \Exception('Cannot collect payment for an incomplete application');
+                }
+
+                if (
+                    $application->status === 'complete' ||
+                    $application->status === 'accepted' ||
+                    $application->status === 'rejected'
+                ) {
+                    throw new \Exception('Payment was already collected for this application');
                 }
 
                 $collected = $this->applicantRepo->collectApplicantFee($data);
