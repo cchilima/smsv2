@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('sponsors', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name',200);
+            $table->string('description')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->timestamps();
 
             // Add indexes
-            $table->index('name');
+            $table->index('name');  // Specify index length for 'name'
             $table->index('email');
         });
     }
