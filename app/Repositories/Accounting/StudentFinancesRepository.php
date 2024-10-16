@@ -64,6 +64,11 @@ class StudentFinancesRepository
         return $data;
     }
 
+    private function calculatePercentage($cumulativeAmount, $total)
+    {
+        return $total == 0 ? 0 : (($cumulativeAmount / $total) * 100);
+    }
+
     protected function adjustFinancialDataForPreviousAcademicPeriod(&$data, $student)
     {
         // Adjust data if a student is not invoiced in the current period
@@ -79,7 +84,7 @@ class StudentFinancesRepository
             $data['totalFees'] = $this->invoiceRepo->getStudentAcademicPeriodInvoicesTotal($student, $data['academicPeriodInfo']?->academic_period_id);
 
             $data['totalPayments'] = $this->statementRepo->getStudentAcademicPeriodStatementsTotal($student, $data['academicPeriodInfo']?->academic_period_id);
-            $data['paymentPercentage'] = $data['totalPayments'] / $data['totalFees'] * 100;
+            $data['paymentPercentage'] = $this->calculatePercentage($data['totalPayments'], $data['totalFees']);
 
             $data['paymentBalance'] = $data['totalFees'] - $data['totalPayments'];
 
