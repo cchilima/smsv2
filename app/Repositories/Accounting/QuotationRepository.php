@@ -5,9 +5,10 @@ namespace App\Repositories\Accounting;
 use App\Models\Academics\{AcademicPeriodClass, AcademicPeriodFee, AcademicPeriod};
 use App\Repositories\Academics\{StudentRegistrationRepository};
 use App\Repositories\Admissions\{StudentRepository};
-use App\Models\Accounting\{Quotation, QuotationDetail, Receipt, Fee};
+use App\Models\Accounting\{Quotation, QuotationDetail, Receipt, Fee, Invoice};
 use App\Models\Enrollments\Enrollment;
 use App\Models\Admissions\Student;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -531,5 +532,56 @@ class QuotationRepository
         return Invoice::with(['receipts', 'creditNotes'])
             ->where('student_id', $studentId)
             ->get();
+    }
+
+    /**
+     * Check if a student has been quoted for a given academic period.
+     *
+     * @param  App\Models\Admissions\Student  $student The student model instance
+     * @param  int  $academicPeriodId The ID of the academic period
+     * @return bool
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function checkStudentAcademicPeriodQuotationStatus($student, $academicPeriodId): bool
+    {
+        return $student->quotations()
+            ->where('academic_period_id', $academicPeriodId)
+            ->exists();
+    }
+
+    /**
+     * Get a student's quotations for a given academic period.
+     * 
+     * @param  App\Models\Admissions\Student  $student The student model instance
+     * @param  int  $academicPeriodId The ID of the academic period
+     * @return Illuminate\Database\Eloquent\Collection
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function getStudentAcademicPeriodQuotations($student, $academicPeriodId): Collection
+    {
+        return $student->quotations()
+            ->where('academic_period_id', $academicPeriodId)
+            ->get();
+    }
+
+    /**
+     * Get the sum of all quotation details for a given student for an academic period.
+     * 
+     * @param  App\Models\Admissions\Student  $student The student model instance
+     * @param  int  $academicPeriodId The ID of the academic period
+     * @return float
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function getStudentAcademicPeriodQuotationsTotal($student, $academicPeriodId): float
+    {
+        $quotations = $this->getStudentAcademicPeriodQuotations($student, $academicPeriodId);
+
+        $quotationsTotal = 0;
+
+        foreach ($quotations as $quotation) {
+            $quotationsTotal += $quotation->details->sum('amount');
+        }
+
+        return $quotationsTotal;
     }
 }

@@ -132,58 +132,58 @@
                     <div class="tab-pane fade show" id="sponsor">
                         <table class="table table-bordered">
                             <tbody>
-                            @if(!empty($student->sponsors[0]))
-                            <tr>
-                                <td class="font-weight-bold">Name</td>
-                                <td class="next-of-kin-infor">
-                                    <span>{{ $student->sponsors[0]->name }}</span>
+                                @if (!empty($student->sponsors[0]))
+                                    <tr>
+                                        <td class="font-weight-bold">Name</td>
+                                        <td class="next-of-kin-infor">
+                                            <span>{{ $student->sponsors[0]->name }}</span>
 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold text-justify">Description</td>
-                                <td class="next-of-kin-infor">
-                                    <span>{{ $student->sponsors[0]->description }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Description</td>
+                                        <td class="next-of-kin-infor">
+                                            <span>{{ $student->sponsors[0]->description }}</span>
 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold text-justify">Mobile</td>
-                                <td class="next-of-kin-infor">
-                                    <span>{{ $student->sponsors[0]->mobile }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Mobile</td>
+                                        <td class="next-of-kin-infor">
+                                            <span>{{ $student->sponsors[0]->mobile }}</span>
 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold text-justify">Email</td>
-                                <td class="next-of-kin-infor">
-                                    <span>{{ $student->sponsors[0]->email }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Email</td>
+                                        <td class="next-of-kin-infor">
+                                            <span>{{ $student->sponsors[0]->email }}</span>
 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold text-justify">Level</td>
-                                <td class="next-of-kin-infor">
-                                    <span>{{ $student->sponsors[0]->pivot->level }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Level</td>
+                                        <td class="next-of-kin-infor">
+                                            <span>{{ $student->sponsors[0]->pivot->level }}</span>
 
-                                </td>
-                            </tr>
-                            @else
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Name</td>
-                                    <td class="next-of-kin-infor">
-                                        <span>Self</span>
+                                        </td>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Name</td>
+                                        <td class="next-of-kin-infor">
+                                            <span>Self</span>
 
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold text-justify">Level</td>
-                                    <td class="next-of-kin-infor">
-                                        <span>100</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Level</td>
+                                        <td class="next-of-kin-infor">
+                                            <span>100</span>
 
-                                    </td>
-                                </tr>
-                            @endif
+                                        </td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -219,7 +219,8 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold text-justify">Country</td>
-                                    <td class="next-of-kin-infor">{{ $student->user->userNextOfKin->country->country }}
+                                    <td class="next-of-kin-infor">
+                                        {{ $student->user->userNextOfKin->country->country }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -1103,14 +1104,14 @@
                         <!-- Add your sponsor content here -->
                         <div class="row">
                             <div class="col-md-12">
-{{--                                <form class="ajax-update" data-reload="#page-header" method="post"--}}
-{{--                                      action="{{ route('students.sponsor.update', $student->id ) }}">--}}
-{{--                                    @csrf--}}
-{{--                                    @method('POST')--}}
+                                {{--                                <form class="ajax-update" data-reload="#page-header" method="post" --}}
+                                {{--                                      action="{{ route('students.sponsor.update', $student->id ) }}"> --}}
+                                {{--                                    @csrf --}}
+                                {{--                                    @method('POST') --}}
                                 <form class="ajax-update" data-reload="#page-header" method="post"
-                                      action="{{ !empty($student->sponsors[0]) ? route('students.sponsor.update', $student->id) : route('students.sponsor.create', $student->id) }}">
+                                    action="{{ !empty($student->sponsors[0]) ? route('students.sponsor.update', $student->id) : route('students.sponsor.create', $student->id) }}">
                                     @csrf
-                                    @if($student->sponsors()->exists())
+                                    @if ($student->sponsors()->exists())
                                         @method('PUT')
                                     @else
                                         @method('POST')
@@ -1123,13 +1124,13 @@
                                                 <label for="kin_relationship_id">Name: <span
                                                         class="text-danger">*</span></label>
                                                 <select data-placeholder="Select Relationship" required
-                                                        class="select-search form-control" name="sponsor_id"
-                                                        id="sponsor_id">
+                                                    class="select-search form-control" name="sponsor_id"
+                                                    id="sponsor_id">
                                                     <option value=""></option>
                                                     @foreach ($sponsors as $sponsor)
                                                         <option value="{{ $sponsor->id }}"
                                                             {{ !empty($student->sponsors[0]) && $sponsor->id == $student->sponsors[0]->pivot->sponsor_id ? 'selected' : '' }}>
-                                                            {{ $sponsor->name .' '.$sponsor->description }}</option>
+                                                            {{ $sponsor->name . ' ' . $sponsor->description }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -1137,9 +1138,10 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Sponsorship Level: <span class="text-danger">*</span></label>
-                                                <input value="{{ !empty($student->sponsors[0]) ? $student->sponsors[0]->pivot->level : ''}}"
-                                                       required type="number" name="level"
-                                                       placeholder="Sponsorship Level" class="form-control">
+                                                <input
+                                                    value="{{ !empty($student->sponsors[0]) ? $student->sponsors[0]->pivot->level : '' }}"
+                                                    required type="number" name="level"
+                                                    placeholder="Sponsorship Level" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -1520,7 +1522,7 @@
 
                 <div class="text-right ">
                     <a href="{{ route('students.add-drop-course', $student->id) }}"
-                        class="btn btn-primary mt-2 mb-2 right text-white">Course Add \ Drop</a>
+                        class="btn btn-primary mt-2 mb-2 right text-white">Add or Drop Course</a>
                 </div>
 
                 <table class="table table-bordered">

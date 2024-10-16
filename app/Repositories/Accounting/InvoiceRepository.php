@@ -696,7 +696,7 @@ class InvoiceRepository
     }
 
     /**
-     * Check if a student has been invoiced for the given academic period.
+     * Check if a student has been invoiced for a given academic period.
      *
      * @param  App\Models\Admissions\Student  $student The student model instance
      * @param  int  $academicPeriodId The ID of the academic period
@@ -726,11 +726,11 @@ class InvoiceRepository
     }
 
     /**
-     * Get the sum of all invoices for a given student for an academic period.
+     * Get the sum of all invoice details for a given student for an academic period.
      * 
      * @param  App\Models\Admissions\Student  $student The student model instance
      * @param  int  $academicPeriodId The ID of the academic period
-     * @return int
+     * @return float
      * @author Blessed Zulu <bzulu@zut.edu.zm>
      */
     public function getStudentAcademicPeriodInvoicesTotal($student, $academicPeriodId): float

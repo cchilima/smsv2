@@ -66,16 +66,18 @@
                                             value="{{ $student->study_mode_id ? $student->study_mode_id : '' }}"
                                             type="text">
                                         <input name="student_id" hidden value="{{ $student->id }}" type="text">
-                                        <div class="text-left">
-                                            <button wire:click.debounce.5000ms="refreshTable('StudentQuotationsTable')"
-                                                id="ajax-btn" type="submit" @disabled(!$periodInfo)
-                                                class="btn btn-primary {{ !$periodInfo ? 'disabled' : '' }}">Get Quotation<i
-                                                    class="icon-paperplane ml-2"></i></button>
-                                        </div>
+                                        @if ($paymentBalance < 100)
+                                            @if (!$studentQuotedForCurrentAcademicPeriod)
+                                                <div class="text-left">
+                                                    <button
+                                                        wire:click.debounce.5000ms="refreshTable('StudentQuotationsTable')"
+                                                        id="ajax-btn" type="submit" class="btn btn-primary ">Get
+                                                        Quotation<i class="icon-paperplane ml-2"></i></button>
+                                                </div>
+                                            @endif
+                                        @endif
                                     </form>
-
                                 </div>
-
                             </h4>
 
                             <livewire:datatables.admissions.students.quotations :student="$student" />

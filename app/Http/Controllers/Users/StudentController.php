@@ -12,6 +12,7 @@ use App\Repositories\Academics\ClassAssessmentsRepo;
 use App\Repositories\Academics\StudentRegistrationRepository;
 use App\Repositories\Accounting\PaymentMethodRepository;
 use App\Repositories\Accounting\QuotationRepository;
+use App\Repositories\Accounting\StudentFinancesRepository;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Enrollments\EnrollmentRepository;
 use App\Repositories\Users\userNextOfKinRepository;
@@ -32,7 +33,8 @@ class StudentController extends Controller
         $enrollmentRepo,
         $classaAsessmentRepo,
         $paymentMethodRepo,
-        $quotationRepo;
+        $quotationRepo,
+        $studentFinancesRepo;
 
     public function __construct(
         StudentRepository $studentRepo,
@@ -43,7 +45,8 @@ class StudentController extends Controller
         EnrollmentRepository $enrollmentRepo,
         ClassAssessmentsRepo $classaAsessmentRepo,
         PaymentMethodRepository $paymentMethodRepo,
-        QuotationRepository $quotationRepo
+        QuotationRepository $quotationRepo,
+        StudentFinancesRepository $studentFinancesRepo,
     ) {
         //        $this->middleware(TeamSA::class, ['except' => ['destroy']]);
         //        $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
@@ -58,6 +61,7 @@ class StudentController extends Controller
         $this->classaAsessmentRepo = $classaAsessmentRepo;
         $this->paymentMethodRepo = $paymentMethodRepo;
         $this->quotationRepo = $quotationRepo;
+        $this->studentFinancesRepo = $studentFinancesRepo;
     }
 
     public function profile()
@@ -75,10 +79,15 @@ class StudentController extends Controller
 
     public function finances()
     {
-        $student = Auth::user()->student;
-        $periodInfo = $this->quotationRepo->openAcademicPeriod($student);
+        try {
+            $student = Auth::user()->student;
+            $data = $this->studentFinancesRepo->getStudentFinancialInfo($student);
+            $data['student'] = $student;
 
-        return view('pages.students.finances', compact('student', 'periodInfo'));
+            return view('pages.students.finances', $data);
+        } catch (\Throwable $th) {
+            return Qs::goBackWithError('Failed to load page: ' . $th->getMessage());
+        }
     }
 
     public function howToMakePayments()
