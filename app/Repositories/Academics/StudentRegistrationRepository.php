@@ -3,7 +3,7 @@
 namespace App\Repositories\Academics;
 
 use App\Models\Academics\{Course, AcademicPeriodClass, AcademicPeriodInformation, CourseLevel, ProgramCourses, Grade, Prerequisite};
-use App\Models\Accounting\{Invoice};
+use App\Models\Accounting\{Invoice, Quotation};
 use App\Models\Admissions\{Student};
 use App\Models\Enrollments\{Enrollment};
 use App\Repositories\Accounting\InvoiceRepository;
@@ -61,11 +61,11 @@ class StudentRegistrationRepository
             // Get the academic period ID
             $currentAcademicPeriodId = $nextAcademicPeriod->academic_period_id;
 
+
             if ($currentAcademicPeriodId) {
+                
                 // Step 7: Filter courses for the current academic period
                 $currentCourses = $this->getCurrentCourses($courses, $currentAcademicPeriodId);
-
-                // dd($currentCourses);
 
                 // Step 8: Filter out courses based on unmet prerequisites
                 $filteredCourseIds = $this->filterCourses($currentCourses, $failedCoursesPrerequisites, $allPassedCourseIds);
@@ -105,7 +105,7 @@ class StudentRegistrationRepository
     }
 
     /**
-     * Get a student's failed courses to include on their registration summary
+     * Get a the failed courses to include on a student's registration summary
      * 
      * @param string|int $student_id The ID of the student
      * @author Blessed Zulu <bzulu@zut.edu.zm>
@@ -331,8 +331,10 @@ class StudentRegistrationRepository
             $currentCourses = $this->getCoursesByIds($filteredWithoutPassed, $academicPeriodId);
         }
 
-        // Check if the student has an invoice for the current academic period
-        $invoice = $this->getInvoice($student_id, $academicPeriodId);
+        // Check if the student has an invoice for the current academic period - NOTE previous implementation 
+        // $invoice = $this->getInvoice($student_id, $academicPeriodId);
+
+           $invoice = true;
 
         // Return the courses if there is an invoice
         if ($invoice) {
@@ -425,11 +427,20 @@ class StudentRegistrationRepository
             // Get current date
             $currentDate = Carbon::now();
 
-            // Get invoice
-            $invoice = $this->getInvoice($student_id, $academicInfo->academic_period_id);
+            // Get invoice - NOTE previous implementation
+            // $invoice = $this->getInvoice($student_id, $academicInfo->academic_period_id);
 
-            // Get payment standing
-            $percentage_paid = $invoice ? $this->paymentStanding($invoice->id) : 0;
+            // Get payment standing NOTE previous implementation
+           // $percentage_paid = $invoice ? $this->paymentStanding($invoice->id) : 0;
+
+           // getStudent
+            $student = $this->getStudent($student_id);
+
+           // Get latest quotation
+           $quotation = $student->quotations()->latest()->first();
+
+           // Check student's account for any non invoice attached funds
+           $percentage_paid = $quotation ? $this->paymentStandingQuotation($quotation->id, $student) : 0;
 
             // Check if current date is within registration period
             if ($currentDate->gte($registrationDate) && $currentDate->lte($lateRegistrationEndDate) && $percentage_paid >= $academicInfo->registration_threshold) {
@@ -489,6 +500,33 @@ class StudentRegistrationRepository
 
         // Calculate the percentage of payments against the invoice
         $percentage_paid = ($receipted_total_amount / $invoice_total_amount) * 100;
+
+        return $percentage_paid;
+    }
+
+
+    private function paymentStandingQuotation($quotation_id, $student)
+    {
+        $quotation = Quotation::find($quotation_id);
+
+        // Calculate the total receipted amount not attached to any invoice
+        $receipted_total_amount = $student->statements->sum('amount');
+
+        // Calculate the total amount of the quotation
+        $quotation_total_amount = $quotation->details->sum('amount');
+
+        // Check for both zero cases
+        if ($quotation_total_amount == 0) {
+
+            if ($receipted_total_amount == 0) {
+                return 0;  // or a special value like -1 to indicate both are zero
+            }
+
+            return 0;  // Invoice amount is zero but receipted is not, or both are zero
+        }
+
+        // Calculate the percentage of payments against the invoice
+        $percentage_paid = ($receipted_total_amount / $quotation_total_amount) * 100;
 
         return $percentage_paid;
     }

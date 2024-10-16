@@ -11,7 +11,7 @@ use App\Models\Academics\Program;
 use App\Models\Academics\ProgramCourses;
 use App\Models\Academics\StudyMode;
 use App\Models\Academics\AcademicPeriodInformation;
-use App\Models\Accounting\{Invoice, InvoiceDetail, Statement, Receipt};
+use App\Models\Accounting\{Invoice, InvoiceDetail, Quotation, QuotationDetail, Statement, Receipt};
 use App\Models\Enrollments\Enrollment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -95,6 +95,12 @@ class Student extends Model implements AuditableContract
             ->withPivot('level')
             ->withTimestamps();
     }
+
+    public function quotations()
+    {
+        return $this->hasMany(Quotation::class);
+    }
+
     public function invoicesDetails()
     {
         return $this->hasManyThrough(InvoiceDetail::class, Invoice::class);

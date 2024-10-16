@@ -69,33 +69,35 @@
         </div>
 
         <div class="col-sm-6 col-xl-3">
-            <div class="card card-body bg-primary has-bg-image">
-                <div class="media">
-                    <div class="media-body">
-                        <h3 class="mb-0">{{ $todaysApplicants }}</h3>
-                        <span class="text-uppercase font-size-xs font-weight-bold">Today's Applicants</span>
-                    </div>
-
-                    <div class="ml-3 align-self-center">
-                        <i class="icon-user-plus icon-3x opacity-75"></i>
+            <a href="{{ route('application.index') }}">
+                <div class="card card-body bg-primary has-bg-image">
+                    <div class="media">
+                        <div class="media-body">
+                            <h3 class="mb-0">{{ $todaysApplicants }}</h3>
+                            <span class="text-uppercase font-size-xs font-weight-bold">Today's Applicants</span>
+                        </div>
+                        <div class="ml-3 align-self-center">
+                            <i class="icon-user-plus icon-3x opacity-75"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-sm-6 col-xl-3">
-            <div class="card card-body bg-primary has-bg-image">
-                <div class="media">
-                    <div class="media-body">
-                        <h3 class="mb-0">{{ $applicants }}</h3>
-                        <span class="text-uppercase font-size-xs">Applicants</span>
-                    </div>
-
-                    <div class="ml-3 align-self-center">
-                        <i class="icon-user-plus icon-3x opacity-75"></i>
+            <a href="{{ route('application.index') }}">
+                <div class="card card-body bg-primary has-bg-image">
+                    <div class="media">
+                        <div class="media-body">
+                            <h3 class="mb-0">{{ $applicants }}</h3>
+                            <span class="text-uppercase font-size-xs">Applicants</span>
+                        </div>
+                        <div class="ml-3 align-self-center">
+                            <i class="icon-user-plus icon-3x opacity-75"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-sm-6 col-xl-3">

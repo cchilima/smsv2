@@ -23,7 +23,7 @@ class Province extends Model implements AuditableContract
         return $this->belongsTo(Country::class);
     }
 
-    public function provinces(): HasMany
+    public function towns(): HasMany
     {
         return $this->hasMany(Town::class);
     }

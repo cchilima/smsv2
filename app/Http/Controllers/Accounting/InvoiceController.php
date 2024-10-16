@@ -10,6 +10,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Accounting\Invoice;
 use App\Models\Admissions\Student;
 use App\Repositories\Accounting\InvoiceRepository;
+use App\Repositories\Enrollments\EnrollmentRepository;
+use App\Repositories\Academics\StudentRegistrationRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Elibyy\TCPDF\Facades\TCPDF;
 use Intervention\Image\Colors\Rgb\Channels\Red;
@@ -19,11 +21,15 @@ class InvoiceController extends Controller
 {
 
     protected $invoiceRepo;
+    protected $enrollmentRepo;
+    protected $studentRepo;
 
-    public function __construct(InvoiceRepository $invoiceRepo)
+    public function __construct(InvoiceRepository $invoiceRepo, EnrollmentRepository $enrollmentRepo, StudentRegistrationRepository $studentRepo)
     {
         $this->middleware(TeamSAT::class, ['only' => ['destroy',]]);
         $this->invoiceRepo = $invoiceRepo;
+        $this->enrollmentRepo = $enrollmentRepo;
+        $this->studentRepo = $studentRepo;
     }
 
     /**
@@ -32,8 +38,10 @@ class InvoiceController extends Controller
     public function batchInvoicing(Request $request)
     {
         try {
+
             $this->invoiceRepo->invoiceStudents($request->academic_period);
             return Qs::jsonStoreOk('Batch invoicing successful');
+
         } catch (\Throwable $th) {
             return Qs::jsonError('Batch invoicing failed: ' . $th->getMessage());
         }
@@ -46,8 +54,17 @@ class InvoiceController extends Controller
     public function Invoice(Request $request)
     {
         try {
+
             $this->invoiceRepo->invoiceStudent($request->academic_period, $request->student_id);
-            return Qs::jsonStoreOk('Student invoiced successfully');
+
+             // Get courses student can register for
+             $courseToRegister = $this->studentRepo->getAll($request->student_id);
+
+             // Register and enroll student in the above courses.
+             $this->enrollmentRepo->create($courseToRegister, $request->student_id);
+
+            return Qs::jsonStoreOk('Student invoiced and enrolled successfully');
+
         } catch (\Throwable $th) {
             Qs::jsonError('Failed to invoice student: ' . $th->getMessage());
         }
