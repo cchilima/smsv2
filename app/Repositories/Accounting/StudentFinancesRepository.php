@@ -84,7 +84,13 @@ class StudentFinancesRepository
             $data['totalFees'] = $this->invoiceRepo->getStudentAcademicPeriodInvoicesTotal($student, $data['academicPeriodInfo']?->academic_period_id);
 
             $data['totalPayments'] = $this->statementRepo->getStudentAcademicPeriodStatementsTotal($student, $data['academicPeriodInfo']?->academic_period_id);
-            $data['paymentPercentage'] = $this->calculatePercentage($data['totalPayments'], $data['totalFees']);
+
+            if ($data['totalFees'] != 0) {
+                $data['paymentPercentage'] = ($data['totalPayments'] / $data['totalFees']) * 100;
+            } else {
+                $data['paymentPercentage'] = 0;  // You can set this to null or another default value if desired
+            }
+
 
             $data['paymentBalance'] = $data['totalFees'] - $data['totalPayments'];
 

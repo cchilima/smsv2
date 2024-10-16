@@ -319,6 +319,7 @@ Route::post('student-quotation-process', [QuotationController::class, 'quotation
 
 
     Route::resource('enrollments', EnrollmentController::class);
+    
     Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 
     // Residency Routes
