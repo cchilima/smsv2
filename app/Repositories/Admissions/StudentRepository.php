@@ -338,7 +338,8 @@ class StudentRepository
             'user.userPersonalInfo.userMaritalStatus',
             'user.userPersonalInfo.province',
             'user.userPersonalInfo.country',
-            'user.userPersonalInfo.town'
+            'user.userPersonalInfo.town',
+            'sponsors'
         )->where('user_id', $id)->get()->first();
     }
 

@@ -11,7 +11,7 @@ class UpdateStudentSponsor extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,27 @@ class UpdateStudentSponsor extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        if ($this->isMethod('post') || $this->isMethod('put')) {
+            return [
+                'sponsor_id' => [
+                    'required',
+                    'string',
+                    'max:255'
+                ],
+                'level' => [
+                    'required',
+                    'max:255'
+                ]
+            ];
+        }
+
+        if ($this->isMethod('get')) {
+            return [
+            ];
+
+//        return [
+//            //
+//        ];
+        }
     }
 }

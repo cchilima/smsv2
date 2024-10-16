@@ -132,43 +132,60 @@
                     <div class="tab-pane fade show" id="sponsor">
                         <table class="table table-bordered">
                             <tbody>
+                            @if(!empty($student->sponsors[0]))
                             <tr>
-                                <td class="font-weight-bold">Full Name</td>
+                                <td class="font-weight-bold">Name</td>
                                 <td class="next-of-kin-infor">
-                                    <span>{{ $student->user->userNextOfKin->full_name }}</span>
-                                    <input value="{{ $student->user->userNextOfKin->full_name }}"
-                                           id="name{{ $student->user->userNextOfKin->id }}" type="text"
-                                           name="kin_full_name" class="form-control d-none">
+                                    <span>{{ $student->sponsors[0]->name }}</span>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold text-justify">Description</td>
+                                <td class="next-of-kin-infor">
+                                    <span>{{ $student->sponsors[0]->description }}</span>
 
                                 </td>
                             </tr>
                             <tr>
                                 <td class="font-weight-bold text-justify">Mobile</td>
                                 <td class="next-of-kin-infor">
-                                    <span>{{ $student->user->userNextOfKin->mobile }}</span>
-                                    <input value="{{ $student->user->userNextOfKin->mobile }}"
-                                           id="mobile{{ $student->user->userNextOfKin->id }}" type="text"
-                                           name="kin_mobile" class="form-control d-none" required>
+                                    <span>{{ $student->sponsors[0]->mobile }}</span>
+
                                 </td>
                             </tr>
                             <tr>
                                 <td class="font-weight-bold text-justify">Email</td>
                                 <td class="next-of-kin-infor">
-                                    <span>{{ $student->user->userNextOfKin->telephone }}</span>
-                                    <input value="{{ $student->user->userNextOfKin->telephone }}"
-                                           id="telephone{{ $student->user->userNextOfKin->id }}" type="text"
-                                           name="kin_telephone" class="d-none form-control">
+                                    <span>{{ $student->sponsors[0]->email }}</span>
 
                                 </td>
                             </tr>
+                            <tr>
+                                <td class="font-weight-bold text-justify">Level</td>
+                                <td class="next-of-kin-infor">
+                                    <span>{{ $student->sponsors[0]->pivot->level }}</span>
+
+                                </td>
+                            </tr>
+                            @else
+                                <tr>
+                                    <td class="font-weight-bold text-justify">Name</td>
+                                    <td class="next-of-kin-infor">
+                                        <span>Self</span>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold text-justify">Level</td>
+                                    <td class="next-of-kin-infor">
+                                        <span>100</span>
+
+                                    </td>
+                                </tr>
+                            @endif
                             </tbody>
                         </table>
-                        <div class="text-right mb-1 mt-4">
-                            <button id="ajax-btn" type="button"
-                                    onclick="UpdateNkininformation('{{ $student->user->userNextOfKin->id }}')"
-                                    class="btn btn-primary">Update Information <i class="icon-pencil ml-2"></i>
-                            </button>
-                        </div>
                     </div>
                     <div class="tab-pane fade show" id="next-kin">
                         <table class="table table-bordered">
@@ -644,6 +661,8 @@
                             Info</a></li>
                     <li class="nav-item"><a href="#next-of-kin-info" class="nav-link" data-toggle="tab">Next of Kin
                             Info</a></li>
+                    <li class="nav-item"><a href="#sponsor-info" class="nav-link" data-toggle="tab">Sponsor
+                            Info</a></li>
                 </ul>
 
                 <div class="tab-content">
@@ -1066,6 +1085,61 @@
                                                             {{ $country->country }}</option>
                                                     @endforeach
                                                 </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-left">
+                                        <button type="submit" class="btn btn-primary">Submit form <i
+                                                class="icon-paperplane ml-2"></i></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="tab-pane fade" id="sponsor-info">
+
+                        <!-- Add your sponsor content here -->
+                        <div class="row">
+                            <div class="col-md-12">
+{{--                                <form class="ajax-update" data-reload="#page-header" method="post"--}}
+{{--                                      action="{{ route('students.sponsor.update', $student->id ) }}">--}}
+{{--                                    @csrf--}}
+{{--                                    @method('POST')--}}
+                                <form class="ajax-update" data-reload="#page-header" method="post"
+                                      action="{{ !empty($student->sponsors[0]) ? route('students.sponsor.update', $student->id) : route('students.sponsor.create', $student->id) }}">
+                                    @csrf
+                                    @if($student->sponsors()->exists())
+                                        @method('PUT')
+                                    @else
+                                        @method('POST')
+                                    @endif
+
+                                    <div class="row">
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="kin_relationship_id">Name: <span
+                                                        class="text-danger">*</span></label>
+                                                <select data-placeholder="Select Relationship" required
+                                                        class="select-search form-control" name="sponsor_id"
+                                                        id="sponsor_id">
+                                                    <option value=""></option>
+                                                    @foreach ($sponsors as $sponsor)
+                                                        <option value="{{ $sponsor->id }}"
+                                                            {{ !empty($student->sponsors[0]) && $sponsor->id == $student->sponsors[0]->pivot->sponsor_id ? 'selected' : '' }}>
+                                                            {{ $sponsor->name .' '.$sponsor->description }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Sponsorship Level: <span class="text-danger">*</span></label>
+                                                <input value="{{ !empty($student->sponsors[0]) ? $student->sponsors[0]->pivot->level : ''}}"
+                                                       required type="number" name="level"
+                                                       placeholder="Sponsorship Level" class="form-control">
                                             </div>
                                         </div>
                                     </div>

@@ -106,7 +106,10 @@
                             <a href="#profile-info" class="nav-link" data-toggle="tab">Personal Information</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#next-kin" class="nav-link" data-toggle="tab">Sponsor Information</a>
+                            <a href="#next-kin" class="nav-link" data-toggle="tab">Next of Kin</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#sponsor" class="nav-link" data-toggle="tab">Sponsor Information</a>
                         </li>
                     </ul>
 
@@ -218,6 +221,45 @@
                                             <span>{{ $student->user->userNextOfKin->country->country }}</span>
                                         </td>
                                     </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade show" id="sponsor">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td class="font-weight-bold">Name</td>
+                                    <td class="next-of-kin-infor">
+                                        <span>{{ $student->user->userNextOfKin->full_name }}</span>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold text-justify">Mobile</td>
+                                    <td class="next-of-kin-infor">
+                                        <span>{{ $student->user->userNextOfKin->mobile }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold text-justify">Description</td>
+                                    <td class="next-of-kin-infor">
+                                        <span>{{ $student->user->userNextOfKin->telephone }}</span>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold text-justify">Email</td>
+                                    <td class="next-of-kin-infor">
+                                        <span>{{ $student->user->userNextOfKin->relationship->relationship }}</span>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold text-justify">Sponsor Level</td>
+                                    <td class="next-of-kin-infor">
+                                        <span>{{ $student->user->userNextOfKin->town->name }}</span>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>

@@ -11,7 +11,7 @@ class UpdateSponsor extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,37 @@ class UpdateSponsor extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        if ($this->isMethod('post') || $this->isMethod('put')) {
+            return [
+                'name' => [
+                    'required',
+                    'string',
+                    'max:255'
+                ],
+                'description' => [
+                    'required',
+                    'string',
+                    'max:255'
+                ],
+                'email' => [
+                    'nullable',
+                    'email',
+                    'max:255'
+                ],
+                'phone' => [
+                    'nullable',
+                    'max:255'
+                ],
+            ];
+        }
+
+        if ($this->isMethod('get')) {
+            return [
+
+            ];
+        }
+//        return [
+//            //
+//        ];
     }
 }

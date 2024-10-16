@@ -78,6 +78,7 @@ use App\Livewire\Pages\Residency\Countries\Index as CountriesIndex;
 use App\Livewire\Pages\Residency\Provinces\Index as ProvincesIndex;
 use App\Livewire\Pages\Residency\Towns\Index as TownsIndex;
 use App\Livewire\Pages\Settings\MaritalStatuses\Index as MaritalStatusesIndex;
+use App\Livewire\Pages\Settings\Sponsors\Index as SponsorsIndex;
 use App\Models\Academics\ClassAssessment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -264,6 +265,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('marital-statuses', MaritalStatusController::class);
     Route::get('/marital-statuses', MaritalStatusesIndex::class)->name('marital-statuses.index');
+
 
     Route::resource('students', StudentController::class);
     Route::resource('users', UserController::class);
@@ -478,7 +480,14 @@ Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->n
 Route::resource('enrollments', EnrollmentController::class);
 Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 //sponsors
+Route::put('/attach-sponsor/{id}', [SponsorController::class,'attachSponsorE'])->name('students.sponsor.update');
+Route::post('/attach-sponsors/{id}', [SponsorController::class,'attachSponsor'])->name('students.sponsor.create');
 Route::resource('sponsors', SponsorController::class);
+Route::get('/sponsors', SponsorsIndex::class)->name('sponsors.index');
+
+
+
+
 // Residency Routes
 Route::get('/countries/{countryId}/provinces/', [CountryController::class, 'getProvincesByCountry'])->name('provinces.getProvincesByCountry');
 Route::resource('countries', CountryController::class);

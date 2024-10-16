@@ -525,9 +525,9 @@
                                         <span>Audit Trail</span></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['sponsor.create', 'sponsor.edit', 'sponsor.index']) ? 'active' : '' }}">
-                                        <span>Audit Reports</span></a>
+                                    <a href="{{ route('sponsors.index') }}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['sponsors.create', 'sponsors.edit', 'sponsors.index']) ? 'active' : '' }}">
+                                        <span>Sponsor Infor</span></a>
                                 </li>
 
                             </ul>

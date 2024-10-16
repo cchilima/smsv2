@@ -9,6 +9,7 @@ use App\Repositories\Accounting\InvoiceRepository;
 use App\Repositories\Accounting\StudentFinancesRepository;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Enrollments\EnrollmentRepository;
+use App\Repositories\Sponsor\SponsorsRepository;
 use App\Repositories\Users\UserPersonalInfoRepository;
 use App\Repositories\Users\UserRepository;
 use App\Traits\CanRefreshDataTable;
@@ -36,6 +37,7 @@ class Show extends Component
     protected InvoiceRepository $invoiceRepo;
     protected UserPersonalInfoRepository $userPersonalInfoRepo;
     protected StudentFinancesRepository $studentFinancesRepo;
+    protected SponsorsRepository $sponsorsRepository;
 
     public function boot()
     {
@@ -47,6 +49,7 @@ class Show extends Component
         $this->invoiceRepo = app(InvoiceRepository::class);
         $this->userPersonalInfoRepo = app(UserPersonalInfoRepository::class);
         $this->studentFinancesRepo = app(StudentFinancesRepository::class);
+        $this->sponsorsRepository = app(SponsorsRepository::class);
     }
 
     public function mount($userId)
@@ -83,6 +86,8 @@ class Show extends Component
         $this->data['hasOpenAcademicPeriod'] = $this->invoiceRepo->openAcademicPeriod($this->data['student']) != null;
 
         $this->financialInfo = $this->studentFinancesRepo->getStudentFinancialInfo($this->data['student']);
+        $this->data['sponsors'] = $this->sponsorsRepository->getAll();
+        $this->data['student_sponsor'] = $this->studentRepo->getAll();
     }
 
     public function updateFinancialStats()
@@ -97,7 +102,7 @@ class Show extends Component
 
     /**
      * Dynamically refresh specified Livewire component sections when a student is invoiced
-     * 
+     *
      * @param array $tableNames Names of any PowerGrid datatables to refresh on the page
      */
     public function invoiceStudentRefresh(array $tableNames): void
@@ -109,7 +114,7 @@ class Show extends Component
 
     /**
      * Dynamically refresh specified Livewire component sections when a payment is collected
-     * 
+     *
      * @param array $tableNames Names of any PowerGrid datatables to refresh on the page
      */
     public function collectPaymentRefresh(array $tableNames): void
