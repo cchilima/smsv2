@@ -53,36 +53,34 @@
 
                         </div>
 
-
-
-
                         <div class="tab-pane fade show" id="quotations">
 
-                        <h4 class="d-flex align-items-center justify-content-between">
-                                    <span>Quotations</span>
+                            <h4 class="d-flex align-items-center justify-content-between">
+                                <span>Quotations</span>
 
-                                    <div class="mb-2 d-flex justify-content-end">
+                                <div class="mb-2 d-flex justify-content-end">
 
                                     <form class="ajax-store" method="post" action="{{ route('quotations.quotation') }}">
-                                    @csrf
-                                    <input name="academic_period" hidden value="{{ $student->study_mode_id ? $student->study_mode_id : '' }}" type="text">
-                                    <input name="student_id" hidden value="{{ $student->id }}" type="text">
-                                    <div class="text-left">
-                                            <button wire:click.debounce.5000ms="refreshTable('StudentInvoicesTable')" id="ajax-btn" type="submit" class="btn btn-primary">Get Quotation<i class="icon-paperplane ml-2"></i></button>
-                                    </div>
-                                </form>
+                                        @csrf
+                                        <input name="academic_period" hidden
+                                            value="{{ $student->study_mode_id ? $student->study_mode_id : '' }}"
+                                            type="text">
+                                        <input name="student_id" hidden value="{{ $student->id }}" type="text">
+                                        <div class="text-left">
+                                            <button wire:click.debounce.5000ms="refreshTable('StudentQuotationsTable')"
+                                                id="ajax-btn" type="submit" @disabled(!$periodInfo)
+                                                class="btn btn-primary {{ !$periodInfo ? 'disabled' : '' }}">Get Quotation<i
+                                                    class="icon-paperplane ml-2"></i></button>
+                                        </div>
+                                    </form>
 
-                                    </div>
+                                </div>
 
-                                </h4>
-
+                            </h4>
 
                             <livewire:datatables.admissions.students.quotations :student="$student" />
 
-
                         </div>
-
-
 
                         <div class="tab-pane fade show" id="statements">
                             <div class="mb-2 d-flex justify-content-end">

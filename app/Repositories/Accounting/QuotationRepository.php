@@ -50,14 +50,13 @@ class QuotationRepository
             // Get next academic period
             $periodInfo = $this->openAcademicPeriod($student);
 
-            if($periodInfo){
+            if ($periodInfo) {
                 // Process the student invoice using the helper function
                 $this->processStudentQuotation($student, $periodInfo);
-
             } else {
                 return false;
             }
-           
+
             DB::commit();
 
             return true;
@@ -72,7 +71,7 @@ class QuotationRepository
     private function processStudentQuotation($student, $periodInfo)
     {
 
-        // Check if the student has already been invoiced for the new period
+        // Check if the student has already been quoted for the new period
         $quotationExists = Quotation::where('student_id', $student->id)->where('academic_period_id', $periodInfo->academic_period_id)->exists();
 
         // Get the latest previous academic period
@@ -173,14 +172,14 @@ class QuotationRepository
         // Create invoice details for each failed course
         foreach ($resultsReview['coursesFailed'] as $courseRepeat) {
             QuotationDetail::create([
-                'quotation _id' => $quotation ->id,
+                'quotation _id' => $quotation->id,
                 'fee_id' => $crf->fee_id,
                 'amount' => $crf->amount
             ]);
         }
 
         // Finalize the in
-        $this->finalizeQuotation($student, $quotation );
+        $this->finalizeQuotation($student, $quotation);
     }
 
     private function createQuotationFromPreviousFees($student, $periodInfo, $previousFees)

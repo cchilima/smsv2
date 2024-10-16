@@ -23,10 +23,13 @@ use App\Http\Controllers\Accomodation\BedSpaceController;
 use App\Http\Controllers\Accomodation\BookingController;
 use App\Http\Controllers\Accomodation\HostelController;
 use App\Http\Controllers\Accomodation\RoomController;
-use App\Http\Controllers\Accounting\{InvoiceController,
-    QuotationController, PaymentMethodController,
+use App\Http\Controllers\Accounting\{
+    InvoiceController,
+    QuotationController,
+    PaymentMethodController,
     SponsorController,
-    StatementController};
+    StatementController
+};
 use App\Http\Controllers\Accounting\FeeController;
 use App\Http\Controllers\Admissions\StudentController;
 use App\Http\Controllers\Applications\ApplicantController;
@@ -199,12 +202,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/exam-registration', [ClassAssessmentsController::class, 'ExamRegistration'])->name('student-exam_registration');
     });
 
-// Accounting livewire routes
-Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
-Route::get('/approve-credit-notes', ApproveCreditNotes::class)->name('accounting.approve_credit_notes');
+    // Accounting livewire routes
+    Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
+    Route::get('/approve-credit-notes', ApproveCreditNotes::class)->name('accounting.approve_credit_notes');
 
 
-Route::get('/quotation-details/{quotation_id}', ViewQuotationDetails::class)->name('accounting.quotation_details');
+    Route::get('/quotation-details/{quotation_id}', ViewQuotationDetails::class)->name('accounting.quotation_details');
 
     // Add drop courses
     Route::get('/add-drop-course/{student_id}', AddDropCourse::class)->name('students.add-drop-course');
@@ -311,17 +314,17 @@ Route::get('/quotation-details/{quotation_id}', ViewQuotationDetails::class)->na
 
     Route::resource('statements', StatementController::class);
 
-Route::resource('invoices', InvoiceController::class);
-Route::post('custom-invoice', [InvoiceController::class, 'customInvoice'])->name('invoices.custom-invoice');
-Route::post('batch-invoice-process', [InvoiceController::class, 'batchInvoicing'])->name('invoices.batchInvoicing');
-Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->name('invoices.invoice');
+    Route::resource('invoices', InvoiceController::class);
+    Route::post('custom-invoice', [InvoiceController::class, 'customInvoice'])->name('invoices.custom-invoice');
+    Route::post('batch-invoice-process', [InvoiceController::class, 'batchInvoicing'])->name('invoices.batchInvoicing');
+    Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->name('invoices.invoice');
 
 
-Route::post('student-quotation-process', [QuotationController::class, 'quotation'])->name('quotations.quotation');
+    Route::post('student-quotation-process', [QuotationController::class, 'quotation'])->name('quotations.quotation');
 
 
     Route::resource('enrollments', EnrollmentController::class);
-    
+
     Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 
     // Residency Routes
@@ -488,8 +491,8 @@ Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->n
 Route::resource('enrollments', EnrollmentController::class);
 Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 //sponsors
-Route::put('/attach-sponsor/{id}', [SponsorController::class,'attachSponsorE'])->name('students.sponsor.update');
-Route::post('/attach-sponsors/{id}', [SponsorController::class,'attachSponsor'])->name('students.sponsor.create');
+Route::put('/attach-sponsor/{id}', [SponsorController::class, 'attachSponsorE'])->name('students.sponsor.update');
+Route::post('/attach-sponsors/{id}', [SponsorController::class, 'attachSponsor'])->name('students.sponsor.create');
 Route::resource('sponsors', SponsorController::class);
 Route::get('/sponsors', SponsorsIndex::class)->name('sponsors.index');
 

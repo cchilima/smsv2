@@ -24,7 +24,7 @@ class ViewQuotationDetails extends Component
         $this->quotationRepo = $quotationRepo;
     }
 
-    #[Layout('components.layouts.administrator')]
+    #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
         return view('livewire.accounting.view-quotation-details');

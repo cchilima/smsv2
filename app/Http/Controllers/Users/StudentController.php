@@ -11,6 +11,7 @@ use App\Models\Accounting\Invoice;
 use App\Repositories\Academics\ClassAssessmentsRepo;
 use App\Repositories\Academics\StudentRegistrationRepository;
 use App\Repositories\Accounting\PaymentMethodRepository;
+use App\Repositories\Accounting\QuotationRepository;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Enrollments\EnrollmentRepository;
 use App\Repositories\Users\userNextOfKinRepository;
@@ -30,7 +31,8 @@ class StudentController extends Controller
         $userNextOfKinRepo,
         $enrollmentRepo,
         $classaAsessmentRepo,
-        $paymentMethodRepo;
+        $paymentMethodRepo,
+        $quotationRepo;
 
     public function __construct(
         StudentRepository $studentRepo,
@@ -40,7 +42,8 @@ class StudentController extends Controller
         userNextOfKinRepository $userNextOfKinRepo,
         EnrollmentRepository $enrollmentRepo,
         ClassAssessmentsRepo $classaAsessmentRepo,
-        PaymentMethodRepository $paymentMethodRepo
+        PaymentMethodRepository $paymentMethodRepo,
+        QuotationRepository $quotationRepo
     ) {
         //        $this->middleware(TeamSA::class, ['except' => ['destroy']]);
         //        $this->middleware(SuperAdmin::class, ['only' => ['destroy']]);
@@ -54,6 +57,7 @@ class StudentController extends Controller
         $this->enrollmentRepo = $enrollmentRepo;
         $this->classaAsessmentRepo = $classaAsessmentRepo;
         $this->paymentMethodRepo = $paymentMethodRepo;
+        $this->quotationRepo = $quotationRepo;
     }
 
     public function profile()
@@ -72,8 +76,9 @@ class StudentController extends Controller
     public function finances()
     {
         $student = Auth::user()->student;
+        $periodInfo = $this->quotationRepo->openAcademicPeriod($student);
 
-        return view('pages.students.finances', compact('student'));
+        return view('pages.students.finances', compact('student', 'periodInfo'));
     }
 
     public function howToMakePayments()
