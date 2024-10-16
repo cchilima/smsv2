@@ -103,6 +103,6 @@ class StudentFinancesRepository
         $data['paymentBalance'] = $data['totalFees'] - $data['totalPayments'];
         $data['registrationBalance'] = ($data['academicPeriodInfo']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
         $data['viewResultsBalance'] = ($data['academicPeriodInfo']?->view_results_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
-        $data['paymentPercentage'] = $data['totalPayments'] / $data['totalFees'] * 100;
+        $data['paymentPercentage'] = $this->calculatePercentage($data['totalPayments'], $data['totalFees']);
     }
 }
