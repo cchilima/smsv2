@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Applications;
 
+use App\Helpers\Qs;
 use App\Http\Requests\Applications\Attachment as AttachmentRequest;
 use App\Models\Applications\Applicant;
 use App\Repositories\Admissions\StudentRepository;
@@ -161,12 +162,12 @@ class CompleteApplication extends Component
             ]
         );
 
-        $this->flash('Application progress saved');
-
         // Check the application completion status
         if ($this->applicantRepo->checkApplicationCompletion($this->applicant->id)) {
-            $this->flash('Application completed successfully. Check your email for confirmation.');
+            return $this->flash('Application completed successfully. Pay the application fee (K' . Qs::getSetting('application_fee') . ') to continue.');
         }
+
+        $this->flash('Application progress saved');
     }
 
     public function saveGrade()
@@ -220,6 +221,7 @@ class CompleteApplication extends Component
             $this->flash('Results added successfully');
 
             DB::commit();
+
             return $this->mount($this->applicant->id);
         } catch (\Throwable $th) {
             $this->flash('Failed to upload file ' . $th->getMessage(), 'error');
