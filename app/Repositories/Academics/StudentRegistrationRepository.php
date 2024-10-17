@@ -63,7 +63,7 @@ class StudentRegistrationRepository
 
 
             if ($currentAcademicPeriodId) {
-                
+
                 // Step 7: Filter courses for the current academic period
                 $currentCourses = $this->getCurrentCourses($courses, $currentAcademicPeriodId);
 
@@ -334,7 +334,7 @@ class StudentRegistrationRepository
         // Check if the student has an invoice for the current academic period - NOTE previous implementation 
         // $invoice = $this->getInvoice($student_id, $academicPeriodId);
 
-           $invoice = true;
+        $invoice = true;
 
         // Return the courses if there is an invoice
         if ($invoice) {
@@ -408,7 +408,9 @@ class StudentRegistrationRepository
         $classIds = $courses ? $courses->pluck('id')->toArray() : [];
 
         // check if student has already been enrolled in courses
-        $enrollmentExists = Enrollment::whereIn('academic_period_class_id', $classIds)->where('student_id', $student_id)->exists();
+        $enrollmentExists = Enrollment::whereIn('academic_period_class_id', $classIds)
+            ->where('student_id', $student_id)
+            ->exists();
 
         return $enrollmentExists;
     }
@@ -431,16 +433,16 @@ class StudentRegistrationRepository
             // $invoice = $this->getInvoice($student_id, $academicInfo->academic_period_id);
 
             // Get payment standing NOTE previous implementation
-           // $percentage_paid = $invoice ? $this->paymentStanding($invoice->id) : 0;
+            // $percentage_paid = $invoice ? $this->paymentStanding($invoice->id) : 0;
 
-           // getStudent
+            // getStudent
             $student = $this->getStudent($student_id);
 
-           // Get latest quotation
-           $quotation = $student->quotations()->latest()->first();
+            // Get latest quotation
+            $quotation = $student->quotations()->latest()->first();
 
-           // Check student's account for any non invoice attached funds
-           $percentage_paid = $quotation ? $this->paymentStandingQuotation($quotation->id, $student) : 0;
+            // Check student's account for any non invoice attached funds
+            $percentage_paid = $quotation ? $this->paymentStandingQuotation($quotation->id, $student) : 0;
 
             // Check if current date is within registration period
             if ($currentDate->gte($registrationDate) && $currentDate->lte($lateRegistrationEndDate) && $percentage_paid >= $academicInfo->registration_threshold) {

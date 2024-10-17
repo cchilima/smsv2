@@ -31,4 +31,5 @@
 {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/jquery-editable/css/jquery-editable.css"
     rel="stylesheet" /> --}}
 
+@livewireStyles()
 @stack('css')

@@ -43,8 +43,9 @@
     src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/jquery-editable/js/jquery-editable-poshytip.min.js">
 </script> --}}
 
-<!-- /theme JS files -->
+{{-- Alpine Plugins --}}
+<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
 
 <script src=" {{ asset('assets/js/custom.js') }} "></script>
-
+@livewireScripts
 @include('partials.js.custom_js')

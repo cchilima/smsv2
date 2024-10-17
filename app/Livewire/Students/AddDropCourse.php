@@ -8,16 +8,19 @@ use App\Repositories\Academics\StudentRegistrationRepository;
 use App\Repositories\Accounting\InvoiceRepository;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Enrollments\EnrollmentRepository;
+use App\Traits\CanShowAlerts;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 class AddDropCourse extends Component
 {
+    use CanShowAlerts;
+
     public $course_id;
     public $student;
     public $data;
-    
+
     protected StudentRepository $studentRepo;
     protected StudentRegistrationRepository $studentRegistrationRepo;
     protected EnrollmentRepository $enrollmentRepo;
@@ -38,34 +41,31 @@ class AddDropCourse extends Component
     public function mount($student_id)
     {
         Gate::allowIf(Qs::userIsAdministrative());
-    
+
         // Fetch student, all courses, and currently enrolled courses
         $this->data['student'] = $this->studentRegistrationRepo->getStudentById($student_id);
         $this->data['courses'] = $this->studentRegistrationRepo->getAll($student_id);
         $this->data['enrolled_courses'] = $this->studentRegistrationRepo->curentEnrolledClasses($student_id);
-    
+
         // Extract the IDs of the enrolled courses
         $enrolledCourseIds = collect($this->data['enrolled_courses'])->pluck('course.id')->toArray();
-    
+
         // Filter out the courses that are already enrolled
         $this->data['courses'] = collect($this->data['courses'])->reject(function ($course) use ($enrolledCourseIds) {
             return in_array($course->course_id, $enrolledCourseIds); // Assumes $course->id is the identifier
         })->values(); // Reset the keys to keep the collection neat
-    
+
         $this->student = $this->data['student'];
     }
-    
-    
-
 
     public function dropCourse($enrollment_id)
     {
-        if($this->enrollmentRepo->dropCourse($enrollment_id)){
+        if ($this->enrollmentRepo->dropCourse($enrollment_id)) {
             $this->mount($this->student->id);
-            return $this->dispatch('course-dropped');
 
+            $this->flash('Course dropped successfully');
         } else {
-            $this->dispatch('course-drop-failed');
+            $this->flash('Failed to drop course', 'error');
         }
     }
 
@@ -75,21 +75,19 @@ class AddDropCourse extends Component
 
         try {
 
-            if($this->enrollmentRepo->addCourse($this->student, $this->course_id)){
+            if ($this->enrollmentRepo->addCourse($this->student, $this->course_id)) {
                 $this->mount($this->student->id);
-                return $this->dispatch('course-added');
-    
+
+                return $this->flash('Course added successfully');
             } else {
-              // $this->dispatch('course-add-failed');
+                return $this->flash('Failed to add course', 'error');
             }
         } catch (\Throwable $th) {
-            //throw $th;
-            dd($th);
-            $this->dispatch('course-add-failed');
+            return $this->flash('Failed to add course: ' . $th->getMessage(), 'error');
         }
     }
 
-    #[Layout('components.layouts.administrator')]
+    #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
         return view('livewire.students.add-drop-course', $this->data);

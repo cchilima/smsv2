@@ -1,181 +1,168 @@
-<div class="container mt-10">
+@section('page_title', 'Invoice Details')
 
 @php
     use App\Helpers\Qs;
 @endphp
 
+<div class="card">
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title">Invoice Details</h6>
+        {!! Qs::getPanelOptions() !!}
+    </div>
 
-    <div>
-
-        <ul class="custom-tabs align-left">
-            <li class="{{ $currentSection === 'details' ? 'active' : '' }} custom-tab-item"
-                wire:click="setSection('details')">
-                <a>Invoice Details</a>
+    <div class="card-body">
+        <ul wire:ignore class="nav nav-tabs nav-tabs-highlight">
+            <li class="nav-item"><a href="#invoice-details" class="nav-link active" data-toggle="tab">Invoice Details</a>
             </li>
-            <li class="{{ $currentSection === 'credit' ? 'active' : '' }} custom-tab-item"
-                wire:click="setSection('credit')">
-                <a>Credit Notes</a>
+            <li class="nav-item"><a href="#credit-notes" class="nav-link" data-toggle="tab">Credit Notes</a>
             </li>
         </ul>
 
-        @if ($currentSection == 'details')
-            <div class="mt-4">
-                @if (count($creditNoteItems) > 0)
-                    <a class="btn btn-small rounded-md primary mb-5 right" wire:click.prevent="raise()"
-                        wire:confirm="Are you sure you want to create credit note?"> Raise Credit Note<i
-                            class="material-icons right">edit_note</i> </a>
-                @endif
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="invoice-details">
+                <div class="mt-4">
 
-                <form action="{{ route('student.download-invoice', $invoice->id) }}" method="get">
-                    @csrf
-                    <button type="submit" class="btn primary rounded-md">
-                        <i class="material-icons right white-text">task</i>
-                        PDF
-                    </button>
-                </form>
+                    <div class="">
+                        <div class="row">
+                            <div class="{{ count($creditNoteItems) > 0 ? 'col-md-8' : 'col' }}">
+                                <div class="form-group">
+                                    <label class="active" for="credit_note_reason">Credit Note Reason</label>
+                                    <textarea placeholder="Enter the reason for raising credit note" id="credit_note_reason"
+                                        wire:model.live.debounce.500ms="creditNoteReason" class="form-control" rows="1"></textarea>
+                                </div>
+                            </div>
 
-                <div class="white z-depth-1 rounded mt-4 mb-10">
+                            @if (count($creditNoteItems) > 0)
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="d-block">&nbsp</label>
+                                        <button class="btn btn-primary" wire:click.prevent="raise()"
+                                            wire:confirm="Are you sure you want to create credit note?">Raise Credit
+                                            Note
+                                        </button>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
 
-                    <div class="p-10">
-                        <div class="input-field">
-                            <textarea id="credit_note_reason" wire:model.live="creditNoteReason" class="materialize-textarea"></textarea>
-                            <label class="active" for="credit_note_reason">Enter credit note reason before marking</label>
+                        <div class="mt-4">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>S/N</th>
+                                        <th>Fee</th>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                        <th>Mark</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($invoice->details as $key => $detail)
+                                        <tr>
+                                            <td>{{ ++$key }}</td>
+                                            <td>{{ $detail->fee->name }}</td>
+                                            <td>ZMW {{ $detail->amount }}</td>
+                                            <td>{{ $detail->created_at->format('d F Y') }}</td>
+                                            <td>
+                                                {{-- <p>
+                                                    <label>
+                                                        <input @if ($creditNoteReason == '') disabled @endif
+                                                            wire:model="checkedItems"
+                                                            wire:click="addItem({{ $detail->id }},{{ $detail->amount }})"
+                                                            type="checkbox" class="filled-in" value="{{ $detail->id }}" />
+                                                        <span></span>
+                                                    </label>
+                                                </p> --}}
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox" data-toggle="tooltip"
+                                                        data-placement="top"
+                                                        title="{{ !$creditNoteReason ? 'First enter a reason for raising credit note' : '' }}">
+                                                        <input wire:model="checkedItems"
+                                                            wire:click="addItem({{ $detail->id }},{{ $detail->amount }})"
+                                                            class="custom-control-input" type="checkbox"
+                                                            value="{{ $detail->id }}"
+                                                            id="flexCheckDefault-{{ $loop->index }}"
+                                                            @disabled(!$creditNoteReason)>
+                                                        <label class="custom-control-label"
+                                                            for="flexCheckDefault-{{ $loop->index }}">
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
-                    <table class="responsive-table centered">
-                        <thead>
-                            <tr>
-                                <th>S/N</th>
-                                <th>Fee</th>
-                                <th>Amount</th>
-                                <th>Date</th>
-                                <th>Mark</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($invoice->details as $key => $detail)
-                                <tr>
-                                    <td>{{ ++$key }}</td>
-                                    <td>{{ $detail->fee->name }}</td>
-                                    <td>ZMW {{ $detail->amount }}</td>
-                                    <td>{{ $detail->created_at->format('d F Y') }}</td>
-                                    <td>
-                                        <p >
-                                            <label>
-                                                <input @if($creditNoteReason == '') disabled  @endif wire:model="checkedItems"
-                                                    wire:click="addItem({{ $detail->id }},{{ $detail->amount }})"
-                                                    type="checkbox" class="filled-in" value="{{ $detail->id }}" />
-                                                <span></span>
-                                            </label>
-                                        </p>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                    @if (count($creditNoteItems) > 0)
 
-                @if(count($creditNoteItems)>0)
+                        <div class="mt-4">
 
-                <div class="white z-depth-1 rounded mt-4">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>S/N</th>
+                                        <th>Amount</th>
+                                        <th>Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($creditNoteItems as $key => $item)
+                                        <tr>
+                                            <td>CN{{ ++$key }}</td>
+                                            <td>ZMW {{ $item['amount'] }}</td>
+                                            <td>{{ $item['reason'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
 
+                    @endif
 
-                <table class="table centered">
-                    <thead>
-                        <tr>
-                            <th>S/N</th>
-                            <th>Amount</th>
-                            <th>Reason</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($creditNoteItems as $key => $item)
-                            <tr>
-                                <td>CN{{ ++$key }}</td>
-                                <td>ZMW {{ $item['amount'] }}</td>
-                                <td>{{ $item['reason'] }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                </div>
-
-                @endif
-
-
-            </div>
-        @else
-            <div class="mt-4">
-                <b class="flow-text light-deca">Invoice Credit Notes</b>
-                <div class="white z-depth-1 rounded mt-4">
-                    <table class="responsive-table centered">
-                        <thead>
-                            <tr>
-                                <th>S/N</th>
-                                <th>Fee</th>
-                                <th>Amount</th>
-                                <th>Reason</th>
-                                <th>Status</th>
-                                <th>Issued by</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($invoice->ApprovedCreditNotes as $key => $note)
-                                <tr>
-                                    <td>{{ ++$key }}</td>
-                                    <td>{{ $note->invoiceDetail->fee->name }}</td>
-                                    <td>ZMW {{ $note->amount }}</td>
-                                    <td><p class="truncate">{{$note->reason}}</p></td>
-                                    <td>{{ $note->status }}</td>
-                                    <td>{{ $note->issuer->first_name }} {{ $note->issuer->last_name }}</td>
-                                    <td>{{ $note->created_at->format('d F Y') }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
                 </div>
             </div>
-        @endif
+
+            <div class="tab-pane fade" id="credit-notes">
+                <div class="mt-4">
+                    @if (count($invoice->approvedCreditNotes) > 0)
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Fee</th>
+                                    <th>Amount</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Issued by</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($invoice->ApprovedCreditNotes as $key => $note)
+                                    <tr>
+                                        <td>{{ ++$key }}</td>
+                                        <td>{{ $note->invoiceDetail->fee->name }}</td>
+                                        <td>ZMW {{ $note->amount }}</td>
+                                        <td>
+                                            <p class="truncate">{{ $note->reason }}</p>
+                                        </td>
+                                        <td>{{ $note->status }}</td>
+                                        <td>{{ $note->issuer->first_name }} {{ $note->issuer->last_name }}</td>
+                                        <td>{{ $note->created_at->format('d F Y') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        This invoice has no approved credit notes
+                    @endif
+
+                </div>
+            </div>
+        </div>
 
     </div>
-
-
-
-
-@script
-    <script>
-        $wire.on('credit-note-created', () => {
-            M.toast({
-                html: 'credit note created successfully'
-            })
-        });
-
-        $wire.on('credit-note-exists', () => {
-            M.toast({
-                html: 'credit note already exists'
-            })
-        });
-
-        $wire.on('credit-note-failed', () => {
-            M.toast({
-                html: 'credit note creation unsuccessful'
-            })
-        });
-
-        $wire.on('raise-another-invoice', () => {
-            M.toast({
-                html: 'raise a new and then raise credit note.'
-            })
-        });
-
-        $wire.on('give-reason', () => {
-            M.toast({
-                html: 'please specify reason'
-            })
-        });
-    </script>
-@endscript
-
 </div>

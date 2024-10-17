@@ -24,18 +24,14 @@ class QuotationController extends Controller
      */
     public function Quotation(Request $request)
     {
-
         try {
-
-            if($this->quotationRepo->getStudentQuotation($request->academic_period, $request->student_id)){
-                return Qs::jsonStoreOk('Student quotation generated successfully');
+            if ($this->quotationRepo->getStudentQuotation($request->academic_period, $request->student_id)) {
+                return Qs::jsonStoreOk('Quotation generated successfully. Pay now to register and get an invoice for the academic period.');
             } else {
-               return Qs::jsonError('Failed to generate student quotaion');
+                return Qs::jsonError('Failed to generate quotaion');
             }
-
-
         } catch (\Throwable $th) {
-            Qs::jsonError('Failed to generate student quotation : ' . $th->getMessage());
+            Qs::jsonError('Failed to generate quotation : ' . $th->getMessage());
         }
     }
 }

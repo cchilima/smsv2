@@ -1,37 +1,46 @@
-<div class="container mt-20">
+@section('page_title', 'Add or Drop Student Courses')
 
-    <p class="flow-text light-deca mb-2">{{ $student->user->first_name }}'s courses</p>
+@php
+    use App\Helpers\Qs;
+@endphp
 
-    <div class="row">
-        <form wire:submit.prevent="addCourse">
-            <div class="col m4 s12">
-                <div class="input-field">
-                    <select wire:model="course_id" class="browser-default custom-select">
-                        <option></option>
-                        @foreach ($courses as $course)
-                            <option value="{{ $course->course_id }}">{{ $course->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <label class="active">Course</label>
-                    @error('course_id')
-                        <span class="red-text darken-4 error">{{ $message }}</span>
-                    @enderror
-                </div>
-            </div>
+<div class="card">
 
-            <div class="col m4 s12">
-                <button class="btn btn-small btn-floating black darken-4 mt-4 rounded-md">
-                    <i class="material-icons left tiny">add</i>
-                </button>
-            </div>
-        </form>
+    <div class="card-header header-elements-inline">
+        <h6 class="card-title">{{ $student->user->first_name . ' ' . $student->user->last_name }}'s Courses</h6>
+        {!! Qs::getPanelOptions() !!}
     </div>
 
-    <div class="white z-depth-1 rounded">
+    <div class="card-body">
+        <form wire:confirm="Are you sure you want to add this course?" wire:submit.prevent="addCourse">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label>Course</label>
+                        <select wire:model="course_id" class="form-control" required>
+                            <option selected value=''>Select course</option>
 
+                            @foreach ($courses as $course)
+                                <option value="{{ $course->course_id }}">{{ $course->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('course_id')
+                            <span class="text-danger d-inline-block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
 
-        <table class="table responsive-table striped centered">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="d-md-block" for="">&nbsp;</label>
+                        <button class="btn btn-primary"><i class="icon-plus3 mr-2"></i>Add Course</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <table class="table table-striped table-hover table-bordered">
             <thead>
                 <tr>
                     <th>S/N</th>
@@ -47,23 +56,30 @@
                         <td>{{ ++$key }}</td>
                         <td>{{ $course['course']->code }}</td>
                         <td>{{ $course['course']->name }}</td>
-                        <td> {{ $student->id}}</td>
+                        <td> {{ $student->id }}</td>
 
                         <td>
-                            <a class='dropdown-trigger btn btn-small btn-floating black' href='#'
-                                data-target="dropdown{{ $key }}"><i class="material-icons">more_vert</i></a>
+                            <div class="list-icons">
+                                <div class="dropdown">
+                                    <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                        <i class="icon-menu9"></i>
+                                    </a>
 
-                            <ul id='dropdown{{ $key }}' class='dropdown-content'>
-                                <li> <a wire:click="dropCourse({{ $course['enrollment_id'] }})"
-                                        class="dropdown-item black-text">drop</a></li>
-                            </ul>
+                                    <div class="dropdown-menu dropdown-menu-left">
+                                        <a wire:confirm="Are you sure you want to drop this course?"
+                                            wire:click="dropCourse({{ $course['enrollment_id'] }})"
+                                            class="dropdown-item">Drop Course</a>
+                                    </div>
+                                </div>
+                            </div>
+
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-
     </div>
+
 </div>
 
 @script

@@ -7,6 +7,8 @@
     @endphp
 
     <div class="row">
+        {{-- @dd($registrationBalance) --}}
+
         @if ($balancePercentage < 100 && $registrationBalance > 0)
             <div class="col-12">
                 <div class="alert alert-warning" role="alert">
@@ -87,7 +89,9 @@
                 <div class="media">
                     <div class="media-body">
                         <h3 class="mb-0">K{{ number_format($totalFees, 2) }}</h3>
-                        <span class="text-uppercase font-size-xs font-weight-bold">Fees Total</span>
+                        <span
+                            class="text-uppercase font-size-xs font-weight-bold">{{ $studentQuotedForCurrentAcademicPeriod && !$studentInvoicedForCurrentAcademicPeriod ? 'Quotation' : 'Fees' }}
+                            Total</span>
                     </div>
 
                     <div class="ml-3 align-self-center">

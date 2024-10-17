@@ -2,17 +2,20 @@
 
 namespace App\Livewire\Applications;
 
+use App\Helpers\Qs;
 use App\Http\Requests\Applications\Attachment as AttachmentRequest;
 use App\Models\Applications\Applicant;
 use App\Repositories\Admissions\StudentRepository;
 use App\Repositories\Applications\ApplicantRepository;
+use App\Traits\CanShowAlerts;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\WithFileUploads;
 
 class CompleteApplication extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, CanShowAlerts;
 
     private StudentRepository $studentRepo;
     private ApplicantRepository $applicantRepo;
@@ -161,8 +164,10 @@ class CompleteApplication extends Component
 
         // Check the application completion status
         if ($this->applicantRepo->checkApplicationCompletion($this->applicant->id)) {
-            $this->dispatch('application-completed');
+            return $this->flash('Application completed successfully. Pay the application fee (K' . Qs::getSetting('application_fee') . ') to continue.');
         }
+
+        $this->flash('Application progress saved');
     }
 
     public function saveGrade()
@@ -188,42 +193,45 @@ class CompleteApplication extends Component
 
                 $this->reset(['subject', 'grade']);
 
-                $this->dispatch('grade-added');
+                $this->flash('Grade added successfully');
 
                 return $this->mount($this->applicant->id);
             } else {
-                return $this->dispatch('fill-all-fields');
+                $this->flash('Provide all mandatory fields', 'error');
             }
         } catch (\Throwable $th) {
-            $this->dispatch('grade-failed');
+            $this->flash('Failed to add grade: ' . $th->getMessage(), 'error');
         }
     }
 
     public function uploadDocument()
     {
+        if (empty($this->results)) {
+            return $this->flash('No file selected', 'warning');
+        }
+
         $this->validate();
 
         try {
-            if (!empty($this->results)) {
+            DB::beginTransaction();
 
-                $this->applicantRepo->uploadAttachment($this->results, $this->applicant->id);
-                $this->reset(['results']);
+            $this->applicantRepo->uploadAttachment($this->results, $this->applicant->id);
+            $this->reset(['results']);
 
-                $this->dispatch('attachment-added');
+            $this->flash('Results added successfully');
 
-                return $this->mount($this->applicant->id);
-            } else {
-                // Handle the case where $this->results is empty
-                $this->dispatch('attachment-failed');
-            }
+            DB::commit();
+
+            return $this->mount($this->applicant->id);
         } catch (\Throwable $th) {
-            //throw $th;
+            $this->flash('Failed to upload file ' . $th->getMessage(), 'error');
+            DB::rollBack();
         }
     }
 
     public function updated($propertyName)
     {
-        $this->saveProgress();
+        // $this->saveProgress();
     }
 
     /**
@@ -278,7 +286,7 @@ class CompleteApplication extends Component
         return (new AttachmentRequest())->rules();
     }
 
-    #[Layout('components.layouts.administrator')]
+    #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
         if ($this->country_id) {
@@ -344,7 +352,6 @@ class CompleteApplication extends Component
         } else {
             $intakes = collect(); // Use an empty collection if no year is selected
         }
-
 
         return view(
             'livewire.applications.complete-application',

@@ -23,10 +23,13 @@ use App\Http\Controllers\Accomodation\BedSpaceController;
 use App\Http\Controllers\Accomodation\BookingController;
 use App\Http\Controllers\Accomodation\HostelController;
 use App\Http\Controllers\Accomodation\RoomController;
-use App\Http\Controllers\Accounting\{InvoiceController,
-    QuotationController, PaymentMethodController,
+use App\Http\Controllers\Accounting\{
+    InvoiceController,
+    QuotationController,
+    PaymentMethodController,
     SponsorController,
-    StatementController};
+    StatementController
+};
 use App\Http\Controllers\Accounting\FeeController;
 use App\Http\Controllers\Admissions\StudentController;
 use App\Http\Controllers\Applications\ApplicantController;
@@ -70,6 +73,7 @@ use App\Livewire\Pages\Accommodation\BedSpaces\Index as BedSpacesIndex;
 use App\Livewire\Pages\Accounting\Fees\Index as FeesIndex;
 use App\Livewire\Pages\Accounting\PaymentMethods\Index as PaymentMethodsIndex;
 use App\Livewire\Pages\Admissions\Applications\Index as ApplicationsIndex;
+use App\Livewire\Pages\Admissions\Students\Finances as StudentFinances;
 use App\Livewire\Pages\Admissions\Students\Show as ShowStudent;
 use App\Livewire\Pages\Admissions\Students\UploadPhotos as UploadStudentPhotos;
 use App\Livewire\Pages\ClassAssessments\Index as ClassAssessmentIndex;
@@ -199,12 +203,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/exam-registration', [ClassAssessmentsController::class, 'ExamRegistration'])->name('student-exam_registration');
     });
 
-// Accounting livewire routes
-Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
-Route::get('/approve-credit-notes', ApproveCreditNotes::class)->name('accounting.approve_credit_notes');
+    // Accounting livewire routes
+    Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
+    Route::get('/approve-credit-notes', ApproveCreditNotes::class)->name('accounting.approve_credit_notes');
 
 
-Route::get('/quotation-details/{quotation_id}', ViewQuotationDetails::class)->name('accounting.quotation_details');
+    Route::get('/quotation-details/{quotation_id}', ViewQuotationDetails::class)->name('accounting.quotation_details');
 
     // Add drop courses
     Route::get('/add-drop-course/{student_id}', AddDropCourse::class)->name('students.add-drop-course');
@@ -311,17 +315,17 @@ Route::get('/quotation-details/{quotation_id}', ViewQuotationDetails::class)->na
 
     Route::resource('statements', StatementController::class);
 
-Route::resource('invoices', InvoiceController::class);
-Route::post('custom-invoice', [InvoiceController::class, 'customInvoice'])->name('invoices.custom-invoice');
-Route::post('batch-invoice-process', [InvoiceController::class, 'batchInvoicing'])->name('invoices.batchInvoicing');
-Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->name('invoices.invoice');
+    Route::resource('invoices', InvoiceController::class);
+    Route::post('custom-invoice', [InvoiceController::class, 'customInvoice'])->name('invoices.custom-invoice');
+    Route::post('batch-invoice-process', [InvoiceController::class, 'batchInvoicing'])->name('invoices.batchInvoicing');
+    Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->name('invoices.invoice');
 
 
-Route::post('student-quotation-process', [QuotationController::class, 'quotation'])->name('quotations.quotation');
+    Route::post('student-quotation-process', [QuotationController::class, 'quotation'])->name('quotations.quotation');
 
 
     Route::resource('enrollments', EnrollmentController::class);
-    
+
     Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 
     // Residency Routes
@@ -351,7 +355,7 @@ Route::post('student-quotation-process', [QuotationController::class, 'quotation
     // Student-specific Routes
     Route::group(['prefix' => 'student'], function () {
         Route::get('/profile', [UsersStudentController::class, 'profile'])->name('student.profile');
-        Route::get('/finances', [UsersStudentController::class, 'finances'])->name('student.finances');
+        Route::get('/finances', StudentFinances::class)->name('student.finances');
 
         Route::group(['prefix' => 'help'], function () {
             Route::get('/how-to-make-payments', [UsersStudentController::class, 'howToMakePayments'])->name('students.help.make-payments');
@@ -488,8 +492,8 @@ Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->n
 Route::resource('enrollments', EnrollmentController::class);
 Route::get('summary', [StudentRegistrationController::class, 'summary'])->name('registration.summary');
 //sponsors
-Route::put('/attach-sponsor/{id}', [SponsorController::class,'attachSponsorE'])->name('students.sponsor.update');
-Route::post('/attach-sponsors/{id}', [SponsorController::class,'attachSponsor'])->name('students.sponsor.create');
+Route::put('/attach-sponsor/{id}', [SponsorController::class, 'attachSponsorE'])->name('students.sponsor.update');
+Route::post('/attach-sponsors/{id}', [SponsorController::class, 'attachSponsor'])->name('students.sponsor.create');
 Route::resource('sponsors', SponsorController::class);
 Route::get('/sponsors', SponsorsIndex::class)->name('sponsors.index');
 
@@ -519,22 +523,6 @@ Route::group(['prefix' => 'my_account'], function () {
 });
 
 Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])->name('students.resetAccountPassword');
-
-// Student-specific Routes
-Route::group(['prefix' => 'student'], function () {
-    Route::get('/profile', [UsersStudentController::class, 'profile'])->name('student.profile');
-    Route::get('/finances', [UsersStudentController::class, 'finances'])->name('student.finances');
-
-    Route::group(['prefix' => 'help'], function () {
-        Route::get('/how-to-make-payments', [UsersStudentController::class, 'howToMakePayments'])->name('students.help.make-payments');
-    });
-
-    // Financial statements generator/download routes
-    Route::get('/invoices/{invoice}/download/', [InvoiceController::class, 'downloadInvoice'])->name('student.download-invoice');
-    Route::get('/invoices/{student}/export/', [InvoiceController::class, 'exportInvoices'])->name('student.export-invoices');
-    Route::get('/statements/{invoice}/download/', [StatementController::class, 'downloadStatement'])->name('student.download-statement');
-    Route::get('/statements/{student}/export/', [StatementController::class, 'exportStatements'])->name('student.export-statements');
-});
 
 // Student Grades Routes
 Route::post('/grades/{id}/edit', [GradeContoller::class, 'update'])->name('grades.edit');
