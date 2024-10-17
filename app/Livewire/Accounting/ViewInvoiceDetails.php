@@ -8,9 +8,11 @@ use Livewire\Attributes\Layout;
 use App\Mail\ApproveCreditNote;
 use Illuminate\Support\Facades\Mail;
 use App\Repositories\Accounting\{InvoiceRepository, CreditNoteRepository};
+use App\Traits\CanShowAlerts;
 
 class ViewInvoiceDetails extends Component
 {
+    use CanShowAlerts;
 
     protected $listeners = ['refresh' => '$refresh'];
 
@@ -20,8 +22,7 @@ class ViewInvoiceDetails extends Component
     public $invoice;
     public $creditNoteItems = [];
     public $checkedItems = [];
-    public $currentSection = 'details';
-    public $creditNoteReason = ''; // Add this property
+    public $creditNoteReason = '';
 
     public function mount($invoice_id)
     {
@@ -39,7 +40,9 @@ class ViewInvoiceDetails extends Component
 
         // check if reason has been given
         if ($this->creditNoteReason == '') {
-            $this->dispatch('give-reason');
+
+            $this->flash('Specify a reason for raising credit note.', 'error');
+
             return $this->dispatch('refresh');
         }
 
@@ -89,7 +92,7 @@ class ViewInvoiceDetails extends Component
             }
 
             if ($creditNotesTotal > ($invoice_total -  $invoice_payments)) {
-                return $this->dispatch('raise-another-invoice');
+                return $this->flash('Raise a new invoice first', 'error');
             }
 
             $created = $this->creditNoteRepo->raiseCreditNote($this->creditNoteItems);
@@ -101,21 +104,18 @@ class ViewInvoiceDetails extends Component
                 Mail::to('stembo@zut.edu.zm')->bcc(['stembo@zut.edu.zm'])->queue(new ApproveCreditNote());
 
                 $this->mount($this->invoice->id);
-                return $this->dispatch('credit-note-created');
+
+                return $this->flash('Credit note created successfully');
             } else {
-                return $this->dispatch('credit-note-exists');
+                return $this->flash('Credit note already exists', 'error');
             }
         } catch (\Throwable $th) {
-            return $this->dispatch('credit-note-failed');
+            $this->flash('Failed to create credit note: ' . $th->getMessage(), 'error');
         }
     }
 
-    public function setSection($section)
-    {
-        $this->currentSection = $section;
-    }
 
-    #[Layout('components.layouts.administrator')]
+    #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
         return view('livewire.accounting.view-invoice-details');

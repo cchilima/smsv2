@@ -77,18 +77,8 @@ class StudentController extends Controller
         }
     }
 
-    public function finances()
-    {
-        try {
-            $student = Auth::user()->student;
-            $data = $this->studentFinancesRepo->getStudentFinancialInfo($student);
-            $data['student'] = $student;
-
-            return view('pages.students.finances', $data);
-        } catch (\Throwable $th) {
-            return Qs::goBackWithError('Failed to load page: ' . $th->getMessage());
-        }
-    }
+    // ? Functionality moved to Livewire component @ livewire/pages/admissions/students/finances
+    // public function finances() { }
 
     public function howToMakePayments()
     {

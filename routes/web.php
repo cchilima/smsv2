@@ -73,6 +73,7 @@ use App\Livewire\Pages\Accommodation\BedSpaces\Index as BedSpacesIndex;
 use App\Livewire\Pages\Accounting\Fees\Index as FeesIndex;
 use App\Livewire\Pages\Accounting\PaymentMethods\Index as PaymentMethodsIndex;
 use App\Livewire\Pages\Admissions\Applications\Index as ApplicationsIndex;
+use App\Livewire\Pages\Admissions\Students\Finances as StudentFinances;
 use App\Livewire\Pages\Admissions\Students\Show as ShowStudent;
 use App\Livewire\Pages\Admissions\Students\UploadPhotos as UploadStudentPhotos;
 use App\Livewire\Pages\ClassAssessments\Index as ClassAssessmentIndex;
@@ -354,7 +355,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Student-specific Routes
     Route::group(['prefix' => 'student'], function () {
         Route::get('/profile', [UsersStudentController::class, 'profile'])->name('student.profile');
-        Route::get('/finances', [UsersStudentController::class, 'finances'])->name('student.finances');
+        Route::get('/finances', StudentFinances::class)->name('student.finances');
 
         Route::group(['prefix' => 'help'], function () {
             Route::get('/how-to-make-payments', [UsersStudentController::class, 'howToMakePayments'])->name('students.help.make-payments');
@@ -522,22 +523,6 @@ Route::group(['prefix' => 'my_account'], function () {
 });
 
 Route::put('reset-password', [StudentController::class, 'resetAccountPassword'])->name('students.resetAccountPassword');
-
-// Student-specific Routes
-Route::group(['prefix' => 'student'], function () {
-    Route::get('/profile', [UsersStudentController::class, 'profile'])->name('student.profile');
-    Route::get('/finances', [UsersStudentController::class, 'finances'])->name('student.finances');
-
-    Route::group(['prefix' => 'help'], function () {
-        Route::get('/how-to-make-payments', [UsersStudentController::class, 'howToMakePayments'])->name('students.help.make-payments');
-    });
-
-    // Financial statements generator/download routes
-    Route::get('/invoices/{invoice}/download/', [InvoiceController::class, 'downloadInvoice'])->name('student.download-invoice');
-    Route::get('/invoices/{student}/export/', [InvoiceController::class, 'exportInvoices'])->name('student.export-invoices');
-    Route::get('/statements/{invoice}/download/', [StatementController::class, 'downloadStatement'])->name('student.download-statement');
-    Route::get('/statements/{student}/export/', [StatementController::class, 'exportStatements'])->name('student.export-statements');
-});
 
 // Student Grades Routes
 Route::post('/grades/{id}/edit', [GradeContoller::class, 'update'])->name('grades.edit');

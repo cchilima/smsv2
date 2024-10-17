@@ -39,11 +39,8 @@
                 </div>
             </div>
         </form>
-    </div>
 
-    <div class="">
-
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover table-bordered">
             <thead>
                 <tr>
                     <th>S/N</th>
@@ -81,8 +78,8 @@
                 @endforeach
             </tbody>
         </table>
-
     </div>
+
 </div>
 
 @script
