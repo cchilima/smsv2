@@ -54,7 +54,7 @@ class Qs
 
     public static function getTeamSA()
     {
-        return ['admin', 'super_admin'];
+        return ['admin', 'super_admin', 'manager_treasurer'];
     }
 
     public static function getTeamAccount()
@@ -247,6 +247,11 @@ class Qs
     public static function userIsED()
     {
         return self::getUserType() == 'executive director';
+    }
+
+    public static function userIsMT()
+    {
+        return self::getUserType() == 'manager_treasurer';
     }
 
     public static function userIsStudent()

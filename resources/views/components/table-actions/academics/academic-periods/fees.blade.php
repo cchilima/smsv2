@@ -2,6 +2,7 @@
     use App\Helpers\Qs;
 @endphp
 
+@can('edit academic period fees')
 <div class="list-icons">
     <div class="dropdown">
         <a href="#" class="list-icons-item" data-toggle="dropdown">
@@ -18,3 +19,4 @@
         </div>
     </div>
 </div>
+@endcan

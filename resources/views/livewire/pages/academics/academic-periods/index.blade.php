@@ -15,8 +15,10 @@
             </li>
             <li class="nav-item"><a href="#all-closed" class="nav-link" data-toggle="tab">Closed Academic Periods</a>
             </li>
+            @can('create academic period')
             <li class="nav-item"><a href="#new-period" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
                     Create New Academic Period</a></li>
+            @endcan
         </ul>
 
         <div class="tab-content">

@@ -78,6 +78,9 @@ use App\Livewire\Pages\Residency\Countries\Index as CountriesIndex;
 use App\Livewire\Pages\Residency\Provinces\Index as ProvincesIndex;
 use App\Livewire\Pages\Residency\Towns\Index as TownsIndex;
 use App\Livewire\Pages\Settings\MaritalStatuses\Index as MaritalStatusesIndex;
+
+use App\Livewire\Permissions\{ManagePermissions, AddPermission};
+
 use App\Models\Academics\ClassAssessment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -198,6 +201,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/exam-registration', [ClassAssessmentsController::class, 'ExamRegistration'])->name('student-exam_registration');
     });
 
+
+    // Permissions
+    Route::get('/manage-permissions', ManagePermissions::class)->name('manage-permissions');
+    Route::get('/add-permission', AddPermission::class)->name('add-permissions');
+
 // Accounting livewire routes
 Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
 Route::get('/approve-credit-notes', ApproveCreditNotes::class)->name('accounting.approve_credit_notes');
@@ -309,10 +317,10 @@ Route::get('/quotation-details/{quotation_id}', ViewQuotationDetails::class)->na
 
     Route::resource('statements', StatementController::class);
 
-Route::resource('invoices', InvoiceController::class);
-Route::post('custom-invoice', [InvoiceController::class, 'customInvoice'])->name('invoices.custom-invoice');
-Route::post('batch-invoice-process', [InvoiceController::class, 'batchInvoicing'])->name('invoices.batchInvoicing');
-Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->name('invoices.invoice');
+    Route::resource('invoices', InvoiceController::class);
+    Route::post('custom-invoice', [InvoiceController::class, 'customInvoice'])->name('invoices.custom-invoice');
+    Route::post('batch-invoice-process', [InvoiceController::class, 'batchInvoicing'])->name('invoices.batchInvoicing');
+    Route::post('student-invoice-process', [InvoiceController::class, 'invoice'])->name('invoices.invoice');
 
 
 Route::post('student-quotation-process', [QuotationController::class, 'quotation'])->name('quotations.quotation');

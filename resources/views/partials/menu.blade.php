@@ -60,7 +60,7 @@
                 </li>
 
                 {{-- Academics --}}
-                @if (Qs::userIsSuperAdmin() || Qs::userIsAdmin() || Qs::userIsDIF() || Qs::userIsED())
+                @if (Qs::userIsSuperAdmin() || Qs::userIsAdmin() || Qs::userIsDIF() || Qs::userIsED() || Qs::userIsMT())
 
                     {{-- Administrative --}}
 
@@ -159,7 +159,8 @@
                                 </li>
                             </ul>
                         </li>
-
+                        
+                        @can('menu option - academics')
                         <li
                             class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
                                 'academic-period-management.index',
@@ -174,21 +175,26 @@
                             ])
                                 ? 'nav-item-expanded nav-item-open'
                                 : '' }} ">
+                            
+                       
                             <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span>
                                     Academics</span></a>
                             <ul class="nav nav-group-sub" data-submenu-title="Manage Academic Period">
-                                <li class="nav-item">
+                            @can('submenu option - academics -> academic periods')   
+                            <li class="nav-item">
                                     <a href="{{ route('academic-periods.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-management.index', 'academic-period-management.edit', 'academic-period-fees.edit', 'academic-periods.create', 'academic-periods.edit', 'academic-periods.index']) ? 'active' : '' }}">
                                         <span>Academic Periods</span></a>
                                 </li>
+                            @endcan
 
+                            @can('submenu option - academics -> academic period classes')
                                 <li class="nav-item">
                                     <a href="{{ route('academic-period-classes.index') }}"
                                         class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-classes.create', 'academic-period-classes.edit', 'academic-period-classes.index']) ? 'active' : '' }}">
                                         <span>Academic Period Classes</span></a>
                                 </li>
-
+                            @endcan
                                 {{--                                <li class="nav-item"> --}}
                                 {{--                                    <a href="{{ route('enrollments.index') }}" --}}
                                 {{--                                        class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.index']) ? 'active' : '' }}"> --}}
@@ -196,6 +202,8 @@
                                 {{--                                </li> --}}
                             </ul>
                         </li>
+
+                        @endcan
 
                         <li
                             class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
@@ -528,6 +536,12 @@
                                     <a href="#"
                                        class="nav-link {{ in_array(Route::currentRouteName(), ['sponsor.create', 'sponsor.edit', 'sponsor.index']) ? 'active' : '' }}">
                                         <span>Audit Reports</span></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('manage-permissions')}}"
+                                       class="nav-link {{ in_array(Route::currentRouteName(), ['manage-permissions']) ? 'active' : '' }}">
+                                        <span>Manage Permissions</span></a>
                                 </li>
 
                             </ul>

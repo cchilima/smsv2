@@ -13,6 +13,7 @@
                     <h3 class="mt-3">{{ $academicPeriod->code . ' - ' . $academicPeriod->name }}</h3>
                     <p>Registered Students : {{ $students }}</p>
                     <div class="row">
+                        @can('download enrollment report')
                         <div class="col">
                             <a href="{{ route('student.program.list', ['ac' => $academicPeriod->id]) }}"
                                 class="dropdown-item"><i class="icon-file-download"></i> Download Enrollment report PDF</a>
@@ -20,6 +21,7 @@
                                 class="dropdown-item"><i class="icon-file-download"></i> Download Enrollment report
                                 Excel</a>
                         </div>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -147,6 +149,7 @@
                 </div>
             </div>
 
+            @can('show academic period - academic information')
             <div class="card">
                 <div class="card-header header-elements-inline">
                     <h6 class="card-title">Academic Information</h6>
@@ -169,12 +172,14 @@
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="all-ac-programs">
                             <div class="d-flex justify-content-between mb-2">
+                            @can('download running programs')
                                 <div class="d-flex">
                                     <a href="{{ route('student.program.list', ['ac' => $academicPeriod->id]) }}"
                                         class="dropdown-item"><i class="icon-file-download"></i> Download PDF</a>
                                     <a href="{{ route('student.program.list.csv', ['ac' => $academicPeriod->id]) }}"
                                         class="dropdown-item"><i class="icon-file-download"></i> Download Excel</a>
                                 </div>
+                                @endcan
                                 <div>
 
                                 </div>
@@ -187,12 +192,14 @@
 
                         <div class="tab-pane fade" id="all-classes">
                             <div class="d-flex justify-content-between mb-2">
+                            @can('download all classes')
                                 <div class="d-flex">
                                     <a href="{{ route('student.class.list', ['ac' => $academicPeriod->id]) }}"
                                         class="dropdown-item"><i class="icon-file-download"></i> Download PDF </a>
                                     <a href="{{ route('student.csv.class.list', ['ac' => $academicPeriod->id]) }}"
                                         class="dropdown-item"><i class="icon-file-download"></i> Download Excel </a>
                                 </div>
+                                @endcan
                                 <div>
                                     <a href="{{ route('student.class.list', ['ac' => $academicPeriod->id]) }}"
                                         class="dropdown-item"><i class="icon-add-to-list"></i> Add Class</a>
@@ -208,7 +215,9 @@
                     </div>
                 </div>
             </div>
+            @endcan
 
+            @can('batch invoicing')
             <div class="card">
                 <div class="card-header header-elements-inline">
                     <h6 class="card-title">Batch Invoicing</h6>
@@ -230,6 +239,7 @@
                     </div>
                 </div>
             </div>
+            @endcan
 
         </div>
     </div>

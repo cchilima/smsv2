@@ -12,16 +12,23 @@
 
         <div class="card-body">
             <ul class="nav nav-tabs nav-tabs-highlight">
+                @can('add academic period information')
                 <li class="nav-item"><a href="#new-period" class="nav-link active show" data-toggle="tab"><i
                             class="icon-plus2"></i>
                         Add Information</a></li>
+                @endcan
+                @can('add academic period classes')
                 <li class="nav-item"><a href="#all-fees" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
                         Create Classes</a></li>
+                @endcan       
+                @can('add academic period fees')
                 <li class="nav-item"><a href="#new-ac-fees" class="nav-link" data-toggle="tab"><i class="icon-plus2"></i>
                         Create New Fees</a></li>
+                @endcan
             </ul>
 
             <div class="tab-content">
+            @can('add academic period classes')
                 <div class="tab-pane fade" id="all-fees">
                     <div class="row">
                         <div class="col-md-12">
@@ -66,6 +73,10 @@
                         </div>
                     </div>
                 </div>
+
+                @endcan
+
+                @can('add academic period information')
 
                 <div class="tab-pane fade active show" id="new-period">
                     <div class="row">
@@ -172,6 +183,9 @@
                     </div>
                 </div>
 
+                @endcan
+
+                @can('add academic period fees')
                 <div class="tab-pane fade" id="new-ac-fees">
                     <div class="row">
                         <div class="col-md-12">
@@ -226,6 +240,7 @@
                         </div>
                     </div>
                 </div>
+                @endcan
             </div>
         </div>
     </div>
