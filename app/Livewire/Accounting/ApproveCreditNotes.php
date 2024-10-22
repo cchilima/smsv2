@@ -6,12 +6,14 @@ use Auth;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Repositories\Accounting\{InvoiceRepository, CreditNoteRepository};
+use App\Traits\CanShowAlerts;
 
 class ApproveCreditNotes extends Component
 {
+    use CanShowAlerts;
 
     private CreditNoteRepository $creditNoteRepo;
-   
+
     public $approver;
     public $creditNote;
 
@@ -19,7 +21,6 @@ class ApproveCreditNotes extends Component
     {
         $user = Auth::user();
         $this->approver = $user->userType->name;
-
     }
 
     public function boot(CreditNoteRepository $creditNoteRepo)
@@ -31,19 +32,17 @@ class ApproveCreditNotes extends Component
     public function approve($credit_note_id)
     {
 
-        if($this->creditNoteRepo->approveCreditNote($credit_note_id, $this->approver)){
-
-            return $this->dispatch('approved');
-
-        } else {
-            return $this->dispatch('approval-failed');
+        try {
+            $this->creditNoteRepo->approveCreditNote($credit_note_id, $this->approver);
+            return $this->flash('Credit note approved successfully');
+        } catch (\Throwable $th) {
+            return $this->flash('Failed to approve credit note: ' . $th->getMessage(), 'error');
         }
     }
 
-    #[Layout('components.layouts.administrator')]
+    #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
-       // dd($this->creditNoteRepo->getCreditNotes($this->approver));
         return view('livewire.accounting.approve-credit-notes', ['credit_notes' => $this->creditNoteRepo->getCreditNotes($this->approver)]);
     }
 }
