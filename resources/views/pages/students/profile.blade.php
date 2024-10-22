@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('page_title', 'Student Profile - ' . \Illuminate\Support\Facades\Auth::user()->first_name)
+@section('page_title', 'Student Profile - ' . auth()->user()->first_name . ' ' . auth()->user()->last_name)
 @section('content')
     @php
         use App\Helpers\Qs;
@@ -31,64 +31,69 @@
                     {!! Qs::getPanelOptions() !!}
                 </div>
                 <div class="card-body">
-                    <ul class="nav nav-tabs nav-tabs-highlight">
-                        @foreach ($enrollments as $innerIndex => $academicData)
-                            <li class="nav-item">
-                                <a href="#account-{{ $academicData['academic_period_id'] }}"
-                                    class="nav-link @if ($loop->iteration === 1) active show @endif"
-                                    data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
-                            </li>
-                        @endforeach
-                    </ul>
+                    @if (count($enrollments) > 0)
+                        <ul class="nav nav-tabs nav-tabs-highlight">
+                            @foreach ($enrollments as $innerIndex => $academicData)
+                                <li class="nav-item">
+                                    <a href="#account-{{ $academicData['academic_period_id'] }}"
+                                        class="nav-link @if ($loop->iteration === 1) active show @endif"
+                                        data-toggle="tab">{{ $academicData['academic_period_code'] }}</a>
+                                </li>
+                            @endforeach
+                        </ul>
 
-                    <div class="tab-content">
-                        {{-- Basic Info --}}
-                        @foreach ($enrollments as $innerIndex => $academicData)
-                            <div class="tab-pane fade @if ($loop->iteration === 1) active show @endif"
-                                id="account-{{ $academicData['academic_period_id'] }}">
+                        <div class="tab-content">
+                            {{-- Basic Info --}}
+                            @foreach ($enrollments as $innerIndex => $academicData)
+                                <div class="tab-pane fade @if ($loop->iteration === 1) active show @endif"
+                                    id="account-{{ $academicData['academic_period_id'] }}">
 
-                                <table class="table table-hover table-striped-columns mb-3">
-                                    <div class="d-flex justify-content-between">
-                                        <div class="d-flex">
-                                            <h5 class="p-2"> Academic Period:
-                                                <strong>{{ $academicData['academic_period_name'] . ' (' . $academicData['academic_period_code'] . ')' }}</strong>
-                                            </h5>
+                                    <table class="table table-hover table-striped-columns mb-3">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="d-flex">
+                                                <h5 class="p-2"> Academic Period:
+                                                    <strong>{{ $academicData['academic_period_name'] . ' (' . $academicData['academic_period_code'] . ')' }}</strong>
+                                                </h5>
+                                            </div>
+                                            <div>
+                                                <form action="{{ route('registration.summary') }}" method="get">
+                                                    @csrf
+                                                    <input name="academic_period_id" type="hidden"
+                                                        value="{{ $academicData['academic_period_id'] }}" />
+                                                    <input name="student_number" type="hidden"
+                                                        value="{{ $academicData['student_id'] }}" />
+                                                    <button type="submit" class="btn btn-primary mt-2">Download
+                                                        summary</button>
+                                                </form>
+                                            </div>
+
                                         </div>
-                                        <div>
-                                            <form action="{{ route('registration.summary') }}" method="get">
-                                                @csrf
-                                                <input name="academic_period_id" type="hidden"
-                                                    value="{{ $academicData['academic_period_id'] }}" />
-                                                <input name="student_number" type="hidden"
-                                                    value="{{ $academicData['student_id'] }}" />
-                                                <button type="submit" class="btn btn-primary mt-2">Download
-                                                    summary</button>
-                                            </form>
-                                        </div>
-
-                                    </div>
-                                    <thead>
-                                        <tr>
-                                            <th>S/N</th>
-                                            <th>Course Code</th>
-                                            <th>Course Name</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($academicData['courses'] as $course)
+                                        <thead>
                                             <tr>
-                                                <th>{{ $loop->iteration }}</th>
-                                                <td>{{ $course['course_code'] }}</td>
-                                                <td>{{ $course['course_title'] }}</td>
+                                                <th>S/N</th>
+                                                <th>Course Code</th>
+                                                <th>Course Name</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($academicData['courses'] as $course)
+                                                <tr>
+                                                    <th>{{ $loop->iteration }}</th>
+                                                    <td>{{ $course['course_code'] }}</td>
+                                                    <td>{{ $course['course_title'] }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
 
-                                </table>
-                            </div>
-                        @endforeach
+                                    </table>
+                                </div>
+                            @endforeach
 
-                    </div>
+                        </div>
+                    @else
+                        {{ Qs::getUserType() === 'student' ? 'You have no enrollments' : 'This student has no enrollments' }}
+                    @endif
+
                 </div>
             </div>
 
@@ -106,7 +111,10 @@
                             <a href="#profile-info" class="nav-link" data-toggle="tab">Personal Information</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#next-kin" class="nav-link" data-toggle="tab">Sponsor Information</a>
+                            <a href="#next-kin" class="nav-link" data-toggle="tab">Next of Kin</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#sponsor" class="nav-link" data-toggle="tab">Sponsor Information</a>
                         </li>
                     </ul>
 
@@ -216,6 +224,45 @@
                                         <td class="font-weight-bold text-justify">Country</td>
                                         <td class="next-of-kin-infor">
                                             <span>{{ $student->user->userNextOfKin->country->country }}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade show" id="sponsor">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td class="font-weight-bold">Name</td>
+                                        <td class="next-of-kin-infor">
+                                            <span>{{ $student->user->userNextOfKin->full_name }}</span>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Mobile</td>
+                                        <td class="next-of-kin-infor">
+                                            <span>{{ $student->user->userNextOfKin->mobile }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Description</td>
+                                        <td class="next-of-kin-infor">
+                                            <span>{{ $student->user->userNextOfKin->telephone }}</span>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Email</td>
+                                        <td class="next-of-kin-infor">
+                                            <span>{{ $student->user->userNextOfKin->relationship->relationship }}</span>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-justify">Sponsor Level</td>
+                                        <td class="next-of-kin-infor">
+                                            <span>{{ '-' }}</span>
                                         </td>
                                     </tr>
                                 </tbody>

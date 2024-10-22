@@ -2,6 +2,7 @@
 
 namespace App\Models\Admissions;
 
+use App\Models\Sponsorship\Sponsor;
 use App\Models\Users\User;
 use App\Models\Academics\CourseLevel;
 use App\Models\Academics\Grade;
@@ -87,6 +88,12 @@ class Student extends Model implements AuditableContract
     public function invoices()
     {
         return $this->hasMany(Invoice::class);
+    }
+    public function sponsors()
+    {
+        return $this->belongsToMany(Sponsor::class, 'student_sponsor', 'student_id', 'sponsor_id')
+            ->withPivot('level')
+            ->withTimestamps();
     }
 
     public function quotations()

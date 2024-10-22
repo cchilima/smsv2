@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Applications;
 
+use App\Helpers\Qs;
 use App\Models\Applications\{ApplicantAttachment, ApplicantPayment};
 use App\Http\Requests\Applications\Attachment;
 use Illuminate\Support\Facades\Mail;
@@ -9,7 +10,7 @@ use App\Mail\ApplicationReceived;
 use App\Models\Applications\Applicant;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class ApplicantRepository
 {
@@ -43,25 +44,25 @@ class ApplicantRepository
 
             DB::beginTransaction();
 
-            $applicant = Applicant::where('applicant_code', $data->applicant)->first();
+            $application = $this->getApplicationByApplicantCode($data->applicant);
+
             $updated = ApplicantPayment::create([
-                'applicant_id' => $applicant->id,
+                'applicant_id' => $application->id,
                 'amount' => $amount,
                 'reference' => $reference,
                 'payment_method_id' => $method
             ]);
 
-            DB::commit();
-
             if ($updated) {
-
-                $this->checkApplicationCompletion($applicant->id);
-                $this->fullApplicationReceived($applicant->id);
+                $this->checkApplicationCompletion($application->id);
+                $this->fullApplicationReceived($application->id);
             }
+
+            DB::commit();
 
             return true;
         } catch (\Throwable $th) {
-
+            Qs::jsonError('Failed to collect payment');
             DB::rollback();
             return false;
         }
@@ -181,18 +182,18 @@ class ApplicantRepository
         $hasAttachments = $application->attachment()->count() > 0;
 
         // Check if atleast 5 subjects were entered
-        $grades = $application->grades()->count();
+        $hasGrades = $application->grades()->count() >= 5;
 
         // Check if application has payment(s)
-        $feePaid = $application->payment->sum('amount');
+        $feePaid = $application->payment->sum('amount') >= Qs::getSetting('application_fee');
 
         // Update status to pending if all fields except status are filled
-        if (empty($unfilledManadatoryFields) && $hasAttachments && $feePaid < 150 && $grades >= 5) {
+        if (empty($unfilledManadatoryFields) && $hasAttachments && !$feePaid && $hasGrades) {
             $application->status = 'pending';
             $application->save();
 
             return true;
-        } elseif (empty($allFieldsFilled) && $hasAttachments && $feePaid >= 150) {
+        } elseif (empty($unfilledManadatoryFields) && $hasAttachments && $hasGrades && $feePaid) {
             $application->status = 'complete';
             $application->save();
 
@@ -202,46 +203,43 @@ class ApplicantRepository
         return false;
     }
 
-    public function uploadAttachment($document, $application_id)
+    /**
+     * Get an application by the applicant code
+     *
+     * @param string $applicantCode The code of the applicant.
+     * @return App\Models\Applications\Applicant
+     * 
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function getApplicationByApplicantCode($applicantCode): Applicant
     {
-        if ($document) {
+        return Applicant::where('applicant_code', $applicantCode)->first();
+    }
+
+    public function uploadAttachment($attachment, $application_id)
+    {
+        if ($attachment) {
             $application = Applicant::find($application_id);
 
-            $exists = $application->attachment;
+            // Generate a unique filename
+            $filename = $application->applicant_code . '-results-' . now()->format('Y-m-d-H-i-s') . '.' . $attachment->getClientOriginalExtension();
 
-            if (!$exists) {
-                // Retrieve the uploaded file
-                $attachment = $document;  // $request->file('attachment');
+            // Store the file in the storage disk
+            $attachment->storeAs('uploads/attachments/applications', $filename, 'public');
 
-                // Generate a unique filename
-                $filename = time() . '.' . $attachment->getClientOriginalExtension();
-
-                // Store the file in the storage disk
-                $path = $attachment->storeAs('uploads/attachments/applications', $filename, 'public');
-
-                return $application->attachment()->create(['type' => 'Results', 'attachment' => $filename]);
-            } else {
+            if ($application->attachment) {
                 // Delete previous file using unlink
                 $previousFile = public_path('storage/uploads/attachments/applications/' . $application->attachment->attachment);
+
                 if (file_exists($previousFile)) {
                     unlink($previousFile);
                 }
 
-                // Retrieve the uploaded file
-                $attachment = $document;  // $request->file('attachment');
-
-                // Generate a unique filename
-                $filename = time() . '.' . $attachment->getClientOriginalExtension();
-
-                // Store the file in the storage disk
-                $path = $attachment->storeAs('uploads/attachments/applications', $filename, 'public');
-
-                // Update the existing attachment record with the new file details
                 return $application->attachment()->update(['type' => 'Results', 'attachment' => $filename]);
             }
-        }
 
-        return null;  // Return null if no file is uploaded
+            return $application->attachment()->create(['type' => 'Results', 'attachment' => $filename]);
+        }
     }
 
     public function changeDBOFromat($data)
@@ -253,6 +251,13 @@ class ApplicantRepository
         return $data;
     }
 
+    /**
+     * Get an application model instance by ID
+     * 
+     * @param string\int $application_id The ID of the application to get
+     * @return App\Models\Applications\Applicant
+     * @author Stephen Tembo <stembo@zut.edu.zm>
+     */
     public function getApplication($application_id)
     {
         return Applicant::find($application_id);

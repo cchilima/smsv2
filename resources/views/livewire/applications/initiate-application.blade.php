@@ -1,85 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
+@section('page_title', 'Start or Continue Application')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masked Input Example</title>
-</head>
+@php
+    use App\Helpers\Qs;
+@endphp
 
-<body>
-
-    @php
-        use App\Helpers\Qs;
-    @endphp
-
-    <div class="container p-10">
-        <div>
-            <div class="mb-5">
-                <h6>Start or continue your application</h6>
-                {!! Qs::getPanelOptions() !!}
+<div class="row justify-content-center">
+    <div class="col col-md-9 col-lg-6">
+        <div class="card">
+            <div class="card-header header-elements-inline">
+                <h6 class="card-title">Enter either your NRC or passport number</h6>
+                {{-- {!! Qs::getPanelOptions() !!}   --}}
             </div>
+            <div class="card-body">
+                <div wire:ignore class="tab-pane fade show" id="collect-payment">
+                    <form wire:submit.prevent="saveAndProceed">
+                        <div class="form-group">
+                            <label for="nrc">NRC Number</label>
+                            <input type="text" class="form-control" id="nrc" wire:model="nrc"
+                                placeholder="XXXXXX/XX/X" x-mask="999999/99/9">
+                            @error('passport')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-            <div>
-                <div class="row">
-                    <div class="col m10 s12 white rounded z-depth-1">
-                        <form wire:submit.prevent="saveAndProceed" class="col s12">
-                            <div class="row">
-                                <div class="input-field col m12 s12">
-                                    <label class="active" for="nrc">NRC</label>
-                                    <input pattern="\d{6}/\d{2}/\d{1}" id="nrc" wire:model="nrc" maxlength="11"
-                                        name="nrc" type="text" class="validate masked" placeholder="XXXXXX/XX/X"
-                                        data-mask="000000/00/0">
-                                    @error('nrc')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                        <div class="form-group">
+                            <label for="passport">Passport Number</label>
+                            <input wire:model="passport" id="passport" type="text" class="form-control"
+                                placeholder="Passport" x-mask="**99999999">
+                            @error('passport')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                                <div class="input-field col m12 s12">
-                                    <label class="active" for="passport">Passport</label>
-                                    <input wire:model="passport" id="passport" name="passport" type="text"
-                                        class="validate" placeholder="Passport">
-                                    @error('passport')
-                                        <span class="red-text darken-4 error">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                        <div class="d-flex align-items-center">
+                            <button id="ajax-btn" type="submit" class="btn btn-primary">Proceed</button>
+                            <a class="ml-2" href="{{ route('login') }}"> Go Home</a>
 
-                            </div>
-
-                            <div class="mb-2">
-                                <button type="submit" class="btn btn-small black rounded">submit</button>
-                                <a class="right" href="{{ route('login') }}"> Go Home</a>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var nrcInput = document.getElementById('nrc');
+{{-- <div>
+    <div class="mb-5">
+        <h6>Start or continue your application</h6>
+        {!! Qs::getPanelOptions() !!}
+    </div>
 
-            nrcInput.addEventListener('input', function(e) {
-                var value = e.target.value.replace(/\D/g, ''); // Remove all non-digit characters
-                var formattedValue = '';
+    <div>
+        <div class="row">
+            <div class="col m10 s12 white rounded z-depth-1">
+                <form wire:submit.prevent="saveAndProceed" class="col s12">
+                    <div class="row">
+                        <div class="input-field col m12 s12">
+                            <label class="active" for="nrc">NRC</label>
+                            <input id="nrc" wire:model="nrc" maxlength="11" name="nrc" type="text"
+                                class="validate" placeholder="XXXXXX/XX/X" x-mask="999999/99/9">
+                            @error('nrc')
+                                <span class="red-text darken-4 error">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                if (value.length > 0) {
-                    formattedValue += value.substring(0, 6);
-                }
-                if (value.length > 6) {
-                    formattedValue += '/' + value.substring(6, 8);
-                }
-                if (value.length > 8) {
-                    formattedValue += '/' + value.substring(8, 9);
-                }
+                        <div class="input-field col m12 s12">
+                            <label class="active" for="passport">Passport</label>
+                            <input wire:model="passport" id="passport" name="passport" type="text"
+                                class="validate" placeholder="Passport">
+                            @error('passport')
+                                <span class="red-text darken-4 error">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                e.target.value = formattedValue;
-            });
-        });
-    </script>
+                    </div>
 
-</body>
-
-</html>
+                    <div class="mb-2">
+                        <button type="submit" class="btn btn-small black rounded">submit</button>
+                        <a class="right" href="{{ route('login') }}"> Go Home</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> --}}

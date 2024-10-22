@@ -10,15 +10,18 @@ class StudentFinancesRepository
     protected $invoiceRepo;
     protected $studentRegistrationRepo;
     protected $statementRepo;
+    protected $quotationRepo;
 
     public function __construct(
         InvoiceRepository $invoiceRepository,
         StudentRegistrationRepository $studentRegistrationRepository,
-        StatementRepository $statementRepository
+        StatementRepository $statementRepository,
+        QuotationRepository $quotationRepository
     ) {
         $this->invoiceRepo = $invoiceRepository;
         $this->studentRegistrationRepo = $studentRegistrationRepository;
         $this->statementRepo = $statementRepository;
+        $this->quotationRepo = $quotationRepository;
     }
 
     /**
@@ -48,20 +51,37 @@ class StudentFinancesRepository
         $data['registrationBalance'] = 0;
         $data['viewResultsBalance'] = 0;
 
-        // Check if student invoiced for the current academic period
-        $studentInvoicedForCurrentAcademicPeriod = $this->invoiceRepo->checkStudentAcademicPeriodInvoiceStatus(
+        // Check if student has been invoiced for the current academic period
+        $data['studentInvoicedForCurrentAcademicPeriod'] = $this->invoiceRepo->checkStudentAcademicPeriodInvoiceStatus(
             $student,
             $data['academicPeriodInfo']?->academic_period_id
         );
 
-        // Adjust financial data if the student isn't invoiced for the current period
-        if (!$studentInvoicedForCurrentAcademicPeriod) {
-            $this->adjustFinancialDataForPreviousAcademicPeriod($data, $student);
-        } else {
+        // Check if student has been quoted for the current academic period
+        $data['studentQuotedForCurrentAcademicPeriod'] = $this->quotationRepo->checkStudentAcademicPeriodQuotationStatus(
+            $student,
+            $data['academicPeriodInfo']?->academic_period_id
+        );
+
+        // Adjust financial data if the student is invoiced for the current period
+        if ($data['studentInvoicedForCurrentAcademicPeriod']) {
             $this->adjustFinancialDataForCurrentAcademicPeriod($data, $student);
+        } else {
+            $this->adjustFinancialDataForPreviousAcademicPeriod($data, $student);
+
+            // Adjust registration balance if student has been quoted for the current academic period
+            if ($data['studentQuotedForCurrentAcademicPeriod']) {
+                $this->adjustFinancialDataForQuotedCurrentPeriod($data, $student);
+            }
         }
 
+
         return $data;
+    }
+
+    private function calculatePercentage($cumulativeAmount, $total)
+    {
+        return $total == 0 ? 0 : (($cumulativeAmount / $total) * 100);
     }
 
     protected function adjustFinancialDataForPreviousAcademicPeriod(&$data, $student)
@@ -74,18 +94,12 @@ class StudentFinancesRepository
         $data['paymentPercentage'] = 0;
         $data['paymentBalance'] = 0;
 
-        // If they have an updaid balance from previous period
+        // If they have an unpaid balance from previous period
         if ($data['balancePercentage'] < 100) {
             $data['totalFees'] = $this->invoiceRepo->getStudentAcademicPeriodInvoicesTotal($student, $data['academicPeriodInfo']?->academic_period_id);
 
             $data['totalPayments'] = $this->statementRepo->getStudentAcademicPeriodStatementsTotal($student, $data['academicPeriodInfo']?->academic_period_id);
-           
-            if ($data['totalFees'] != 0) {
-                $data['paymentPercentage'] = ($data['totalPayments'] / $data['totalFees']) * 100;
-            } else {
-                $data['paymentPercentage'] = 0;  // You can set this to null or another default value if desired
-            }
-            
+            $data['paymentPercentage'] = $this->calculatePercentage($data['totalPayments'], $data['totalFees']);
 
             $data['paymentBalance'] = $data['totalFees'] - $data['totalPayments'];
 
@@ -104,6 +118,22 @@ class StudentFinancesRepository
         $data['paymentBalance'] = $data['totalFees'] - $data['totalPayments'];
         $data['registrationBalance'] = ($data['academicPeriodInfo']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
         $data['viewResultsBalance'] = ($data['academicPeriodInfo']?->view_results_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
-        $data['paymentPercentage'] = $data['totalPayments'] / $data['totalFees'] * 100;
+        $data['paymentPercentage'] = $this->calculatePercentage($data['totalPayments'], $data['totalFees']);
+    }
+
+    protected function adjustFinancialDataForQuotedCurrentPeriod(&$data, $student)
+    {
+        $data['academicPeriodInfo'] = $this->studentRegistrationRepo->getNextAcademicPeriod($student, now());
+
+        $data['totalFees'] = $this->quotationRepo->getStudentAcademicPeriodQuotationsTotal(
+            $student,
+            $data['academicPeriodInfo']?->academic_period_id
+        );
+
+        $data['totalPayments'] = $this->statementRepo->getStudentNonInvoicedStatementsTotal(
+            $student,
+        );
+
+        $data['registrationBalance'] = ($data['academicPeriodInfo']?->registration_threshold / 100) * $data['totalFees'] - $data['totalPayments'];
     }
 }

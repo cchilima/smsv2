@@ -1507,7 +1507,20 @@
         });
     }
 
+
+    // // Inline Editale Table Rows
+    // $.fn.editable.defaults.mode = 'inline';
+
+    // $.ajaxSetup({
+    //     headers: {
+    //         'X-CSRF-TOKEN': "{{ csrf_token() }}"
+    //     }
+    // })
+
     $(document).ready(() => {
+        // Editable marks (student.show)
+        // $('.editable').editable();
+
         $('#academic-period-ids').change(function() {
             const academicPeriodIds = $(this).val();
 
@@ -1519,20 +1532,6 @@
         });
 
         maskNRC();
-    });
-
-    // Inline Editale Table Rows
-    $.fn.editable.defaults.mode = 'inline';
-
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': "{{ csrf_token() }}"
-        }
-    })
-
-    $(document).ready(() => {
-        // Editable marks (student.show)
-        $('.editable').editable();
     })
 </script>
 

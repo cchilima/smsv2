@@ -61,7 +61,7 @@ class StudentRepository
 
     public function getProvinceTowns($id)
     {
-        return Town::where('province_id', $id)->get();
+        return Town::where('province_id', $id)->orWhere('province_id', null)->get();
     }
 
     public function getTowns()
@@ -71,7 +71,7 @@ class StudentRepository
 
     public function getCountryProvinces($id)
     {
-        return Province::where('country_id', $id)->get();
+        return Province::where('country_id', $id)->orWhere('country_id', null)->get();
     }
 
     public function getProvinces()
@@ -338,7 +338,8 @@ class StudentRepository
             'user.userPersonalInfo.userMaritalStatus',
             'user.userPersonalInfo.province',
             'user.userPersonalInfo.country',
-            'user.userPersonalInfo.town'
+            'user.userPersonalInfo.town',
+            'sponsors'
         )->where('user_id', $id)->get()->first();
     }
 

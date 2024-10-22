@@ -20,6 +20,7 @@ use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 final class Quotations extends PowerGridComponent
 {
     use WithExport;
+
     public $student;
     public string $tableName = 'StudentQuotationsTable';
     public bool $deferLoading = true;
@@ -87,14 +88,13 @@ final class Quotations extends PowerGridComponent
 
     public function filters(): array
     {
-        return [
-        ];
+        return [];
     }
 
     #[\Livewire\Attributes\On('edit')]
     public function edit($rowId): void
     {
-        $this->js('alert('.$rowId.')');
+        $this->js('alert(' . $rowId . ')');
     }
 
     public function actions($row): array

@@ -47,7 +47,7 @@
                                                 <div class="dropdown-menu dropdown-menu-left">
                                                     @if (Qs::userIsTeamSA())
                                                         <a href="{{ route('show.student', $student->user->id, ['ac' => 1]) }}"
-                                                           class="dropdown-item"><i class="icon-eye"></i> Show</a>
+                                                            class="dropdown-item"><i class="icon-eye"></i> Show</a>
                                                     @endif
                                                     @if (Qs::userIsTeamSA())
                                                         <a href="{{ route('students.edit', $student->id) }}"
@@ -71,19 +71,7 @@
                     </table>
                 </div>
 
-
-
-
-
-
-
-
-
                 <div class="tab-pane fade" id="new-student">
-
-
-
-
 
                     <div class="card">
 
@@ -97,7 +85,7 @@
                             class="wizard-form steps-validation" action="{{ route('students.store') }}" data-fouc>
                             @csrf
 
-                            <h6>Personal data</h6>
+                            <h6>Personal Information</h6>
 
                             <fieldset>
                                 <legend>Personal Information</legend>
@@ -105,8 +93,8 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>First Name: <span class="text-danger">*</span></label>
-                                            <input value="{{ old('first_name') }}" required type="text" name="first_name"
-                                                placeholder="First Name" class="form-control">
+                                            <input value="{{ old('first_name') }}" required type="text"
+                                                name="first_name" placeholder="First Name" class="form-control">
                                         </div>
                                     </div>
 
@@ -474,16 +462,8 @@
                         </form>
                     </div>
 
-
-
-
-
                 </div>
 
-
-
-
-                
             </div>
         </div>
     </div>

@@ -36,9 +36,9 @@ class MyApplications extends Component
         return redirect()->route('application.complete_application', $application->id);
     }
 
-    #[Layout('components.layouts.administrator')]
+    #[Layout('components.layouts.app-bootstrap')]
     public function render()
     {
-        return view('livewire.applications.my-applications', ['applications' => $this->applicantRepo->checkApplications($this->buildData())]);
+        return view('livewire.applications.my-applications', ['applicantIdentifiers' => $this->buildData()]);
     }
 }

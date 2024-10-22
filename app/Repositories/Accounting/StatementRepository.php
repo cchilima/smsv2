@@ -266,4 +266,32 @@ class StatementRepository
 
         return $statements->sum('amount');
     }
+
+    /**
+     * Get a student's non-invoiced statements
+     * 
+     * @param  App\Models\Admissions\Student  $student The student model instance
+     * @param  int  $academicPeriodId The ID of the academic period
+     * @return Illuminate\Database\Eloquent\Collection
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function getStudentNonInvoicedStatements($student): Collection
+    {
+        return $student->statements()->where('invoice_id', null)->get();
+    }
+
+    /**
+     * Get the sum of all non-invoiced statements for a student
+     * 
+     * @param  App\Models\Admissions\Student  $student The student model instance
+     * @param  int  $academicPeriodId The ID of the academic period
+     * @return float
+     * @author Blessed Zulu <bzulu@zut.edu.zm>
+     */
+    public function getStudentNonInvoicedStatementsTotal($student): float
+    {
+        $statements = $this->getStudentNonInvoicedStatements($student);
+
+        return $statements->sum('amount');
+    }
 }
