@@ -12,7 +12,7 @@
         </div>
 
         <div class="card-body">
-            @if (count($credit_notes) > 0)
+            @if ($credit_notes && count($credit_notes) > 0)
                 <table class="table table-striped table-hover table-bordered">
                     <thead>
                         <tr>
