@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Laravel\Sanctum\HasApiTokens;
@@ -19,7 +20,7 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class User extends Authenticatable implements AuditableContract
 {
-    use HasApiTokens, HasFactory, Notifiable, Auditable;
+    use HasApiTokens, HasFactory, Notifiable, Auditable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -60,6 +61,21 @@ class User extends Authenticatable implements AuditableContract
     public function userType(){
 
         return $this->belongsTo(UserType::class);
+    }
+
+    public function hasPermissionTo($permission)
+    {
+        // Check if the user has the permission directly
+        if ($this->getDirectPermissions()->contains('name', $permission)) {
+            return true;
+        }
+
+        // Check if the user's user_type has the permission
+        if ($this->userType && $this->userType->permissions->contains('name', $permission)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

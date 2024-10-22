@@ -83,6 +83,9 @@ use App\Livewire\Pages\Residency\Provinces\Index as ProvincesIndex;
 use App\Livewire\Pages\Residency\Towns\Index as TownsIndex;
 use App\Livewire\Pages\Settings\MaritalStatuses\Index as MaritalStatusesIndex;
 use App\Livewire\Pages\Settings\Sponsors\Index as SponsorsIndex;
+
+use App\Livewire\Permissions\{ManagePermissions, AddPermission};
+
 use App\Models\Academics\ClassAssessment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -203,9 +206,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/exam-registration', [ClassAssessmentsController::class, 'ExamRegistration'])->name('student-exam_registration');
     });
 
-    // Accounting livewire routes
-    Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
-    Route::get('/approve-credit-notes', ApproveCreditNotes::class)->name('accounting.approve_credit_notes');
+
+    // Permissions
+    Route::get('/manage-permissions', ManagePermissions::class)->name('manage-permissions');
+    Route::get('/add-permission', AddPermission::class)->name('add-permissions');
+
+// Accounting livewire routes
+Route::get('/invoice-details/{invoice_id}', ViewInvoiceDetails::class)->name('accounting.invoice_details');
+Route::get('/approve-credit-notes', ApproveCreditNotes::class)->name('accounting.approve_credit_notes');
 
 
     Route::get('/quotation-details/{quotation_id}', ViewQuotationDetails::class)->name('accounting.quotation_details');

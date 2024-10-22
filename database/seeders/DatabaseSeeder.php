@@ -56,7 +56,11 @@ class DatabaseSeeder extends Seeder
             ['title' => 'student', 'name' => 'Student', 'level' => 3],
             ['title' => 'accounts', 'name' => 'Accounts', 'level' => 4],
             ['title' => 'hod', 'name' => 'HOD', 'level' => 5],
-            ['title' => 'director', 'name' => 'Director', 'level' => 6]
+            ['title' => 'director', 'name' => 'Director', 'level' => 6],
+            ['title' => 'manager_treasurer', 'name' => 'Manager Treasurer', 'level' => 7],
+            ['title' => 'deputy_registrar_academics', 'name' => 'Deputy Registrar Academics', 'level' => 8],
+            ['title' => 'executive_director', 'name' => 'Executive Director', 'level' => 9],
+            ['title' => 'director_finance', 'name' => 'Director Finance', 'level' => 10],
         ];
 
         // Insert data into the 'user_types' table
