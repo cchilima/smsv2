@@ -19,7 +19,7 @@
         <div class="row">
             <div class="input-field">
                 @foreach ($permissions as $category => $permissions)
-                    <h5 class="mb-4">{{ $category }} Permissions</h5>
+                    <h5 class="mb-4">{{ $category ?? 'Uncategorised' }} Permissions</h5>
 
                     @foreach ($permissions as $permission)
                         <div class="col l6 m6 s12">
