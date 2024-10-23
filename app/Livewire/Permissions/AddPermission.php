@@ -9,10 +9,12 @@ class AddPermission extends Component
 {
 
     public $name;
+    public $category;
 
     // Validation rules
     protected $rules = [
         'name' => 'required|min:3|unique:permissions,name',
+        'category' => 'required|in:Departments & Programs,Academics,Accounting,Students,Admissions,Accommodation,Reports,Other',
     ];
 
     // Save a new permission
@@ -21,10 +23,13 @@ class AddPermission extends Component
         $this->validate();  // Validate input
 
         // Create the permission
-        Permission::create(['name' => $this->name]);
+        Permission::create([
+            'name' => $this->name,
+            'category' => $this->category
+        ]);
 
         // Reset the form
-        $this->reset('name');
+        $this->reset();
 
         // Provide success feedback
         session()->flash('message', 'Permission successfully created!');
