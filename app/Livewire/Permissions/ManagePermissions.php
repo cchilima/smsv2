@@ -4,6 +4,7 @@ namespace App\Livewire\Permissions;
 
 use Livewire\Component;
 use App\Models\Users\UserType;
+use Livewire\Attributes\Layout;
 use Spatie\Permission\Models\Permission;
 
 
@@ -39,6 +40,7 @@ class ManagePermissions extends Component
         session()->flash('message', 'Permissions updated successfully!');
     }
 
+    #[Layout('components.layouts.administrator')]
     public function render()
     {
         return view('livewire.permissions.manage-permissions');

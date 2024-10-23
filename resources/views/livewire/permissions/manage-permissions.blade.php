@@ -14,27 +14,25 @@
     </div>
 
     @if ($selectedUserType)
-        {{-- <h5>Permissions</h5> --}}
+        @foreach ($permissions as $category => $permissions)
+            <div class="row">
+                <div class="col l12 m12 s12 mb-4">
+                    <h5 class="">{{ $category ?? 'Uncategorised' }} Permissions</h5>
+                </div>
 
-        <div class="row">
-            <div class="input-field">
-                @foreach ($permissions as $category => $permissions)
-                    <h5 class="mb-4">{{ $category ?? 'Uncategorised' }} Permissions</h5>
-
-                    @foreach ($permissions as $permission)
-                        <div class="col l6 m6 s12">
-                            <p>
-                                <label>
-                                    <input type="checkbox" wire:model="selectedPermissions"
-                                        value="{{ $permission['name'] }}" />
-                                    <span>{{ $permission['name'] }}</span>
-                                </label>
-                            </p>
-                        </div>
-                    @endforeach
+                @foreach ($permissions as $permission)
+                    <div class="col l6 m6 s12">
+                        <p class="mt-1">
+                            <label>
+                                <input type="checkbox" wire:model="selectedPermissions"
+                                    value="{{ $permission['name'] }}" />
+                                <span>{{ $permission['name'] }}</span>
+                            </label>
+                        </p>
+                    </div>
                 @endforeach
             </div>
-        </div>
+        @endforeach
 
         <button wire:click="savePermissions" class="btn waves-effect waves-light">Save Permissions</button>
     @endif

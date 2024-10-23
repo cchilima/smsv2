@@ -159,50 +159,48 @@
                                 </li>
                             </ul>
                         </li>
-                        
-                        @can('menu option - academics')
-                        <li
-                            class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
-                                'academic-period-management.index',
-                                'academic-period-fees.edit',
-                                'academic-period-management.edit',
-                                'academic-periods.create',
-                                'academic-periods.edit',
-                                'academic-periods.index',
-                                'academic-period-classes.index',
-                                'academic-period-classes.edit',
-                                'academic-period-classes.create',
-                            ])
-                                ? 'nav-item-expanded nav-item-open'
-                                : '' }} ">
-                            
-                       
-                            <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span>
-                                    Academics</span></a>
-                            <ul class="nav nav-group-sub" data-submenu-title="Manage Academic Period">
-                            @can('submenu option - academics -> academic periods')   
-                            <li class="nav-item">
-                                    <a href="{{ route('academic-periods.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-management.index', 'academic-period-management.edit', 'academic-period-fees.edit', 'academic-periods.create', 'academic-periods.edit', 'academic-periods.index']) ? 'active' : '' }}">
-                                        <span>Academic Periods</span></a>
-                                </li>
-                            @endcan
 
-                            @can('submenu option - academics -> academic period classes')
-                                <li class="nav-item">
-                                    <a href="{{ route('academic-period-classes.index') }}"
-                                        class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-classes.create', 'academic-period-classes.edit', 'academic-period-classes.index']) ? 'active' : '' }}">
-                                        <span>Academic Period Classes</span></a>
-                                </li>
-                            @endcan
-                                {{--                                <li class="nav-item"> --}}
-                                {{--                                    <a href="{{ route('enrollments.index') }}" --}}
-                                {{--                                        class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.index']) ? 'active' : '' }}"> --}}
-                                {{--                                        <span>Enrollments</span></a> --}}
-                                {{--                                </li> --}}
-                            </ul>
-                        </li>
+                        @can('academics - menu')
+                            <li
+                                class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), [
+                                    'academic-period-management.index',
+                                    'academic-period-fees.edit',
+                                    'academic-period-management.edit',
+                                    'academic-periods.create',
+                                    'academic-periods.edit',
+                                    'academic-periods.index',
+                                    'academic-period-classes.index',
+                                    'academic-period-classes.edit',
+                                    'academic-period-classes.create',
+                                ])
+                                    ? 'nav-item-expanded nav-item-open'
+                                    : '' }} ">
 
+                                <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span>
+                                        Academics</span></a>
+                                <ul class="nav nav-group-sub" data-submenu-title="Manage Academic Period">
+                                    @can('academics.academic_periods - submenu')
+                                        <li class="nav-item">
+                                            <a href="{{ route('academic-periods.index') }}"
+                                                class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-management.index', 'academic-period-management.edit', 'academic-period-fees.edit', 'academic-periods.create', 'academic-periods.edit', 'academic-periods.index']) ? 'active' : '' }}">
+                                                <span>Academic Periods</span></a>
+                                        </li>
+                                    @endcan
+
+                                    @can('academics.academic_period_classes - submenu')
+                                        <li class="nav-item">
+                                            <a href="{{ route('academic-period-classes.index') }}"
+                                                class="nav-link {{ in_array(Route::currentRouteName(), ['academic-period-classes.create', 'academic-period-classes.edit', 'academic-period-classes.index']) ? 'active' : '' }}">
+                                                <span>Academic Period Classes</span></a>
+                                        </li>
+                                    @endcan
+                                    {{--                                <li class="nav-item"> --}}
+                                    {{--                                    <a href="{{ route('enrollments.index') }}" --}}
+                                    {{--                                        class="nav-link {{ in_array(Route::currentRouteName(), ['enrollments.index']) ? 'active' : '' }}"> --}}
+                                    {{--                                        <span>Enrollments</span></a> --}}
+                                    {{--                                </li> --}}
+                                </ul>
+                            </li>
                         @endcan
 
                         <li
@@ -484,7 +482,6 @@
                                 'audits.index',
                                 'sponsor.index',
                                 'sponsor.edit',
-
                             ])
                                 ? 'nav-item-expanded nav-item-open'
                                 : '' }} ">
@@ -534,13 +531,13 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('sponsors.index') }}"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['sponsors.create', 'sponsors.edit', 'sponsors.index']) ? 'active' : '' }}">
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['sponsors.create', 'sponsors.edit', 'sponsors.index']) ? 'active' : '' }}">
                                         <span>Sponsor Infor</span></a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a href="{{ route('manage-permissions')}}"
-                                       class="nav-link {{ in_array(Route::currentRouteName(), ['manage-permissions']) ? 'active' : '' }}">
+                                    <a href="{{ route('manage-permissions') }}"
+                                        class="nav-link {{ in_array(Route::currentRouteName(), ['manage-permissions']) ? 'active' : '' }}">
                                         <span>Manage Permissions</span></a>
                                 </li>
 
