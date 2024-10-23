@@ -13,14 +13,14 @@
                     <h3 class="mt-3">{{ $academicPeriod->code . ' - ' . $academicPeriod->name }}</h3>
                     <p>Registered Students : {{ $students }}</p>
                     <div class="row">
-                        @can('download enrollment report')
-                        <div class="col">
-                            <a href="{{ route('student.program.list', ['ac' => $academicPeriod->id]) }}"
-                                class="dropdown-item"><i class="icon-file-download"></i> Download Enrollment report PDF</a>
-                            <a href="{{ route('student.program.list.csv', ['ac' => $academicPeriod->id]) }}"
-                                class="dropdown-item"><i class="icon-file-download"></i> Download Enrollment report
-                                Excel</a>
-                        </div>
+                        @can('academic_period.academic_report - download')
+                            <div class="col">
+                                <a href="{{ route('student.program.list', ['ac' => $academicPeriod->id]) }}"
+                                    class="dropdown-item"><i class="icon-file-download"></i> Download Enrollment report PDF</a>
+                                <a href="{{ route('student.program.list.csv', ['ac' => $academicPeriod->id]) }}"
+                                    class="dropdown-item"><i class="icon-file-download"></i> Download Enrollment report
+                                    Excel</a>
+                            </div>
                         @endcan
                     </div>
                 </div>
@@ -149,96 +149,96 @@
                 </div>
             </div>
 
-            @can('show academic period - academic information')
-            <div class="card">
-                <div class="card-header header-elements-inline">
-                    <h6 class="card-title">Academic Information</h6>
-                    {!! Qs::getPanelOptions() !!}
-                </div>
-                <div class="card-body show">
-                    <ul class="nav nav-tabs nav-tabs-highlight">
-                        <li class="nav-item">
-                            <a href="#all-ac-programs" class="nav-link active" data-toggle="tab">
-                                Running Programs
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#all-classes" class="nav-link" data-toggle="tab">
-                                All Classes
-                            </a>
-                        </li>
-                    </ul>
+            @can('academic_period.academic_information - show_section')
+                <div class="card">
+                    <div class="card-header header-elements-inline">
+                        <h6 class="card-title">Academic Information</h6>
+                        {!! Qs::getPanelOptions() !!}
+                    </div>
+                    <div class="card-body show">
+                        <ul class="nav nav-tabs nav-tabs-highlight">
+                            <li class="nav-item">
+                                <a href="#all-ac-programs" class="nav-link active" data-toggle="tab">
+                                    Running Programs
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#all-classes" class="nav-link" data-toggle="tab">
+                                    All Classes
+                                </a>
+                            </li>
+                        </ul>
 
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="all-ac-programs">
-                            <div class="d-flex justify-content-between mb-2">
-                            @can('download running programs')
-                                <div class="d-flex">
-                                    <a href="{{ route('student.program.list', ['ac' => $academicPeriod->id]) }}"
-                                        class="dropdown-item"><i class="icon-file-download"></i> Download PDF</a>
-                                    <a href="{{ route('student.program.list.csv', ['ac' => $academicPeriod->id]) }}"
-                                        class="dropdown-item"><i class="icon-file-download"></i> Download Excel</a>
-                                </div>
-                                @endcan
-                                <div>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="all-ac-programs">
+                                <div class="d-flex justify-content-between mb-2">
+                                    @can('academic_period.running_programs - download')
+                                        <div class="d-flex">
+                                            <a href="{{ route('student.program.list', ['ac' => $academicPeriod->id]) }}"
+                                                class="dropdown-item"><i class="icon-file-download"></i> Download PDF</a>
+                                            <a href="{{ route('student.program.list.csv', ['ac' => $academicPeriod->id]) }}"
+                                                class="dropdown-item"><i class="icon-file-download"></i> Download Excel</a>
+                                        </div>
+                                    @endcan
+                                    <div>
 
+                                    </div>
                                 </div>
+
+                                @livewire('datatables.academics.academicperiods.running-programs', [
+                                    'academicPeriodId' => $academicPeriod->id,
+                                ])
                             </div>
 
-                            @livewire('datatables.academics.academicperiods.running-programs', [
-                                'academicPeriodId' => $academicPeriod->id,
-                            ])
-                        </div>
+                            <div class="tab-pane fade" id="all-classes">
+                                <div class="d-flex justify-content-between mb-2">
+                                    @can('academic_period.running_classes - download')
+                                        <div class="d-flex">
+                                            <a href="{{ route('student.class.list', ['ac' => $academicPeriod->id]) }}"
+                                                class="dropdown-item"><i class="icon-file-download"></i> Download PDF </a>
+                                            <a href="{{ route('student.csv.class.list', ['ac' => $academicPeriod->id]) }}"
+                                                class="dropdown-item"><i class="icon-file-download"></i> Download Excel </a>
+                                        </div>
+                                    @endcan
+                                    <div>
+                                        <a href="{{ route('student.class.list', ['ac' => $academicPeriod->id]) }}"
+                                            class="dropdown-item"><i class="icon-add-to-list"></i> Add Class</a>
+                                    </div>
+                                </div>
 
-                        <div class="tab-pane fade" id="all-classes">
-                            <div class="d-flex justify-content-between mb-2">
-                            @can('download all classes')
-                                <div class="d-flex">
-                                    <a href="{{ route('student.class.list', ['ac' => $academicPeriod->id]) }}"
-                                        class="dropdown-item"><i class="icon-file-download"></i> Download PDF </a>
-                                    <a href="{{ route('student.csv.class.list', ['ac' => $academicPeriod->id]) }}"
-                                        class="dropdown-item"><i class="icon-file-download"></i> Download Excel </a>
-                                </div>
-                                @endcan
-                                <div>
-                                    <a href="{{ route('student.class.list', ['ac' => $academicPeriod->id]) }}"
-                                        class="dropdown-item"><i class="icon-add-to-list"></i> Add Class</a>
-                                </div>
+                                @livewire('datatables.academics.academic-periods.classes', [
+                                    'academicPeriodId' => $academicPeriod->id,
+                                ])
+
                             </div>
 
-                            @livewire('datatables.academics.academic-periods.classes', [
-                                'academicPeriodId' => $academicPeriod->id,
-                            ])
-
                         </div>
-
                     </div>
                 </div>
-            </div>
             @endcan
 
-            @can('batch invoicing')
-            <div class="card">
-                <div class="card-header header-elements-inline">
-                    <h6 class="card-title">Batch Invoicing</h6>
-                    {!! Qs::getPanelOptions() !!}
-                </div>
-                <div class="card-body show">
-                    <div class="tab-content">
+            @can('academic_period - batch_invoice')
+                <div class="card">
+                    <div class="card-header header-elements-inline">
+                        <h6 class="card-title">Batch Invoicing</h6>
+                        {!! Qs::getPanelOptions() !!}
+                    </div>
+                    <div class="card-body show">
+                        <div class="tab-content">
 
-                        <form class="ajax-store" method="post"
-                            action="{{ route('invoices.batchInvoicing', $academicPeriod->id) }}">
-                            @csrf
-                            <input name="academic_period" hidden value="{{ $academicPeriod->id }}" type="text">
-                            <div class="text-left">
-                                <button id="ajax-btn" type="submit" class="btn btn-primary">invoice students<i
-                                        class="icon-paperplane ml-2"></i></button>
-                            </div>
-                        </form>
+                            <form class="ajax-store" method="post"
+                                action="{{ route('invoices.batchInvoicing', $academicPeriod->id) }}">
+                                @csrf
+                                <input name="academic_period" hidden value="{{ $academicPeriod->id }}" type="text">
+                                <div class="text-left">
+                                    <button id="ajax-btn" type="submit" class="btn btn-primary">invoice students<i
+                                            class="icon-paperplane ml-2"></i></button>
+                                </div>
+                            </form>
 
+                        </div>
                     </div>
                 </div>
-            </div>
             @endcan
 
         </div>
