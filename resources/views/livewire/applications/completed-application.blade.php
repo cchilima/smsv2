@@ -213,7 +213,7 @@
                                         @endif
                                     </td>
                                 @else
-                                    <td>NA</td>
+                                    <td>N/A</td>
                                 @endif
                             </tr>
                         @else

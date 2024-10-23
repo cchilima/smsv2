@@ -13,7 +13,6 @@ class Index extends Component
 {
     use CanRefreshDataTable;
 
-
     public function mount()
     {
         Gate::allowIf(Qs::userIsAdministrative());

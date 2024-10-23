@@ -18,7 +18,7 @@ class ManagePermissions extends Component
     public function mount()
     {
         $this->userTypes = UserType::all();
-        $this->permissions = Permission::all();
+        $this->permissions = Permission::all()->groupBy('category')->toArray();
     }
 
     public function updatedSelectedUserType($userTypeId)
@@ -38,7 +38,7 @@ class ManagePermissions extends Component
 
         session()->flash('message', 'Permissions updated successfully!');
     }
-    
+
     public function render()
     {
         return view('livewire.permissions.manage-permissions');
